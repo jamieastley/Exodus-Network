@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:padding="3dp" >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginLeft="3dp"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/platform_Icon"
+                android:src="@drawable/icon_psn" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lfg_activity_title"
+                android:text="Vault of Glass - Prestige"
+                android:textSize="20sp"
+                android:layout_toEndOf="@id/platform_Icon"
+                android:layout_toRightOf="@+id/platform_Icon"
+                android:layout_marginStart="6dp"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:id="@+id/lfg_activity_checkpoint"
+                android:text="Prestige - Eater of Worlds"
+                android:textSize="14sp"
+                android:layout_toRightOf="@+id/platform_Icon"
+                android:layout_toEndOf="@+id/platform_Icon"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/lfg_activity_title"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lfg_time"
+                android:text="3 min ago"
+                android:layout_marginLeft="6dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginBottom="3dp"
+                android:layout_alignParentBottom="true"
+                android:textStyle="italic"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/light_Level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:text="✦ 300"
+                android:textSize="25sp"
+                android:textColor="#d000ff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/class_Type"
+                android:text="Warlock"
+                android:textSize="18sp"
+                android:layout_marginRight="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/light_Level" />
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:id="@+id/micIcon"
+                android:src="@drawable/icon_mic_off_24dp"
+                android:layout_toStartOf="@+id/player_Username"
+                android:layout_toLeftOf="@+id/player_Username"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="3dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/player_Username"
+                android:text="wheels00769"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="3dp" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
