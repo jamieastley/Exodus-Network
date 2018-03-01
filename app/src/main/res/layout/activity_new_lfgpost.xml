@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity">
+
+
+    <RadioGroup
+        android:id="@+id/radio_character_selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="70dp">
+        <RadioButton
+            android:id="@+id/radio0"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:button="@android:color/transparent"
+            android:drawableTop="@drawable/icon_psn"
+            android:gravity="center"
+            android:text="Warlock"
+            />
+        <RadioButton
+            android:id="@+id/radio1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@android:color/transparent"
+            android:drawableTop="@drawable/icon_xbl"
+            android:gravity="center"
+            android:text="Hunter"
+            />
+        <RadioButton
+            android:id="@+id/radio2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@android:color/transparent"
+            android:drawableTop="@drawable/icon_psn"
+            android:gravity="center"
+            android:text="Titan"/>
+    </RadioGroup>
+
+</android.support.constraint.ConstraintLayout>

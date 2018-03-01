@@ -23,7 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserCharactersActivity"></activity>
+        <activity android:name=".UserCharactersActivity" />
+        <activity android:name=".LFG.NewLFGPostActivity"></activity>
     </application>
 
 </manifest>
