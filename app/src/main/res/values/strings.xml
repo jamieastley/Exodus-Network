@@ -20,4 +20,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="lightIcon">✦ %1$s</string>
+    <string name="nav_hunter_character_title">Hunter</string>
+    <string name="nav_titan_character_title">Titan</string>
+    <string name="nav_warlock_character_title">Warlock</string>
+    <string name="characters">Characters</string>
+    <string name="lfg_feed">LFG Feed</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

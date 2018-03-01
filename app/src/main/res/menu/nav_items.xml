@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_first_character_item"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/nav_hunter_character_title" />
+    <item
+        android:id="@+id/nav_second_character_item"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/nav_titan_character_title" />
+    <item
+        android:id="@+id/nav_third_character_item"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/nav_warlock_character_title" />
+</menu>
