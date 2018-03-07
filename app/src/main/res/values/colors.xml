@@ -6,4 +6,6 @@
 
     <color name="colorWhite">#ffffff</color>
     <color name="colorWhiteTransparent">#80ffffff</color>
+
+    <color name="emblem_deselected">#d2a1a1a1</color>
 </resources>
