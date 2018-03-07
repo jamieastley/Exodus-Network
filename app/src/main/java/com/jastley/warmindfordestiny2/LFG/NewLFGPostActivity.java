@@ -22,6 +22,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     private String displayName;
     private String classType;
     private String dateTime;
+    private boolean hasMic;
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
 
     @Override
@@ -33,10 +34,12 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         submitBtn = findViewById(R.id.submit_lfg_post_button);
 
-        lightLevel = "300";
+//        TODO: remove hardcoded variables and replace with user account details
+        lightLevel = "280";
         membershipType = "2";
-        displayName = "Jeewwbacca";
+        displayName = "wheels00769";
         classType = "1";
+        hasMic = true;
         dateTime = Calendar.getInstance().getTime().toString();
 
         submitBtn.setOnClickListener(this);
@@ -49,7 +52,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view) {
         LFGPost newPost = new LFGPost(activityName.getText().toString(),
                                     activityCheckpoint.getText().toString(),
-                                    lightLevel, membershipType, displayName, classType, dateTime);
+                                    lightLevel, membershipType, displayName, classType, dateTime, hasMic);
 
         DATABASE.getReference().child("lfg").child(displayName).setValue(newPost);
         finish();

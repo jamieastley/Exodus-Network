@@ -2,6 +2,7 @@ package com.jastley.warmindfordestiny2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -9,15 +10,21 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -25,15 +32,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.jastley.warmindfordestiny2.LFG.LFGPost;
+import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
+import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.User.LogInActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
-    private DatabaseReference mDatabase;
-    private String mUserId;
+    private RecyclerView mLFGRecyclerView;
+    private FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> mLFGPostAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +52,16 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
-//            }
-//        });
+                Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
+                startActivity(intent);
+            }
+        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -60,68 +72,51 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //Firebase init
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        if (mFirebaseUser == null) {
-            //not logged in
-            loadLogInView();
-        }
-        else {
-            mUserId = mFirebaseUser.getUid();
+        mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
+        mLFGRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            //Set Up Listview
-            final ListView listView = findViewById(R.id.listView);
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
-            listView.setAdapter(adapter);
+        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
+//        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
+        Query query = postRef.child("lfg");
+//            TODO: query options, sort by dateTime
 
-            //Add items via the button and edit text at the bottom of the view
-            final EditText text = findViewById(R.id.todoText);
-            final Button button = findViewById(R.id.addButton);
-            button.setOnClickListener(new View.OnClickListener() {
+        FirebaseRecyclerOptions lfgOptions =
+                new FirebaseRecyclerOptions.Builder<LFGPost>()
+                        .setQuery(query, LFGPost.class)
+                        .build();
 
-                @Override
-                public void onClick(View view) {
-                    mDatabase.child("lfg").child(mUserId).push().child("title").setValue(text.getText().toString());
-//                    mDatabase.child("users").child(mUserId).child("items").push().child("title").setValue(text.getText().toString());
-                    text.setText("");
-                }
-            });
+        mLFGPostAdapter = new FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder>(lfgOptions) {
+            @Override
+            protected void onBindViewHolder(LFGPostViewHolder holder, int position, @NonNull LFGPost model) {
+                holder.setActivityTitle(model.getActivityTitle());
+                holder.setActivityCheckpoint(model.getActivityCheckpoint());
+                holder.setPlatformIcon(model.getMembershipType(), getApplicationContext());
+                holder.setClassType(model.getClassType());
+                holder.setDisplayName(model.getDisplayName());
+                holder.setLightLevel(model.getLightLevel());
+                holder.setMicIcon(model.isHasMic(), getApplicationContext());
 
-            //Use firebase to populate the list
-//            mDatabase.child("users").child(mUserId).child("items").addChildEventListener(new ChildEventListener() {
-            mDatabase.child("lfg").child(mUserId).addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    adapter.add((String) dataSnapshot.child("title").getValue());
-                }
+            }
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            @Override
+            public LFGPostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-                }
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.lfg_list_item, parent, false);
 
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    adapter.remove((String) dataSnapshot.child("title").getValue());
-                }
+                return new LFGPostViewHolder(view);
+            }
+        };
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
+        mLFGRecyclerView.setAdapter(mLFGPostAdapter);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mLFGPostAdapter.startListening();
+    }
 
     @Override
     public void onBackPressed() {
@@ -180,13 +175,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    //redirects to logInActivity and clears the stack so back button press will won't return to MainActivity
-    private void loadLogInView() {
-        Intent intent = new Intent(this, LogInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 }
