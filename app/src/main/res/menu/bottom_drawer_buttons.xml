@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:visible="true"
+        android:id="@+id/nav_log_in"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/log_in" />
+
+    <item
+        android:visible="false"
+        android:id="@+id/nav_log_out"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/log_out" />
+
+    <!--TODO check logged user state and enable/disable each button-->
+</menu>

@@ -20,6 +20,22 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer">
+
+        <android.support.design.widget.NavigationView
+            android:orientation="horizontal"
+            android:id="@+id/nav_view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:fitsSystemWindows="true"
+            app:menu="@menu/bottom_drawer_buttons"
+
+            >
+
+        </android.support.design.widget.NavigationView>
+    </android.support.design.widget.NavigationView>
+
+
 
 </android.support.v4.widget.DrawerLayout>

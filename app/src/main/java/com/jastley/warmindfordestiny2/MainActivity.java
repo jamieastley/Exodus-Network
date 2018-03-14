@@ -1,5 +1,7 @@
 package com.jastley.warmindfordestiny2;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> mLFGPostAdapter;
 
+    View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +60,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+//                        .setAction("Action", null)
+//                        .show();
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
+//                startActivityForResult(intent, 1);
                 startActivity(intent);
             }
         });
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
 //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
-        Query query = postRef.child("lfg");
+        Query query = postRef.child("lfg").orderByChild("dateTime");
 //            TODO: query options, sort by dateTime
 
         FirebaseRecyclerOptions lfgOptions =
@@ -96,7 +101,7 @@ public class MainActivity extends AppCompatActivity
                 holder.setDisplayName(model.getDisplayName());
                 holder.setLightLevel(model.getLightLevel());
                 holder.setMicIcon(model.isHasMic(), getApplicationContext());
-
+                holder.setDateTime(model.getDateTime());
             }
 
             @Override
@@ -117,6 +122,19 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         mLFGPostAdapter.startListening();
     }
+
+//    @Override
+//    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+////        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == 1) {
+//            if(resultCode == NewLFGPostActivity.RESULT_OK){
+////                String result=data.getStringExtra("result");
+//                Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
+//                        .show();
+//            }
+//        }
+//    }
 
     @Override
     public void onBackPressed() {
@@ -162,15 +180,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_characters) {
             Intent accountCharacters = new Intent(this, UserCharactersActivity.class);
             startActivity(accountCharacters);
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
+// else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

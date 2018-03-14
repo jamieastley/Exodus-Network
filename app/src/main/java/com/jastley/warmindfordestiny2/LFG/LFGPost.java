@@ -12,14 +12,14 @@ public class LFGPost {
     private String membershipType;
     private String displayName;
     private String classType;
-    private String dateTime;
+    private Long dateTime;
     private boolean hasMic;
 
     public LFGPost() {
         //empty constructor for Firebase
     }
 
-    public LFGPost(String activityTitle, String activityCheckpoint, String lightLevel, String membershipType, String displayName, String classType, String dateTime, boolean hasMic) {
+    public LFGPost(String activityTitle, String activityCheckpoint, String lightLevel, String membershipType, String displayName, String classType, Long dateTime, boolean hasMic) {
         this.activityTitle = activityTitle;
         this.activityCheckpoint = activityCheckpoint;
         this.lightLevel = lightLevel;
@@ -55,7 +55,7 @@ public class LFGPost {
         return classType;
     }
 
-    public String getDateTime() {
+    public Long getDateTime() {
         return dateTime;
     }
 

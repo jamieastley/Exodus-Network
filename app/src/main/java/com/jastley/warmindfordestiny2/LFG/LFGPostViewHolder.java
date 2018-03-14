@@ -18,11 +18,12 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     private final ImageView platformIcon;
     private final TextView activityTitle;
     private final TextView activityCheckpoint;
-    private final TextView lfgTime;
+    private final TextView dateTime;
     private final TextView lightLevel;
     private final TextView classType;
     private final ImageView micIcon;
     private final TextView displayName;
+
 
 
     public LFGPostViewHolder(View itemView) {
@@ -30,11 +31,12 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         platformIcon = itemView.findViewById(R.id.platform_Icon);
         activityTitle = itemView.findViewById(R.id.lfg_activity_title);
         activityCheckpoint = itemView.findViewById(R.id.lfg_activity_checkpoint);
-        lfgTime = itemView.findViewById(R.id.lfg_time);
+        dateTime = itemView.findViewById(R.id.lfg_time);
         lightLevel = itemView.findViewById(R.id.light_Level);
         classType = itemView.findViewById(R.id.class_Type);
         micIcon = itemView.findViewById(R.id.micIcon);
         displayName = itemView.findViewById(R.id.player_Username);
+
     }
 
     public void setActivityTitle(String title) {
@@ -45,18 +47,23 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         activityCheckpoint.setText(checkpoint);
     }
 
+//    public int getIconResource(Context context, String membershipType) {
+//        int resId = context.getResources().getI
+//    }
+
     public void setPlatformIcon(String icon, Context context) {
 
 //        TODO: alpha-out white backgrounds from platform icons
-        if (icon == "2") {
+        if (icon.equals("2")) {
+            //Use setImageResource runs on UI thread and can cause hiccups, use setImageDrawable
             platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
         }
-        else if (icon == "1") {
+        else if (icon.equals("1")) {
             platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_xbl));
         }
-//        else {
-////            TODO: Blizzard icon
-//        }
+        else if (icon.equals("4")) {
+            platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_blizzard));
+        }
     }
 
     public void setLightLevel(String light) {
@@ -69,13 +76,13 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
     public void setClassType(String type) {
 
-        if (type == "0") {
+        if (type.equals("0")) {
             classType.setText("Titan");
         }
-        else if (type == "1") {
+        else if (type.equals("1")) {
             classType.setText("Hunter");
         }
-        else if (type == "2") {
+        else if (type.equals("2")) {
             classType.setText("Warlock");
         }
         else {
@@ -91,5 +98,9 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         else {
             micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_off_24dp));
         }
+    }
+
+    public void setDateTime(Long time) {
+        dateTime.setText(time.toString());
     }
 }

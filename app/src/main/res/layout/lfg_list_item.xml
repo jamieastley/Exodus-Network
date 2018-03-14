@@ -23,7 +23,7 @@
                 android:layout_marginLeft="3dp"
                 android:layout_alignParentLeft="true"
                 android:id="@+id/platform_Icon"
-                android:src="@drawable/icon_psn" />
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:id="@+id/micIcon"
-                android:src="@drawable/icon_mic_off_24dp"
+
                 android:layout_toStartOf="@+id/player_Username"
                 android:layout_toLeftOf="@+id/player_Username"
                 android:layout_alignParentBottom="true"
