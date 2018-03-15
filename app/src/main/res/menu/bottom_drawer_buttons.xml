@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:visible="true"
-        android:id="@+id/nav_log_in"
-        android:icon="@drawable/ic_account_circle_black_24dp"
-        android:title="@string/log_in" />
+    <group android:checkableBehavior="single">
 
-    <item
-        android:visible="false"
-        android:id="@+id/nav_log_out"
-        android:icon="@drawable/ic_account_circle_black_24dp"
-        android:title="@string/log_out" />
+        <!--<item-->
+            <!--android:visible="true"-->
+            <!--android:id="@+id/nav_log_in"-->
+            <!--android:icon="@drawable/ic_account_circle_black_24dp"-->
+            <!--android:title="@string/log_in" />-->
 
-    <!--TODO check logged user state and enable/disable each button-->
+        <item
+            android:visible="false"
+            android:id="@+id/nav_refresh_account"
+            android:icon="@drawable/ic_account_circle_black_24dp"
+            android:title="@string/refresh_account" />
+
+        <!--TODO check logged user state and enable/disable each button-->
+    </group>
 </menu>

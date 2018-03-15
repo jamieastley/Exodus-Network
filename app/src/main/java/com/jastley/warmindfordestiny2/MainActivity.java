@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -39,6 +41,25 @@ import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.User.LogInActivity;
+import com.jastley.warmindfordestiny2.api.AccessToken;
+import com.jastley.warmindfordestiny2.api.BungieAPI;
+
+import android.util.Base64;
+
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
+import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -46,7 +67,9 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> mLFGPostAdapter;
 
-    View view;
+    private String redirectUri = "warmindfordestiny://callback";
+    private String baseURL = "https://www.bungie.net/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +191,63 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    //catch OAuth token callback
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //callback for OAuth
+        //TODO: refresh access_token if expired
+        Uri uri = getIntent().getData();
+
+        if (uri != null && uri.toString().startsWith(redirectUri)) {
+            final String code = uri.getQueryParameter("code");
+
+            //Network logging - debug
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            // set your desired log level
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            // add your other interceptors …
+
+
+            // add logging as last interceptor
+            httpClient.addInterceptor(logging);
+
+            Retrofit.Builder builder = new Retrofit.Builder()
+                    .baseUrl(baseURL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(httpClient.build());
+
+            Retrofit retrofit = builder.build();
+
+            BungieAPI bungieClient = retrofit.create(BungieAPI.class);
+            Call<AccessToken> accessTokenCall = bungieClient.getAccessToken(
+                    clientId,
+                    clientSecret,
+                    "authorization_code",
+                    code
+            );
+
+            accessTokenCall.enqueue(new Callback<AccessToken>() {
+                @Override
+                public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+//                    TODO: store accessToken/refreshToken
+
+                    System.out.println("accessToken: " + response.body().getAccessToken());
+                    Toast.makeText(MainActivity.this, "Acquired access_token!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<AccessToken> call, Throwable t) {
+                    Toast.makeText(MainActivity.this, "Couldn't acquire access token!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -190,6 +270,13 @@ public class MainActivity extends AppCompatActivity
 //        } else if (id == R.id.nav_send) {
 //
 //        }
+
+        else if (id == R.id.nav_log_in) {
+            Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
+            startActivity(oauthIntent);
+        }
+
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
