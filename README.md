@@ -1,4 +1,4 @@
-# Warmind-for-Destiny-2
+# Warmind for Destiny 2
 
 An Android companion app for Destiny 2, that utilises the Bungie API to allow players to access and manage their Destiny 2 
 characters' inventories, see their stats for various in-game activities and clan functionality (pending API access).
