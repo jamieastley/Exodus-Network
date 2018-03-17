@@ -8,4 +8,4 @@ group for Raids/PVP/Weekly activities.
 
 # OAuth
 
-OAuth2 is integrated to allow the app to access the players private character data such as their inventories. 
+OAuth2 is integrated to allow the app to access the players private character data such as their inventories and transfer/equip items.
