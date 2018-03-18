@@ -11,6 +11,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -62,13 +64,16 @@ import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
 
     private RecyclerView mLFGRecyclerView;
-    private FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> mLFGPostAdapter;
+    private FirebaseRecyclerAdapter mLFGPostAdapter;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private String redirectUri = "warmindfordestiny://callback";
     private String baseURL = "https://www.bungie.net/";
+
+
 
 
     @Override
@@ -100,14 +105,36 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         mLFGRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO added/ may need to remove
+
+        //SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.lfg_swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+
+                //Load LFG posts from Firebase
+                loadLFGPosts();
+                mLFGPostAdapter.startListening();
+            }
+        });
+
+
+    }
+
+    private void loadLFGPosts() {
+
+        swipeRefreshLayout.setRefreshing(true);
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
-//        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
+        //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
         Query query = postRef.child("lfg").orderByChild("dateTime");
-//            TODO: query options, sort by dateTime
+        //            TODO: query options, sort by dateTime
 
         FirebaseRecyclerOptions lfgOptions =
                 new FirebaseRecyclerOptions.Builder<LFGPost>()
@@ -130,6 +157,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public LFGPostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+//                ProgressBar lfgProgressBar = (findViewById(R.id.lfg_progress_bar));
+//                lfgProgressBar.setVisibility(View.INVISIBLE);
+                swipeRefreshLayout.setRefreshing(false);
+
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.lfg_list_item, parent, false);
 
@@ -138,12 +169,13 @@ public class MainActivity extends AppCompatActivity
         };
 
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mLFGPostAdapter.startListening();
+//        mLFGPostAdapter.startListening();
     }
 
 //    @Override
@@ -281,5 +313,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onRefresh() {
+
+//        mLFGPostAdapter.stopListening();
+//        mLFGPostAdapter.notifyDataSetChanged();
+        loadLFGPosts();
     }
 }
