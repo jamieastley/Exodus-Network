@@ -54,4 +54,6 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
 
         Toast.makeText(context, "A database error occurred, check your connection.", Toast.LENGTH_SHORT).show();
     }
+
+
 }

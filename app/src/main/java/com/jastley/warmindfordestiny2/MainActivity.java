@@ -132,7 +132,13 @@ public class MainActivity extends AppCompatActivity
 //        mLFGPostAdapter.startListening();
     }
 
-//    @Override
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mLFGPostAdapter.stopListening();
+    }
+
+    //    @Override
 //    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 ////        super.onActivityResult(requestCode, resultCode, data);
 //
@@ -174,7 +180,19 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.pause_live_lfg_feed) {
+            mLFGPostAdapter.stopListening();
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+//        TODO: modify pause icon state here
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     //catch OAuth token callback
