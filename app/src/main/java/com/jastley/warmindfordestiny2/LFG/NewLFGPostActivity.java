@@ -44,9 +44,9 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         submitBtn = findViewById(R.id.submit_lfg_post_button);
 
 //        TODO: remove hardcoded variables and replace with user account details
-        lightLevel = "318";
-        membershipType = "4";
-        displayName = "tanky_tim12";
+        lightLevel = "208";
+        membershipType = "1";
+        displayName = "wheels00769";
         classType = "2";
         hasMic = true;
         dateTime = System.currentTimeMillis();

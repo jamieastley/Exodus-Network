@@ -1,14 +1,10 @@
 package com.jastley.warmindfordestiny2;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,42 +13,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
-import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
+import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
-import com.jastley.warmindfordestiny2.User.LogInActivity;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 
-import android.util.Base64;
-
-import java.io.IOException;
-
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -107,7 +84,8 @@ public class MainActivity extends AppCompatActivity
 
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         mLFGRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO added/ may need to remove
+
+        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
 
         //SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.lfg_swipe_refresh);
@@ -133,41 +111,17 @@ public class MainActivity extends AppCompatActivity
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
         //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
-        Query query = postRef.child("lfg").orderByChild("dateTime");
+        DatabaseReference dataRef = postRef.child("lfg");
+        Query query = dataRef.orderByChild("dateTime");
         //            TODO: query options, sort by dateTime
 
         FirebaseRecyclerOptions lfgOptions =
                 new FirebaseRecyclerOptions.Builder<LFGPost>()
-                        .setQuery(query, LFGPost.class)
+//                        .setQuery(query, LFGPost.class)
+                        .setIndexedQuery(query, dataRef, LFGPost.class)
                         .build();
 
-        mLFGPostAdapter = new FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder>(lfgOptions) {
-            @Override
-            protected void onBindViewHolder(LFGPostViewHolder holder, int position, @NonNull LFGPost model) {
-                holder.setActivityTitle(model.getActivityTitle());
-                holder.setActivityCheckpoint(model.getActivityCheckpoint());
-                holder.setPlatformIcon(model.getMembershipType(), getApplicationContext());
-                holder.setClassType(model.getClassType());
-                holder.setDisplayName(model.getDisplayName());
-                holder.setLightLevel(model.getLightLevel());
-                holder.setMicIcon(model.isHasMic(), getApplicationContext());
-                holder.setDateTime(model.getDateTime());
-            }
-
-            @Override
-            public LFGPostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-//                ProgressBar lfgProgressBar = (findViewById(R.id.lfg_progress_bar));
-//                lfgProgressBar.setVisibility(View.INVISIBLE);
-                swipeRefreshLayout.setRefreshing(false);
-
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.lfg_list_item, parent, false);
-
-                return new LFGPostViewHolder(view);
-            }
-        };
-
+        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions);
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
 
     }
