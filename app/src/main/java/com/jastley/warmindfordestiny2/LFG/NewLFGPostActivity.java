@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,9 +41,26 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
 
+        Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
+        myToolbar.setTitle(R.string.lfg_feed);
+        setSupportActionBar(myToolbar);
+
         activityName = findViewById(R.id.activity_name_input);
         activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         submitBtn = findViewById(R.id.submit_lfg_post_button);
+
+
+        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+//        ActionBar actionBar = getSupportActionBar();  //to support lower version too
+//        actionBar.setDisplayShowCustomEnabled(true);
+//        View customView=getLayoutInflater().inflate(R.layout.yourlayout, null);
+//        actionBar.setCustomView(customView);
 
 //        TODO: remove hardcoded variables and replace with user account details
         lightLevel = "278";
@@ -88,5 +107,11 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.app_bar_new_lfg, menu);
+        return true;
     }
 }
