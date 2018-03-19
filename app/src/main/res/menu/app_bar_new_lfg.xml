@@ -4,14 +4,8 @@
 
     <item
         android:id="@+id/pause_live_lfg_feed"
-        android:icon="@drawable/ic_pause_circle_outline_black_24dp"
+        android:icon="@drawable/ic_send_black_24dp"
         android:title="@string/action_lfg_pause"
         app:showAsAction="ifRoom"/>
 
-
-    <item
-        android:id="@+id/action_logout"
-        android:orderInCategory="100"
-        android:title="@string/action_logout"
-        app:showAsAction="never" />
 </menu>

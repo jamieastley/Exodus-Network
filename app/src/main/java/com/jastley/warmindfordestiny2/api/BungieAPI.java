@@ -17,11 +17,22 @@ public interface BungieAPI {
     @POST("Platform/App/OAuth/Token/")
     @FormUrlEncoded
     Call<AccessToken> getAccessToken(
-            @Field("client_id") String clientId,
-            @Field("client_secret") String clientSecret,
-            @Field("grant_type") String grantType,
-            @Field("code") String code
+        @Field("client_id") String clientId,
+        @Field("client_secret") String clientSecret,
+        @Field("grant_type") String grantType,
+        @Field("code") String code
     );
+
+    //Renew access_token
+    @Headers("Accept: application/json")
+    @POST("Platform/App/OAuth/Token")
+    @FormUrlEncoded
+    Call<AccessToken> renewAccessToken(
+        @Field("grant_type") String grantType,
+        @Field("refresh_token") String refreshToken
+    );
+
+
 
 
 //    Get profile summary
