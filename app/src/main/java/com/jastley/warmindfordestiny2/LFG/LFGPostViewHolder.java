@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2.LFG;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -101,6 +102,12 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setDateTime(Long time) {
-        dateTime.setText(time.toString());
+
+        Long currentTime = System.currentTimeMillis();
+
+        //output as n seconds/mins/hours/days ago
+        String postAge = (String) DateUtils.getRelativeTimeSpanString(time, currentTime, 0);
+
+        dateTime.setText(postAge);
     }
 }

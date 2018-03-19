@@ -1,6 +1,8 @@
 package com.jastley.warmindfordestiny2;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,21 +15,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
+
+import java.text.SimpleDateFormat;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -45,7 +54,7 @@ public class MainActivity extends AppCompatActivity
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
-    SwipeRefreshLayout swipeRefreshLayout;
+//    SwipeRefreshLayout swipeRefreshLayout;
 
     private String redirectUri = "warmindfordestiny://callback";
     private String baseURL = "https://www.bungie.net/";
@@ -85,34 +94,37 @@ public class MainActivity extends AppCompatActivity
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         mLFGRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
+//        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
 
         //SwipeRefreshLayout
-        swipeRefreshLayout = findViewById(R.id.lfg_swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(this);
-
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
+//        swipeRefreshLayout = findViewById(R.id.lfg_swipe_refresh);
+//        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+//        swipeRefreshLayout.setOnRefreshListener(this);
+//
+//        swipeRefreshLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                swipeRefreshLayout.setRefreshing(true);
 
                 //Load LFG posts from Firebase
                 loadLFGPosts();
+//                swipeRefreshLayout.setRefreshing(false);
                 mLFGPostAdapter.startListening();
-            }
-        });
+//            }
+//        });
 
 
     }
 
     private void loadLFGPosts() {
 
-        swipeRefreshLayout.setRefreshing(true);
+//        swipeRefreshLayout.setRefreshing(true);
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
         //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
         DatabaseReference dataRef = postRef.child("lfg");
         Query query = dataRef.orderByChild("dateTime");
+        dataRef.keepSynced(true);
         //            TODO: query options, sort by dateTime
 
         FirebaseRecyclerOptions lfgOptions =
@@ -123,8 +135,14 @@ public class MainActivity extends AppCompatActivity
 
         mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions);
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+        mLFGPostAdapter.startListening();
+
+        ProgressBar lfgProgressBar = findViewById(R.id.lfg_progress_bar);
+        lfgProgressBar.setVisibility(View.INVISIBLE);
 
     }
+
+
 
     @Override
     protected void onStart() {
@@ -135,7 +153,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        mLFGPostAdapter.stopListening();
+//        mLFGPostAdapter.stopListening();
     }
 
     //    @Override
@@ -238,8 +256,16 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 //                    TODO: store accessToken/refreshToken
+                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = savedPrefs.edit();
+//                    editor.putInt("your_int_key", yourIntValue);
+//                    editor.commit();
 
-                    System.out.println("accessToken: " + response.body().getAccessToken());
+                    editor.putString("access_token", response.body().getAccessToken());
+                    editor.putString("refresh_token", response.body().getRefreshToken());
+                    editor.putLong("token_age", System.currentTimeMillis());
+                    editor.commit();
+//                    System.out.println("accessToken: " + response.body().getAccessToken());
                     Toast.makeText(MainActivity.this, "Acquired access_token!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -249,7 +275,8 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-        }
+        } //callback from browser
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

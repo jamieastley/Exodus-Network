@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -21,6 +22,7 @@ import com.jastley.warmindfordestiny2.R;
 public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> {
 
     private Context context;
+    ProgressBar lfgProgressBar;
 
     public LFGPostRecyclerAdapter(@NonNull Context context, FirebaseRecyclerOptions<LFGPost> options) {
         super(options);
@@ -54,6 +56,8 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
 
         Toast.makeText(context, "A database error occurred, check your connection.", Toast.LENGTH_SHORT).show();
     }
+
+
 
 
 }
