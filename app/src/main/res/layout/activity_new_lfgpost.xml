@@ -44,11 +44,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@null"
-            android:checked="true"
+            android:checked="false"
             android:drawableTop="@drawable/icon_psn"
             android:gravity="center"
             android:text="Warlock"
             />
+        <!--TODO: dynamically buttons below (check character count)-->
         <RadioButton
             android:id="@+id/radio1"
             android:layout_width="0dp"

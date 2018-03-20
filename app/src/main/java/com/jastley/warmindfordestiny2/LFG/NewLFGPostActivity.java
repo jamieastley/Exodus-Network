@@ -64,11 +64,42 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         membershipType = "4";
         displayName = "Last player";
 //        classType = "2";
-        int selectedCharacterId = characterRadioGroup.getCheckedRadioButtonId();
+//        int selectedCharacterId = characterRadioGroup.getCheckedRadioButtonId();
+//
+//        RadioButton radioButton = findViewById(selectedCharacterId);
+        characterRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
 
-        RadioButton radioButton = findViewById(selectedCharacterId);
+                View radioButton = characterRadioGroup.findViewById(i);
+                int index = characterRadioGroup.indexOfChild(radioButton);
 
-        radioButton.getTag(); //TODO: store characterId here?
+                // Add logic here
+
+                switch (index) {
+                    case 0: // first button
+                        //((RadioButton) mGroup.getChildAt(i)).setText("Radio Button "+i);
+                        characterRadioGroup.getChildAt(0).setAlpha(1f);
+                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+                        characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+//                        Toast.makeText(NewLFGPostActivity.this, "Index btn: " + index, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1: // secondbutton
+                        characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+                        characterRadioGroup.getChildAt(1).setAlpha(1f);
+                        characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+//                        Toast.makeText(NewLFGPostActivity.this, "Index btn: " + index, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2:
+                        characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+                        characterRadioGroup.getChildAt(2).setAlpha(1f);
+                        break;
+                }
+            }
+        });
+
+//        radioButton.getTag(); //TODO: store characterId here?
 
         hasMic = true;
         dateTime = System.currentTimeMillis();
