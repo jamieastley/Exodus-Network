@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,6 +35,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     private String displayName;
     private String classType;
     private Long dateTime;
+    private RadioGroup characterRadioGroup;
     private boolean hasMic;
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
 
@@ -41,21 +45,10 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
 
-        Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
-        myToolbar.setTitle(R.string.lfg_feed);
-        setSupportActionBar(myToolbar);
-
         activityName = findViewById(R.id.activity_name_input);
         activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         submitBtn = findViewById(R.id.submit_lfg_post_button);
-
-
-        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        characterRadioGroup = findViewById(R.id.radio_character_selection);
 
 //        ActionBar actionBar = getSupportActionBar();  //to support lower version too
 //        actionBar.setDisplayShowCustomEnabled(true);
@@ -66,7 +59,13 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         lightLevel = "278";
         membershipType = "4";
         displayName = "Last player";
-        classType = "2";
+//        classType = "2";
+        int selectedCharacterId = characterRadioGroup.getCheckedRadioButtonId();
+
+        RadioButton radioButton = findViewById(selectedCharacterId);
+
+        radioButton.getTag(); //TODO: store characterId here?
+
         hasMic = true;
         dateTime = System.currentTimeMillis();
 
@@ -96,10 +95,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
                     finish();
                 }
             }
-
 //            TODO: Network/submit error
-
-
         });
 //        finish();
     }
@@ -113,5 +109,31 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_bar_new_lfg, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.submit_lfg_post_button:
+                LFGPost newPost = new LFGPost(activityName.getText().toString(),
+                        activityCheckpoint.getText().toString(),
+                        lightLevel, membershipType, displayName, classType, dateTime, hasMic);
+
+                DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+//            TODO: Network/submit error
+                });
+
+
+        }
+
+
+        return super.onOptionsItemSelected(item);
     }
 }
