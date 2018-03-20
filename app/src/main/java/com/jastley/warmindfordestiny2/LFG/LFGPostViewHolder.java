@@ -1,6 +1,5 @@
 package com.jastley.warmindfordestiny2.LFG;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -10,34 +9,29 @@ import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by jastl on 7/03/2018.
  */
 
 public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
-    private final ImageView platformIcon;
-    private final TextView activityTitle;
-    private final TextView activityCheckpoint;
-    private final TextView dateTime;
-    private final TextView lightLevel;
-    private final TextView classType;
-    private final ImageView micIcon;
-    private final TextView displayName;
+    @BindView(R.id.platform_Icon) ImageView platformIcon;
+    @BindView(R.id.lfg_activity_title) TextView activityTitle;
+    @BindView(R.id.lfg_activity_checkpoint) TextView activityCheckpoint;
+    @BindView(R.id.lfg_time) TextView dateTime;
+    @BindView(R.id.light_Level) TextView lightLevel;
+    @BindView(R.id.class_Type) TextView classType;
+    @BindView(R.id.micIcon) ImageView micIcon;
+    @BindView(R.id.player_Username) TextView displayName;
 
 
 
     public LFGPostViewHolder(View itemView) {
         super(itemView);
-        platformIcon = itemView.findViewById(R.id.platform_Icon);
-        activityTitle = itemView.findViewById(R.id.lfg_activity_title);
-        activityCheckpoint = itemView.findViewById(R.id.lfg_activity_checkpoint);
-        dateTime = itemView.findViewById(R.id.lfg_time);
-        lightLevel = itemView.findViewById(R.id.light_Level);
-        classType = itemView.findViewById(R.id.class_Type);
-        micIcon = itemView.findViewById(R.id.micIcon);
-        displayName = itemView.findViewById(R.id.player_Username);
-
+        ButterKnife.bind(this, itemView);
     }
 
     public void setActivityTitle(String title) {

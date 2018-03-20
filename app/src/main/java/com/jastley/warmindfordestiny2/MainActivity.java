@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
+
 //    SwipeRefreshLayout swipeRefreshLayout;
 
     private String redirectUri = "warmindfordestiny://callback";
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.lfg_feed);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -98,29 +100,13 @@ public class MainActivity extends AppCompatActivity
 
 //        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
 
-        //SwipeRefreshLayout
-//        swipeRefreshLayout = findViewById(R.id.lfg_swipe_refresh);
-//        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
-//        swipeRefreshLayout.setOnRefreshListener(this);
-//
-//        swipeRefreshLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                swipeRefreshLayout.setRefreshing(true);
-
                 //Load LFG posts from Firebase
                 loadLFGPosts();
-//                swipeRefreshLayout.setRefreshing(false);
                 mLFGPostAdapter.startListening();
-//            }
-//        });
-
 
     }
 
     private void loadLFGPosts() {
-
-//        swipeRefreshLayout.setRefreshing(true);
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
         //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
@@ -154,19 +140,6 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
 //        mLFGPostAdapter.stopListening();
     }
-
-    //    @Override
-//    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-////        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == 1) {
-//            if(resultCode == NewLFGPostActivity.RESULT_OK){
-////                String result=data.getStringExtra("result");
-//                Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
-//                        .show();
-//            }
-//        }
-//    }
 
     @Override
     public void onBackPressed() {
@@ -255,6 +228,9 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 //                    TODO: store accessToken/refreshToken
+//                    TODO: fullscreen loadingDialog here
+
+
                     SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
                     SharedPreferences.Editor editor = savedPrefs.edit();
 //                    editor.putInt("your_int_key", yourIntValue);

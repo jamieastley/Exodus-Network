@@ -26,9 +26,8 @@
     <string name="characters">Characters</string>
     <string name="lfg_feed">LFG Feed</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="refresh_account">Refresh Account</string>
     <string name="log_in">Log In</string>
     <string name="action_lfg_pause">Pause live feed</string>
+    <string name="submitPost">Submit Post</string>
 </resources>

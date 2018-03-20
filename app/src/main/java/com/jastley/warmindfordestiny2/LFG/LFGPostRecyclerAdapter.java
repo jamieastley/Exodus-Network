@@ -23,7 +23,7 @@ import com.jastley.warmindfordestiny2.R;
 public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> {
 
     private Context context;
-    ProgressBar lfgProgressBar;
+    private ProgressBar lfgProgressBar;
 
     public LFGPostRecyclerAdapter(@NonNull Context context, FirebaseRecyclerOptions<LFGPost> options) {
         super(options);

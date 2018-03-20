@@ -46,7 +46,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_new_lfgpost);
 
         Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
-        myToolbar.setTitle(R.string.lfg_feed);
+        myToolbar.setTitle(R.string.submitPost);
         setSupportActionBar(myToolbar);
 
         activityName = findViewById(R.id.activity_name_input);
@@ -86,19 +86,21 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
                                     activityCheckpoint.getText().toString(),
                                     lightLevel, membershipType, displayName, classType, dateTime, hasMic);
 
-        DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
-//                    Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
-//                        .show();
-//                    Intent returnIntent = new Intent();
-////                    returnIntent.putExtra("result", result);
-//                    setResult(RESULT_OK);
-                    finish();
+        DATABASE.getReference().child("lfg").child(displayName)
+                .setValue(newPost)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
+    //                    Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
+    //                        .show();
+    //                    Intent returnIntent = new Intent();
+    ////                    returnIntent.putExtra("result", result);
+    //                    setResult(RESULT_OK);
+                        finish();
+                    }
                 }
-            }
 //            TODO: Network/submit error
         });
 //        finish();
@@ -136,8 +138,6 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
 
 
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 }
