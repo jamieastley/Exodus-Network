@@ -139,9 +139,6 @@ public class MainActivity extends AppCompatActivity
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
         mLFGPostAdapter.startListening();
 
-        ProgressBar lfgProgressBar = findViewById(R.id.lfg_progress_bar);
-        lfgProgressBar.setVisibility(View.INVISIBLE);
-
     }
 
 

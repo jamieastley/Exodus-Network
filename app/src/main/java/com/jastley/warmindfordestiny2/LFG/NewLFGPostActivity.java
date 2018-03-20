@@ -45,6 +45,10 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
 
+        Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
+        myToolbar.setTitle(R.string.lfg_feed);
+        setSupportActionBar(myToolbar);
+
         activityName = findViewById(R.id.activity_name_input);
         activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         submitBtn = findViewById(R.id.submit_lfg_post_button);
@@ -70,7 +74,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         dateTime = System.currentTimeMillis();
 
 
-        submitBtn.setOnClickListener(this);
+//        submitBtn.setOnClickListener(this);
 
         key = DATABASE.getReference().push().getKey();
     }
