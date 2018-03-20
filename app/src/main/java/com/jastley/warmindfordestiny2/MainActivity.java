@@ -91,8 +91,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Display latest first
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
-        mLFGRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
+        mLinearLayoutManager.setReverseLayout(true);
+        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
 //        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
 
@@ -136,9 +139,6 @@ public class MainActivity extends AppCompatActivity
         mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions);
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
         mLFGPostAdapter.startListening();
-
-        ProgressBar lfgProgressBar = findViewById(R.id.lfg_progress_bar);
-        lfgProgressBar.setVisibility(View.INVISIBLE);
 
     }
 
@@ -194,9 +194,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            return true;
-        }
+//        if (id == R.id.action_logout) {
+//            return true;
+//        }
 
         if (id == R.id.pause_live_lfg_feed) {
             mLFGPostAdapter.stopListening();

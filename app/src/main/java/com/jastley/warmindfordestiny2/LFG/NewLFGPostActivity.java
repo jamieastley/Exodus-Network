@@ -50,12 +50,12 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         submitBtn = findViewById(R.id.submit_lfg_post_button);
 
 
-        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
 
 //        ActionBar actionBar = getSupportActionBar();  //to support lower version too
 //        actionBar.setDisplayShowCustomEnabled(true);
@@ -111,7 +111,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.app_bar_new_lfg, menu);
+        getMenuInflater().inflate(R.menu.new_lfg, menu);
         return true;
     }
 }

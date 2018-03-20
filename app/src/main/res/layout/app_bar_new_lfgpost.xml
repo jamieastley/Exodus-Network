@@ -12,14 +12,12 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/lfg_toolbar"
+            android:id="@+id/lfg_toolbar_test"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 
     </android.support.design.widget.AppBarLayout>
-
-
 
 </android.support.design.widget.CoordinatorLayout>
