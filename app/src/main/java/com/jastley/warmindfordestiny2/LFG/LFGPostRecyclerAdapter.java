@@ -1,5 +1,6 @@
 package com.jastley.warmindfordestiny2.LFG;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -46,6 +47,9 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
 
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.lfg_list_item, parent, false);
+
+        lfgProgressBar = ((Activity) context).findViewById(R.id.lfg_progress_bar);
+        lfgProgressBar.setVisibility(View.INVISIBLE);
 
         return new LFGPostViewHolder(view);
     }

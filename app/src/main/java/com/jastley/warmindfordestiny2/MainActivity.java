@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
+    ProgressBar lfgProgressbar;
 //    SwipeRefreshLayout swipeRefreshLayout;
 
     private String redirectUri = "warmindfordestiny://callback";
@@ -92,7 +93,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
-        mLFGRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //Display latest LFG posts first
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
+        mLinearLayoutManager.setReverseLayout(true);
+        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
 //        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
 
@@ -136,9 +141,6 @@ public class MainActivity extends AppCompatActivity
         mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions);
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
         mLFGPostAdapter.startListening();
-
-        ProgressBar lfgProgressBar = findViewById(R.id.lfg_progress_bar);
-        lfgProgressBar.setVisibility(View.INVISIBLE);
 
     }
 
