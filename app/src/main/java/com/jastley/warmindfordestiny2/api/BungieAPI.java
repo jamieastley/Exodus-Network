@@ -35,13 +35,10 @@ public interface BungieAPI {
     );
 
     //GetCurrentUser
-//    @Headers("X-API-Key: "  + apiKey.apiKey)
-//    @GET("/Platform/User/GetMembershipsForCurrentUser")
     @GET("Platform/User/GetMembershipsForCurrentUser/")
     Call<Response_GetCurrentUser> getCurrentUser();
 
     //Get profile summary
-//    @Headers("X-API-Key: " + apiKey.apiKey)
     @GET("/Platform/Destiny2/{console}/Profile/{membershipId}?components=100")
     Call<Response_GetProfile> getProfile(@Path("console") String consoleId, @Path("membershipId") String membershipId);
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     private String redirectUri = "warmindfordestiny://callback";
     private String baseURL = "https://www.bungie.net/";
 
+    View view;
 
 
 
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
+        mLinearLayoutManager.setStackFromEnd(true);
         mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
 //        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
@@ -188,9 +191,30 @@ public class MainActivity extends AppCompatActivity
 
                 int count = response.body().getResponse().getDestinyMemberships().size();
 
-                for(int i = 0; i <= response.body().getResponse().getDestinyMemberships().size()-1; i++){
-                    editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                            String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()));
+                for(int i = 0; i < count; i++){
+
+                    try{
+                        editor.putInt("membershipType" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
+
+                        editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                response.body().getResponse().getDestinyMemberships().get(i).getMembershipId());
+
+                        editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                response.body().getResponse().getDestinyMemberships().get(i).getDisplayName());
+
+                        editor.commit();
+
+//                    TODO: implement ProgressBar and hide it here
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Account database updated.", Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null)
+                                .show();
+                    } catch(Exception e) {
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null)
+                                .show();
+                    }
+
                 }
 
             }
@@ -327,6 +351,9 @@ public class MainActivity extends AppCompatActivity
             });
 
         } //callback from browser
+
+        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+        Long tokenAge = savedPrefs.getLong("token_age", 0);
 
     }
 

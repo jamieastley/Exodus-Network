@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.R;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
