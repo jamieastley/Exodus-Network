@@ -28,7 +28,6 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.player_Username) TextView displayName;
 
 
-
     public LFGPostViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);

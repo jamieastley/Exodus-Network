@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,10 +36,14 @@ import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
+import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +51,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
@@ -127,6 +133,76 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void getPlayerProfile() {
+//        TODO: shared_prefs(membershipType, membershipId, characterIds[],
+
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        httpClient.addInterceptor(new Interceptor() {
+
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+
+                Request original = chain.request();
+
+                //Get access_token from shared_prefs
+                SharedPreferences settings = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+                String accessToken = settings.getString("access_token", "");
+
+                //add request header
+                Request.Builder requestBuilder = original.newBuilder()
+                        .header("X-API-Key", apiKey)
+                        .header("Authorization", "Bearer " + accessToken);
+
+                Request request = requestBuilder.build();
+
+                return chain.proceed(request);
+
+            }
+
+        });
+
+        httpClient.addInterceptor(logging);
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build());
+
+        Retrofit retrofit = builder.build();
+
+        BungieAPI bungieClient = retrofit.create(BungieAPI.class);
+        Call<Response_GetCurrentUser> getCurrentUserCall = bungieClient.getCurrentUser();
+
+        getCurrentUserCall.enqueue(new Callback<Response_GetCurrentUser>() {
+            @Override
+            public void onResponse(Call<Response_GetCurrentUser> call, Response<Response_GetCurrentUser> response) {
+
+                //Store specific user/character ids for reference later
+                SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = savedPrefs.edit();
+
+                int count = response.body().getResponse().getDestinyMemberships().size();
+
+                for(int i = 0; i <= response.body().getResponse().getDestinyMemberships().size()-1; i++){
+                    editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                            String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()));
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Response_GetCurrentUser> call, Throwable t) {
+
+            }
+        });
+
+
+    }
 
 
     @Override
@@ -263,7 +339,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_lfg) {
             Intent lfgFeed = new Intent(this, MainActivity.class);
             startActivity(lfgFeed);
-        } else if (id == R.id.nav_characters) {
+        }
+        else if (id == R.id.nav_characters) {
             Intent accountCharacters = new Intent(this, UserCharactersActivity.class);
             startActivity(accountCharacters);
         }
@@ -276,6 +353,10 @@ public class MainActivity extends AppCompatActivity
 //        } else if (id == R.id.nav_send) {
 //
 //        }
+
+        else if (id == R.id.nav_refresh_account) {
+            getPlayerProfile();
+        }
 
         else if (id == R.id.nav_log_in) {
             Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));

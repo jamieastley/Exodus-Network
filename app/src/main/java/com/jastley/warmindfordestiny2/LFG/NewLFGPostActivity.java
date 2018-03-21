@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,18 +23,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.jastley.warmindfordestiny2.R;
 
-import java.util.Calendar;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class NewLFGPostActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private EditText activityName;
-    private EditText activityCheckpoint;
-    private Button submitBtn;
+public class NewLFGPostActivity extends AppCompatActivity {
+
+    @BindView(R.id.activity_name_input) EditText activityName;
+//    private EditText activityName;
+//    private EditText activityCheckpoint;
+    @BindView(R.id.activity_checkpoint_input) EditText activityCheckpoint;
     private String key;
     private String lightLevel;
     private String membershipType;
+//    @BindView(R.id.description_text_input) EditText description;
     private String displayName;
-    private String classType;
+//    private String classType;
     private Long dateTime;
     private RadioGroup characterRadioGroup;
     private boolean hasMic;
@@ -44,14 +49,14 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
+        ButterKnife.bind(this);
 
         Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
         myToolbar.setTitle(R.string.submitPost);
         setSupportActionBar(myToolbar);
 
-        activityName = findViewById(R.id.activity_name_input);
-        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
-        submitBtn = findViewById(R.id.submit_lfg_post_button);
+//        activityName = findViewById(R.id.activity_name_input);
+//        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         characterRadioGroup = findViewById(R.id.radio_character_selection);
 
 //        ActionBar actionBar = getSupportActionBar();  //to support lower version too
@@ -64,9 +69,7 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
         membershipType = "4";
         displayName = "Last player";
 //        classType = "2";
-//        int selectedCharacterId = characterRadioGroup.getCheckedRadioButtonId();
-//
-//        RadioButton radioButton = findViewById(selectedCharacterId);
+
         characterRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -74,21 +77,19 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
                 View radioButton = characterRadioGroup.findViewById(i);
                 int index = characterRadioGroup.indexOfChild(radioButton);
 
+//                int count = characterRadioGroup.getChildCount();
                 // Add logic here
 
                 switch (index) {
                     case 0: // first button
-                        //((RadioButton) mGroup.getChildAt(i)).setText("Radio Button "+i);
                         characterRadioGroup.getChildAt(0).setAlpha(1f);
                         characterRadioGroup.getChildAt(1).setAlpha(0.3f);
                         characterRadioGroup.getChildAt(2).setAlpha(0.3f);
-//                        Toast.makeText(NewLFGPostActivity.this, "Index btn: " + index, Toast.LENGTH_SHORT).show();
                         break;
                     case 1: // secondbutton
                         characterRadioGroup.getChildAt(0).setAlpha(0.3f);
                         characterRadioGroup.getChildAt(1).setAlpha(1f);
                         characterRadioGroup.getChildAt(2).setAlpha(0.3f);
-//                        Toast.makeText(NewLFGPostActivity.this, "Index btn: " + index, Toast.LENGTH_SHORT).show();
                         break;
                     case 2:
                         characterRadioGroup.getChildAt(0).setAlpha(0.3f);
@@ -111,31 +112,35 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-    @Override
-    public void onClick(final View view) {
-        LFGPost newPost = new LFGPost(activityName.getText().toString(),
-                                    activityCheckpoint.getText().toString(),
-                                    lightLevel, membershipType, displayName, classType, dateTime, hasMic);
-
-        DATABASE.getReference().child("lfg").child(displayName)
-                .setValue(newPost)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
-    //                    Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
-    //                        .show();
-    //                    Intent returnIntent = new Intent();
-    ////                    returnIntent.putExtra("result", result);
-    //                    setResult(RESULT_OK);
-                        finish();
-                    }
-                }
-//            TODO: Network/submit error
-        });
-//        finish();
-    }
+//    @Override
+//    public void onClick(final View view) {
+//
+//
+//
+//
+//        LFGPost newPost = new LFGPost(activityName.getText().toString(),
+//                                    activityCheckpoint.getText().toString(),
+//                                    lightLevel, membershipType, displayName, selectedCharacter.getText().toString(), dateTime, hasMic);
+//
+//        DATABASE.getReference().child("lfg").child(displayName)
+//                .setValue(newPost)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                    if(task.isSuccessful()){
+//                        Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
+//    //                    Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
+//    //                        .show();
+//    //                    Intent returnIntent = new Intent();
+//    ////                    returnIntent.putExtra("result", result);
+//    //                    setResult(RESULT_OK);
+//                        finish();
+//                    }
+//                }
+////            TODO: Network/submit error
+//        });
+////        finish();
+//    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
@@ -152,9 +157,15 @@ public class NewLFGPostActivity extends AppCompatActivity implements View.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.submit_lfg_post_button:
+
+                int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
+                View radioButton = characterRadioGroup.findViewById(radioButtonID);
+                int idx = characterRadioGroup.indexOfChild(radioButton);
+                RadioButton selectedCharacter = (RadioButton)  characterRadioGroup.getChildAt(idx);
+
                 LFGPost newPost = new LFGPost(activityName.getText().toString(),
                         activityCheckpoint.getText().toString(),
-                        lightLevel, membershipType, displayName, classType, dateTime, hasMic);
+                        lightLevel, membershipType, displayName, selectedCharacter.getText().toString(), dateTime, hasMic);
 
                 DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
