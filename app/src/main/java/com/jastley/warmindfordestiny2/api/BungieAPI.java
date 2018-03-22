@@ -39,7 +39,7 @@ public interface BungieAPI {
     Call<Response_GetCurrentUser> getCurrentUser();
 
     //Get profile summary
-    @GET("/Platform/Destiny2/{console}/Profile/{membershipId}?components=100")
+    @GET("/Platform/Destiny2/{console}/Profile/{membershipId}/?components=100")
     Call<Response_GetProfile> getProfile(@Path("console") String consoleId, @Path("membershipId") String membershipId);
 
     //Get character inventory

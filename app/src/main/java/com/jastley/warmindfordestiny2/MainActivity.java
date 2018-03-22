@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
-        mLinearLayoutManager.setStackFromEnd(true);
+//        mLinearLayoutManager.setStackFromEnd(true);
         mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
 //        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
@@ -117,11 +117,14 @@ public class MainActivity extends AppCompatActivity
 
     private void loadLFGPosts() {
 
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
         //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
         DatabaseReference dataRef = postRef.child("lfg");
-        Query query = dataRef.orderByChild("dateTime");
         dataRef.keepSynced(true);
+        Query query = dataRef.orderByChild("dateTime").limitToLast(20);
+//        dataRef.keepSynced(true);
         //            TODO: query options, sort by dateTime
 
         FirebaseRecyclerOptions lfgOptions =
@@ -352,8 +355,7 @@ public class MainActivity extends AppCompatActivity
 
         } //callback from browser
 
-        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-        Long tokenAge = savedPrefs.getLong("token_age", 0);
+
 
     }
 
@@ -368,6 +370,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(lfgFeed);
         }
         else if (id == R.id.nav_characters) {
+
             Intent accountCharacters = new Intent(this, UserCharactersActivity.class);
             startActivity(accountCharacters);
         }

@@ -55,6 +55,10 @@ public class NewLFGPostActivity extends AppCompatActivity {
         myToolbar.setTitle(R.string.submitPost);
         setSupportActionBar(myToolbar);
 
+/**       TODO: Store activityNames/checkpoints on Firebase and cache on device, save last update timestamp and
+*         TODO sync from Firebase if expired
+*/
+
 //        activityName = findViewById(R.id.activity_name_input);
 //        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         characterRadioGroup = findViewById(R.id.radio_character_selection);
