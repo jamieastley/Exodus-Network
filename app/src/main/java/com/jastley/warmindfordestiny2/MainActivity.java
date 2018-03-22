@@ -57,7 +57,7 @@ import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
-        implements SwipeRefreshLayout.OnRefreshListener, NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
@@ -306,10 +306,7 @@ public class MainActivity extends AppCompatActivity
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            // add your other interceptors …
 
-
-            // add logging as last interceptor
             httpClient.addInterceptor(logging);
 
             Retrofit.Builder builder = new Retrofit.Builder()
@@ -353,6 +350,9 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
+//            TODO: Account picker if user is active >1 platform
+
+
         } //callback from browser
 
 
@@ -374,20 +374,9 @@ public class MainActivity extends AppCompatActivity
             Intent accountCharacters = new Intent(this, UserCharactersActivity.class);
             startActivity(accountCharacters);
         }
-// else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
-
         else if (id == R.id.nav_refresh_account) {
             getPlayerProfile();
         }
-
         else if (id == R.id.nav_log_in) {
             Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
             startActivity(oauthIntent);
@@ -398,13 +387,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onRefresh() {
-
-//        mLFGPostAdapter.stopListening();
-//        mLFGPostAdapter.notifyDataSetChanged();
-        loadLFGPosts();
     }
 }
