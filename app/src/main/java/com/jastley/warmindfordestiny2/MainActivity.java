@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,7 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +38,6 @@ import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -87,13 +84,9 @@ public class MainActivity extends AppCompatActivity
 //                        .setAction("Action", null)
 //                        .show();
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
-//                startActivityForResult(intent, 1);
                 startActivity(intent);
             }
         });
-
-        final FragmentManager fm = getFragmentManager();
-        final PlatformSelectionFragment platformFragment = new PlatformSelectionFragment();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -145,12 +138,10 @@ public class MainActivity extends AppCompatActivity
     private void getPlayerProfile() {
 //        TODO: shared_prefs(membershipType, membershipId, characterIds[],
 
+        //Interceptor to add Authorization token
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
         httpClient.addInterceptor(new Interceptor() {
 
             @Override
@@ -195,11 +186,12 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
                 SharedPreferences.Editor editor = savedPrefs.edit();
 
+//              TODO: move below membership counting and fragment to onResume after OAuth callback
                 int count = response.body().getResponse().getDestinyMemberships().size();
 
                 String[] memberships = new String[count];
 
-                if(count > 1){
+                if(count > 1){ //get membershipType to pass to dialogFragment
                     for(int i = 0; i < count; i++) {
                         memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
                     }
@@ -310,8 +302,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        //callback for OAuth
-        //TODO: refresh access_token if expired
+        //callback for OAuth TODO: refresh access_token if expired
         Uri uri = getIntent().getData();
 
         if (uri != null && uri.toString().startsWith(redirectUri)) {
@@ -367,7 +358,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-//            TODO: Account picker if user is active >1 platform
+//            TODO: Account picker if user is active on >1 platform
 
 
         } //callback from browser
@@ -406,7 +397,5 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void showSimpleList(List<String> characters) {
 
-    }
 }
