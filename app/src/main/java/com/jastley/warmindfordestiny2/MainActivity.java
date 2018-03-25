@@ -1,46 +1,46 @@
 package com.jastley.warmindfordestiny2;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
+import com.jastley.warmindfordestiny2.User.PlatformSelectionAdapter;
+import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -92,6 +92,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        final FragmentManager fm = getFragmentManager();
+        final PlatformSelectionFragment platformFragment = new PlatformSelectionFragment();
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -117,7 +120,7 @@ public class MainActivity extends AppCompatActivity
 
     private void loadLFGPosts() {
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance(); //.setPersistenceEnabled(true);
 
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
         //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
@@ -193,6 +196,20 @@ public class MainActivity extends AppCompatActivity
                 SharedPreferences.Editor editor = savedPrefs.edit();
 
                 int count = response.body().getResponse().getDestinyMemberships().size();
+
+                String[] memberships = new String[count];
+
+                if(count > 1){
+                    for(int i = 0; i < count; i++) {
+                        memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
+                    }
+                }
+
+                DialogFragment platformDialog = new PlatformSelectionFragment();
+                Bundle args = new Bundle();
+                args.putStringArray("platforms", memberships);
+                platformDialog.setArguments(args);
+                platformDialog.show(getFragmentManager(), "tag");
 
                 for(int i = 0; i < count; i++){
 
@@ -387,5 +404,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void showSimpleList(List<String> characters) {
+
     }
 }

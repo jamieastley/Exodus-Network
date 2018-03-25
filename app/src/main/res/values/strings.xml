@@ -31,4 +31,7 @@
     <string name="action_lfg_pause">Pause live feed</string>
     <string name="submitPost">Submit Post</string>
     <string name="select_platform">Select platform</string>
+    <string name="xbox">Xbox</string>
+    <string name="psn">PlayStation</string>
+    <string name="battlenet">Battle.Net</string>
 </resources>

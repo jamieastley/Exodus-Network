@@ -1,15 +1,15 @@
 package com.jastley.warmindfordestiny2.User;
 
-import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.jastley.warmindfordestiny2.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jastl on 23/03/2018.
@@ -17,35 +17,41 @@ import java.util.List;
 
 public class PlatformSelectionFragment extends DialogFragment{
 
-    public static final List<Integer> memberships = new ArrayList<>();
+//    public static final List<String> memberships = new ArrayList<>();
+//    public static final String[] memberships2 = "PlatformSelectionFragment.characterCount";
+//    public static final ArrayList<String> platforms = (ArrayList<String>);
+
+    RecyclerView recyclerView;
+    PlatformSelectionAdapter adapter;
 
     public PlatformSelectionFragment() {
 
     }
 
+    @Nullable
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        return super.onCreateDialog(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         Bundle args = getArguments();
-        List<Integer> characters = args.getIntegerArrayList(String.valueOf(memberships));
+//        ArrayList<Parcelable> list = getArguments().getParcelableArrayList("platforms");
+        String[] list = args.getStringArray("platforms");
 
-        int count = characters.size();
+        View rootView = inflater.inflate(R.layout.fragment_platform_select, container);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.select_platform)
-                .setPositiveButton("First", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                });
-        // Create the AlertDialog object and return it
-        return builder.create();
+        //RecyclerView
+        recyclerView = rootView.findViewById(R.id.platform_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
+        //Adapter
+        adapter = new PlatformSelectionAdapter(this.getActivity(), list);
+        recyclerView.setAdapter(adapter);
+
+        this.getDialog().setTitle("Select platform");
+        this.getDialog().setCancelable(false);
+
+        return rootView;
     }
+
+
 }
+

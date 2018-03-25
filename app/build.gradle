@@ -44,14 +44,7 @@ dependencies {
     compile 'com.google.firebase:firebase-auth:11.8.0'
     implementation 'com.firebaseui:firebase-ui:3.2.2'
 
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }
-
-
-
-
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'
