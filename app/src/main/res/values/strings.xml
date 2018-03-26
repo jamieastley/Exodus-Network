@@ -34,4 +34,5 @@
     <string name="xbox">Xbox</string>
     <string name="psn">PlayStation</string>
     <string name="battlenet">Battle.Net</string>
+    <string name="loading">Please wait...</string>
 </resources>
