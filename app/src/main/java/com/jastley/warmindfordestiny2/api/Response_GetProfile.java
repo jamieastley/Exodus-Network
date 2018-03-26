@@ -9,7 +9,7 @@ import java.util.List;
  * Created by jamie on 21/3/18.
  */
 
-class Response_GetProfile {
+public class Response_GetProfile {
 
 
     @Expose

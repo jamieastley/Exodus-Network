@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
+import com.jastley.warmindfordestiny2.User.FetchUserDetails;
 import com.jastley.warmindfordestiny2.User.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionAdapter;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
     SharedPreferences savedPrefs;
+    Context context;
 
 
 //    SwipeRefreshLayout swipeRefreshLayout;
@@ -114,6 +117,11 @@ public class MainActivity extends AppCompatActivity
                 loadLFGPosts();
                 mLFGPostAdapter.startListening();
 
+        asyncTest();
+    }
+
+    private void asyncTest() {
+        new FetchUserDetails().execute(context);
     }
 
     private void loadLFGPosts() {
@@ -210,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 //                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
                 platformDialog.show(getFragmentManager(), "platformSelectDialog");
 //                platformDialog.onDismiss();
-                platformDialog.dismiss();
+//                platformDialog.dismiss();
 
 
                 for(int i = 0; i < count; i++){
