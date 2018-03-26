@@ -2,15 +2,14 @@ package com.jastley.warmindfordestiny2;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +31,7 @@ import com.google.firebase.database.Query;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
+import com.jastley.warmindfordestiny2.User.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionAdapter;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
+    SharedPreferences savedPrefs;
+
 
 //    SwipeRefreshLayout swipeRefreshLayout;
 
@@ -202,7 +205,11 @@ public class MainActivity extends AppCompatActivity
                 args.putStringArray("platforms", memberships);
 
                 platformDialog.setArguments(args);
+//                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
                 platformDialog.show(getFragmentManager(), "platformSelectDialog");
+//                platformDialog.onDismiss();
+                platformDialog.dismiss();
+
 
                 for(int i = 0; i < count; i++){
 
@@ -364,6 +371,92 @@ public class MainActivity extends AppCompatActivity
 
         } //callback from browser
 
+        else {
+//            final SharedPreferences savedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+            savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+            Long timestamp = savedPrefs.getLong("token_age", 0);
+
+            try {
+                timestamp = savedPrefs.getLong("token_age", 0);
+            } catch (Exception e) {
+                System.out.println("No timestamp: " + e);
+            }
+            if (timestamp != null) {
+                Long hour = 60L * 60L * 1000L;
+                Long now = System.currentTimeMillis();
+                Long timespan = now - timestamp;
+                if (timespan > hour) {
+                    //TODO: refresh access_token here
+                    savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+                    String refreshToken = savedPrefs.getString("refresh_token", "");
+
+                    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+                    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+                    OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    //                httpClient.addInterceptor(new Interceptor() {
+    //                    @Override
+    //                    public okhttp3.Response intercept(Chain chain) throws IOException {
+    //                        Request original = chain.request();
+    //
+    //                        Request.Builder requestBuilder = original.newBuilder()
+    //                                .header("Authorization", "Basic " + clientId + ":" + clientSecret);
+    //
+    //                        Request request = requestBuilder.build();
+    //
+    //                        return chain.proceed(request);
+    //                    }
+    //                });
+
+                    httpClient.addInterceptor(logging);
+
+                    Retrofit.Builder builder = new Retrofit.Builder()
+                            .baseUrl(baseURL)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .client(httpClient.build());
+
+                    Retrofit retrofit = builder.build();
+
+                    BungieAPI bungieClient = retrofit.create(BungieAPI.class);
+                    Call<AccessToken> renewTokenCall = bungieClient.renewAccessToken(
+                            clientId,
+                            clientSecret,
+                            "refresh_token",
+                            refreshToken
+                    );
+
+                    renewTokenCall.enqueue(new Callback<AccessToken>() {
+
+                        @Override
+                        public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+                            getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = savedPrefs.edit();
+
+                            try {
+                                editor.putString("access_token", response.body().getAccessToken());
+                                editor.putLong("token_age", System.currentTimeMillis());
+                                editor.commit();
+                                Snackbar.make(findViewById(R.id.activity_main_content), "OAuth access refreshed", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null)
+                                        .show();
+
+                            } catch (Exception e) {
+                                Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update OAuth access_token.", Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null)
+                                        .show();
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<AccessToken> call, Throwable t) {
+
+                        }
+                    });
+                }
+            }
+        }
 
 
     }

@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2.User;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +16,17 @@ import com.jastley.warmindfordestiny2.R;
  * Created by jastl on 23/03/2018.
  */
 
-public class PlatformSelectionFragment extends DialogFragment{
+public class PlatformSelectionFragment extends DialogFragment implements DialogFragmentListener {
 
     RecyclerView recyclerView;
     PlatformSelectionAdapter adapter;
 
     public PlatformSelectionFragment() {
+
+    }
+
+    @Override
+    public void onReturnValue(String foo) {
 
     }
 
@@ -48,7 +54,15 @@ public class PlatformSelectionFragment extends DialogFragment{
         builder.setTitle(R.string.select_platform);
 
         return builder.create();
+
     }
 
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+
+    }
 }
 

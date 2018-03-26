@@ -1,6 +1,7 @@
 package com.jastley.warmindfordestiny2.User;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,7 @@ import com.jastley.warmindfordestiny2.R;
  * Created by jastl on 23/03/2018.
  */
 
-public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHolder>{
+public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHolder> implements DialogInterface{
 
     Context context;
     String[] platforms;
@@ -57,6 +58,7 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
             @Override
             public void onClick(View view) {
                 Toast.makeText(context, holder.platformType.getText() + " selected", Toast.LENGTH_SHORT).show();
+//                dismiss();
             }
         });
 
@@ -65,5 +67,15 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
     @Override
     public int getItemCount() {
         return platforms.length;
+    }
+
+    @Override
+    public void cancel() {
+
+    }
+
+    @Override
+    public void dismiss() {
+        Toast.makeText(context, "dismiss called", Toast.LENGTH_SHORT).show();
     }
 }
