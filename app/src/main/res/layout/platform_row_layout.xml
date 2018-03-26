@@ -26,6 +26,14 @@
             android:layout_marginTop="13dp"
             android:text="placeholder"/>
 
+        <TextView
+            android:id="@+id/hidden_platform_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="1dp"
+            android:layout_toRightOf="@id/platform_name_row"
+            android:visibility="invisible"
+            />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

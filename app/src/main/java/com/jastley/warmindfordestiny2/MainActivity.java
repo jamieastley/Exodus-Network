@@ -200,8 +200,9 @@ public class MainActivity extends AppCompatActivity
                 DialogFragment platformDialog = new PlatformSelectionFragment();
                 Bundle args = new Bundle();
                 args.putStringArray("platforms", memberships);
+
                 platformDialog.setArguments(args);
-                platformDialog.show(getFragmentManager(), "tag");
+                platformDialog.show(getFragmentManager(), "platformSelectDialog");
 
                 for(int i = 0; i < count; i++){
 

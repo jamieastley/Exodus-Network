@@ -19,16 +19,20 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.platform_row_icon) ImageView platformIcon;
     @BindView(R.id.platform_name_row) TextView platformName;
+    @BindView(R.id.hidden_platform_type) TextView platformType;
+    protected View mRootView;
 
     public PlatformRVHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        mRootView = itemView;
     }
+
+
 
     public void setPlatformIcon(String icon, Context context) {
 
         if (icon.equals("2")) {
-            //Use setImageResource runs on UI thread and can cause hiccups, use setImageDrawable
             platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
         }
         else if (icon.equals("1")) {
@@ -41,5 +45,10 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder {
 
     public void setPlatformName(String platform) {
         platformName.setText(platform);
+    }
+
+    //Hidden field to get platformType out of onClick
+    public void setPlatformType(String type) {
+        platformType.setText(type);
     }
 }

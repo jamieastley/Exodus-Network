@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.jastley.warmindfordestiny2.R;
 
 
@@ -30,23 +32,33 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
     }
 
     @Override
-    public void onBindViewHolder(PlatformRVHolder holder, int position) {
+    public void onBindViewHolder(final PlatformRVHolder holder, int position) {
 
         //Xbox
         if(platforms[position].equals("1")){
-            holder.platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_xbl));
-            holder.platformName.setText(R.string.xbox);
+            holder.setPlatformIcon(platforms[position], context);
+            holder.setPlatformName("Xbox");
+            holder.setPlatformType("1");
         }
         //PlayStation
         else if(platforms[position].equals("2")){
-            holder.platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
-            holder.platformName.setText(R.string.psn);
+            holder.setPlatformIcon(platforms[position], context);
+            holder.setPlatformName("PlayStation");
+            holder.setPlatformType("2");
         }
         //PC/Battle.Net
         else {
-            holder.platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_blizzard));
-            holder.platformName.setText(R.string.battlenet);
+            holder.setPlatformIcon(platforms[position], context);
+            holder.setPlatformName("Battle.Net");
+            holder.setPlatformType("4");
         }
+
+        holder.mRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, holder.platformType.getText() + " selected", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 

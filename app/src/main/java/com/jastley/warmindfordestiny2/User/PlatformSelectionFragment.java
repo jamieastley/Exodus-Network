@@ -47,8 +47,8 @@ public class PlatformSelectionFragment extends DialogFragment{
         builder.setView(rootView);
         builder.setTitle(R.string.select_platform);
 
-
         return builder.create();
     }
+
 }
 
