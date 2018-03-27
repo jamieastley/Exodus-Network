@@ -117,6 +117,14 @@ public class MainActivity extends AppCompatActivity
                 loadLFGPosts();
                 mLFGPostAdapter.startListening();
 
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+//        Long timestamp = savedPrefs.getLong("token_age", 0);
+
+        for(int i = 0; i < 3; i++){
+
+            String emblem = savedPrefs.getString("emblemIcon"+i, "");
+
+        }
         asyncTest();
     }
 
@@ -473,8 +481,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
-
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

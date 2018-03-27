@@ -34,6 +34,7 @@ import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
 
     SQLiteDatabase bungieAccount = null;
+    SharedPreferences savedPrefs;
 
 
     @Override
@@ -56,9 +57,9 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
 
 
         String baseURL = "https://www.bungie.net/";
-        Context context = contexts[0];
-        String membershipType = "2";
-        String membershipId = "4611686018428911554";
+        final Context context = contexts[0];
+        String membershipType = "2"; //TODO: remove this hard-code later
+        String membershipId = "4611686018428911554"; //TODO: and this one
 //        SharedPreferences savedPrefs = context.getSharedPreferences("saved_prefs", context.MODE_PRIVATE);
 
         //Initialise database
@@ -122,8 +123,11 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
                 JsonElement json = response.body();
                 JsonObject responseObj = (JsonObject) json;
 
-                String[] urls;
+                String[] urls = {"one", "two"};
                 Integer count = 0;
+
+                savedPrefs = context.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = savedPrefs.edit();
 
                 for(Iterator iterator = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").keySet().iterator(); iterator.hasNext();) {
                     String key = (String)iterator.next();
@@ -132,18 +136,21 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
                     //Each character object toString();
                     String characterDB = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key).toString();
 
+                    //Append character count to key name and store in sqlite
                     String currentCharacter = "character" + count;
                     try{
+                        editor.putString("emblemIcon"+count, characterIdObj.get("emblemPath").getAsString());
+                        editor.putString("emblemBackground"+count, characterIdObj.get("emblemBackgroundPath").getAsString());
+                        editor.apply();
                         bungieAccount.execSQL("INSERT INTO account ('key', value)"
                         + "VALUES('" + currentCharacter + "','" + characterDB + "')");
                     }
                     catch(Exception e){
                         System.out.println("Error: " + e);
                     }
-                    //TODO: write each characterObj toString() and store in db
 
-                    String emblemPath = characterIdObj.get("emblemPath").getAsString();
-                    System.out.println("Emblem path" +count+ ": " +emblemPath);
+//                    String emblemPath = characterIdObj.get("emblemPath").getAsString();
+//                    System.out.println("Emblem path" +count+ ": " +emblemPath);
                     count++;
 //                    String something = characterIdObj.getAsString();
                     System.out.println("character string: " + characterDB);
