@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void asyncTest() {
-        new FetchUserDetails().execute(context);
+        new FetchUserDetails().execute(this);
     }
 
     private void loadLFGPosts() {
@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 System.out.println("No timestamp: " + e);
             }
-            if (timestamp != null) {
+            if (timestamp != 0) {
                 Long hour = 60L * 60L * 1000L;
                 Long now = System.currentTimeMillis();
                 Long timespan = now - timestamp;
