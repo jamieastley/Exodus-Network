@@ -23,6 +23,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -41,9 +43,14 @@ import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -67,10 +74,11 @@ public class MainActivity extends AppCompatActivity
     Context context;
 
 
+
 //    SwipeRefreshLayout swipeRefreshLayout;
 
     private String redirectUri = "warmindfordestiny://callback";
-    private String baseURL = "https://www.bungie.net/";
+    private String baseURL = "https://www.bungie.net";
 
     View view;
 
@@ -104,6 +112,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View hView =  navigationView.getHeaderView(0);
+//        TextView nav_user = (TextView)hView.findViewById(R.id.nav_name);
+//        nav_user.setText(user);
+
+        TextView displayName = hView.findViewById(R.id.nav_displayName);
 
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
@@ -118,13 +131,26 @@ public class MainActivity extends AppCompatActivity
                 mLFGPostAdapter.startListening();
 
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//        Long timestamp = savedPrefs.getLong("token_age", 0);
+        String selectedPlatform = "2"; //tODO: remove hardcoded and replace with stored value retrieved from AlertDialog
+        String name = savedPrefs.getString("displayName"+selectedPlatform, "");
+        displayName.setText(name);
 
         for(int i = 0; i < 3; i++){
 
+            int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
             String emblem = savedPrefs.getString("emblemIcon"+i, "");
+            if(emblem != ""){
 
+                ImageView emblemIcon = hView.findViewById(resID);
+
+                Picasso.with(this)
+                    .load(baseURL+emblem)
+                    .fit()
+                    .transform(new CropCircleTransformation())
+                    .into(emblemIcon);
+            }
         }
+
         asyncTest();
     }
 
@@ -182,7 +208,6 @@ public class MainActivity extends AppCompatActivity
                 Request request = requestBuilder.build();
 
                 return chain.proceed(request);
-
             }
 
         });
@@ -203,56 +228,66 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<Response_GetCurrentUser> call, Response<Response_GetCurrentUser> response) {
 
-                //Store specific user/character ids for reference later
-                SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-                SharedPreferences.Editor editor = savedPrefs.edit();
+                try {
+                    //Store specific user/character ids for reference later
+                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = savedPrefs.edit();
 
-//              TODO: move below membership counting and fragment to onResume after OAuth callback
-                int count = response.body().getResponse().getDestinyMemberships().size();
+                    //              TODO: move below membership counting and fragment to onResume after OAuth callback
+                    int count = response.body().getResponse().getDestinyMemberships().size();
 
-                String[] memberships = new String[count];
+                    String[] memberships = new String[count];
 
-                if(count > 1){ //get membershipType to pass to dialogFragment
-                    for(int i = 0; i < count; i++) {
-                        memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
+                    if (count > 1) { //get membershipType to pass to dialogFragment
+
+                        for (int i = 0; i < count; i++) {
+                            memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
+                        }
+                    }
+
+                    DialogFragment platformDialog = new PlatformSelectionFragment();
+                    Bundle args = new Bundle();
+                    args.putStringArray("platforms", memberships);
+
+                    platformDialog.setArguments(args);
+                    //                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
+                    platformDialog.show(getFragmentManager(), "platformSelectDialog");
+                    //                platformDialog.onDismiss();
+                    //                platformDialog.dismiss();
+
+                    //TODO: get tapped recyclerView row and store as preferred character, write to sharedPrefs/sqlite
+
+                    //write all found character details to sharedPrefs
+                    for (int i = 0; i < count; i++) {
+
+                        try {
+                            editor.putInt("membershipType" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                    response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
+
+                            editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                    response.body().getResponse().getDestinyMemberships().get(i).getMembershipId());
+
+                            editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                    response.body().getResponse().getDestinyMemberships().get(i).getDisplayName());
+
+                            editor.commit();
+
+                            //                    TODO: implement ProgressBar and hide it here
+                            Snackbar.make(findViewById(R.id.activity_main_content), "Account database updated.", Snackbar.LENGTH_SHORT)
+                                    .setAction("Action", null)
+                                    .show();
+                        } catch (Exception e) {
+                            Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
+                                    .setAction("Action", null)
+                                    .show();
+                        }
+
                     }
                 }
-
-                DialogFragment platformDialog = new PlatformSelectionFragment();
-                Bundle args = new Bundle();
-                args.putStringArray("platforms", memberships);
-
-                platformDialog.setArguments(args);
-//                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
-                platformDialog.show(getFragmentManager(), "platformSelectDialog");
-//                platformDialog.onDismiss();
-//                platformDialog.dismiss();
-
-
-                for(int i = 0; i < count; i++){
-
-                    try{
-                        editor.putInt("membershipType" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
-
-                        editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                response.body().getResponse().getDestinyMemberships().get(i).getMembershipId());
-
-                        editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                response.body().getResponse().getDestinyMemberships().get(i).getDisplayName());
-
-                        editor.commit();
-
-//                    TODO: implement ProgressBar and hide it here
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Account database updated.", Snackbar.LENGTH_SHORT)
-                                .setAction("Action", null)
-                                .show();
-                    } catch(Exception e) {
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
-                                .setAction("Action", null)
-                                .show();
-                    }
-
+                catch(Exception e){
+                    Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't retrieve account.", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null)
+                            .show();
                 }
 
             }
@@ -395,23 +430,23 @@ public class MainActivity extends AppCompatActivity
 
         } //callback from browser
 
-        else {
-//            final SharedPreferences savedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        else { //not an OAuth callback
 
             savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
             Long timestamp = savedPrefs.getLong("token_age", 0);
 
             try {
                 timestamp = savedPrefs.getLong("token_age", 0);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.println("No timestamp: " + e);
             }
             if (timestamp != 0) {
                 Long hour = 60L * 60L * 1000L;
                 Long now = System.currentTimeMillis();
                 Long timespan = now - timestamp;
+
                 if (timespan > hour) {
-                    //TODO: refresh access_token here
                     savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
                     String refreshToken = savedPrefs.getString("refresh_token", "");
 
@@ -419,19 +454,6 @@ public class MainActivity extends AppCompatActivity
                     logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
                     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    //                httpClient.addInterceptor(new Interceptor() {
-    //                    @Override
-    //                    public okhttp3.Response intercept(Chain chain) throws IOException {
-    //                        Request original = chain.request();
-    //
-    //                        Request.Builder requestBuilder = original.newBuilder()
-    //                                .header("Authorization", "Basic " + clientId + ":" + clientSecret);
-    //
-    //                        Request request = requestBuilder.build();
-    //
-    //                        return chain.proceed(request);
-    //                    }
-    //                });
 
                     httpClient.addInterceptor(logging);
 
@@ -466,7 +488,7 @@ public class MainActivity extends AppCompatActivity
                                         .show();
 
                             } catch (Exception e) {
-                                Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update OAuth access_token.", Snackbar.LENGTH_LONG)
+                                Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
                                         .setAction("Action", null)
                                         .show();
                             }
@@ -475,7 +497,9 @@ public class MainActivity extends AppCompatActivity
 
                         @Override
                         public void onFailure(Call<AccessToken> call, Throwable t) {
-
+                            Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null)
+                                    .show();
                         }
                     });
                 }

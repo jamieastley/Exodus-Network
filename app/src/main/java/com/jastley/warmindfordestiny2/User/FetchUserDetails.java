@@ -56,7 +56,7 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
     protected Boolean doInBackground(Context... contexts) {
 
 
-        String baseURL = "https://www.bungie.net/";
+        String baseURL = "https://www.bungie.net";
         final Context context = contexts[0];
         String membershipType = "2"; //TODO: remove this hard-code later
         String membershipId = "4611686018428911554"; //TODO: and this one
