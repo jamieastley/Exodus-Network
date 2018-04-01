@@ -29,9 +29,11 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.micIcon) ImageView micIcon;
     @BindView(R.id.player_Username) TextView displayName;
 
+    View view;
 
     public LFGPostViewHolder(View itemView) {
         super(itemView);
+        view = itemView;
         ButterKnife.bind(this, itemView);
     }
 
@@ -63,7 +65,8 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setLightLevel(String light) {
-        lightLevel.setText(light);
+        String lightlevel = view.getResources().getString(R.string.lightIcon, light);
+        lightLevel.setText(lightlevel);
     }
 
     public void setDisplayName(String name) {

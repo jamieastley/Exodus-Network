@@ -1,55 +1,60 @@
 package com.jastley.warmindfordestiny2.LFG;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.database.DatabaseHelper;
+import com.jastley.warmindfordestiny2.database.DatabaseModel;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 public class NewLFGPostActivity extends AppCompatActivity {
 
     @BindView(R.id.activity_name_input) EditText activityName;
-//    private EditText activityName;
-//    private EditText activityCheckpoint;
     @BindView(R.id.activity_checkpoint_input) EditText activityCheckpoint;
     private String key;
     private String lightLevel;
     private String membershipType;
-//    @BindView(R.id.description_text_input) EditText description;
     private String displayName;
-//    private String classType;
     private Long dateTime;
     private RadioGroup characterRadioGroup;
     private boolean hasMic;
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
-
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
         ButterKnife.bind(this);
+
+        db = new DatabaseHelper(this);
+
 
         Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
         myToolbar.setTitle(R.string.submitPost);
@@ -62,11 +67,87 @@ public class NewLFGPostActivity extends AppCompatActivity {
 //        activityName = findViewById(R.id.activity_name_input);
 //        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
         characterRadioGroup = findViewById(R.id.radio_character_selection);
+//        RadioGroup characterGroup = new RadioGroup(this);
 
 //        ActionBar actionBar = getSupportActionBar();  //to support lower version too
 //        actionBar.setDisplayShowCustomEnabled(true);
 //        View customView=getLayoutInflater().inflate(R.layout.yourlayout, null);
 //        actionBar.setCustomView(customView);
+
+        JsonParser parser = new JsonParser();
+
+        for(int i = 0; i < 3; i++){
+            DatabaseModel characters = db.getAccountData("account", "character"+i);
+            String characterValue = characters.getValue();
+
+            JsonObject json = (JsonObject) parser.parse(characterValue);
+
+            String characterId = json.get("characterId").getAsString();
+            int characterType = json.get("classType").getAsInt();
+            String emblem = json.get("emblemPath").getAsString();
+
+            String btnRef = "btn"+i;
+
+            final RadioButton btn = new RadioButton(this);
+
+            //get class name
+            switch(characterType) {
+                case 0: //Titan
+                    btn.setText(R.string.titan);
+                    break;
+                case 1: //Hunter
+                    btn.setText(R.string.hunter);
+                    break;
+                case 2: //Warlock
+                    btn.setText(R.string.warlock);
+                break;
+            }
+
+            btn.setId(i);
+            btn.setGravity(Gravity.CENTER);
+            btn.setButtonDrawable(new StateListDrawable());
+            btn.setLayoutParams(new RadioGroup.LayoutParams(
+                    RadioGroup.LayoutParams.WRAP_CONTENT, //width
+                    RadioGroup.LayoutParams.WRAP_CONTENT, //height
+                    1.0f
+            ));
+
+            if(i == 0){ //always set first button as checked to prevent null selection
+                btn.setChecked(true);
+            }
+            else {
+                btn.setChecked(false);
+                btn.setAlpha(0.3f);
+            }
+
+            String baseURL = "https://www.bungie.net";
+            Picasso.with(this)
+                    .load(baseURL+emblem)
+                    .transform(new CropCircleTransformation())
+                    .into(new Target() {
+                              @Override
+                              public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                  Drawable draw = new BitmapDrawable(getResources(), bitmap);
+
+                                  //setBounds required for setCompoundDrawables
+                                  draw.setBounds(0,0, 150, 150);
+                                  btn.setCompoundDrawables(null, draw, null, null);
+                              }
+
+                              @Override
+                              public void onBitmapFailed(Drawable errorDrawable) {
+
+                              }
+
+                              @Override
+                              public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                              }
+                          });
+
+
+                            characterRadioGroup.addView(btn);
+        }
 
 //        TODO: remove hardcoded variables and replace with user account details
         lightLevel = "278";
@@ -115,36 +196,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
         key = DATABASE.getReference().push().getKey();
     }
 
-
-//    @Override
-//    public void onClick(final View view) {
-//
-//
-//
-//
-//        LFGPost newPost = new LFGPost(activityName.getText().toString(),
-//                                    activityCheckpoint.getText().toString(),
-//                                    lightLevel, membershipType, displayName, selectedCharacter.getText().toString(), dateTime, hasMic);
-//
-//        DATABASE.getReference().child("lfg").child(displayName)
-//                .setValue(newPost)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if(task.isSuccessful()){
-//                        Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
-//    //                    Snackbar.make(view, "Post submitted!", Snackbar.LENGTH_SHORT)
-//    //                        .show();
-//    //                    Intent returnIntent = new Intent();
-//    ////                    returnIntent.putExtra("result", result);
-//    //                    setResult(RESULT_OK);
-//                        finish();
-//                    }
-//                }
-////            TODO: Network/submit error
-//        });
-////        finish();
-//    }
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
