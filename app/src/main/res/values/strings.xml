@@ -35,4 +35,7 @@
     <string name="psn">PlayStation</string>
     <string name="battlenet">Battle.Net</string>
     <string name="loading">Please wait...</string>
+    <string name="titan">Titan</string>
+    <string name="hunter">Hunter</string>
+    <string name="warlock">Warlock</string>
 </resources>

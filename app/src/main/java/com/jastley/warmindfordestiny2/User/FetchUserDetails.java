@@ -8,10 +8,10 @@ import android.os.AsyncTask;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.jastley.warmindfordestiny2.BuildConfig;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
+import com.jastley.warmindfordestiny2.database.DatabaseHelper;
+import com.jastley.warmindfordestiny2.database.DatabaseModel;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -35,6 +35,7 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
 
     SQLiteDatabase bungieAccount = null;
     SharedPreferences savedPrefs;
+    private DatabaseHelper db;
 
 
     @Override
@@ -55,32 +56,33 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Context... contexts) {
 
-
         String baseURL = "https://www.bungie.net";
         final Context context = contexts[0];
+
+        db = new DatabaseHelper(context);
         String membershipType = "2"; //TODO: remove this hard-code later
-        String membershipId = "4611686018428911554"; //TODO: and this one
+            String membershipId = "4611686018428911554"; //TODO: and this one
 //        SharedPreferences savedPrefs = context.getSharedPreferences("saved_prefs", context.MODE_PRIVATE);
 
         //Initialise database
-        try{
-            bungieAccount = context.openOrCreateDatabase("bungieAccount.db", Context.MODE_PRIVATE, null);
-            bungieAccount.execSQL("CREATE TABLE IF NOT EXISTS account"
-                    + "('key' VARCHAR, value VARCHAR);");
-
-            if(BuildConfig.DEBUG){
-                File db = context.getDatabasePath("bungieAccount.db");
-                if(db.exists()){
-                    System.out.println("Database created/exists");
-                }
-                else {
-                    System.out.println("Database doesn't exist");
-                }
-            }
-        }
-        catch(Exception e){
-            System.out.println("Error: " + e);
-        }
+//        try{
+//            bungieAccount = context.openOrCreateDatabase("bungieAccount.db", Context.MODE_PRIVATE, null);
+//            bungieAccount.execSQL("CREATE TABLE IF NOT EXISTS account"
+//                    + "('key' VARCHAR PRIMARY KEY, value VARCHAR);");
+//
+//            if(BuildConfig.DEBUG){
+//                File db = context.getDatabasePath("bungieAccount.db");
+//                if(db.exists()){
+//                    System.out.println("Database created/exists");
+//                }
+//                else {
+//                    System.out.println("Database doesn't exist");
+//                }
+//            }
+//        }
+//        catch(Exception e){
+//            System.out.println("Error: " + e);
+//        }
 
 //                savedPrefs.getString("membershipId"+membershipType, "");
 
@@ -142,8 +144,8 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
                         editor.putString("emblemIcon"+count, characterIdObj.get("emblemPath").getAsString());
                         editor.putString("emblemBackground"+count, characterIdObj.get("emblemBackgroundPath").getAsString());
                         editor.apply();
-                        bungieAccount.execSQL("INSERT INTO account ('key', value)"
-                        + "VALUES('" + currentCharacter + "','" + characterDB + "')");
+
+                        db.insertAccountData("account", currentCharacter, characterDB);
                     }
                     catch(Exception e){
                         System.out.println("Error: " + e);
@@ -156,11 +158,6 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
                     System.out.println("character string: " + characterDB);
                 }
 
-//                while(iterator.hasNext()){
-//
-//                }
-//                String characterId = (responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").getAsJsonObject(get) getAsJsonArray("characters").get(0))
-//                System.out.println(json);
             }
 
             @Override
