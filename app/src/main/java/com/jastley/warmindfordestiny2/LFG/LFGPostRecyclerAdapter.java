@@ -3,8 +3,6 @@ package com.jastley.warmindfordestiny2.LFG;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +29,28 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull LFGPostViewHolder holder, int position, @NonNull LFGPost model) {
+    public LFGPostViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+
+        View mView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.lfg_list_item, parent, false);
+
+        lfgProgressBar = ((Activity) context).findViewById(R.id.lfg_progress_bar);
+        lfgProgressBar.setVisibility(View.INVISIBLE);
+
+        final LFGPostViewHolder holder = new LFGPostViewHolder(mView);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("position: " + holder.displayName.getText());
+            }
+        });
+
+        return holder;
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull final LFGPostViewHolder holder, final int position, @NonNull final LFGPost model) {
         holder.setActivityTitle(model.getActivityTitle());
         holder.setActivityCheckpoint(model.getActivityCheckpoint());
         holder.setPlatformIcon(model.getMembershipType(), context);
@@ -42,17 +61,7 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
         holder.setDateTime(model.getDateTime());
     }
 
-    @Override
-    public LFGPostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.lfg_list_item, parent, false);
-
-        lfgProgressBar = ((Activity) context).findViewById(R.id.lfg_progress_bar);
-        lfgProgressBar.setVisibility(View.INVISIBLE);
-
-        return new LFGPostViewHolder(view);
-    }
 
     @Override
     public void onError(@NonNull DatabaseError error) {

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.R;
 
 
@@ -20,16 +21,27 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
     Context context;
     String[] platforms;
 
-    public PlatformSelectionAdapter(Context context, String[] platforms) {
+    RecyclerViewClickListener listener;
+
+    public PlatformSelectionAdapter(Context context, String[] platforms, RecyclerViewClickListener listener) {
         this.context = context;
         this.platforms = platforms;
+        this.listener = listener;
     }
 
     @Override
     public PlatformRVHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.platform_row_layout, parent, false);
+        View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.platform_row_layout, parent, false);
 
-        return new PlatformRVHolder(view);
+        final PlatformRVHolder mPlatformRVHolder = new PlatformRVHolder(mView);
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onClick(view, mPlatformRVHolder.getAdapterPosition());
+            }
+        });
+
+        return mPlatformRVHolder;
     }
 
     @Override

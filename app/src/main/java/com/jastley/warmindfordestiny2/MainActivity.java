@@ -2,13 +2,13 @@ package com.jastley.warmindfordestiny2;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,10 +19,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,12 +34,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
+import com.jastley.warmindfordestiny2.Dialogs.RecyclerTouchListener;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
+import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
+import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.User.FetchUserDetails;
-import com.jastley.warmindfordestiny2.User.PlatformRVHolder;
-import com.jastley.warmindfordestiny2.User.PlatformSelectionAdapter;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
@@ -47,9 +49,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences savedPrefs;
     Context context;
 
-
+//    private LFGPost lfgPost = new LFGPost();
 
 //    SwipeRefreshLayout swipeRefreshLayout;
 
@@ -170,14 +171,29 @@ public class MainActivity extends AppCompatActivity
 //        dataRef.keepSynced(true);
         //            TODO: query options, sort by dateTime
 
-        FirebaseRecyclerOptions lfgOptions =
+        final FirebaseRecyclerOptions lfgOptions =
                 new FirebaseRecyclerOptions.Builder<LFGPost>()
 //                        .setQuery(query, LFGPost.class)
                         .setIndexedQuery(query, dataRef, LFGPost.class)
                         .build();
 
+
         mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions);
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+
+
+//        mLFGRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mLFGRecyclerView, new RecyclerViewClickListener() {
+//            @Override
+//            public void onClick(View view, int position) {
+//                Toast.makeText(MainActivity.this,   " clicked!", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int position) {
+//
+//            }
+//        }));
+
         mLFGPostAdapter.startListening();
 
     }
@@ -252,6 +268,7 @@ public class MainActivity extends AppCompatActivity
                     platformDialog.setArguments(args);
                     //                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
                     platformDialog.show(getFragmentManager(), "platformSelectDialog");
+
                     //                platformDialog.onDismiss();
                     //                platformDialog.dismiss();
 
@@ -369,7 +386,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        //callback for OAuth TODO: refresh access_token if expired
+        //callback for OAuth
         Uri uri = getIntent().getData();
 
         if (uri != null && uri.toString().startsWith(redirectUri)) {
@@ -402,7 +419,6 @@ public class MainActivity extends AppCompatActivity
             accessTokenCall.enqueue(new Callback<AccessToken>() {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-//                    TODO: store accessToken/refreshToken
 //                    TODO: fullscreen loadingDialog here
 
 

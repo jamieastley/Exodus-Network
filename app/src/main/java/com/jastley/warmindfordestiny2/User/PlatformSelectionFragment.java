@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.R;
 
 /**
@@ -34,7 +35,7 @@ public class PlatformSelectionFragment extends DialogFragment implements DialogF
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         Bundle args = getArguments();
-        String[] list = args.getStringArray("platforms");
+        final String[] list = args.getStringArray("platforms");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -47,7 +48,18 @@ public class PlatformSelectionFragment extends DialogFragment implements DialogF
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
         //Adapter
-        adapter = new PlatformSelectionAdapter(this.getActivity(), list);
+        adapter = new PlatformSelectionAdapter(this.getActivity(), list, new RecyclerViewClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                System.out.println("selected: " + position);
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        });
         recyclerView.setAdapter(adapter);
 
         builder.setView(rootView);

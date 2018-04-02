@@ -37,12 +37,12 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
     @BindView(R.id.activity_name_input) EditText activityName;
     @BindView(R.id.activity_checkpoint_input) EditText activityCheckpoint;
+    @BindView(R.id.radio_character_selection) RadioGroup characterRadioGroup;
     private String key;
     private String lightLevel;
     private String membershipType;
     private String displayName;
     private Long dateTime;
-    private RadioGroup characterRadioGroup;
     private boolean hasMic;
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
     private DatabaseHelper db;
@@ -66,8 +66,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
 //        activityName = findViewById(R.id.activity_name_input);
 //        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
-        characterRadioGroup = findViewById(R.id.radio_character_selection);
-//        RadioGroup characterGroup = new RadioGroup(this);
 
 //        ActionBar actionBar = getSupportActionBar();  //to support lower version too
 //        actionBar.setDisplayShowCustomEnabled(true);
@@ -85,8 +83,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
             String characterId = json.get("characterId").getAsString();
             int characterType = json.get("classType").getAsInt();
             String emblem = json.get("emblemPath").getAsString();
-
-            String btnRef = "btn"+i;
 
             final RadioButton btn = new RadioButton(this);
 
@@ -125,6 +121,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                     .load(baseURL+emblem)
                     .transform(new CropCircleTransformation())
                     .into(new Target() {
+                            //Load image into target so the bitmap can be converted to a drawable
                               @Override
                               public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                                   Drawable draw = new BitmapDrawable(getResources(), bitmap);
@@ -136,7 +133,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                               @Override
                               public void onBitmapFailed(Drawable errorDrawable) {
-
+                                //TODO: set emblemIcon error placeholders if all else fails
                               }
 
                               @Override
@@ -144,9 +141,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                               }
                           });
-
-
-                            characterRadioGroup.addView(btn);
+            characterRadioGroup.addView(btn);
         }
 
 //        TODO: remove hardcoded variables and replace with user account details
@@ -162,19 +157,27 @@ public class NewLFGPostActivity extends AppCompatActivity {
                 View radioButton = characterRadioGroup.findViewById(i);
                 int index = characterRadioGroup.indexOfChild(radioButton);
 
-//                int count = characterRadioGroup.getChildCount();
-                // Add logic here
+                //get button count for alpha modification
+                int childCount = characterRadioGroup.getChildCount();
 
                 switch (index) {
                     case 0: // first button
                         characterRadioGroup.getChildAt(0).setAlpha(1f);
-                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-                        characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                        if(childCount > 1){
+                            characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+                            if(childCount > 2){
+                                characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                            }
+                        }
                         break;
                     case 1: // secondbutton
                         characterRadioGroup.getChildAt(0).setAlpha(0.3f);
-                        characterRadioGroup.getChildAt(1).setAlpha(1f);
-                        characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                        if(childCount > 1){
+                            characterRadioGroup.getChildAt(1).setAlpha(1f);
+                            if(childCount > 2){
+                                characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                            }
+                        }
                         break;
                     case 2:
                         characterRadioGroup.getChildAt(0).setAlpha(0.3f);

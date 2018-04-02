@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.R;
 
-import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -29,12 +27,30 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.micIcon) ImageView micIcon;
     @BindView(R.id.player_Username) TextView displayName;
 
-    View view;
+private LFGPostViewHolder.ClickListener mClickListener;
+
+    View mView;
 
     public LFGPostViewHolder(View itemView) {
         super(itemView);
-        view = itemView;
+        this.mView = itemView;
+
         ButterKnife.bind(this, itemView);
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                mClickListener.OnItemClick(view, getAdapterPosition());
+            }
+        });
+    }
+
+    public interface ClickListener{
+        public void OnItemClick(View view, int position);
+    }
+
+    public void setOnClickListener(LFGPostViewHolder.ClickListener clickListener){
+        mClickListener = clickListener;
     }
 
     public void setActivityTitle(String title) {
@@ -65,7 +81,7 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setLightLevel(String light) {
-        String lightlevel = view.getResources().getString(R.string.lightIcon, light);
+        String lightlevel = mView.getResources().getString(R.string.lightIcon, light);
         lightLevel.setText(lightlevel);
     }
 
