@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jastley.warmindfordestiny2.R;
 
@@ -28,7 +27,6 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder {
         super(itemView);
         ButterKnife.bind(this, itemView);
         mRootView = itemView;
-//        itemView.setOnClickListener(this);
     }
 
 
@@ -54,11 +52,6 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder {
     public void setPlatformType(String type) {
         platformType.setText(type);
     }
-
-//    @Override
-//    public void onClick(View view) {
-//        Toast.makeText(context.getApplicationContext(), this.platformType.getText(), Toast.LENGTH_SHORT).show();
-//    }
 
     public ImageView getPlatformIcon() {
         return platformIcon;

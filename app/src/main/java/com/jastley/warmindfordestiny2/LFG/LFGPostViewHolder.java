@@ -27,8 +27,6 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.micIcon) ImageView micIcon;
     @BindView(R.id.player_Username) TextView displayName;
 
-private LFGPostViewHolder.ClickListener mClickListener;
-
     View mView;
 
     public LFGPostViewHolder(View itemView) {
@@ -37,21 +35,8 @@ private LFGPostViewHolder.ClickListener mClickListener;
 
         ButterKnife.bind(this, itemView);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                mClickListener.OnItemClick(view, getAdapterPosition());
-            }
-        });
     }
 
-    public interface ClickListener{
-        public void OnItemClick(View view, int position);
-    }
-
-    public void setOnClickListener(LFGPostViewHolder.ClickListener clickListener){
-        mClickListener = clickListener;
-    }
 
     public void setActivityTitle(String title) {
         activityTitle.setText(title);
@@ -60,10 +45,6 @@ private LFGPostViewHolder.ClickListener mClickListener;
     public void setActivityCheckpoint(String checkpoint) {
         activityCheckpoint.setText(checkpoint);
     }
-
-//    public int getIconResource(Context context, String membershipType) {
-//        int resId = context.getResources().getI
-//    }
 
     public void setPlatformIcon(String icon, Context context) {
 

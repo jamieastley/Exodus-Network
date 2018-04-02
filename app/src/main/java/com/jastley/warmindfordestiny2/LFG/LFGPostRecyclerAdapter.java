@@ -42,13 +42,6 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
 
         final LFGPostViewHolder holder = new LFGPostViewHolder(mView);
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                System.out.println("position: " + holder.displayName.getText());
-//            }
-//        });
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,8 +63,6 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
         holder.setMicIcon(model.isHasMic(), context);
         holder.setDateTime(model.getDateTime());
     }
-
-
 
     @Override
     public void onError(@NonNull DatabaseError error) {

@@ -70,7 +70,7 @@ import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    PlatformSelectionFragment.PlatformSelectionListener2{
+                    PlatformSelectionListener{
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
@@ -578,8 +578,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    //PlatformSelection dialog clickListener
     @Override
     public void onClick(View view, int position, PlatformRVHolder holder) {
-        Toast.makeText(this, holder.getPlatformName().getText() + " selected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, holder.getPlatformName().getText().toString()
+                + " ("
+                + holder.getPlatformType().getText().toString() + ") selected", Toast.LENGTH_SHORT).show();
     }
 }

@@ -22,9 +22,9 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
     Context context;
     String[] platforms;
 
-    PlatformSelectionFragment.PlatformSelectionListener2 listener;
+    PlatformSelectionListener listener;
 
-    public PlatformSelectionAdapter(Context context, String[] platforms, PlatformSelectionFragment.PlatformSelectionListener2 listener) {
+    public PlatformSelectionAdapter(Context context, String[] platforms, PlatformSelectionListener listener) {
         this.context = context;
         this.platforms = platforms;
         this.listener = listener;
@@ -35,12 +35,6 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.platform_row_layout, parent, false);
 
         final PlatformRVHolder mPlatformRVHolder = new PlatformRVHolder(mView);
-//        mView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                listener.onClick(view, mPlatformRVHolder.getAdapterPosition());
-//            }
-//        });
 
         mPlatformRVHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,14 +67,6 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
             holder.setPlatformName("Battle.Net");
             holder.setPlatformType("4");
         }
-
-//        holder.mRootView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(context, holder.platformType.getText() + " selected", Toast.LENGTH_SHORT).show();
-////                dismiss();
-//            }
-//        });
 
     }
 
