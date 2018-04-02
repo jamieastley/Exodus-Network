@@ -35,12 +35,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Dialogs.RecyclerTouchListener;
+import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.User.FetchUserDetails;
+import com.jastley.warmindfordestiny2.User.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
@@ -67,7 +69,8 @@ import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                    PlatformSelectionFragment.PlatformSelectionListener2{
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
@@ -178,7 +181,17 @@ public class MainActivity extends AppCompatActivity
                         .build();
 
 
-        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions);
+        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions, new RecyclerViewClickListener() {
+            @Override
+            public void onClick(View view, int position, LFGPostViewHolder holder) {
+                Toast.makeText(MainActivity.this, holder.getDisplayName().getText() + " clicked", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        });
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
 
 
@@ -267,6 +280,7 @@ public class MainActivity extends AppCompatActivity
 
                     platformDialog.setArguments(args);
                     //                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
+
                     platformDialog.show(getFragmentManager(), "platformSelectDialog");
 
                     //                platformDialog.onDismiss();
@@ -314,9 +328,19 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-
-
     }
+
+    public void showDialog(String[] memberships) {
+        DialogFragment platformDialog = new PlatformSelectionFragment();
+        Bundle args = new Bundle();
+        args.putStringArray("platforms", memberships);
+
+        platformDialog.setArguments(args);
+        //                platformDialog.setCancelable(false); TODO uncomment later when onClicks work
+
+        platformDialog.show(getFragmentManager(), "platformSelectDialog");
+    }
+
 
 
     @Override
@@ -554,4 +578,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onClick(View view, int position, PlatformRVHolder holder) {
+        Toast.makeText(this, holder.getPlatformName().getText() + " selected", Toast.LENGTH_SHORT).show();
+    }
 }

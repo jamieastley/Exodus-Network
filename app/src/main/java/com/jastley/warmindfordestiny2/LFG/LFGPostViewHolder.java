@@ -124,4 +124,40 @@ private LFGPostViewHolder.ClickListener mClickListener;
 
         dateTime.setText(postAge);
     }
+
+    public ImageView getPlatformIcon() {
+        return platformIcon;
+    }
+
+    public TextView getActivityTitle() {
+        return activityTitle;
+    }
+
+    public TextView getActivityCheckpoint() {
+        return activityCheckpoint;
+    }
+
+    public TextView getDateTime() {
+        return dateTime;
+    }
+
+    public TextView getLightLevel() {
+        return lightLevel;
+    }
+
+    public TextView getClassType() {
+        return classType;
+    }
+
+    public ImageView getMicIcon() {
+        return micIcon;
+    }
+
+    public TextView getDisplayName() {
+        return displayName;
+    }
+
+    public View getmView() {
+        return mView;
+    }
 }

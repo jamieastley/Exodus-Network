@@ -23,9 +23,12 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
     private Context context;
     private ProgressBar lfgProgressBar;
 
-    public LFGPostRecyclerAdapter(@NonNull Context context, FirebaseRecyclerOptions<LFGPost> options) {
+    RecyclerViewClickListener listener;
+
+    public LFGPostRecyclerAdapter(@NonNull Context context, FirebaseRecyclerOptions<LFGPost> options, RecyclerViewClickListener listener) {
         super(options);
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -39,10 +42,17 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
 
         final LFGPostViewHolder holder = new LFGPostViewHolder(mView);
 
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                System.out.println("position: " + holder.displayName.getText());
+//            }
+//        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("position: " + holder.displayName.getText());
+                listener.onClick(view, holder.getAdapterPosition(), holder);
             }
         });
 

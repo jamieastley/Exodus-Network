@@ -1,8 +1,10 @@
 package com.jastley.warmindfordestiny2.User;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
+import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
 import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.R;
 
@@ -31,6 +35,12 @@ public class PlatformSelectionFragment extends DialogFragment implements DialogF
 
     }
 
+    public interface PlatformSelectionListener2 {
+        void onClick(View view, int position, PlatformRVHolder holder);
+    }
+
+    PlatformSelectionListener2 mListener;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -48,18 +58,15 @@ public class PlatformSelectionFragment extends DialogFragment implements DialogF
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
         //Adapter
-        adapter = new PlatformSelectionAdapter(this.getActivity(), list, new RecyclerViewClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                System.out.println("selected: " + position);
+        adapter = new PlatformSelectionAdapter(this.getActivity(), list, mListener);//{
+//            @Override
+//            public void onClick(View view, int position, PlatformRVHolder holder) {
+//                System.out.println("selected: " + position);
+//
+//            }
+//        });
 
-            }
 
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        });
         recyclerView.setAdapter(adapter);
 
         builder.setView(rootView);
@@ -69,6 +76,19 @@ public class PlatformSelectionFragment extends DialogFragment implements DialogF
 
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try{
+            mListener = (PlatformSelectionListener2) activity;
+        }
+        catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(activity.toString()
+                    + " must implement NoticeDialogListener");
+        }
+    }
 
     @Override
     public void onDismiss(DialogInterface dialog) {

@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
  * Created by jastl on 23/03/2018.
  */
 
-public class PlatformRVHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class PlatformRVHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.platform_row_icon) ImageView platformIcon;
     @BindView(R.id.platform_name_row) TextView platformName;
@@ -28,7 +28,7 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder implements View.On
         super(itemView);
         ButterKnife.bind(this, itemView);
         mRootView = itemView;
-        itemView.setOnClickListener(this);
+//        itemView.setOnClickListener(this);
     }
 
 
@@ -55,8 +55,20 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder implements View.On
         platformType.setText(type);
     }
 
-    @Override
-    public void onClick(View view) {
-        Toast.makeText(context.getApplicationContext(), this.platformType.getText(), Toast.LENGTH_SHORT).show();
+//    @Override
+//    public void onClick(View view) {
+//        Toast.makeText(context.getApplicationContext(), this.platformType.getText(), Toast.LENGTH_SHORT).show();
+//    }
+
+    public ImageView getPlatformIcon() {
+        return platformIcon;
+    }
+
+    public TextView getPlatformName() {
+        return platformName;
+    }
+
+    public TextView getPlatformType() {
+        return platformType;
     }
 }
