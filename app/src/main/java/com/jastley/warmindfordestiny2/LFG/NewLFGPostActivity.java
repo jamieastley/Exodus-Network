@@ -1,10 +1,12 @@
 package com.jastley.warmindfordestiny2.LFG;
 
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -74,6 +76,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         JsonParser parser = new JsonParser();
 
+        Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
+        coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+
         for(int i = 0; i < 3; i++){
             DatabaseModel characters = db.getAccountData("account", "character"+i);
             String characterValue = characters.getValue();
@@ -119,6 +124,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
             String baseURL = "https://www.bungie.net";
             Picasso.with(this)
                     .load(baseURL+emblem)
+                    .placeholder(coloredPlaceholder)
                     .transform(new CropCircleTransformation())
                     .into(new Target() {
                             //Load image into target so the bitmap can be converted to a drawable

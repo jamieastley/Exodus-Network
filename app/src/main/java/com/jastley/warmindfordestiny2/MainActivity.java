@@ -3,7 +3,6 @@ package com.jastley.warmindfordestiny2;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -19,11 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,14 +33,12 @@ import com.google.firebase.database.Query;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
-import com.jastley.warmindfordestiny2.Dialogs.RecyclerTouchListener;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
-import com.jastley.warmindfordestiny2.User.FetchUserDetails;
 import com.jastley.warmindfordestiny2.User.GetCharacters;
 import com.jastley.warmindfordestiny2.User.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
@@ -54,9 +49,7 @@ import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import okhttp3.Interceptor;
@@ -166,6 +159,7 @@ public class MainActivity extends AppCompatActivity
     private void updateNavUI(View hView) {
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+
         if(selectedPlatform != "") {
             String name = savedPrefs.getString("displayName"+selectedPlatform, "");
             TextView displayName = hView.findViewById(R.id.nav_displayName);
@@ -232,6 +226,7 @@ public class MainActivity extends AppCompatActivity
     private void getPlayerProfile() {
 //        TODO: shared_prefs(membershipType, membershipId, characterIds[],
 
+
         //Interceptor to add Authorization token
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -280,7 +275,7 @@ public class MainActivity extends AppCompatActivity
                     SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
                     SharedPreferences.Editor editor = savedPrefs.edit();
 
-                    //              TODO: move below membership counting and fragment to onResume after OAuth callback
+                    //TODO: move below membership counting and fragment to onResume after OAuth callback
                     int count = response.body().getResponse().getDestinyMemberships().size();
 
                     String[] memberships = new String[count];
@@ -322,7 +317,7 @@ public class MainActivity extends AppCompatActivity
                         args.putStringArray("platforms", memberships);
 
                         platformDialog.setArguments(args);
-                        platformDialog.setCancelable(false);// TODO uncomment later when onClicks work
+                        platformDialog.setCancelable(false);
 
                         platformDialog.show(getFragmentManager(), "platformSelectDialog");
                     }
@@ -337,9 +332,6 @@ public class MainActivity extends AppCompatActivity
                         //String membershipId = response.body().getResponse().getDestinyMemberships().get(0).getMembershipId();
                         getCharacters.GetCharacterSummaries(MainActivity.this);
                     }
-
-
-
 
                 }
                 catch(Exception e){
@@ -442,7 +434,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
         //callback for OAuth
-        Uri uri = getIntent().getData();
+        final Uri uri = getIntent().getData();
 
         if (uri != null && uri.toString().startsWith(redirectUri)) {
             final String code = uri.getQueryParameter("code");
@@ -478,20 +470,24 @@ public class MainActivity extends AppCompatActivity
                     //show Loading Dialog to block UI and prevent navigating away before authorised
 //                    showLoadingDialog();
 
-                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = savedPrefs.edit();
+                    try{
+                        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = savedPrefs.edit();
 
-                    editor.putString("access_token", response.body().getAccessToken());
-                    editor.putString("refresh_token", response.body().getRefreshToken());
-                    editor.putLong("token_age", System.currentTimeMillis());
-                    editor.commit();
-//                    System.out.println("accessToken: " + response.body().getAccessToken());
-                    Toast.makeText(MainActivity.this, "Acquired access_token!", Toast.LENGTH_SHORT).show();
+                        editor.putString("access_token", response.body().getAccessToken());
+                        editor.putString("refresh_token", response.body().getRefreshToken());
+                        editor.putLong("token_age", System.currentTimeMillis());
+                        editor.apply();
+    //                    System.out.println("accessToken: " + response.body().getAccessToken());
+                        Toast.makeText(MainActivity.this, "Acquired access_token!", Toast.LENGTH_SHORT).show();
 
-
-                    //Now logged in and authorised, get currentUser profile
-                    //We're authorised, now get currentUser playerProfile
-                    getPlayerProfile();
+                        //Now logged in and authorised, get currentUser profile
+                        //We're authorised, now get currentUser playerProfile
+                        getPlayerProfile();
+                    }
+                    catch(Exception e){
+                        System.out.println("Callback was probably accidentally triggered: " + e);
+                    }
                 }
 
                 @Override
@@ -557,7 +553,7 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 editor.putString("access_token", response.body().getAccessToken());
                                 editor.putLong("token_age", System.currentTimeMillis());
-                                editor.commit();
+                                editor.apply();
                                 Snackbar.make(findViewById(R.id.activity_main_content), "OAuth access refreshed", Snackbar.LENGTH_LONG)
                                         .setAction("Action", null)
                                         .show();
@@ -641,33 +637,10 @@ public class MainActivity extends AppCompatActivity
 
         //Get membershipId and selectedPlatform from SharedPrefs and use for request
         db = new DatabaseHelper(this);
-        String membershipType = "2"; //TODO: remove this hard-code later
-        String membershipId = "4611686018428911554"; //TODO: and this one
-//        SharedPreferences savedPrefs = context.getSharedPreferences("saved_prefs", context.MODE_PRIVATE);
 
-        //Initialise database
-//        try{
-//            bungieAccount = context.openOrCreateDatabase("bungieAccount.db", Context.MODE_PRIVATE, null);
-//            bungieAccount.execSQL("CREATE TABLE IF NOT EXISTS account"
-//                    + "('key' VARCHAR PRIMARY KEY, value VARCHAR);");
-//
-//            if(BuildConfig.DEBUG){
-//                File db = context.getDatabasePath("bungieAccount.db");
-//                if(db.exists()){
-//                    System.out.println("Database created/exists");
-//                }
-//                else {
-//                    System.out.println("Database doesn't exist");
-//                }
-//            }
-//        }
-//        catch(Exception e){
-//            System.out.println("Error: " + e);
-//        }
-
-//                savedPrefs.getString("membershipId"+membershipType, "");
-
-//        String[] characterIds;
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+        String membershipId = savedPrefs.getString("membershipId"+selectedPlatform, "");
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -696,7 +669,7 @@ public class MainActivity extends AppCompatActivity
 
         BungieAPI bungieClient = retrofit.create(BungieAPI.class);
         Call<JsonElement> getProfileCall = bungieClient.getProfile(
-                membershipType,
+                selectedPlatform,
                 membershipId
         );
 
@@ -713,6 +686,7 @@ public class MainActivity extends AppCompatActivity
                 savedPrefs = getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = savedPrefs.edit();
 
+                //Iterate through dynamic keys (characterIds)
                 for (Iterator iterator = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").keySet().iterator(); iterator.hasNext(); ) {
                     String key = (String) iterator.next();
                     JsonObject characterIdObj = (JsonObject) responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key);
@@ -731,6 +705,8 @@ public class MainActivity extends AppCompatActivity
                     } catch (Exception e) {
                         System.out.println("Can't insert: " + e);
                         e.printStackTrace();
+
+                        //Update existing
                         try{
                             db.updateData("account", currentCharacter, characterDB);
                         }
@@ -740,25 +716,23 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
 
-//                    String emblemPath = characterIdObj.get("emblemPath").getAsString();
-//                    System.out.println("Emblem path" +count+ ": " +emblemPath);
                     count++;
-//                    String something = characterIdObj.getAsString();
                     System.out.println("character string: " + characterDB);
 
                     NavigationView navigationView = findViewById(R.id.nav_view);
 //                    navigationView.setNavigationItemSelectedListener(this);
                     View hView =  navigationView.getHeaderView(0);
                     updateNavUI(hView);
-
-
                 }
+
                 loadingDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<JsonElement> call, Throwable t) {
-
+                Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't get Bungie profile", Snackbar.LENGTH_LONG)
+                        .setAction("Retry", new retryListener())
+                        .show();
             }
 
         });
@@ -773,5 +747,13 @@ public class MainActivity extends AppCompatActivity
         updateNavUI(hView);
 
 //        loadingDialog.dismiss();
+    }
+
+    public class retryListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View view) {
+
+        }
     }
 }
