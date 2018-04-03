@@ -38,39 +38,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="50dp">
-        <!--<RadioButton-->
-            <!--android:id="@+id/radio0"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:button="@null"-->
-            <!--android:checked="false"-->
-            <!--android:drawableTop="@drawable/icon_psn"-->
-            <!--android:gravity="center"-->
-            <!--android:text="Warlock"/>-->
-
-        <!--&lt;!&ndash;TODO: dynamically create buttons below (check character count)&ndash;&gt;-->
-        <!--<RadioButton-->
-            <!--android:id="@+id/radio1"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:button="@null"-->
-            <!--android:drawableTop="@drawable/icon_xbl"-->
-            <!--android:alpha="0.3"-->
-            <!--android:gravity="center"-->
-            <!--android:text="Hunter"-->
-            <!--/>-->
-        <!--<RadioButton-->
-            <!--android:id="@+id/radio2"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:button="@null"-->
-            <!--android:drawableTop="@drawable/icon_psn"-->
-            <!--android:alpha="0.3"-->
-            <!--android:gravity="center"-->
-            <!--android:text="Titan"/>-->
     </RadioGroup>
 
 

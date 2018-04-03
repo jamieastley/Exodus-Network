@@ -37,6 +37,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+
+
     //account- bungieAccount.db
 
     public void insertAccountData(String tableName, String key, String value){
@@ -73,4 +75,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return accountData;
     }
+
+
+
+    public void updateData(String tableName, String key, String value){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseModel.COLUMN_KEY, key);
+        values.put(DatabaseModel.COLUMN_VALUE, value);
+
+        //update row
+        db.update(tableName,
+                values,
+                DatabaseModel.COLUMN_KEY + " =?",
+                new String[] {String.valueOf(key)});
+        db.close();
+    }
+
+
+
+
+
+
+
+
 }

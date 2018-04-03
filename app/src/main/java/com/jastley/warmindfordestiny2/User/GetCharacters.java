@@ -1,17 +1,12 @@
 package com.jastley.warmindfordestiny2.User;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
-import com.jastley.warmindfordestiny2.database.DatabaseModel;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -29,52 +24,33 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 
 /**
- * Created by jamie on 21/3/18.
+ * Created by jamie on 3/4/18.
  */
 
-public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
+public class GetCharacters {
 
-    SQLiteDatabase bungieAccount = null;
     SharedPreferences savedPrefs;
     private DatabaseHelper db;
 
-    public interface AsyncResponse {
+    public interface GetCharacterResponseInterface {
         void onComplete();
     }
 
-    public AsyncResponse delegate = null;
+    public GetCharacterResponseInterface delegate = null;
 
-    public FetchUserDetails(AsyncResponse delegate) {
-
+    public GetCharacters(GetCharacterResponseInterface delegate) {
         this.delegate = delegate;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        //Start ProgressBar spinner
-    }
-
-    @Override
-    protected void onPostExecute(Boolean aBoolean) {
-        super.onPostExecute(aBoolean);
-
-        //Hide loading
-        //TODO: Picasso here to download emblemIcons and bind them to navMenu imageviews
-//        DialogFragment loading = con
-        delegate.onComplete();
-    }
-
-    @Override
-    protected Boolean doInBackground(Context... contexts) {
+    public void GetCharacterSummaries(final Context context) {
 
         String baseURL = "https://www.bungie.net";
-        final Context context = contexts[0];
+//        final Context context = contexts[0];
 
+        //Get membershipId and selectedPlatform from SharedPrefs and use for request
         db = new DatabaseHelper(context);
         String membershipType = "2"; //TODO: remove this hard-code later
-            String membershipId = "4611686018428911554"; //TODO: and this one
+        String membershipId = "4611686018428911554"; //TODO: and this one
 //        SharedPreferences savedPrefs = context.getSharedPreferences("saved_prefs", context.MODE_PRIVATE);
 
         //Initialise database
@@ -145,8 +121,8 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
                 savedPrefs = context.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = savedPrefs.edit();
 
-                for(Iterator iterator = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").keySet().iterator(); iterator.hasNext();) {
-                    String key = (String)iterator.next();
+                for (Iterator iterator = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").keySet().iterator(); iterator.hasNext(); ) {
+                    String key = (String) iterator.next();
                     JsonObject characterIdObj = (JsonObject) responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key);
 
                     //Each character object toString();
@@ -154,14 +130,13 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
 
                     //Append character count to key name and store in sqlite
                     String currentCharacter = "character" + count;
-                    try{
-                        editor.putString("emblemIcon"+count, characterIdObj.get("emblemPath").getAsString());
-                        editor.putString("emblemBackground"+count, characterIdObj.get("emblemBackgroundPath").getAsString());
+                    try {
+                        editor.putString("emblemIcon" + count, characterIdObj.get("emblemPath").getAsString());
+                        editor.putString("emblemBackground" + count, characterIdObj.get("emblemBackgroundPath").getAsString());
                         editor.apply();
 
                         db.insertAccountData("account", currentCharacter, characterDB);
-                    }
-                    catch(Exception e){
+                    } catch (Exception e) {
                         System.out.println("Error: " + e);
                     }
 
@@ -170,21 +145,16 @@ public class FetchUserDetails extends AsyncTask<Context, Void, Boolean> {
                     count++;
 //                    String something = characterIdObj.getAsString();
                     System.out.println("character string: " + characterDB);
-                }
 
+                    delegate.onComplete();
+                }
             }
 
             @Override
             public void onFailure(Call<JsonElement> call, Throwable t) {
 
             }
+
         });
-
-
-        return true;
     }
-
-
-
-
 }

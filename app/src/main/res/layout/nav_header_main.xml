@@ -22,7 +22,7 @@
             android:layout_height="70dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            app:srcCompat="@mipmap/ic_launcher" />
+            />
 
         <ImageView
             android:id="@+id/character_header_icon_1"
@@ -30,7 +30,7 @@
             android:layout_height="70dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            app:srcCompat="@mipmap/ic_launcher" />
+            />
 
         <ImageView
             android:id="@+id/character_header_icon_2"
@@ -38,7 +38,7 @@
             android:layout_height="70dp"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            app:srcCompat="@mipmap/ic_launcher" />
+            />
 
     </LinearLayout>
 
