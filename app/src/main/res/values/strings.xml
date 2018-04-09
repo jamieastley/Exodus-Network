@@ -38,4 +38,5 @@
     <string name="titan">Titan</string>
     <string name="hunter">Hunter</string>
     <string name="warlock">Warlock</string>
+    <string name="gettingItemDatabase">Getting Item Database...</string>
 </resources>

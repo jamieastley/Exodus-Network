@@ -19,21 +19,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    private static final String TABLE_ACCOUNT = "account";
+    private static final String TABLE_COLLECTABLES = "collectables";
+//    private static final String
+
+
+
     @Override
     public void onCreate(SQLiteDatabase db) {
 
         //TODO: create all tables here (account, weapons, armour, items)
-//        String accountQuery = "CREATE TABLE IF NOT EXISTS account (key VARCHAR PRIMARY KEY, value VARCHAR)";
-        String weaponQuery = "CREATE TABLE IF NOT EXISTS weapons (key VARCHAR PRIMARY KEY, value VARCHAR)";
+        String accountQuery = "CREATE TABLE IF NOT EXISTS "+TABLE_ACCOUNT+ " ("+ OldDatabaseModel.COLUMN_KEY+" VARCHAR PRIMARY KEY, "+ OldDatabaseModel.COLUMN_VALUE+" VARCHAR)";
+//        String weaponQuery = "CREATE TABLE IF NOT EXISTS weapons ("+OldDatabaseModel.COLUMN_KEY+" VARCHAR PRIMARY KEY, "+OldDatabaseModel.COLUMN_VALUE+" VARCHAR)";
+        String collectablesQuery = "CREATE TABLE IF NOT EXISTS "+TABLE_COLLECTABLES+" ("+ OldDatabaseModel.COLUMN_KEY+" VARCHAR PRIMARY KEY, "+ OldDatabaseModel.COLUMN_VALUE+" VARCHAR)";
 
-        db.execSQL(DatabaseModel.CREATE_TABLE);
-        db.execSQL(weaponQuery);
+//        db.execSQL(OldDatabaseModel.CREATE_ACCOUNT_TABLE);
+        db.execSQL(accountQuery);
+//        db.execSQL(weaponQuery);
+        db.execSQL(collectablesQuery);
 
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
 
+        db.execSQL("DROP TABLE IF EXISTS "+ TABLE_ACCOUNT);
+        db.execSQL("DROP TABLE IF EXISTS "+ TABLE_COLLECTABLES);
+
+        onCreate(db);
     }
 
 
@@ -47,29 +60,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
 
-        values.put(DatabaseModel.COLUMN_KEY, key);
-        values.put(DatabaseModel.COLUMN_VALUE, value);
+        values.put(OldDatabaseModel.COLUMN_KEY, key);
+        values.put(OldDatabaseModel.COLUMN_VALUE, value);
 
         db.insert(tableName, null, values);
 
-        db.close();
+//        db.close();
     }
 
-    public DatabaseModel getAccountData(String tableName, String key) {
+    public OldDatabaseModel getAccountData(String tableName, String key) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(tableName,
-                new String[]{DatabaseModel.COLUMN_KEY, DatabaseModel.COLUMN_VALUE},
-                DatabaseModel.COLUMN_KEY + "=?",
+                new String[]{OldDatabaseModel.COLUMN_KEY, OldDatabaseModel.COLUMN_VALUE},
+                OldDatabaseModel.COLUMN_KEY + "=?",
                 new String[]{String.valueOf(key)}, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
 
-        DatabaseModel accountData = new DatabaseModel(
-                cursor.getString(cursor.getColumnIndex(DatabaseModel.COLUMN_KEY)),
-                cursor.getString(cursor.getColumnIndex(DatabaseModel.COLUMN_VALUE)));
+        OldDatabaseModel accountData = new OldDatabaseModel(
+                cursor.getString(cursor.getColumnIndex(OldDatabaseModel.COLUMN_KEY)),
+                cursor.getString(cursor.getColumnIndex(OldDatabaseModel.COLUMN_VALUE)));
 
         cursor.close();
 
@@ -82,13 +95,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DatabaseModel.COLUMN_KEY, key);
-        values.put(DatabaseModel.COLUMN_VALUE, value);
+        values.put(OldDatabaseModel.COLUMN_KEY, key);
+        values.put(OldDatabaseModel.COLUMN_VALUE, value);
 
         //update row
         db.update(tableName,
                 values,
-                DatabaseModel.COLUMN_KEY + " =?",
+                OldDatabaseModel.COLUMN_KEY + " =?",
                 new String[] {String.valueOf(key)});
         db.close();
     }

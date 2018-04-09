@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -45,7 +45,12 @@ import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
+import com.jastley.warmindfordestiny2.database.AccountDAO;
+import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
+import com.jastley.warmindfordestiny2.database.GetItemDatabase;
+import com.jastley.warmindfordestiny2.database.models.Account;
+import com.jastley.warmindfordestiny2.ui.SplashScreenActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -86,6 +91,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        Intent splash = new Intent(MainActivity.this, SplashScreenActivity.class);
+//        startActivity(splash);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.lfg_feed);
@@ -150,10 +159,9 @@ public class MainActivity extends AppCompatActivity
 //                }
 //            }
 //        }
-
+//        asyncGetCollectables();
         updateNavUI(hView);
 
-//        asyncTest();
     }
 
     private void updateNavUI(View hView) {
@@ -183,9 +191,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void asyncTest() {
-//        new FetchUserDetails().execute(this);
-    }
+//    private void asyncTest() {
+////        new FetchUserDetails().execute(this);
+//    }
+
+//    private void asyncGetCollectables(){
+//        new GetItemDatabase().execute(this);
+//    }
 
     private void loadLFGPosts() {
 
@@ -636,7 +648,7 @@ public class MainActivity extends AppCompatActivity
     public void getCharacters(){
 
         //Get membershipId and selectedPlatform from SharedPrefs and use for request
-        db = new DatabaseHelper(this);
+//        db = new DatabaseHelper(this);
 
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
@@ -683,6 +695,8 @@ public class MainActivity extends AppCompatActivity
 
                 Integer count = 0;
 
+                final AccountDAO mAccountDAO = AppDatabase.getAppDatabase(MainActivity.this).getAccountDAO();
+
                 savedPrefs = getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = savedPrefs.edit();
 
@@ -692,28 +706,37 @@ public class MainActivity extends AppCompatActivity
                     JsonObject characterIdObj = (JsonObject) responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key);
 
                     //Each character object toString();
-                    String characterDB = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key).toString();
+                    final String characterDB = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key).toString();
 
                     //Append character count to key name and store in sqlite
-                    String currentCharacter = "character" + count;
+                    final String currentCharacter = "character" + count;
                     try {
                         editor.putString("emblemIcon" + count, characterIdObj.get("emblemPath").getAsString());
                         editor.putString("emblemBackground" + count, characterIdObj.get("emblemBackgroundPath").getAsString());
                         editor.apply();
 
-                        db.insertAccountData("account", currentCharacter, characterDB);
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                Account account = new Account();
+                                account.setKey(currentCharacter);
+                                account.setValue(characterDB);
+                                mAccountDAO.insert(account);
+                            }
+                        });
+//                        db.insertAccountData("account", currentCharacter, characterDB);
                     } catch (Exception e) {
                         System.out.println("Can't insert: " + e);
                         e.printStackTrace();
 
                         //Update existing
-                        try{
-                            db.updateData("account", currentCharacter, characterDB);
-                        }
-                        catch(Exception err){
-                            System.out.println("Couldn't update");
-                            err.printStackTrace();
-                        }
+//                        try{
+//                            db.updateData("account", currentCharacter, characterDB);
+//                        }
+//                        catch(Exception err){
+//                            System.out.println("Couldn't update");
+//                            err.printStackTrace();
+//                        }
                     }
 
                     count++;

@@ -14,7 +14,7 @@
         <activity android:name=".User.LogInActivity" />
         <activity android:name=".User.SignUpActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.SplashScreenActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -33,7 +33,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserCharactersActivity" />
-        <activity android:name=".LFG.NewLFGPostActivity"></activity>
+        <activity android:name=".LFG.NewLFGPostActivity"/>
+        <activity android:name=".MainActivity" />
+
     </application>
 
 </manifest>

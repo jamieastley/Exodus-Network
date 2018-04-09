@@ -1,6 +1,5 @@
 package com.jastley.warmindfordestiny2.User;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,10 +7,8 @@ import android.os.AsyncTask;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
-import com.jastley.warmindfordestiny2.database.DatabaseModel;
 
 import java.io.IOException;
 import java.util.Iterator;

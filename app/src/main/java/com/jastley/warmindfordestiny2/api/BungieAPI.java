@@ -52,4 +52,9 @@ public interface BungieAPI {
     //Get character inventory
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201")
     Call<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
+
+    //Collectable Items/Weapons/Armor
+    @GET("reducedCollectableInventoryItems.json")
+    Call<JsonElement> getCollectablesDatabase();
+
 }

@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
-import com.jastley.warmindfordestiny2.database.DatabaseModel;
+import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -80,7 +80,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
         coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 
         for(int i = 0; i < 3; i++){
-            DatabaseModel characters = db.getAccountData("account", "character"+i);
+            OldDatabaseModel characters = db.getAccountData("account", "character"+i);
             String characterValue = characters.getValue();
 
             JsonObject json = (JsonObject) parser.parse(characterValue);
