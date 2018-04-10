@@ -14,8 +14,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.R;
@@ -35,32 +36,40 @@ import com.squareup.picasso.Target;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 public class NewLFGPostActivity extends AppCompatActivity {
 
-    @BindView(R.id.activity_name_input) EditText activityName;
-    @BindView(R.id.activity_checkpoint_input) EditText activityCheckpoint;
     @BindView(R.id.radio_character_selection) RadioGroup characterRadioGroup;
     @BindView(R.id.activity_name_spinner) Spinner activityNameSpinner;
+    @BindView(R.id.activity_checkpoint_spinner) Spinner activityCheckpointSpinner;
+    @BindView(R.id.lfg_description_input) EditText description;
+    @BindView(R.id.micCheckBox) CheckBox micCheckBox;
     private String key;
     private String lightLevel;
     private String membershipType;
     private String displayName;
     private Long dateTime;
-    private boolean hasMic;
+    private boolean hasMic = false;
+    private boolean onCreateFlag = true;
+    JsonArray characterArray = new JsonArray();
+
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
     private DatabaseHelper db;
-    private boolean onCreateFlag = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
         ButterKnife.bind(this);
+
+        if ((savedInstanceState != null)) {
+
+            description.setText((String)savedInstanceState.getSerializable("description"));
+        }
 
         db = new DatabaseHelper(this);
 
@@ -73,12 +82,15 @@ public class NewLFGPostActivity extends AppCompatActivity {
 *         TODO sync from Firebase if expired
 */
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, android.R.layout.simple_spinner_item);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        ArrayAdapter<CharSequence> checkpointAdapter = ArrayAdapter.createFromResource(this, R.array.nightfall, android.R.layout.simple_spinner_item);
+        checkpointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         activityNameSpinner.setAdapter(adapter);
         activityNameSpinner.setSelection(0, false);
+        activityCheckpointSpinner.setAdapter(checkpointAdapter);
+
 
 //        activityName = findViewById(R.id.activity_name_input);
 //        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
@@ -92,7 +104,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         final JsonParser parser = new JsonParser();
 
-        Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
+        final Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
         coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 
         for(int i = 0; i < 3; i++){
@@ -101,6 +113,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
             String characterValue = characters.getValue();
 
             JsonObject json = (JsonObject) parser.parse(characterValue);
+            characterArray.add(json);
 
             String characterId = json.get("characterId").getAsString();
             int characterType = json.get("classType").getAsInt();
@@ -162,7 +175,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                               @Override
                               public void onPrepareLoad(Drawable placeHolderDrawable) {
-
+                                  btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
                               }
                           });
             characterRadioGroup.addView(btn);
@@ -214,7 +227,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
 //        radioButton.getTag(); //TODO: store characterId here?
 
-        hasMic = true;
         dateTime = System.currentTimeMillis();
 
 
@@ -242,14 +254,26 @@ public class NewLFGPostActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.submit_lfg_post_button:
 
+                item.setEnabled(false);
+
                 int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
                 View radioButton = characterRadioGroup.findViewById(radioButtonID);
                 int idx = characterRadioGroup.indexOfChild(radioButton);
                 RadioButton selectedCharacter = (RadioButton)  characterRadioGroup.getChildAt(idx);
 
-                LFGPost newPost = new LFGPost(activityName.getText().toString(),
-                        activityCheckpoint.getText().toString(),
-                        lightLevel, membershipType, displayName, selectedCharacter.getText().toString(), dateTime, hasMic);
+                //Which object in characterArray to pass along to Firebase
+                int index = selectedCharacter.getId();
+                JsonObject characterObject = characterArray.get(index).getAsJsonObject();
+
+                if(micCheckBox.isChecked()){
+                    hasMic = true;
+                }
+
+                LFGPost newPost = new LFGPost(
+                        activityNameSpinner.getSelectedItem().toString(),
+                        activityCheckpointSpinner.getSelectedItem().toString(),
+                        lightLevel, membershipType, displayName, selectedCharacter.getText().toString(), description.getText().toString(), dateTime, hasMic,
+                        characterObject);
 
                 DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -274,6 +298,26 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable("description", description.getText().toString());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        description.setText((String)savedInstanceState.getSerializable("description"));
+    }
+
     @OnItemSelected(R.id.activity_name_spinner)
     public void spinnerItemSelected(Spinner spinner, int position) {
 
@@ -281,9 +325,77 @@ public class NewLFGPostActivity extends AppCompatActivity {
             onCreateFlag = false;
         }
         else{
-            spinner.getItemAtPosition(position);
+            ArrayAdapter<CharSequence> adapter;
+
+            String result = spinner.getItemAtPosition(position).toString();
+            System.out.println("result: "+ result);
+
+            switch (result) {
+                case "PvP":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.pvp, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Nightfall":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.nightfall, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Raid Lair":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.raidLair, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Raid":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.raid, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Raid - Misc":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.raidMisc, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Public Events":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.publicEvents, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Strikes":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.strikes, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Campaign":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.empty, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Achievement":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.achievement, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+                case "Social":
+                    adapter = ArrayAdapter.createFromResource(this, R.array.empty, android.R.layout.simple_spinner_item);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    activityCheckpointSpinner.setAdapter(adapter);
+                    break;
+            }
+
             //TODO: populate and show checkpoint spinner here
         }
+
 
     }
 

@@ -39,6 +39,8 @@
     <string name="hunter">Hunter</string>
     <string name="warlock">Warlock</string>
     <string name="gettingItemDatabase">Getting Item Database...</string>
+    <string name="lfgDescription">(Optional) Description..</string>
+    <string name="haveMic">Mic?</string>
 
     <string-array name="activities">
         <item>Nightfall</item>
@@ -49,7 +51,6 @@
         <item>Public Events</item>
         <item>Strikes</item>
         <item>Campaign</item>
-        <item>Trials</item>
         <item>Achievement</item>
         <item>Social</item>
     </string-array>
@@ -101,6 +102,10 @@
     <string-array name="achievement">
         <item>Flawless Raider</item>
         <item>Misc</item>
+    </string-array>
+
+    <string-array name="empty">
+        <item></item>
     </string-array>
 
 </resources>

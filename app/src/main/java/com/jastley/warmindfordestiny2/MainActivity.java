@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Intent splash = new Intent(MainActivity.this, SplashScreenActivity.class);
-//        startActivity(splash);
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.lfg_feed);
@@ -107,6 +104,7 @@ public class MainActivity extends AppCompatActivity
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null)
 //                        .show();
+                //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
                 startActivity(intent);
             }
@@ -188,6 +186,7 @@ public class MainActivity extends AppCompatActivity
                             .into(emblemIcon);
                 }
             }
+
         }
     }
 
@@ -628,30 +627,30 @@ public class MainActivity extends AppCompatActivity
                 + " ("
                 + holder.getPlatformType().getText().toString() + ") selected", Toast.LENGTH_SHORT).show();
 
-        String membershipType = holder.getPlatformType().getText().toString();
+        String selectedPlatform = holder.getPlatformType().getText().toString();
 
         platformDialog.dismiss();
 
         getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = savedPrefs.edit();
 
-        editor.putString("selectedPlatform", membershipType);
+        editor.putString("selectedPlatform", selectedPlatform);
         editor.apply();
 
         //getCharacter summaries BEFORE UI update
 //        Context cont = getApplicationContext();
 //        getCharacters.GetCharacterSummaries(getApplicationContext());
         showLoadingDialog();
-        getCharacters();
+        getCharacters(selectedPlatform);
     }
 
-    public void getCharacters(){
+    public void getCharacters(String selectedPlatform){
 
         //Get membershipId and selectedPlatform from SharedPrefs and use for request
 //        db = new DatabaseHelper(this);
 
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+//        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
         String membershipId = savedPrefs.getString("membershipId"+selectedPlatform, "");
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

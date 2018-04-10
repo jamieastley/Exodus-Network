@@ -46,6 +46,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
         savedPrefs = context.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
         Boolean firstRun = savedPrefs.getBoolean("firstRun", true);
 
+
         if(firstRun){
 
             final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
@@ -124,6 +125,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
         //if not first run
         else{
 
+            //TODO: try pass intent jsonArray of character args to MainActivity
             delegate.onAsyncDone();
         }
         return true;
