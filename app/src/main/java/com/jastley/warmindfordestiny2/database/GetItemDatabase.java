@@ -47,13 +47,8 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
         Boolean firstRun = savedPrefs.getBoolean("firstRun", true);
 
         if(firstRun){
-    //        db = new DatabaseHelper(context);
-
-            //final AppDatabase mDb = Room.databaseBuilder(context, AppDatabase.class, "bungieAccount.db").build();
 
             final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
-
-    //        final CollectablesDAO mCollectibleDAO = mDb.getCollectablesDAO();
 
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -77,36 +72,34 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                     JsonElement json = response.body();
                     JsonObject responseObj = (JsonObject) json;
 
-                    for(Iterator iterator = responseObj.keySet().iterator(); iterator.hasNext();) {
+                    try{
+                        for(Iterator iterator = responseObj.keySet().iterator(); iterator.hasNext();) {
 
-                        final String key = (String)iterator.next();
-                        JsonObject collectableObj = (JsonObject) responseObj.get(key);
+                            final String key = (String)iterator.next();
+                            JsonObject collectableObj = (JsonObject) responseObj.get(key);
 
-                        //get each item definition and store as string
-                        final String currentItemDefinition = collectableObj.toString();
+                            //store item definition object as string
+                            final String currentItemDefinition = collectableObj.toString();
 
-                        try{
-                            //db.insertAccountData("collectables", key, currentItemDefinition);
+                                //onResponse is on UI thread, move back onto worker thread for Room
+                                AsyncTask.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Collectables collectable = new Collectables();
+                                        collectable.setKey(key);
+                                        collectable.setValue(currentItemDefinition);
 
-                            AsyncTask.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Collectables collectable = new Collectables();
-                                    collectable.setKey(key);
-                                    collectable.setValue(currentItemDefinition);
-
-                                    mCollectibleDAO.insert(collectable);
-                                }
-                            });
+                                        mCollectibleDAO.insert(collectable);
+                                    }
+                                });
                         }
-                        catch(Exception e){
-                            System.out.println("error: " + e);
-                        }
+                    }
+                    catch(Exception e){
+                        System.out.println("Error getting manifest: " + e);
                     }
 
                     delegate.onAsyncDone();
-//                    return null;
-    //                db.close();
+
                 }
 
                 @Override
@@ -121,18 +114,18 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 
             try{
                 editor.putBoolean("firstRun", false);
-                editor.apply();
+                editor.apply(); //TODO: UNCOMMENT THIS AFTER DEBUG
             }
             catch(Exception e){
                 System.out.println("onCompleteSplash: " + e);
             }
-//            return true;
         }
+
+        //if not first run
         else{
+
             delegate.onAsyncDone();
-//            return true;
         }
-//        return true;
         return true;
     }
 

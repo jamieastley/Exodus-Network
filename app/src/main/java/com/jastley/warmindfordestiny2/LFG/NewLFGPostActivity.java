@@ -14,9 +14,12 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,6 +35,8 @@ import com.squareup.picasso.Target;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
@@ -40,6 +45,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
     @BindView(R.id.activity_name_input) EditText activityName;
     @BindView(R.id.activity_checkpoint_input) EditText activityCheckpoint;
     @BindView(R.id.radio_character_selection) RadioGroup characterRadioGroup;
+    @BindView(R.id.activity_name_spinner) Spinner activityNameSpinner;
     private String key;
     private String lightLevel;
     private String membershipType;
@@ -48,6 +54,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
     private boolean hasMic;
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
     private DatabaseHelper db;
+    private boolean onCreateFlag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +72,13 @@ public class NewLFGPostActivity extends AppCompatActivity {
 /**       TODO: Store activityNames/checkpoints on Firebase and cache on device, save last update timestamp and
 *         TODO sync from Firebase if expired
 */
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        activityNameSpinner.setAdapter(adapter);
+        activityNameSpinner.setSelection(0, false);
 
 //        activityName = findViewById(R.id.activity_name_input);
 //        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
@@ -74,12 +88,15 @@ public class NewLFGPostActivity extends AppCompatActivity {
 //        View customView=getLayoutInflater().inflate(R.layout.yourlayout, null);
 //        actionBar.setCustomView(customView);
 
-        JsonParser parser = new JsonParser();
+//        final AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+
+        final JsonParser parser = new JsonParser();
 
         Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
         coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 
         for(int i = 0; i < 3; i++){
+
             OldDatabaseModel characters = db.getAccountData("account", "character"+i);
             String characterValue = characters.getValue();
 
@@ -107,6 +124,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
             btn.setId(i);
             btn.setGravity(Gravity.CENTER);
             btn.setButtonDrawable(new StateListDrawable());
+            btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
             btn.setLayoutParams(new RadioGroup.LayoutParams(
                     RadioGroup.LayoutParams.WRAP_CONTENT, //width
                     RadioGroup.LayoutParams.WRAP_CONTENT, //height
@@ -217,6 +235,8 @@ public class NewLFGPostActivity extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -246,4 +266,25 @@ public class NewLFGPostActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @OnItemSelected(R.id.activity_name_spinner)
+    public void spinnerItemSelected(Spinner spinner, int position) {
+
+        if(onCreateFlag){
+            onCreateFlag = false;
+        }
+        else{
+            spinner.getItemAtPosition(position);
+            //TODO: populate and show checkpoint spinner here
+        }
+
+    }
+
 }

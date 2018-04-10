@@ -13,14 +13,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "bungieAccount.db";
+    private static final String DATABASE_NAME = "bungieAccount";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    private static final String TABLE_ACCOUNT = "account";
-    private static final String TABLE_COLLECTABLES = "collectables";
+    private static final String TABLE_ACCOUNT = "Account";
+    private static final String TABLE_COLLECTABLES = "Collectables";
 //    private static final String
 
 

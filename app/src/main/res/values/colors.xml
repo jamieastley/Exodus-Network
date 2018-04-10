@@ -8,4 +8,8 @@
     <color name="colorWhiteTransparent">#80ffffff</color>
 
     <color name="emblem_deselected">#d2a1a1a1</color>
+
+    <!--Warmind colors-->
+
+    <color name="backgroundColor">#2e2e2e</color>
 </resources>

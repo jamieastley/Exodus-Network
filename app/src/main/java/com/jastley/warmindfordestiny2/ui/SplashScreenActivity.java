@@ -30,8 +30,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @BindView(R.id.splash_icon) ImageView splashIcon;
     @BindView(R.id.splash_text) TextView splashText;
     private static final int SPLASH_TIME = 2000;
-//    SharedPreferences savedPrefs;
-//    Boolean firstRun;
+
     Intent intent;
 
     @Override
@@ -41,8 +40,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(this);
 
-//        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//        firstRun = savedPrefs.getBoolean("firstRun", true);
         intent = new Intent(SplashScreenActivity.this, MainActivity.class);
 
         //set flags so pressing back won't trigger launching splash screen again
@@ -63,21 +60,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         alphaAnimator.setRepeatCount(ValueAnimator.INFINITE);
         alphaAnimator.start();
 
-//        if(firstRun){
             splashText.setText(R.string.gettingItemDatabase);
-//            asyncGetItemDatabase();
-//        }
-//        else {
-//            try {
-//                Thread.sleep(SPLASH_TIME);
-////                startActivity(intent);
-////                finish();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        asyncBackground();
-//        asyncGetItemDatabase();
 
         GetItemDatabase items = new GetItemDatabase(new GetItemDatabase.AsyncResponse() {
             @Override
@@ -91,29 +74,10 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
-//    private void asyncGetItemDatabase() {
-//        new GetItemDatabase(this).execute(this);
-//    }
-//
-////    private void test() {
-////        new GetItemDatabase().execute(this);
-////    }
-//
-//    @Override
-//    public void onAsyncDone(Boolean mBool) {
-//
-//
-//
-//
-////        getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-////        SharedPreferences.Editor editor = savedPrefs.edit();
-////
-////        try{
-////            editor.putBoolean("firstRun", false);
-////            editor.apply();
-////        }
-////        catch(Exception e){
-////            System.out.println("onCompleteSplash: " + e);
-////        }
-//    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

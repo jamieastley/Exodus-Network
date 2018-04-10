@@ -23,4 +23,7 @@ public interface AccountDAO {
 
     @Update
     void update(Account accountRow);
+
+    @Query("SELECT * FROM Account WHERE key = :key")
+    Account getByKey(String key);
 }

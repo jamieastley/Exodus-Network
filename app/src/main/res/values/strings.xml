@@ -39,4 +39,68 @@
     <string name="hunter">Hunter</string>
     <string name="warlock">Warlock</string>
     <string name="gettingItemDatabase">Getting Item Database...</string>
+
+    <string-array name="activities">
+        <item>Nightfall</item>
+        <item>PvP</item>
+        <item>Raid Lair</item>
+        <item>Raid</item>
+        <item>Raid - Misc</item>
+        <item>Public Events</item>
+        <item>Strikes</item>
+        <item>Campaign</item>
+        <item>Trials</item>
+        <item>Achievement</item>
+        <item>Social</item>
+    </string-array>
+
+    <string-array name="nightfall">
+        <item>Prestige</item>
+        <item>Normal</item>
+    </string-array>
+
+    <string-array name="pvp">
+        <item>Trials</item>
+        <item>Iron Banner</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="raidLair">
+        <item>Eater of Worlds - Prestige (Fresh)</item>
+        <item>Eater of Worlds - Prestige (Checkpoint)</item>
+        <item>Eater of Worlds - Prestige (Boss)</item>
+        <item>Eater of Worlds - Normal (Fresh)</item>
+        <item>Eater of Worlds - Normal (Checkpoint)</item>
+        <item>Eater of Worlds - Normal (Boss)</item>
+    </string-array>
+
+    <string-array name="raid">
+        <item>Leviathan - Prestige (Fresh)</item>
+        <item>Leviathan - Prestige (Checkpoint)</item>
+        <item>Leviathan - Prestige (Calus)</item>
+        <item>Leviathan - Normal (Fresh)</item>
+        <item>Leviathan - Normal (Checkpoint)</item>
+        <item>Leviathan - Normal (Calus)</item>
+    </string-array>
+
+    <string-array name="raidMisc">
+        <item>Raid - Checkpoint Share</item>
+        <item>Raid - Exploration</item>
+    </string-array>
+
+    <string-array name="publicEvents">
+        <item>Public Event - Heroic</item>
+        <item>Public Event - Normal</item>
+    </string-array>
+
+    <string-array name="strikes">
+        <item>Strike - Heroic</item>
+        <item>Strike - Normal</item>
+    </string-array>
+
+    <string-array name="achievement">
+        <item>Flawless Raider</item>
+        <item>Misc</item>
+    </string-array>
+
 </resources>

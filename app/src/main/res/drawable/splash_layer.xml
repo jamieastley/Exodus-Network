@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@color/backgroundColor" />
+
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/small_rasputin_white_alpha"/>
+    </item>
+</layer-list>
