@@ -1,7 +1,5 @@
 package com.jastley.warmindfordestiny2.LFG;
 
-import com.google.gson.JsonObject;
-
 /**
  * Created by jastl on 2/03/2018.
  */
@@ -17,7 +15,10 @@ public class LFGPost {
     private String description;
     private Long dateTime;
     private boolean hasMic;
-    private JsonObject characterStats;
+    private String membershipId;
+    private String emblemIcon;
+    private String emblemBackground;
+    private String characterId;
 
     public LFGPost() {
         //empty constructor for Firebase
@@ -25,7 +26,9 @@ public class LFGPost {
 
     //TODO: add description
 
-    public LFGPost(String activityTitle, String activityCheckpoint, String lightLevel, String membershipType, String displayName, String classType, String description, Long dateTime, boolean hasMic, JsonObject characterStats) {
+    public LFGPost(String activityTitle, String activityCheckpoint, String lightLevel, String membershipType,
+                   String displayName, String classType, String description, Long dateTime, boolean hasMic,
+                   String membershipId, String emblemIcon, String emblemBackground, String characterId) {
         this.activityTitle = activityTitle;
         this.activityCheckpoint = activityCheckpoint;
         this.lightLevel = lightLevel;
@@ -35,7 +38,10 @@ public class LFGPost {
         this.description = description;
         this.dateTime = dateTime;
         this.hasMic = hasMic;
-        this.characterStats = characterStats;
+        this.membershipId = membershipId;
+        this.emblemIcon = emblemIcon;
+        this.emblemBackground = emblemBackground;
+        this.characterId = characterId;
     }
 
 
@@ -71,19 +77,43 @@ public class LFGPost {
         return hasMic;
     }
 
-    public JsonObject getCharacterStats() {
-        return characterStats;
-    }
-
-    public void setCharacterStats(JsonObject characterStats) {
-        this.characterStats = characterStats;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getMembershipId() {
+        return membershipId;
+    }
+
+    public void setMembershipId(String membershipId) {
+        this.membershipId = membershipId;
+    }
+
+    public String getEmblemIcon() {
+        return emblemIcon;
+    }
+
+    public void setEmblemIcon(String emblemIcon) {
+        this.emblemIcon = emblemIcon;
+    }
+
+    public String getEmblemBackground() {
+        return emblemBackground;
+    }
+
+    public void setEmblemBackground(String emblemBackground) {
+        this.emblemBackground = emblemBackground;
+    }
+
+    public String getCharacterId() {
+        return characterId;
+    }
+
+    public void setCharacterId(String characterId) {
+        this.characterId = characterId;
     }
 }

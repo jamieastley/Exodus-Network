@@ -104,8 +104,14 @@ public class MainActivity extends AppCompatActivity
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null)
 //                        .show();
+                savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+                String membershipType = savedPrefs.getString("selectedPlatform", "");
+                String displayName = savedPrefs.getString("displayName"+membershipType, "");
+
                 //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
+                intent.putExtra("displayName", displayName);
+
                 startActivity(intent);
             }
         });
@@ -126,7 +132,7 @@ public class MainActivity extends AppCompatActivity
         mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
         mLinearLayoutManager.setReverseLayout(true);
-//        mLinearLayoutManager.setStackFromEnd(true);
+        mLinearLayoutManager.setStackFromEnd(true);
         mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
 //        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?

@@ -1,5 +1,6 @@
 package com.jastley.warmindfordestiny2.LFG;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -48,8 +49,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
     @BindView(R.id.lfg_description_input) EditText description;
     @BindView(R.id.micCheckBox) CheckBox micCheckBox;
     private String key;
-    private String lightLevel;
-    private String membershipType;
     private String displayName;
     private Long dateTime;
     private boolean hasMic = false;
@@ -65,6 +64,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
         ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        displayName = intent.getStringExtra("displayName");
 
         if ((savedInstanceState != null)) {
 
@@ -182,9 +184,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
         }
 
 //        TODO: remove hardcoded variables and replace with user account details
-        lightLevel = "278";
-        membershipType = "4";
-        displayName = "Last player";
+//        lightLevel = "278";
+//        membershipType = "4";
+//        displayName = "Last player";
 //        classType = "2";
 
         characterRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -269,11 +271,20 @@ public class NewLFGPostActivity extends AppCompatActivity {
                     hasMic = true;
                 }
 
+                String light = characterObject.get("light").getAsString();
+                String membershipType = characterObject.get("membershipType").getAsString();
+                String membershipId = characterObject.get("membershipId").getAsString();
+                String emblemIcon = characterObject.get("emblemPath").getAsString();
+                String emblemBackground = characterObject.get("emblemBackgroundPath").getAsString();
+                String characterId = characterObject.get("characterId").getAsString();
+                String classType = characterObject.get("classType").getAsString();
+
                 LFGPost newPost = new LFGPost(
                         activityNameSpinner.getSelectedItem().toString(),
                         activityCheckpointSpinner.getSelectedItem().toString(),
-                        lightLevel, membershipType, displayName, selectedCharacter.getText().toString(), description.getText().toString(), dateTime, hasMic,
-                        characterObject);
+                        light,
+                        membershipType, displayName, classType, description.getText().toString(), dateTime, hasMic,
+                        membershipId, emblemIcon, emblemBackground, characterId);
 
                 DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
