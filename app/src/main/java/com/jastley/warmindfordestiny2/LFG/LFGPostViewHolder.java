@@ -27,6 +27,14 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     @BindView(R.id.micIcon) ImageView micIcon;
     @BindView(R.id.player_Username) TextView displayName;
 
+
+    public String emblemIcon;
+    public String emblemBackground;
+    public String membershipId;
+    public String characterId;
+    public String membershipType;
+
+
     View mView;
 
     public LFGPostViewHolder(View itemView) {
@@ -47,6 +55,8 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setPlatformIcon(String icon, Context context) {
+
+        this.membershipType = icon;
 
 //        TODO: alpha-out white backgrounds from platform icons
         if (icon.equals("2")) {
@@ -136,6 +146,46 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
     public TextView getDisplayName() {
         return displayName;
+    }
+
+    public String getEmblemIcon() {
+        return emblemIcon;
+    }
+
+    public void setEmblemIcon(String emblemIcon) {
+        this.emblemIcon = emblemIcon;
+    }
+
+    public String getEmblemBackground() {
+        return emblemBackground;
+    }
+
+    public void setEmblemBackground(String emblemBackground) {
+        this.emblemBackground = emblemBackground;
+    }
+
+    public String getMembershipId() {
+        return membershipId;
+    }
+
+    public void setMembershipId(String membershipId) {
+        this.membershipId = membershipId;
+    }
+
+    public String getCharacterId() {
+        return characterId;
+    }
+
+    public void setCharacterId(String characterId) {
+        this.characterId = characterId;
+    }
+
+    public String getMembershipType() {
+        return membershipType;
+    }
+
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
     }
 
     public View getmView() {

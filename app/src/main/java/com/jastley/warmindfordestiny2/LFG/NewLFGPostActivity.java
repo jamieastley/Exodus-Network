@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
@@ -278,6 +279,8 @@ public class NewLFGPostActivity extends AppCompatActivity {
                 String emblemBackground = characterObject.get("emblemBackgroundPath").getAsString();
                 String characterId = characterObject.get("characterId").getAsString();
                 String classType = characterObject.get("classType").getAsString();
+
+                //TODO: check for null values before writing to Firebase
 
                 LFGPost newPost = new LFGPost(
                         activityNameSpinner.getSelectedItem().toString(),

@@ -1,0 +1,285 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
+    tools:context="com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment">
+
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/AppTheme.AppBarOverlay"-->
+        <!--&gt;-->
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/lfg_details_toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--android:elevation="4dp"-->
+            <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+            <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
+
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/emblem_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            >
+
+            <!--Emblem container-->
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+                <ImageView
+                    android:id="@+id/lfg_details_emblem_background"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_display_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginStart="80dp"
+                    android:layout_marginLeft="90dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/hello_blank_fragment"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="19sp"
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_group_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lfg_details_display_name"
+                    android:layout_alignLeft="@id/lfg_details_display_name"
+                    android:layout_alignStart="@id/lfg_details_display_name"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorWhite"
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/lightLevelBlue"
+                    android:textStyle="bold"
+                    android:textSize="23sp"
+                     />
+
+                <TextView
+                    android:id="@+id/lfg_details_class_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/lfg_details_light"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    />
+
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <!--Stats header container-->
+        <android.support.v7.widget.CardView
+            android:id="@+id/stats_card_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/emblem_container"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            >
+
+            <LinearLayout
+                android:id="@+id/stats_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/timePlayed"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/PVPAvgLifespan"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/pvpKdRatio"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    />
+
+            </LinearLayout>
+
+            <!--Stats value container-->
+            <LinearLayout
+                android:id="@+id/stats_values_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="10dp"
+                android:layout_below="@id/stats_container"
+                >
+
+                <ProgressBar
+                    android:id="@+id/stats_values_progress_bar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:indeterminateTint="@color/warmindAccent"
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_play_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_lifespan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_kdr"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    />
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+
+
+        <!--Post body container-->
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/stats_card_container"
+            >
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:padding="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/lfg_details_activity_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Someone doing something"
+                    android:textColor="@color/warmindAccent"
+                    android:textSize="20sp"
+                    />
+
+                <ImageView
+                    android:id="@+id/lfg_details_microphone_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignTop="@id/lfg_details_activity_title"
+                    android:layout_toStartOf="@id/lfg_details_platform_icon"
+                    android:layout_toLeftOf="@id/lfg_details_platform_icon"
+                    />
+
+                <ImageView
+                    android:id="@+id/lfg_details_platform_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_alignTop="@id/lfg_details_activity_title"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+
+                     />
+
+                <TextView
+                    android:id="@+id/lfg_details_activity_checkpoint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lfg_details_activity_title"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Activity checkpoint"
+                    android:textSize="15sp"
+                    android:textStyle="italic"
+                    />
+
+                <TextView
+                    android:id="@+id/lfg_details_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_below="@id/lfg_details_activity_checkpoint"
+                    android:text="@string/samIpsum"
+                    />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.User;
+package com.jastley.warmindfordestiny2.Dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Dialogs.adapters.PlatformSelectionAdapter;
 
 /**
  * Created by jastl on 23/03/2018.

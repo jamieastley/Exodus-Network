@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.User;
+package com.jastley.warmindfordestiny2.Dialogs.holders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -48,7 +48,7 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder {
         platformName.setText(platform);
     }
 
-    //Hidden field to get platformType out of onClick
+    //Hidden field to get platformType out of onPlatformSelection
     public void setPlatformType(String type) {
         platformType.setText(type);
     }

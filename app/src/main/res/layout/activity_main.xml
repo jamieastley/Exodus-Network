@@ -12,7 +12,8 @@
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -20,21 +21,24 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/warmindPrimary"
+        app:itemTextColor="@color/colorWhite"
+        app:itemIconTint="@color/colorWhite"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer">
 
-        <android.support.design.widget.NavigationView
-            android:orientation="horizontal"
-            android:id="@+id/nav_view_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:fitsSystemWindows="true"
-            app:menu="@menu/bottom_drawer_buttons"
+        <!--<android.support.design.widget.NavigationView-->
+            <!--android:orientation="horizontal"-->
+            <!--android:id="@+id/nav_view_bottom"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom"-->
+            <!--android:fitsSystemWindows="true"-->
+            <!--app:menu="@menu/bottom_drawer_buttons"-->
 
-            >
+            <!--&gt;-->
 
-        </android.support.design.widget.NavigationView>
+        <!--</android.support.design.widget.NavigationView>-->
     </android.support.design.widget.NavigationView>
 
 

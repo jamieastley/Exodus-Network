@@ -11,5 +11,10 @@
 
     <!--Warmind colors-->
 
+    <color name="warmindPrimary">#181d25</color>
+    <color name="warmindDark">#12161b</color>
+    <color name="warmindAccent">#ffd700</color>
+    <color name="warmindCardBackground">#2a333e</color>
+    <color name="lightLevelBlue">#01e5de</color>
     <color name="backgroundColor">#2e2e2e</color>
 </resources>

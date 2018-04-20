@@ -1,10 +1,13 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.LFG.models;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
- * Created by jastl on 2/03/2018.
+ * Created by jamie1192 on 2/03/2018.
  */
 
-public class LFGPost {
+public class LFGPost implements Parcelable {
 
     private String activityTitle;
     private String activityCheckpoint;
@@ -44,6 +47,38 @@ public class LFGPost {
         this.characterId = characterId;
     }
 
+
+    protected LFGPost(Parcel in) {
+        activityTitle = in.readString();
+        activityCheckpoint = in.readString();
+        lightLevel = in.readString();
+        membershipType = in.readString();
+        displayName = in.readString();
+        classType = in.readString();
+        description = in.readString();
+        if (in.readByte() == 0) {
+            dateTime = null;
+        } else {
+            dateTime = in.readLong();
+        }
+        hasMic = in.readByte() != 0;
+        membershipId = in.readString();
+        emblemIcon = in.readString();
+        emblemBackground = in.readString();
+        characterId = in.readString();
+    }
+
+    public static final Creator<LFGPost> CREATOR = new Creator<LFGPost>() {
+        @Override
+        public LFGPost createFromParcel(Parcel in) {
+            return new LFGPost(in);
+        }
+
+        @Override
+        public LFGPost[] newArray(int size) {
+            return new LFGPost[size];
+        }
+    };
 
     public String getActivityTitle() {
         return activityTitle;
@@ -113,7 +148,66 @@ public class LFGPost {
         return characterId;
     }
 
+    public void setActivityTitle(String activityTitle) {
+        this.activityTitle = activityTitle;
+    }
+
+    public void setActivityCheckpoint(String activityCheckpoint) {
+        this.activityCheckpoint = activityCheckpoint;
+    }
+
+    public void setLightLevel(String lightLevel) {
+        this.lightLevel = lightLevel;
+    }
+
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
+    }
+
+    public void setDateTime(Long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setHasMic(boolean hasMic) {
+        this.hasMic = hasMic;
+    }
+
     public void setCharacterId(String characterId) {
         this.characterId = characterId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(activityTitle);
+        dest.writeString(activityCheckpoint);
+        dest.writeString(lightLevel);
+        dest.writeString(membershipType);
+        dest.writeString(displayName);
+        dest.writeString(classType);
+        dest.writeString(description);
+        if (dateTime == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(dateTime);
+        }
+        dest.writeByte((byte) (hasMic ? 1 : 0));
+        dest.writeString(membershipId);
+        dest.writeString(emblemIcon);
+        dest.writeString(emblemBackground);
+        dest.writeString(characterId);
     }
 }

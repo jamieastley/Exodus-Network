@@ -11,11 +11,11 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -34,23 +34,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
-import com.jastley.warmindfordestiny2.LFG.LFGPost;
-import com.jastley.warmindfordestiny2.LFG.LFGPostRecyclerAdapter;
-import com.jastley.warmindfordestiny2.LFG.LFGPostViewHolder;
+import com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment;
+import com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment.OnFragmentInteractionListener;
+import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
+import com.jastley.warmindfordestiny2.LFG.LFGPostsFragment;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
-import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
+import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.User.GetCharacters;
-import com.jastley.warmindfordestiny2.User.PlatformRVHolder;
-import com.jastley.warmindfordestiny2.User.PlatformSelectionFragment;
+import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
+import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.api.AccessToken;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
-import com.jastley.warmindfordestiny2.database.GetItemDatabase;
 import com.jastley.warmindfordestiny2.database.models.Account;
-import com.jastley.warmindfordestiny2.ui.SplashScreenActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -73,15 +72,18 @@ import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    PlatformSelectionListener, GetCharacters.GetCharacterResponseInterface{
+                    PlatformSelectionListener, GetCharacters.GetCharacterResponseInterface,
+                    LFGDetailsFragment.OnFragmentInteractionListener,
+                    LFGPostsFragment.OnFragmentInteractionListener {
 
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
     private DatabaseHelper db;
+
+    private LFGPostsFragment postsFragment;
     SharedPreferences savedPrefs;
     DialogFragment platformDialog;
     DialogFragment loadingDialog;// = new LoadingDialogFragment();
-    GetCharacters getCharacters;
 
     private String redirectUri = "warmindfordestiny://callback";
     private String baseURL = "https://www.bungie.net";
@@ -96,6 +98,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.lfg_feed);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -127,19 +131,21 @@ public class MainActivity extends AppCompatActivity
         View hView =  navigationView.getHeaderView(0);
 
 
+        postsFragment = new LFGPostsFragment();
+        setFragment(postsFragment);
 //        TextView displayName = hView.findViewById(R.id.nav_displayName);
 
-        mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setReverseLayout(true);
-        mLinearLayoutManager.setStackFromEnd(true);
-        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
-
-//        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
-
-                //Load LFG posts from Firebase
-                loadLFGPosts();
-                mLFGPostAdapter.startListening();
+//        mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
+//        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
+//        mLinearLayoutManager.setReverseLayout(true);
+//        mLinearLayoutManager.setStackFromEnd(true);
+//        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
+//
+////        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
+//
+//                //Load LFG posts from Firebase
+//                loadLFGPosts();
+//                mLFGPostAdapter.startListening();
 
 //        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
 //        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
@@ -166,6 +172,13 @@ public class MainActivity extends AppCompatActivity
 //        asyncGetCollectables();
         updateNavUI(hView);
 
+    }
+
+    private void setFragment(LFGPostsFragment postsFragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        fragmentTransaction.replace(R.id.lfg_content_frame, postsFragment);
+        fragmentTransaction.commit();
     }
 
     private void updateNavUI(View hView) {
@@ -211,7 +224,7 @@ public class MainActivity extends AppCompatActivity
         DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
         //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
         DatabaseReference dataRef = postRef.child("lfg");
-        dataRef.keepSynced(true);
+//        dataRef.keepSynced(true);
         Query query = dataRef.orderByChild("dateTime").limitToLast(20);
 //        dataRef.keepSynced(true);
         //            TODO: query options, sort by dateTime
@@ -223,20 +236,40 @@ public class MainActivity extends AppCompatActivity
                         .build();
 
 
-        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions, new RecyclerViewClickListener() {
-            @Override
-            public void onClick(View view, int position, LFGPostViewHolder holder) {
-                Toast.makeText(MainActivity.this, holder.getDisplayName().getText() + " clicked", Toast.LENGTH_SHORT).show();
-            }
+//        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions, new RecyclerViewClickListener() {
+//            @Override
+//            public void onClick(View view, int position, LFGPostViewHolder holder) {
+//
+//                Fragment playerFragment = null;
+//                playerFragment = new LFGDetailsFragment();
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                fragmentManager.beginTransaction()
+//                        .replace(R.id.lfg_content_frame, playerFragment)
+//                        .commit();
 
-            @Override
-            public void onLongClick(View view, int position) {
 
-            }
-        });
-        mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+//                Toast.makeText(MainActivity.this, holder.getDisplayName().getText() + " clicked", Toast.LENGTH_SHORT).show();
 
-        mLFGPostAdapter.startListening();
+//                Intent lfgFeed = new Intent(this, MainActivity.class);
+//                Intent intent = new Intent(getBaseContext(), LFGPlayerDetails.class);
+//                intent.putExtra("displayName", holder.getDisplayName().getText());
+//                intent.putExtra("membershipId", holder.getMembershipId());
+//                intent.putExtra("characterId", holder.getCharacterId());
+//                intent.putExtra("classType", holder.getClassType().getText());
+//                intent.putExtra("emblemBackground", holder.getEmblemBackground());
+//                startActivity(intent);
+
+
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int position) {
+//
+//            }
+//        });
+//        mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+
+//        mLFGPostAdapter.startListening();
 
     }
 
@@ -347,7 +380,9 @@ public class MainActivity extends AppCompatActivity
                         editor.apply();
 
                         //String membershipId = response.body().getResponse().getDestinyMemberships().get(0).getMembershipId();
-                        getCharacters.GetCharacterSummaries(MainActivity.this);
+
+                        getCharacters(membershipType);
+//                        getCharacters.GetCharacterSummaries(MainActivity.this);
                     }
 
                 }
@@ -628,7 +663,7 @@ public class MainActivity extends AppCompatActivity
 
     //PlatformSelection dialog clickListener
     @Override
-    public void onClick(View view, int position, PlatformRVHolder holder) {
+    public void onPlatformSelection(View view, int position, PlatformRVHolder holder) {
         Toast.makeText(this, holder.getPlatformName().getText().toString()
                 + " ("
                 + holder.getPlatformType().getText().toString() + ") selected", Toast.LENGTH_SHORT).show();
@@ -759,7 +794,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<JsonElement> call, Throwable t) {
                 Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't get Bungie profile", Snackbar.LENGTH_LONG)
-                        .setAction("Retry", new retryListener())
+//                        .setAction("Retry", new retryListener())
                         .show();
             }
 
@@ -777,11 +812,16 @@ public class MainActivity extends AppCompatActivity
 //        loadingDialog.dismiss();
     }
 
-    public class retryListener implements View.OnClickListener{
-
-        @Override
-        public void onClick(View view) {
-
-        }
+    @Override
+    public void onFragmentInteraction(SelectedPlayerModel playerModel) {
+//        LFGDetailsFragment.OnFragmentInteractionListener.onFra;
     }
+
+//    public class retryListener implements View.OnClickListener{
+//
+//        @Override
+//        public void onClick(View view) {
+//
+//        }
+//    }
 }

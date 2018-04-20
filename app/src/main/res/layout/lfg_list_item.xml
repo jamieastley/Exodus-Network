@@ -8,7 +8,9 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:backgroundTint="@color/warmindCardBackground"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -31,6 +33,7 @@
                 android:id="@+id/lfg_activity_title"
                 android:text="Vault of Glass - Prestige"
                 android:textSize="20sp"
+                android:textColor="@color/warmindAccent"
                 android:layout_toEndOf="@id/platform_Icon"
                 android:layout_toRightOf="@+id/platform_Icon"
                 android:layout_marginStart="6dp"
@@ -42,6 +45,7 @@
                 android:id="@+id/lfg_activity_checkpoint"
                 android:text="Prestige - Eater of Worlds"
                 android:textSize="14sp"
+                android:textColor="@color/colorWhite"
                 android:layout_toRightOf="@+id/platform_Icon"
                 android:layout_toEndOf="@+id/platform_Icon"
                 android:layout_marginLeft="10dp"
@@ -54,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/lfg_time"
                 android:text="3 min ago"
+                android:textColor="@color/colorWhite"
                 android:layout_marginLeft="6dp"
                 android:layout_marginStart="6dp"
                 android:layout_marginBottom="3dp"
@@ -71,7 +76,7 @@
                 android:layout_marginEnd="3dp"
                 android:text="✦ 300"
                 android:textSize="25sp"
-                android:textColor="#d000ff" />
+                android:textColor="@color/lightLevelBlue" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -79,6 +84,7 @@
                 android:id="@+id/class_Type"
                 android:text="Warlock"
                 android:textSize="18sp"
+                android:textColor="@color/colorWhite"
                 android:layout_marginRight="3dp"
                 android:layout_marginEnd="3dp"
                 android:layout_alignParentEnd="true"
@@ -100,6 +106,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/player_Username"
                 android:text="wheels00769"
+                android:textColor="@color/colorWhite"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"

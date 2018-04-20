@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.User;
+package com.jastley.warmindfordestiny2.Dialogs.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
-import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 
 
 /**
@@ -39,7 +39,7 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
         mPlatformRVHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onClick(view, mPlatformRVHolder.getAdapterPosition(), mPlatformRVHolder);
+                listener.onPlatformSelection(view, mPlatformRVHolder.getAdapterPosition(), mPlatformRVHolder);
             }
         });
 

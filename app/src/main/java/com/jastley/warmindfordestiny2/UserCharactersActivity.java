@@ -36,7 +36,6 @@ public class UserCharactersActivity extends AppCompatActivity {
         thirdCharacterFragment = new ThirdCharacterFragment();
 
         setFragment(firstCharacterFragment);
-
         //TODO implement OnNavigationItemReselected to refresh current fragment
         mCharacterNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

@@ -5,6 +5,7 @@ import com.squareup.okhttp.ResponseBody;
 
 import org.json.JSONObject;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -18,6 +19,8 @@ import retrofit2.http.Path;
  */
 
 public interface BungieAPI {
+
+    String baseURL = "https://www.bungie.net";
 
     //OAuth
     @Headers("Accept: application/json")
@@ -57,4 +60,12 @@ public interface BungieAPI {
     @GET("reducedCollectableInventoryItems.json")
     Call<JsonElement> getCollectablesDatabase();
 
+    //HistoricalStatsForAccount
+    @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Stats/")
+    Call<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+
+
+    //Get Clan Data
+    @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
+    Call<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 }

@@ -12,10 +12,11 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseError;
+import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
 
 /**
- * Created by jamie on 18/3/18.
+ * Created by jamie1192 on 18/3/18.
  */
 
 public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> {
@@ -62,6 +63,12 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
         holder.setLightLevel(model.getLightLevel());
         holder.setMicIcon(model.isHasMic(), context);
         holder.setDateTime(model.getDateTime());
+
+        //won't be displayed, for retrieval onPlatformSelection
+        holder.setEmblemIcon(model.getEmblemIcon());
+        holder.setEmblemBackground(model.getEmblemBackground());
+        holder.setCharacterId(model.getCharacterId());
+        holder.setMembershipId(model.getMembershipId());
     }
 
     @Override

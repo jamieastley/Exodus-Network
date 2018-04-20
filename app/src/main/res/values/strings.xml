@@ -107,5 +107,13 @@
     <string-array name="empty">
         <item></item>
     </string-array>
+    <string name="title_activity_lfgplayer">LFGPlayerActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="samIpsum">Look, just because I don\'t be givin\' no man a foot massage don\'t make it right for Marsellus to throw Antwone into a glass motherfuckin\' house, fuckin\' up the way the nigger talks. Motherfucker do that shit to me, he better paralyze my ass, \'cause I\'ll kill the motherfucker, know what I\'m sayin\'?</string>
+    <string name="timePlayed">Play Time</string>
+    <string name="PVPAvgLifespan">PVP Avg Lifespan</string>
+    <string name="pvpKdRatio">PVP KDR</string>
 
 </resources>
