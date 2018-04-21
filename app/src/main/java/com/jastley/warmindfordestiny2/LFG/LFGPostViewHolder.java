@@ -99,10 +99,10 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     public void setMicIcon(boolean hasMic, Context context) {
 
         if (hasMic) {
-            micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_on_24dp));
+            micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_on_white));
         }
         else {
-            micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_off_24dp));
+            micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_off_white));
         }
     }
 

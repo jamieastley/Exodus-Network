@@ -1,9 +1,6 @@
 package com.jastley.warmindfordestiny2.api;
 
 import com.google.gson.JsonElement;
-import com.squareup.okhttp.ResponseBody;
-
-import org.json.JSONObject;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -15,7 +12,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 /**
- * Created by jastl on 15/03/2018.
+ * Created by jamie1192 on 15/03/2018.
  */
 
 public interface BungieAPI {
@@ -62,10 +59,10 @@ public interface BungieAPI {
 
     //HistoricalStatsForAccount
     @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Stats/")
-    Call<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+    Observable<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
 
     //Get Clan Data
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
-    Call<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+    Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 }

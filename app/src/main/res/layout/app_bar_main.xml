@@ -5,23 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/warmindDark"
     tools:context="com.jastley.warmindfordestiny2.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:label="@string/lfg_feed"
-        android:textColor="@color/colorWhite"
-        android:background="@color/warmindDark"
+        android:theme="@style/AppTheme.AppBarOverlay"
         >
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/warmindDark"
-            android:textColor="@color/colorWhite"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>

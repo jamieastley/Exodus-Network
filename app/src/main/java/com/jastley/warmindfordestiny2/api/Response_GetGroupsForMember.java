@@ -798,10 +798,6 @@ public class Response_GetGroupsForMember {
         @SerializedName("clanCallsign")
         @Expose
         private String clanCallsign;
-        @SerializedName("clanBannerData")
-        @Expose
-        private ClanBannerData clanBannerData;
-        private final static long serialVersionUID = -5424053051508748197L;
 
         public String getClanCallsign() {
             return clanCallsign;
@@ -811,94 +807,8 @@ public class Response_GetGroupsForMember {
             this.clanCallsign = clanCallsign;
         }
 
-        public ClanBannerData getClanBannerData() {
-            return clanBannerData;
-        }
 
-        public void setClanBannerData(ClanBannerData clanBannerData) {
-            this.clanBannerData = clanBannerData;
-        }
     }
 
-    public static class ClanBannerData {
 
-        @SerializedName("decalId")
-        @Expose
-        private int decalId;
-        @SerializedName("decalColorId")
-        @Expose
-        private int decalColorId;
-        @SerializedName("decalBackgroundColorId")
-        @Expose
-        private int decalBackgroundColorId;
-        @SerializedName("gonfalonId")
-        @Expose
-        private int gonfalonId;
-        @SerializedName("gonfalonColorId")
-        @Expose
-        private int gonfalonColorId;
-        @SerializedName("gonfalonDetailId")
-        @Expose
-        private int gonfalonDetailId;
-        @SerializedName("gonfalonDetailColorId")
-        @Expose
-        private int gonfalonDetailColorId;
-        private final static long serialVersionUID = 6701398512643917465L;
-
-        public int getDecalId() {
-            return decalId;
-        }
-
-        public void setDecalId(int decalId) {
-            this.decalId = decalId;
-        }
-
-        public int getDecalColorId() {
-            return decalColorId;
-        }
-
-        public void setDecalColorId(int decalColorId) {
-            this.decalColorId = decalColorId;
-        }
-
-        public int getDecalBackgroundColorId() {
-            return decalBackgroundColorId;
-        }
-
-        public void setDecalBackgroundColorId(int decalBackgroundColorId) {
-            this.decalBackgroundColorId = decalBackgroundColorId;
-        }
-
-        public int getGonfalonId() {
-            return gonfalonId;
-        }
-
-        public void setGonfalonId(int gonfalonId) {
-            this.gonfalonId = gonfalonId;
-        }
-
-        public int getGonfalonColorId() {
-            return gonfalonColorId;
-        }
-
-        public void setGonfalonColorId(int gonfalonColorId) {
-            this.gonfalonColorId = gonfalonColorId;
-        }
-
-        public int getGonfalonDetailId() {
-            return gonfalonDetailId;
-        }
-
-        public void setGonfalonDetailId(int gonfalonDetailId) {
-            this.gonfalonDetailId = gonfalonDetailId;
-        }
-
-        public int getGonfalonDetailColorId() {
-            return gonfalonDetailColorId;
-        }
-
-        public void setGonfalonDetailColorId(int gonfalonDetailColorId) {
-            this.gonfalonDetailColorId = gonfalonDetailColorId;
-        }
-    }
 }

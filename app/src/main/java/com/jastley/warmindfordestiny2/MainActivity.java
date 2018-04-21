@@ -5,6 +5,8 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,7 +53,10 @@ import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.jastley.warmindfordestiny2.database.models.Account;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -97,27 +102,25 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.lfg_feed);
+//        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(view -> {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null)
 //                        .show();
-                savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-                String membershipType = savedPrefs.getString("selectedPlatform", "");
-                String displayName = savedPrefs.getString("displayName"+membershipType, "");
+            savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+            String membershipType = savedPrefs.getString("selectedPlatform", "");
+            String displayName = savedPrefs.getString("displayName"+membershipType, "");
 
-                //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
-                Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
-                intent.putExtra("displayName", displayName);
+            //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
+            Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
+            intent.putExtra("displayName", displayName);
 
-                startActivity(intent);
-            }
+            startActivity(intent);
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -456,18 +459,22 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-//            return true;
+//        if (id == R.id.action_logout) {
+////            return true;
+//
+////            DialogFragment loadingDialog = new LoadingDialogFragment();
+////            loadingDialog.setCancelable(false);
+////            loadingDialog.show(getFragmentManager(), "loadingDialog");
+//
+//        }
 
-//            DialogFragment loadingDialog = new LoadingDialogFragment();
-//            loadingDialog.setCancelable(false);
-//            loadingDialog.show(getFragmentManager(), "loadingDialog");
-
+        if (id == R.id.action_filter){
+            Toast.makeText(this, "TODO: filter items", Toast.LENGTH_SHORT).show();
         }
 
-        if (id == R.id.pause_live_lfg_feed) {
-            mLFGPostAdapter.stopListening();
-        }
+//        if (id == R.id.pause_live_lfg_feed) {
+//            mLFGPostAdapter.stopListening();
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -755,15 +762,51 @@ public class MainActivity extends AppCompatActivity
                         editor.putString("emblemBackground" + count, characterIdObj.get("emblemBackgroundPath").getAsString());
                         editor.apply();
 
-                        AsyncTask.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                Account account = new Account();
-                                account.setKey(currentCharacter);
-                                account.setValue(characterDB);
-                                mAccountDAO.insert(account);
-                            }
+                        Integer finalCount1 = count;
+                        AsyncTask.execute(() -> {
+                            Account account = new Account();
+                            account.setKey(currentCharacter);
+                            account.setValue(characterDB);
+                            mAccountDAO.insert(account);
+
+
                         });
+                        Integer finalCount = finalCount1;
+                        Picasso.with(getBaseContext())
+                                .load(baseURL+characterIdObj.get("emblemPath").getAsString())
+//                            .fit()
+                                .into(new Target() {
+                                    @Override
+                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                        try{
+                                            File directory = getDir("playerEmblems", Context.MODE_PRIVATE);
+                                            if (!directory.exists()) {
+                                                directory.mkdir();
+                                            }
+
+                                            File path = new File(directory, finalCount + ".jpeg");
+                                            FileOutputStream fos = new FileOutputStream(path);
+                                            int quality = 100;
+                                            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+                                            fos.flush();
+                                            fos.close();
+//                                                emblemIcon.setImageURI(Uri.fromFile(path));
+                                        }
+                                        catch(Exception e) {
+                                            Toast.makeText(MainActivity.this, "Couldn't download character emblems!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onBitmapFailed(Drawable errorDrawable) {
+
+                                    }
+
+                                    @Override
+                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                    }
+                                });
 //                        db.insertAccountData("account", currentCharacter, characterDB);
                     } catch (Exception e) {
                         System.out.println("Can't insert: " + e);

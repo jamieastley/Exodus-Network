@@ -1,11 +1,13 @@
 package com.jastley.warmindfordestiny2.LFG;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,8 @@ import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -140,6 +144,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
             btn.setId(i);
             btn.setGravity(Gravity.CENTER);
             btn.setButtonDrawable(new StateListDrawable());
+            btn.setTextColor(getResources().getColor(R.color.colorWhite));
             btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
             btn.setLayoutParams(new RadioGroup.LayoutParams(
                     RadioGroup.LayoutParams.WRAP_CONTENT, //width
@@ -156,8 +161,12 @@ public class NewLFGPostActivity extends AppCompatActivity {
             }
 
             String baseURL = "https://www.bungie.net";
+
+            File directory = getDir("playerEmblems", Context.MODE_PRIVATE);
+            File path = new File(directory, i + ".jpeg");
+
             Picasso.with(this)
-                    .load(baseURL+emblem)
+                    .load(Uri.fromFile(path))
                     .placeholder(coloredPlaceholder)
                     .transform(new CropCircleTransformation())
                     .into(new Target() {
@@ -190,41 +199,38 @@ public class NewLFGPostActivity extends AppCompatActivity {
 //        displayName = "Last player";
 //        classType = "2";
 
-        characterRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+        characterRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
 
-                View radioButton = characterRadioGroup.findViewById(i);
-                int index = characterRadioGroup.indexOfChild(radioButton);
+            View radioButton = characterRadioGroup.findViewById(i);
+            int index = characterRadioGroup.indexOfChild(radioButton);
 
-                //get button count for alpha modification
-                int childCount = characterRadioGroup.getChildCount();
+            //get button count for alpha modification
+            int childCount = characterRadioGroup.getChildCount();
 
-                switch (index) {
-                    case 0: // first button
-                        characterRadioGroup.getChildAt(0).setAlpha(1f);
-                        if(childCount > 1){
-                            characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-                            if(childCount > 2){
-                                characterRadioGroup.getChildAt(2).setAlpha(0.3f);
-                            }
-                        }
-                        break;
-                    case 1: // secondbutton
-                        characterRadioGroup.getChildAt(0).setAlpha(0.3f);
-                        if(childCount > 1){
-                            characterRadioGroup.getChildAt(1).setAlpha(1f);
-                            if(childCount > 2){
-                                characterRadioGroup.getChildAt(2).setAlpha(0.3f);
-                            }
-                        }
-                        break;
-                    case 2:
-                        characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+            switch (index) {
+                case 0: // first button
+                    characterRadioGroup.getChildAt(0).setAlpha(1f);
+                    if(childCount > 1){
                         characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-                        characterRadioGroup.getChildAt(2).setAlpha(1f);
-                        break;
-                }
+                        if(childCount > 2){
+                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                        }
+                    }
+                    break;
+                case 1: // secondbutton
+                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+                    if(childCount > 1){
+                        characterRadioGroup.getChildAt(1).setAlpha(1f);
+                        if(childCount > 2){
+                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                        }
+                    }
+                    break;
+                case 2:
+                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+                    characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+                    characterRadioGroup.getChildAt(2).setAlpha(1f);
+                    break;
             }
         });
 

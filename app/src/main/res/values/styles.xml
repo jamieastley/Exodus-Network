@@ -3,15 +3,27 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/warmindPrimary</item>
+        <item name="colorPrimaryDark">@color/warmindDark</item>
+        <item name="colorAccent">@color/warmindAccent</item>
+        <item name="android:windowBackground">@color/warmindCardBackground</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <!--<style name="SpinnerItemStyle" parent="@style/Widget.AppCompat.Spinner.DropDown">-->
+        <!--<item name="android:textColor">@color/colorWhite</item>-->
+        <!--<item name="android:background">@color/warmindCardBackground</item>-->
+    <!--</style>-->
+
+    <!--<style name="WarmindTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+        <!--<item name="warmindPrimary">@color/warmindPrimary</item>-->
+        <!--<item name="warmindPrimaryDark">@color/warmindDark</item>-->
+        <!--<item name="warmindAccent">@color/warmindAccent</item>-->
+    <!--</style>-->
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_layer</item>

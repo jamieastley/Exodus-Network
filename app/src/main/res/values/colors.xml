@@ -17,4 +17,5 @@
     <color name="warmindCardBackground">#2a333e</color>
     <color name="lightLevelBlue">#01e5de</color>
     <color name="backgroundColor">#2e2e2e</color>
+    <color name="placeholderHint">#a9a9a9</color>
 </resources>

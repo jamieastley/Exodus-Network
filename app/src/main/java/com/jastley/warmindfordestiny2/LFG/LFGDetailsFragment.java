@@ -2,6 +2,7 @@ package com.jastley.warmindfordestiny2.LFG;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,28 +14,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
-import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
-import com.jastley.warmindfordestiny2.api.Response_GetGroupsForMember;
-import com.jastley.warmindfordestiny2.api.Response_GetHistoricalStatsAccount;
+import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,7 +53,9 @@ public class LFGDetailsFragment extends Fragment {
     @BindView(R.id.lfg_details_kdr) TextView kdRatio;
     @BindView(R.id.lfg_details_activity_title) TextView activityTitle;
     @BindView(R.id.lfg_details_activity_checkpoint) TextView activityCheckpoint;
+
     @BindView(R.id.stats_values_progress_bar) ProgressBar statsValuesProgress;
+    @BindView(R.id.lfg_details_group_progress) ProgressBar groupNameProgress;
 
 //    @BindView(R.id.lfg_details_emblem_icon) ImageView emblemIcon;
 
@@ -74,6 +64,8 @@ public class LFGDetailsFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    @NonNull
+    private BungieAPI mBungieAPI;
 
     public LFGDetailsFragment() {
         // Required empty public constructor
@@ -103,6 +95,8 @@ public class LFGDetailsFragment extends Fragment {
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             receivedPlayerClick = bundle.getParcelable("clickedPlayer");
+
+            mBungieAPI = new RetrofitHelper().getBungieAPI();
 
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -167,9 +161,9 @@ public class LFGDetailsFragment extends Fragment {
                 .load(baseURL+receivedPlayerClick.getEmblemBackground())
                 .into(emblemBackground);
 
-        getHistoricalStatsAccount(membershipType, membershipId);
 
-//        getClanData(membershipType, membershipId);
+        getHistoricalStatsAccount(membershipType, membershipId);
+        getGroupDetails(membershipType, membershipId);
 
         return view;
 
@@ -232,145 +226,60 @@ public class LFGDetailsFragment extends Fragment {
 
     }
 
-    public void getHistoricalStatsAccount(final String membershipType, final String membershipId) {
+    public void getGroupDetails(String membershipType, String membershipId) {
 
-
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
-
-                Request.Builder requestBuilder = original.newBuilder()
-                        .header("X-API-Key", apiKey);
-
-                Request request = requestBuilder.build();
-
-                return chain.proceed(request);
-            }
-        });
-
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build());
-
-        Retrofit retrofit = builder.build();
-
-        BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-        Call<Response_GetHistoricalStatsAccount> getHistoricalStatsAccountCall = bungieClient.getHistoricalStatsAccount(
-                membershipType,
-                membershipId
-        );
-
-        getHistoricalStatsAccountCall.enqueue(new Callback<Response_GetHistoricalStatsAccount>() {
-            @Override
-            public void onResponse(Call<Response_GetHistoricalStatsAccount> call, Response<Response_GetHistoricalStatsAccount> response) {
-
-                try{
-                    playTime.setText(response.body().getResponse().getMergedAllCharacters().getMerged().getAccountAllTime().getSecondsPlayed().getBasic().getDisplayValue());
-                }
-                catch(Exception e){
-                    playTime.setText("-");
-                }
-
-                try{
-                    lifeSpan.setText(response.body().getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getAverageLifespan().getBasic().getDisplayValue());
-                }
-                catch(Exception e){
-                    lifeSpan.setText("-");
-                }
-
-                try{
-                    kdRatio.setText(response.body().getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getKillsDeathsRatio().getBasic().getDisplayValue());
-                }
-                catch(Exception e){
-                    kdRatio.setText("-");
-                }
-
-                statsValuesProgress.setVisibility(View.GONE);
-
-                getClanData(membershipType, membershipId);
-
-            }
-
-            @Override
-            public void onFailure(Call<Response_GetHistoricalStatsAccount> call, Throwable t) {
-
-            }
-        });
-
+        mBungieAPI.getClanData(membershipType, membershipId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                            groupName.setText(response.getResponse().getResults().get(0).getGroup().getName());
+                            groupNameProgress.setVisibility(View.GONE);
+                        },
+                        error -> groupName.setText(""));
     }
 
+    public void getHistoricalStatsAccount(String membershipType, String membershipId) {
 
-    public void getClanData(String membershipType, String membershipId) {
+        mBungieAPI.getHistoricalStatsAccount(membershipType, membershipId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                    try {
+                        playTime.setText(response.getResponse().getMergedAllCharacters().getMerged().getAccountAllTime().getSecondsPlayed().getBasic().getDisplayValue());
+                    } catch (Exception e) {
+                        playTime.setText("-");
+                    }
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
+                    try {
+                        lifeSpan.setText(response.getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getAverageLifespan().getBasic().getDisplayValue());
+                    } catch (Exception e) {
+                        lifeSpan.setText("-");
+                    }
 
-                Request.Builder requestBuilder = original.newBuilder()
-                        .header("X-API-Key", apiKey);
-
-                Request request = requestBuilder.build();
-
-                return chain.proceed(request);
-            }
-        });
-
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build());
-
-        Retrofit retrofit = builder.build();
-
-        BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-        Call<Response_GetGroupsForMember> getGroupsForMemberCall = bungieClient.getClanData(
-                membershipType,
-                membershipId
-        );
-
-        getGroupsForMemberCall.enqueue(new Callback<Response_GetGroupsForMember>() {
-            @Override
-            public void onResponse(Call<Response_GetGroupsForMember> call, Response<Response_GetGroupsForMember> response) {
-
-                try{
-                    int groupCount = response.body().getResponse().getTotalResults();
-                    groupName.setText(response.body().getResponse().getResults().get(groupCount).getGroup().getName());
-                }
-                catch(Exception e) {
-                    groupName.setText("");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Response_GetGroupsForMember> call, Throwable t) {
-
-            }
-        });
-
+                    try {
+                        kdRatio.setText(response.getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getKillsDeathsRatio().getBasic().getDisplayValue());
+                    } catch (Exception e) {
+                        kdRatio.setText("-");
+                    }
+                    statsValuesProgress.setVisibility(View.GONE);
+                });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

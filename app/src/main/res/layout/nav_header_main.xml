@@ -64,5 +64,4 @@
 
     </RelativeLayout>
 
-    <!--TODO Display logged-in users displayName and character emblemIcons-->
 </LinearLayout>

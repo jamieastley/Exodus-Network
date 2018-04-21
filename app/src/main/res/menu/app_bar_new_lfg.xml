@@ -6,6 +6,7 @@
         android:id="@+id/submit_lfg_post_button"
         android:icon="@drawable/ic_send_black_24dp"
         android:title="@string/action_lfg_pause"
+        android:iconTint="@color/warmindAccent"
         app:showAsAction="ifRoom"/>
 
 </menu>
