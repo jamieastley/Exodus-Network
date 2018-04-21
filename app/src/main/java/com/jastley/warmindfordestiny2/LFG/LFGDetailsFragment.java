@@ -133,12 +133,13 @@ public class LFGDetailsFragment extends Fragment {
         classType.setText(receivedPlayerClick.getClassType());
         activityTitle.setText(receivedPlayerClick.getActivityTitle());
         activityCheckpoint.setText(receivedPlayerClick.getActivityCheckpoint());
+        description.setText(receivedPlayerClick.getDescription());
 
-        if(receivedPlayerClick.isHasMic()){
-            micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_on_24dp));
+        if(receivedPlayerClick.getHasMic()){
+            micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_on_white));
         }
         else {
-            micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_off_24dp));
+            micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_off_white));
         }
 
         switch (receivedPlayerClick.getMembershipType()) {

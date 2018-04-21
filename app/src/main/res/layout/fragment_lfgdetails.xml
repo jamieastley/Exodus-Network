@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorWhite"
     tools:context="com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment">
 
     <!--<android.support.design.widget.AppBarLayout-->
@@ -32,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            app:cardBackgroundColor="@color/warmindCardBackground"
             >
 
             <!--Emblem container-->
@@ -133,6 +133,7 @@
             android:layout_below="@id/emblem_container"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            app:cardBackgroundColor="#1a2028"
             >
 
             <LinearLayout
@@ -149,6 +150,7 @@
                     android:text="@string/timePlayed"
                     android:textStyle="bold"
                     android:textAlignment="center"
+                    android:textColor="@color/colorWhite"
                     />
 
                 <TextView
@@ -158,6 +160,7 @@
                     android:text="@string/PVPAvgLifespan"
                     android:textStyle="bold"
                     android:textAlignment="center"
+                    android:textColor="@color/colorWhite"
                     />
 
                 <TextView
@@ -167,6 +170,7 @@
                     android:text="@string/pvpKdRatio"
                     android:textStyle="bold"
                     android:textAlignment="center"
+                    android:textColor="@color/colorWhite"
                     />
 
             </LinearLayout>
@@ -186,6 +190,7 @@
                     android:id="@+id/stats_values_progress_bar"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:layout_marginLeft="10dp"
                     android:indeterminateTint="@color/warmindAccent"
                     />
 
@@ -195,6 +200,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
+                    android:textColor="@color/warmindAccent"
                     />
 
                 <TextView
@@ -203,6 +209,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
+                    android:textColor="@color/warmindAccent"
                     />
 
                 <TextView
@@ -211,6 +218,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textAlignment="center"
+                    android:textColor="@color/warmindAccent"
                     />
 
             </LinearLayout>
@@ -225,6 +233,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_below="@id/stats_card_container"
+            app:cardBackgroundColor="#1a2028"
             >
 
             <RelativeLayout
@@ -240,7 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Someone doing something"
-                    android:textColor="@color/warmindAccent"
+                    android:textColor="@color/colorWhite"
                     android:textSize="20sp"
                     />
 
@@ -277,15 +286,16 @@
                     android:text="Activity checkpoint"
                     android:textSize="15sp"
                     android:textStyle="italic"
+                    android:textColor="@color/placeholderHint"
                     />
 
                 <TextView
                     android:id="@+id/lfg_details_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:layout_below="@id/lfg_details_activity_checkpoint"
                     android:text="@string/samIpsum"
+                    android:textColor="@color/colorWhite"
                     />
 
             </RelativeLayout>

@@ -33,6 +33,8 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     public String membershipId;
     public String characterId;
     public String membershipType;
+    public String description;
+    public boolean hasMic;
 
 
     View mView;
@@ -99,9 +101,11 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     public void setMicIcon(boolean hasMic, Context context) {
 
         if (hasMic) {
+            this.hasMic = true;
             micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_on_white));
         }
         else {
+            this.hasMic = false;
             micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_off_white));
         }
     }
@@ -186,6 +190,22 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
     public void setMembershipType(String membershipType) {
         this.membershipType = membershipType;
+    }
+
+    public boolean getHasMic() {
+        return hasMic;
+    }
+
+    public void setHasMic(boolean hasMic) {
+        this.hasMic = hasMic;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public View getmView() {

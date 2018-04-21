@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -263,50 +264,50 @@ public class NewLFGPostActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.submit_lfg_post_button:
 
-                item.setEnabled(false);
+                String descriptionText = description.getText().toString().trim();
 
-                int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
-                View radioButton = characterRadioGroup.findViewById(radioButtonID);
-                int idx = characterRadioGroup.indexOfChild(radioButton);
-                RadioButton selectedCharacter = (RadioButton)  characterRadioGroup.getChildAt(idx);
-
-                //Which object in characterArray to pass along to Firebase
-                int index = selectedCharacter.getId();
-                JsonObject characterObject = characterArray.get(index).getAsJsonObject();
-
-                if(micCheckBox.isChecked()){
-                    hasMic = true;
+                if(!description.getText().toString().matches("")) {
+                    descriptionText = "No description provided.";
                 }
+                    item.setEnabled(false);
 
-                String light = characterObject.get("light").getAsString();
-                String membershipType = characterObject.get("membershipType").getAsString();
-                String membershipId = characterObject.get("membershipId").getAsString();
-                String emblemIcon = characterObject.get("emblemPath").getAsString();
-                String emblemBackground = characterObject.get("emblemBackgroundPath").getAsString();
-                String characterId = characterObject.get("characterId").getAsString();
-                String classType = characterObject.get("classType").getAsString();
+                    int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
+                    View radioButton = characterRadioGroup.findViewById(radioButtonID);
+                    int idx = characterRadioGroup.indexOfChild(radioButton);
+                    RadioButton selectedCharacter = (RadioButton)  characterRadioGroup.getChildAt(idx);
 
-                //TODO: check for null values before writing to Firebase
+                    //Which object in characterArray to pass along to Firebase
+                    int index = selectedCharacter.getId();
+                    JsonObject characterObject = characterArray.get(index).getAsJsonObject();
 
-                LFGPost newPost = new LFGPost(
-                        activityNameSpinner.getSelectedItem().toString(),
-                        activityCheckpointSpinner.getSelectedItem().toString(),
-                        light,
-                        membershipType, displayName, classType, description.getText().toString(), dateTime, hasMic,
-                        membershipId, emblemIcon, emblemBackground, characterId);
-
-                DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                    if(micCheckBox.isChecked()){
+                        hasMic = true;
                     }
-//            TODO: Network/submit error
+
+                    String light = characterObject.get("light").getAsString();
+                    String membershipType = characterObject.get("membershipType").getAsString();
+                    String membershipId = characterObject.get("membershipId").getAsString();
+                    String emblemIcon = characterObject.get("emblemPath").getAsString();
+                    String emblemBackground = characterObject.get("emblemBackgroundPath").getAsString();
+                    String characterId = characterObject.get("characterId").getAsString();
+                    String classType = characterObject.get("classType").getAsString();
+
+                    //TODO: check for null values before writing to Firebase
+
+                    LFGPost newPost = new LFGPost(
+                            activityNameSpinner.getSelectedItem().toString(),
+                            activityCheckpointSpinner.getSelectedItem().toString(),
+                            light,
+                            membershipType, displayName, classType, descriptionText, dateTime, hasMic,
+                            membershipId, emblemIcon, emblemBackground, characterId);
+
+                //            TODO: Network/submit error
+                DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 });
-
-
         }
         return super.onOptionsItemSelected(item);
     }

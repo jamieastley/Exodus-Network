@@ -4,9 +4,9 @@
 
     <item
         android:id="@+id/submit_lfg_post_button"
-        android:icon="@drawable/ic_send_black_24dp"
+        android:icon="@drawable/icon_send"
         android:title="@string/action_lfg_pause"
-        android:iconTint="@color/warmindAccent"
+        android:iconTint="@color/colorWhite"
         app:showAsAction="ifRoom"/>
 
 </menu>

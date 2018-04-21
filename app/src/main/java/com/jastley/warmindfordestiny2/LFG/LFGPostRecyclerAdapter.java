@@ -43,12 +43,8 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
 
         final LFGPostViewHolder holder = new LFGPostViewHolder(mView);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onClick(view, holder.getAdapterPosition(), holder);
-            }
-        });
+        holder.itemView.setOnClickListener(view ->
+                listener.onClick(view, holder.getAdapterPosition(), holder));
 
         return holder;
     }
@@ -61,14 +57,15 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
         holder.setClassType(model.getClassType());
         holder.setDisplayName(model.getDisplayName());
         holder.setLightLevel(model.getLightLevel());
-        holder.setMicIcon(model.isHasMic(), context);
+        holder.setMicIcon(model.getHasMic(), context);
         holder.setDateTime(model.getDateTime());
 
-        //won't be displayed, for retrieval onPlatformSelection
+        //won't be displayed, for retrieval when clicked
         holder.setEmblemIcon(model.getEmblemIcon());
         holder.setEmblemBackground(model.getEmblemBackground());
         holder.setCharacterId(model.getCharacterId());
         holder.setMembershipId(model.getMembershipId());
+        holder.setDescription(model.getDescription());
     }
 
     @Override

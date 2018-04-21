@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/warmindPrimary</item>
         <item name="colorPrimaryDark">@color/warmindDark</item>
         <item name="colorAccent">@color/warmindAccent</item>
-        <item name="android:windowBackground">@color/warmindCardBackground</item>
+        <item name="android:windowBackground">@color/bungieBackground</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

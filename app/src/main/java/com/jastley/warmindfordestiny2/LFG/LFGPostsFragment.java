@@ -112,13 +112,13 @@ public class LFGPostsFragment extends Fragment {
 //        DatabaseReference dataRef = postRef.child("lfg");
         DatabaseReference dataRef = FirebaseDatabase.getInstance().getReference().child("lfg");
 ////        dataRef.keepSynced(true);
-//        Query query = dataRef.orderByChild("dateTime").limitToLast(20);
+        Query query = dataRef.orderByChild("dateTime").limitToLast(20);
 //        dataRef.keepSynced(true);
-        Query query = FirebaseDatabase.getInstance()
-                .getReference()
-                .child("lfg")
-//                .orderByChild()
-                .limitToLast(20);
+//        Query query = FirebaseDatabase.getInstance()
+//                .getReference()
+//                .child("lfg")
+////                .orderByChild()
+//                .limitToLast(20);
 
         //            TODO: query options, sort by dateTime
 
@@ -146,6 +146,8 @@ public class LFGPostsFragment extends Fragment {
                 selectedPost.setEmblemBackground(holder.getEmblemBackground());
                 selectedPost.setActivityTitle(holder.getActivityTitle().getText().toString());
                 selectedPost.setActivityCheckpoint(holder.getActivityCheckpoint().getText().toString());
+                selectedPost.setHasMic(holder.getHasMic());
+                selectedPost.setDescription(holder.getDescription());
 
 //                mListener.onFragmentInteraction(selectedPlayer);
 

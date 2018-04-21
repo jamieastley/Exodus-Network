@@ -108,7 +108,7 @@ public class LFGPost implements Parcelable {
         return dateTime;
     }
 
-    public boolean isHasMic() {
+    public boolean getHasMic() {
         return hasMic;
     }
 
