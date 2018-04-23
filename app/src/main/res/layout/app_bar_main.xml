@@ -34,6 +34,6 @@
         android:background="@color/warmindAccent"
         android:tint="@color/colorWhite"
 
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:src="@android:drawable/ic_input_add" />
 
 </android.support.design.widget.CoordinatorLayout>

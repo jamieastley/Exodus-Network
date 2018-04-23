@@ -15,14 +15,14 @@
     </style>
 
     <!--<style name="SpinnerItemStyle" parent="@style/Widget.AppCompat.Spinner.DropDown">-->
-        <!--<item name="android:textColor">@color/colorWhite</item>-->
-        <!--<item name="android:background">@color/warmindCardBackground</item>-->
+    <!--<item name="android:textColor">@color/colorWhite</item>-->
+    <!--<item name="android:background">@color/warmindCardBackground</item>-->
     <!--</style>-->
 
     <!--<style name="WarmindTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
-        <!--<item name="warmindPrimary">@color/warmindPrimary</item>-->
-        <!--<item name="warmindPrimaryDark">@color/warmindDark</item>-->
-        <!--<item name="warmindAccent">@color/warmindAccent</item>-->
+    <!--<item name="warmindPrimary">@color/warmindPrimary</item>-->
+    <!--<item name="warmindPrimaryDark">@color/warmindDark</item>-->
+    <!--<item name="warmindAccent">@color/warmindAccent</item>-->
     <!--</style>-->
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

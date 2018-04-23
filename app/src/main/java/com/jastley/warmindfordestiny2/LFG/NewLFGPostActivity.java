@@ -193,6 +193,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                           });
             characterRadioGroup.addView(btn);
         }
+        db.close();
 
 //        TODO: remove hardcoded variables and replace with user account details
 //        lightLevel = "278";

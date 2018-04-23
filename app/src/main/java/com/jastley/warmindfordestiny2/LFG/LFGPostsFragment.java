@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 
 /**
@@ -40,6 +41,12 @@ public class LFGPostsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+//        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -152,6 +159,7 @@ public class LFGPostsFragment extends Fragment {
 //                mListener.onFragmentInteraction(selectedPlayer);
 
 
+
                 Fragment playerFragment;
                 playerFragment = new LFGDetailsFragment();
 
@@ -194,6 +202,13 @@ public class LFGPostsFragment extends Fragment {
 //        mLFGPostAdapter.startListening();
 
     }
+
+//    @Override
+//    public void onBackStackChanged() {
+//        if(getActivity().getSupportFragmentManager().getBackStackEntryCount() < 1) {
+//            ((MainActivity)getActivity()).hideUpButton();
+//        }
+//    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

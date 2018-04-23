@@ -13,7 +13,7 @@ import com.jastley.warmindfordestiny2.User.FirstCharacterFragment;
 import com.jastley.warmindfordestiny2.User.SecondCharacterFragment;
 import com.jastley.warmindfordestiny2.User.ThirdCharacterFragment;
 
-public class UserCharactersActivity extends AppCompatActivity {
+public class OldUserCharactersActivity extends AppCompatActivity {
 
     private BottomNavigationView mCharacterNav;
     private FrameLayout mCharacterFrame;
@@ -37,30 +37,27 @@ public class UserCharactersActivity extends AppCompatActivity {
 
         setFragment(firstCharacterFragment);
         //TODO implement OnNavigationItemReselected to refresh current fragment
-        mCharacterNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        mCharacterNav.setOnNavigationItemSelectedListener(item -> {
 
-                switch (item.getItemId()) {
+            switch (item.getItemId()) {
 
-                    case R.id.nav_first_character_item :
-                        mCharacterNav.setItemBackgroundResource(R.color.colorPrimary);
-                        setFragment(firstCharacterFragment);
-                        return true;
+                case R.id.nav_first_character_item :
+                    mCharacterNav.setItemBackgroundResource(R.color.colorPrimary);
+                    setFragment(firstCharacterFragment);
+                    return true;
 
-                    case R.id.nav_second_character_item :
-                        mCharacterNav.setItemBackgroundResource(R.color.colorAccent);
-                        setFragment(secondCharacterFragment);
-                        return true;
+                case R.id.nav_second_character_item :
+                    mCharacterNav.setItemBackgroundResource(R.color.colorAccent);
+                    setFragment(secondCharacterFragment);
+                    return true;
 
-                    case R.id.nav_third_character_item :
-                        mCharacterNav.setItemBackgroundResource(R.color.colorPrimaryDark);
-                        setFragment(thirdCharacterFragment);
-                        return true;
+                case R.id.nav_third_character_item :
+                    mCharacterNav.setItemBackgroundResource(R.color.colorPrimaryDark);
+                    setFragment(thirdCharacterFragment);
+                    return true;
 
-                    default:
-                        return false;
-                }
+                default:
+                    return false;
             }
         });
     }

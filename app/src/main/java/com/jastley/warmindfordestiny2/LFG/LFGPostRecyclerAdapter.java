@@ -68,6 +68,12 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
         holder.setDescription(model.getDescription());
     }
 
+    @NonNull
+    @Override
+    public LFGPost getItem(int position) {
+        return super.getItem(position);
+    }
+
     @Override
     public void onError(@NonNull DatabaseError error) {
         super.onError(error);

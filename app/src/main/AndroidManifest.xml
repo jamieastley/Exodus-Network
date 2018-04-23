@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserCharactersActivity" />
+        <activity android:name=".OldUserCharactersActivity" />
         <activity
             android:name=".LFG.NewLFGPostActivity"
             android:windowSoftInputMode="adjustPan" />
@@ -39,7 +39,11 @@
                     android:scheme="warmindfordestiny" />
             </intent-filter>
         </activity>
-        <!--<activity android:name=".LFG.LFGPlayerDetails"></activity>-->
+        <!-- <activity android:name=".LFG.LFGPlayerDetails"></activity> -->
+        <activity
+            android:name=".Characters.CharacterInventoryActivity"
+            android:label="@string/title_activity_character_inventory"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

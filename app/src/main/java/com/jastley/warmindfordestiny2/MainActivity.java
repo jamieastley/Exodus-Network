@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,10 +36,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.jastley.warmindfordestiny2.Characters.CharacterInventoryActivity;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment;
-import com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment.OnFragmentInteractionListener;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostsFragment;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View hView =  navigationView.getHeaderView(0);
-
 
         postsFragment = new LFGPostsFragment();
         setFragment(postsFragment);
@@ -458,6 +459,12 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+//        switch(item.getItemId()){
+//            case android.R.id.home:
+//                getSupportFragmentManager().popBackStack();
+//                return true;
+//        }
+
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_logout) {
 ////            return true;
@@ -477,6 +484,14 @@ public class MainActivity extends AppCompatActivity
 //        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showUpButton() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void hideUpButton() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
     @Override
@@ -641,6 +656,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
+        Fragment fragment = new Fragment();
         int id = item.getItemId();
 
         if (id == R.id.nav_lfg) {
@@ -649,7 +666,7 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_characters) {
 
-            Intent accountCharacters = new Intent(this, UserCharactersActivity.class);
+            Intent accountCharacters = new Intent(this, CharacterInventoryActivity.class);
             startActivity(accountCharacters);
         }
         else if (id == R.id.nav_refresh_account) {
@@ -660,7 +677,32 @@ public class MainActivity extends AppCompatActivity
             startActivity(oauthIntent);
         }
 
-
+//        switch(item.getItemId()){
+//            case R.id.nav_lfg:
+//                fragment = new LFGPostsFragment();
+//                break;
+//
+//            case R.id.nav_characters:
+//                //TODO: CHANGE THIS LATER
+////                fragment = new InventoryFragment();
+//                break;
+//
+//            case R.id.nav_refresh_account:
+//                getPlayerProfile();
+//                break;
+//
+//            case R.id.nav_log_in:
+//                Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
+//                startActivity(oauthIntent);
+//                break;
+//        }
+//
+//        item.setChecked(true);
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.lfg_content_frame, fragment)
+//                .commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

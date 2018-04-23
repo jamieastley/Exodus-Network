@@ -8,6 +8,10 @@ import android.arch.persistence.room.Update;
 
 import com.jastley.warmindfordestiny2.database.models.Account;
 
+import java.util.List;
+
+import io.reactivex.Flowable;
+
 /**
  * Created by jamie on 9/4/18.
  */
@@ -16,7 +20,7 @@ import com.jastley.warmindfordestiny2.database.models.Account;
 public interface AccountDAO {
 
     @Query("SELECT * FROM Account")
-    Account getAll();
+    Flowable <List<Account>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Account account);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
@@ -102,8 +104,17 @@ public class LFGDetailsFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        setHasOptionsMenu(true);
+        ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+        actionBar.setTitle(receivedPlayerClick.getDisplayName());
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+
+//        ((MainActivity)getActivity()).showUpButton();
+//        setHasOptionsMenu(true);
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -162,17 +173,28 @@ public class LFGDetailsFragment extends Fragment {
                 .load(baseURL+receivedPlayerClick.getEmblemBackground())
                 .into(emblemBackground);
 
-
         getHistoricalStatsAccount(membershipType, membershipId);
         getGroupDetails(membershipType, membershipId);
+
+
+        setHasOptionsMenu(true);
 
         return view;
 
     }
 
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//
+//        inflater.inflate(R.menu.app_bar_new_lfg, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
+//    }
+
+
+
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+    public void setHasOptionsMenu(boolean hasMenu) {
+        super.setHasOptionsMenu(hasMenu);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

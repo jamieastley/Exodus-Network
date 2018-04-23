@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jastley.warmindfordestiny2.UserCharactersActivity">
+    tools:context="com.jastley.warmindfordestiny2.OldUserCharactersActivity">
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/character_nav"
