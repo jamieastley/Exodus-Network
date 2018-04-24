@@ -50,8 +50,8 @@ public interface BungieAPI {
     Call<JsonElement> getProfile(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
     //Get character inventory
-    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201")
-    Call<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201&components=300")
+    Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
 
     //Collectable Items/Weapons/Armor
     @GET("reducedCollectableInventoryItems.json")

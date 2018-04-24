@@ -26,6 +26,11 @@ public class RetrofitHelper {
         return retrofit.create(BungieAPI.class);
     }
 
+    public BungieAPI getAuthBungieAPI(Context context) {
+        final Retrofit retrofit = createAuthRetrofit(context);
+        return retrofit.create(BungieAPI.class);
+    }
+
 
     private OkHttpClient createOkHttpClient() {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

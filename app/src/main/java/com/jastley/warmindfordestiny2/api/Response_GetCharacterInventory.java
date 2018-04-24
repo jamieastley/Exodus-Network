@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jamie on 21/3/18.
@@ -76,6 +77,111 @@ public class Response_GetCharacterInventory {
     }
 
     public static class ItemComponents {
+        @Expose
+        @SerializedName("instances")
+        private Instances instances;
+
+        public Instances getInstances() {
+            return instances;
+        }
+    }
+
+    public static class Instances {
+        @Expose
+        @SerializedName("data")
+        private Map<String, InstanceData>  data;
+//        private InstanceData instanceData;
+
+        public Map<String, InstanceData> getInstanceData() {
+            return data;
+        }
+
+//        public InstanceData getInstanceData() {
+//            return instanceData;
+//        }
+    }
+
+    public static class InstanceData {
+        @Expose
+        @SerializedName("damageType")
+        private int damageType;
+        @Expose
+        @SerializedName("damageTypeHash")
+        private Double damageTypeHash;
+        @Expose
+        @SerializedName("itemLevel")
+        private int itemLevel;
+        @Expose
+        @SerializedName("quality")
+        private int quality;
+        @Expose
+        @SerializedName("isEquipped")
+        private boolean isEquipped;
+        @Expose
+        @SerializedName("canEquip")
+        private boolean canEquip;
+        @Expose
+        @SerializedName("equipRequiredLevel")
+        private int equipRequiredLevel;
+        @Expose
+        @SerializedName("primaryStat")
+        private PrimaryStat primaryStat;
+
+        public PrimaryStat getPrimaryStat() {
+            return primaryStat;
+        }
+
+        public int getDamageType() {
+            return damageType;
+        }
+
+        public Double getDamageTypeHash() {
+            return damageTypeHash;
+        }
+
+        public int getItemLevel() {
+            return itemLevel;
+        }
+
+        public int getQuality() {
+            return quality;
+        }
+
+        public boolean isEquipped() {
+            return isEquipped;
+        }
+
+        public boolean isCanEquip() {
+            return canEquip;
+        }
+
+        public int getEquipRequiredLevel() {
+            return equipRequiredLevel;
+        }
+    }
+
+    public static class PrimaryStat {
+        @Expose
+        @SerializedName("statHash")
+        private Double statHash;
+        @Expose
+        @SerializedName("value")
+        private int value;
+        @Expose
+        @SerializedName("maximumValue")
+        private int maximumValue;
+
+        public Double getStatHash() {
+            return statHash;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public int getMaximumValue() {
+            return maximumValue;
+        }
     }
 
     public static class Inventory {
@@ -120,7 +226,7 @@ public class Response_GetCharacterInventory {
         private int transferStatus;
         @Expose
         @SerializedName("bucketHash")
-        private int bucketHash;
+        private Double bucketHash;
         @Expose
         @SerializedName("location")
         private int location;
@@ -135,7 +241,7 @@ public class Response_GetCharacterInventory {
         private String itemInstanceId;
         @Expose
         @SerializedName("itemHash")
-        private int itemHash;
+        private Double itemHash;
 
         public int getDismantlePermission() {
             return dismantlePermission;
@@ -153,7 +259,7 @@ public class Response_GetCharacterInventory {
             return transferStatus;
         }
 
-        public int getBucketHash() {
+        public Double getBucketHash() {
             return bucketHash;
         }
 
@@ -173,7 +279,7 @@ public class Response_GetCharacterInventory {
             return itemInstanceId;
         }
 
-        public int getItemHash() {
+        public Double getItemHash() {
             return itemHash;
         }
     }

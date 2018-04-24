@@ -1,5 +1,6 @@
 package com.jastley.warmindfordestiny2.Characters;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -40,7 +41,8 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class CharacterInventoryActivity extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        CharacterInventoryFragment.OnFragmentInteractionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -145,6 +147,11 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
         return false;
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -194,11 +201,11 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
-            return PlaceholderFragment.newInstance(position + 1);
+//            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
+//            return PlaceholderFragment.newInstance(position + 1);
 
-//            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position));
-//            return CharacterInventoryFragment.newInstance(position+1, charactersList.get(position+1));
+            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position));
+            return CharacterInventoryFragment.newInstance(position, charactersList.get(position));
         }
 
         @Override

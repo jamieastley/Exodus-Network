@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,8 +20,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -43,6 +46,7 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
@@ -69,7 +73,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
-        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         displayName = intent.getStringExtra("displayName");
@@ -81,10 +84,14 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(this);
 
-
         Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
         myToolbar.setTitle(R.string.submitPost);
         setSupportActionBar(myToolbar);
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        ButterKnife.bind(this);
 
 /**       TODO: Store activityNames/checkpoints on Firebase and cache on device, save last update timestamp and
 *         TODO sync from Firebase if expired
@@ -308,7 +315,14 @@ public class NewLFGPostActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
                         finish();
                     }
+
                 });
+                break;
+
+//            case R.id.lfg_post_close:
+//                onBackPressed();
+//                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -417,8 +431,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
             //TODO: populate and show checkpoint spinner here
         }
-
-
     }
 
 }

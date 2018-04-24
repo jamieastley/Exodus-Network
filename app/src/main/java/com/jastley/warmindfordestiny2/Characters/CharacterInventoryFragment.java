@@ -8,8 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.api.BungieAPI;
+import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +44,8 @@ public class CharacterInventoryFragment extends Fragment {
     private CharacterDatabaseModel mCharacter;
 
     private OnFragmentInteractionListener mListener;
+    private BungieAPI mBungieAPI;
+    private List<InventoryItemModel> inventoryItems = new ArrayList<>();
 
     public CharacterInventoryFragment() {
         // Required empty public constructor
@@ -62,6 +76,14 @@ public class CharacterInventoryFragment extends Fragment {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
         }
+
+        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
+
+
+        getCharacterInventory(
+                mCharacter.getMembershipType(),
+                mCharacter.getMembershipId(),
+                mCharacter.getCharacterId());
     }
 
     @Override
@@ -108,5 +130,60 @@ public class CharacterInventoryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
+
+
+        mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+//                    response.getResponse().getInventory().getData().getItems().
+                    for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
+
+                        int primaryStatValue;
+                        String itemInstanceId = null;
+                        Boolean canEquip = false;
+                        InventoryItemModel itemModel = new InventoryItemModel();
+
+                        //Get instanceId to look up it's instanceData from the response
+
+                        if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null){
+                            itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
+                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).isCanEquip();
+                            try{
+                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                                itemModel.setPrimaryStatValue(primaryStatValue);
+                            }
+                            catch(Exception e){
+                                System.out.println("Not an instance-specific item");
+                            }
+                            itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
+                        }
+
+
+                        //Cast to JsonObject as we don't have a model class for instance data (because dynamic key values)
+//                        JsonObject obj = new JsonParser().parse(response.getResponse().getItemComponents().getInstances().getInstanceData().getAsJsonObject());
+//
+//                        //If we can equip the item (true), get the primaryStat value (damage/defense)
+//                        if(obj.get(itemInstanceId).getAsJsonObject().get("canEquip").getAsBoolean()){
+//                            primaryStatValue = obj.get(itemInstanceId).getAsJsonObject().get("primaryStat").getAsJsonObject().get("value").getAsDouble();
+//                            itemModel.setPrimaryStatValue(primaryStatValue);
+//                        }
+//                        if(canEquip){
+//                            primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+//                            itemModel.setPrimaryStatValue(primaryStatValue);
+//                            itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
+//                        }
+
+                            //get inventory item
+                            itemModel.setItemHash(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
+                            itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
+
+                    }
+
+                });
+
     }
 }
