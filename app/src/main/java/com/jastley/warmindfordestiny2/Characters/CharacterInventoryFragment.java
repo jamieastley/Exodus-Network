@@ -3,23 +3,39 @@ package com.jastley.warmindfordestiny2.Characters;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.CollectablesDAO;
+import com.jastley.warmindfordestiny2.database.DatabaseHelper;
+import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
+import com.jastley.warmindfordestiny2.database.models.Collectables;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -43,9 +59,15 @@ public class CharacterInventoryFragment extends Fragment {
     private int mTabNumber;
     private CharacterDatabaseModel mCharacter;
 
+    @BindView(R.id.inventory_items_recyclerview) RecyclerView mItemsRecyclerView;
+    @BindView(R.id.inventory_items_progress) ProgressBar loadingProgress;
+    private CharacterItemsRecyclerAdapter mItemsRecyclerAdapter;
+
     private OnFragmentInteractionListener mListener;
     private BungieAPI mBungieAPI;
     private List<InventoryItemModel> inventoryItems = new ArrayList<>();
+    private List<Collectables> mCollectablesList = new ArrayList<>();
+    private DatabaseHelper db;
 
     public CharacterInventoryFragment() {
         // Required empty public constructor
@@ -60,11 +82,12 @@ public class CharacterInventoryFragment extends Fragment {
      * @return A new instance of fragment CharacterInventoryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CharacterInventoryFragment newInstance(int tabNumber, CharacterDatabaseModel character) {
+    public static CharacterInventoryFragment newInstance(int tabNumber, CharacterDatabaseModel character, ArrayList<Collectables> collectablesManifest) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
         Bundle args = new Bundle();
         args.putInt("ARG_TAB_NUMBER", tabNumber);
         args.putParcelable("ARG_CHARACTER_DATA", character);
+        args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", collectablesManifest);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,22 +98,60 @@ public class CharacterInventoryFragment extends Fragment {
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
+            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
         }
 
-        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
-
-
-        getCharacterInventory(
-                mCharacter.getMembershipType(),
-                mCharacter.getMembershipId(),
-                mCharacter.getCharacterId());
+        db = new DatabaseHelper(getContext());
+//        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
+//
+//
+//        getCharacterInventory(
+//                mCharacter.getMembershipType(),
+//                mCharacter.getMembershipId(),
+//                mCharacter.getCharacterId());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_character_inventory, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_character_inventory, container, false);
+
+        ButterKnife.bind(this, rootView);
+
+//        if (savedInstanceState != null) {
+//            inventoryItems = savedInstanceState.getParcelableArrayList("characterItems");
+//            setRecyclerView(inventoryItems);
+//        }
+//        else {
+//            getCharacterInventory(
+//                    mCharacter.getMembershipType(),
+//                    mCharacter.getMembershipId(),
+//                    mCharacter.getCharacterId());
+//        }
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+
+        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
+
+        if (savedInstanceState != null) {
+            inventoryItems = savedInstanceState.getParcelableArrayList("characterItems");
+            setRecyclerView(inventoryItems);
+        }
+        else {
+            getCharacterInventory(
+                    mCharacter.getMembershipType(),
+                    mCharacter.getMembershipId(),
+                    mCharacter.getCharacterId());
+        }
+//        getCharacterInventory(
+//                mCharacter.getMembershipType(),
+//                mCharacter.getMembershipId(),
+//                mCharacter.getCharacterId());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -117,6 +178,13 @@ public class CharacterInventoryFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList("characterItems", (ArrayList<? extends Parcelable>) inventoryItems);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -134,6 +202,7 @@ public class CharacterInventoryFragment extends Fragment {
 
     public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
 
+        JsonParser parser = new JsonParser();
 
         mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
                 .subscribeOn(Schedulers.io())
@@ -142,25 +211,56 @@ public class CharacterInventoryFragment extends Fragment {
 //                    response.getResponse().getInventory().getData().getItems().
                     for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
-                        int primaryStatValue;
+                        String primaryStatValue;
                         String itemInstanceId = null;
+                        String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
                         Boolean canEquip = false;
                         InventoryItemModel itemModel = new InventoryItemModel();
 
                         //Get instanceId to look up it's instanceData from the response
-
-                        if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null){
+                        if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
                             itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
-                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).isCanEquip();
-                            try{
-                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                                itemModel.setPrimaryStatValue(primaryStatValue);
-                            }
-                            catch(Exception e){
-                                System.out.println("Not an instance-specific item");
-                            }
-                            itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
                         }
+                            //Lookup manifest data for item
+                        try {
+//                                JsonArray json =  mCollectablesList;
+//                                String name = json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString();
+//                                itemModel.setItemName(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
+//                                itemModel.setItemIcon(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
+//                                //                                itemModel.setItemName(mCollectablesList.indexOf(1));
+                            OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
+//                                String dataString = dbItem.getValue();
+                            JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
+                            itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                            itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                        }
+                        catch(Exception e){
+                            System.out.println(e);
+                        }
+                        db.close();
+//                            CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(getContext()).getCollectablesDAO();
+//                            mCollectablesDAO.getItemByKey(itemHash)
+//                                    .subscribeOn(Schedulers.io())
+//                                    .subscribe(collectables -> {
+////                                       collectables.
+//                                        JsonParser parser = new JsonParser();
+//                                        JsonElement itemData = parser.parse(collectables.getValue());
+//                                        itemModel.setItemName(itemData.getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
+//                                        itemModel.setItemIcon(itemData.getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
+//                                    });
+
+
+//                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).isCanEquip();
+                        try{
+                            primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                            itemModel.setPrimaryStatValue(primaryStatValue);
+                        }
+                        catch(Exception e){
+                            System.out.println("Not an instance-specific item");
+                        }
+                        itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
+
+//                        }
 
 
                         //Cast to JsonObject as we don't have a model class for instance data (because dynamic key values)
@@ -178,12 +278,28 @@ public class CharacterInventoryFragment extends Fragment {
 //                        }
 
                             //get inventory item
-                            itemModel.setItemHash(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
+//                            itemModel.setItemHash(String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash()));
                             itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
-
+                            inventoryItems.add(itemModel);
                     }
 
+                    setRecyclerView(inventoryItems);
+//                    //create Recyclerview
+//                    LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+//                    mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), inventoryItems);
+//                    mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
+//                    mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+//                    loadingProgress.setVisibility(View.GONE);
                 });
 
+    }
+
+    public void setRecyclerView(List<InventoryItemModel> itemList){
+        //create Recyclerview
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList);
+        mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+        loadingProgress.setVisibility(View.GONE);
     }
 }

@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
     private void setFragment(LFGPostsFragment postsFragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.lfg_content_frame, postsFragment);
+        fragmentTransaction.replace(R.id.lfg_content_frame, postsFragment, "postsFragment");
         fragmentTransaction.commit();
     }
 

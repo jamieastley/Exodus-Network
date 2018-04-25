@@ -8,6 +8,11 @@ import android.arch.persistence.room.Update;
 
 import com.jastley.warmindfordestiny2.database.models.Collectables;
 
+import java.util.List;
+
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+
 /**
  * Created by jamie on 9/4/18.
  */
@@ -16,10 +21,13 @@ import com.jastley.warmindfordestiny2.database.models.Collectables;
 public interface CollectablesDAO {
 
     @Query("SELECT * FROM Collectables")
-    Collectables getAllCollectables();
+    Flowable <List<Collectables>> getAllCollectables();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Collectables collectables);
+
+    @Query("SELECT * FROM Collectables WHERE `key` = :itemKey")
+    Maybe<Collectables> getItemByKey(String itemKey);
 
     @Update
     void update(Collectables collectablesRow);

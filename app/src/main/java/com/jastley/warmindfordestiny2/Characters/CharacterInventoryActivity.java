@@ -23,13 +23,16 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.CollectablesDAO;
 import com.jastley.warmindfordestiny2.database.models.Account;
+import com.jastley.warmindfordestiny2.database.models.Collectables;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +58,8 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private List<CharacterDatabaseModel> charactersList = new ArrayList<>();
+    private ArrayList<Collectables> collectablesManifest = new ArrayList<>();
+    private JsonObject collectablesObject = new JsonObject();
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -77,29 +82,51 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        JsonParser parser = new JsonParser();
+//        JsonParser parser = new JsonParser();
 
-        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
-        mAccountDAO.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(accounts -> {
+//        CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(this).getCollectablesDAO();
+//        mCollectablesDAO.getAllCollectables()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(collectables -> {
+//                    for(int i = 0; i < collectables.size(); i++){
+//
+////                        String key = collectables.get(i).getKey();
+////                        JsonElement value = (JsonElement) parser.parse(collectables.get(i).getValue());
+//////                        JsonObject obj = (JsonObject) parser.parse(collectables.get(i).getValue());
+//
+////                        collectablesObject.add(key, value);
+//                        Collectables collectableData = new Collectables();
+//                        collectableData.setKey(collectables.get(i).getKey());
+//                        collectableData.setValue(collectables.get(i).getValue());
+//                        collectablesManifest.add(collectableData);
+//                    }
 
-                    for(int i = 0; i < accounts.size(); i++){
-                        System.out.println(accounts.get(i).getKey());
-                        JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
-                        CharacterDatabaseModel character = new CharacterDatabaseModel(
-                                charObj.get("membershipId").getAsString(),
-                                charObj.get("characterId").getAsString(),
-                                charObj.get("membershipType").getAsString(),
-                                charObj.get("classType").getAsString()
-                        );
-                        charactersList.add(character);
-                    }
+                    getAccountCharacters();
+//                });
 
-                    mViewPager.setAdapter(mSectionsPagerAdapter);
-                    mTabLayout.setupWithViewPager(mViewPager);
-        });
+
+//        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+//        mAccountDAO.getAll()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(accounts -> {
+//
+//                    for(int i = 0; i < accounts.size(); i++){
+//                        System.out.println(accounts.get(i).getKey());
+//                        JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
+//                        CharacterDatabaseModel character = new CharacterDatabaseModel(
+//                                charObj.get("membershipId").getAsString(),
+//                                charObj.get("characterId").getAsString(),
+//                                charObj.get("membershipType").getAsString(),
+//                                charObj.get("classType").getAsString()
+//                        );
+//                        charactersList.add(character);
+//                    }
+//
+//                    mViewPager.setAdapter(mSectionsPagerAdapter);
+//                    mTabLayout.setupWithViewPager(mViewPager);
+//        });
 
 //        // Set up the ViewPager with the sections adapter.
 //        mViewPager = findViewById(R.id.container);
@@ -204,8 +231,8 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
 //            return PlaceholderFragment.newInstance(position + 1);
 
-            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position));
-            return CharacterInventoryFragment.newInstance(position, charactersList.get(position));
+            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
+            return CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
         }
 
         @Override
@@ -231,5 +258,31 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
             }
             return super.getPageTitle(position);
         }
+    }
+
+    public void getAccountCharacters() {
+        JsonParser parser = new JsonParser();
+
+        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+        mAccountDAO.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(accounts -> {
+
+                    for(int i = 0; i < accounts.size(); i++){
+                        System.out.println(accounts.get(i).getKey());
+                        JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
+                        CharacterDatabaseModel character = new CharacterDatabaseModel(
+                                charObj.get("membershipId").getAsString(),
+                                charObj.get("characterId").getAsString(),
+                                charObj.get("membershipType").getAsString(),
+                                charObj.get("classType").getAsString()
+                        );
+                        charactersList.add(character);
+                    }
+
+                    mViewPager.setAdapter(mSectionsPagerAdapter);
+                    mTabLayout.setupWithViewPager(mViewPager);
+                });
     }
 }

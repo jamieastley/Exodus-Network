@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -104,11 +105,20 @@ public class LFGDetailsFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
-        actionBar.setTitle(receivedPlayerClick.getDisplayName());
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if(savedInstanceState != null){
+            LFGPost savedInstanceModel = savedInstanceState.getParcelable("savedPlayerClick");
+            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+//            actionBar.setTitle(savedInstanceModel.getDisplayName());
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
+        else{
+            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+            actionBar.setTitle(receivedPlayerClick.getDisplayName());
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
 //        ((MainActivity)getActivity()).showUpButton();
 //        setHasOptionsMenu(true);
@@ -139,43 +149,86 @@ public class LFGDetailsFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        displayName.setText(receivedPlayerClick.getDisplayName());
-        lightLevel.setText(receivedPlayerClick.getLightLevel());
-        classType.setText(receivedPlayerClick.getClassType());
-        activityTitle.setText(receivedPlayerClick.getActivityTitle());
-        activityCheckpoint.setText(receivedPlayerClick.getActivityCheckpoint());
-        description.setText(receivedPlayerClick.getDescription());
+        if(savedInstanceState != null){
+            LFGPost savedInstanceModel = savedInstanceState.getParcelable("savedPlayerClick");
+            displayName.setText(savedInstanceModel.getDisplayName());
+            lightLevel.setText(savedInstanceModel.getLightLevel());
+            classType.setText(savedInstanceModel.getClassType());
+            activityTitle.setText(savedInstanceModel.getActivityTitle());
+            activityCheckpoint.setText(savedInstanceModel.getActivityCheckpoint());
+            description.setText(savedInstanceModel.getDescription());
 
-        if(receivedPlayerClick.getHasMic()){
-            micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_on_white));
+            if(savedInstanceModel.getHasMic()){
+                micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_on_white));
+            }
+            else {
+                micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_off_white));
+            }
+
+            switch (savedInstanceModel.getMembershipType()) {
+
+                case "1":
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_xbl));
+                    break;
+                case "2":
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn));
+                    break;
+                case "4":
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_blizzard));
+                    break;
+            }
+
+            String membershipId = savedInstanceModel.getMembershipId();
+            String membershipType = savedInstanceModel.getMembershipType();
+
+            Picasso.with(getContext())
+                    .load(baseURL+savedInstanceModel.getEmblemBackground())
+                    .into(emblemBackground);
+
+            getHistoricalStatsAccount(membershipType, membershipId);
+            getGroupDetails(membershipType, membershipId);
+
         }
+
         else {
-            micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_off_white));
+
+            displayName.setText(receivedPlayerClick.getDisplayName());
+            lightLevel.setText(receivedPlayerClick.getLightLevel());
+            classType.setText(receivedPlayerClick.getClassType());
+            activityTitle.setText(receivedPlayerClick.getActivityTitle());
+            activityCheckpoint.setText(receivedPlayerClick.getActivityCheckpoint());
+            description.setText(receivedPlayerClick.getDescription());
+
+            if(receivedPlayerClick.getHasMic()){
+                micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_on_white));
+            }
+            else {
+                micIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_mic_off_white));
+            }
+
+            switch (receivedPlayerClick.getMembershipType()) {
+
+                case "1":
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_xbl));
+                    break;
+                case "2":
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn));
+                    break;
+                case "4":
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_blizzard));
+                    break;
+            }
+
+            String membershipId = receivedPlayerClick.getMembershipId();
+            String membershipType = receivedPlayerClick.getMembershipType();
+
+            Picasso.with(getContext())
+                    .load(baseURL+receivedPlayerClick.getEmblemBackground())
+                    .into(emblemBackground);
+
+            getHistoricalStatsAccount(membershipType, membershipId);
+            getGroupDetails(membershipType, membershipId);
         }
-
-        switch (receivedPlayerClick.getMembershipType()) {
-
-            case "1":
-                platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_xbl));
-                break;
-            case "2":
-                platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn));
-                break;
-            case "4":
-                platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_blizzard));
-                break;
-        }
-
-        String membershipId = receivedPlayerClick.getMembershipId();
-        String membershipType = receivedPlayerClick.getMembershipType();
-
-        Picasso.with(getContext())
-                .load(baseURL+receivedPlayerClick.getEmblemBackground())
-                .into(emblemBackground);
-
-        getHistoricalStatsAccount(membershipType, membershipId);
-        getGroupDetails(membershipType, membershipId);
-
 
         setHasOptionsMenu(true);
 
@@ -183,7 +236,13 @@ public class LFGDetailsFragment extends Fragment {
 
     }
 
-//    @Override
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("savedPlayerClick", receivedPlayerClick);
+    }
+
+    //    @Override
 //    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 //
 //        inflater.inflate(R.menu.app_bar_new_lfg, menu);

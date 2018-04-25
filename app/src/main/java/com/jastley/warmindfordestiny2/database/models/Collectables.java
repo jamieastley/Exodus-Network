@@ -3,6 +3,8 @@ package com.jastley.warmindfordestiny2.database.models;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 /**
@@ -10,7 +12,7 @@ import android.support.annotation.NonNull;
  */
 
 @Entity
-public class Collectables {
+public class Collectables implements Parcelable {
 
     @PrimaryKey
     @NonNull
@@ -33,5 +35,15 @@ public class Collectables {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

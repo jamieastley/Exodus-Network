@@ -17,7 +17,7 @@ import retrofit2.http.Path;
 
 public interface BungieAPI {
 
-    String baseURL = "https://www.bungie.net";
+    public static final String baseURL = "https://www.bungie.net";
 
     //OAuth
     @Headers("Accept: application/json")
@@ -54,7 +54,8 @@ public interface BungieAPI {
     Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
 
     //Collectable Items/Weapons/Armor
-    @GET("reducedCollectableInventoryItems.json")
+//    @GET("reducedCollectableInventoryItems.json")
+    @GET("raw/DestinyInventoryItemDefinition.json")
     Call<JsonElement> getCollectablesDatabase();
 
     //HistoricalStatsForAccount

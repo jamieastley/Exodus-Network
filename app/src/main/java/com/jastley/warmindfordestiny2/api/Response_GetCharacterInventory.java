@@ -166,7 +166,7 @@ public class Response_GetCharacterInventory {
         private Double statHash;
         @Expose
         @SerializedName("value")
-        private int value;
+        private String value;
         @Expose
         @SerializedName("maximumValue")
         private int maximumValue;
@@ -175,7 +175,7 @@ public class Response_GetCharacterInventory {
             return statHash;
         }
 
-        public int getValue() {
+        public String getValue() {
             return value;
         }
 
@@ -226,7 +226,7 @@ public class Response_GetCharacterInventory {
         private int transferStatus;
         @Expose
         @SerializedName("bucketHash")
-        private Double bucketHash;
+        private String bucketHash;
         @Expose
         @SerializedName("location")
         private int location;
@@ -241,7 +241,7 @@ public class Response_GetCharacterInventory {
         private String itemInstanceId;
         @Expose
         @SerializedName("itemHash")
-        private Double itemHash;
+        private String itemHash;
 
         public int getDismantlePermission() {
             return dismantlePermission;
@@ -259,7 +259,7 @@ public class Response_GetCharacterInventory {
             return transferStatus;
         }
 
-        public Double getBucketHash() {
+        public String getBucketHash() {
             return bucketHash;
         }
 
@@ -279,7 +279,7 @@ public class Response_GetCharacterInventory {
             return itemInstanceId;
         }
 
-        public Double getItemHash() {
+        public String getItemHash() {
             return itemHash;
         }
     }

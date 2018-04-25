@@ -89,6 +89,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return accountData;
     }
 
+    public OldDatabaseModel getCollectablesData(String tableName, String key) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(tableName,
+                new String[]{OldDatabaseModel.COLUMN_KEY, OldDatabaseModel.COLUMN_VALUE},
+                OldDatabaseModel.COLUMN_KEY +"=?",
+                new String[]{String.valueOf(key)}, null, null, null);
+
+        if(cursor != null)
+            cursor.moveToFirst();
+
+        OldDatabaseModel collectablesData = new OldDatabaseModel(
+                cursor.getString(cursor.getColumnIndex(OldDatabaseModel.COLUMN_KEY)),
+                cursor.getString(cursor.getColumnIndex(OldDatabaseModel.COLUMN_VALUE)));
+
+        cursor.close();
+
+        return collectablesData;
+    }
+
 
 
     public void updateData(String tableName, String key, String value){

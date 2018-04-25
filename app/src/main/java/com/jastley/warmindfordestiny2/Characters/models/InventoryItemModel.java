@@ -1,22 +1,31 @@
 package com.jastley.warmindfordestiny2.Characters.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by jamie1192 on 24/4/18.
  */
 
-public class InventoryItemModel {
+public class InventoryItemModel implements Parcelable {
 
-    private Double itemHash;
+    private String itemHash;
     private String itemInstanceId;
-    private Double bucketHash;
+    private String bucketHash;
     //TODO: state (is item locked?)
 
     //item instance data
     private boolean isEquipped;
     private boolean canEquip;
-    private int primaryStatValue;
+    private String primaryStatValue;
 
-    public InventoryItemModel(Double itemHash, String itemInstanceId, Double bucketHash, int primaryStatValue) {
+    //Manifest data
+    private String classType;
+    private String itemName;
+    private String itemIcon;
+
+
+    public InventoryItemModel(String itemHash, String itemInstanceId, String bucketHash, String primaryStatValue) {
         this.itemHash = itemHash;
         this.itemInstanceId = itemInstanceId;
         this.bucketHash = bucketHash;
@@ -26,11 +35,11 @@ public class InventoryItemModel {
     public InventoryItemModel() {
     }
 
-    public Double getItemHash() {
+    public String getItemHash() {
         return itemHash;
     }
 
-    public void setItemHash(Double itemHash) {
+    public void setItemHash(String itemHash) {
         this.itemHash = itemHash;
     }
 
@@ -42,11 +51,11 @@ public class InventoryItemModel {
         this.itemInstanceId = itemInstanceId;
     }
 
-    public Double getBucketHash() {
+    public String getBucketHash() {
         return bucketHash;
     }
 
-    public void setBucketHash(Double bucketHash) {
+    public void setBucketHash(String bucketHash) {
         this.bucketHash = bucketHash;
     }
 
@@ -66,11 +75,45 @@ public class InventoryItemModel {
         this.canEquip = canEquip;
     }
 
-    public int getPrimaryStatValue() {
+    public String getPrimaryStatValue() {
         return primaryStatValue;
     }
 
-    public void setPrimaryStatValue(int primaryStatValue) {
+    public void setPrimaryStatValue(String primaryStatValue) {
         this.primaryStatValue = primaryStatValue;
+    }
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemIcon() {
+        return itemIcon;
+    }
+
+    public void setItemIcon(String itemIcon) {
+        this.itemIcon = itemIcon;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }
