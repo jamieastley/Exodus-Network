@@ -92,6 +92,9 @@ public class MainActivity extends AppCompatActivity
     DialogFragment platformDialog;
     DialogFragment loadingDialog;// = new LoadingDialogFragment();
 
+    NavigationView navigationView;
+    FloatingActionButton faButton;
+
     private String redirectUri = "warmindfordestiny://callback";
     private String baseURL = "https://www.bungie.net";
 
@@ -104,26 +107,32 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.lfg_feed);
-//        toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String membershipType = savedPrefs.getString("selectedPlatform", "");
+        String displayName = savedPrefs.getString("displayName"+membershipType, "");
+
+        if((displayName != "") && (membershipType != "")) {
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(view -> {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null)
 //                        .show();
-            savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-            String membershipType = savedPrefs.getString("selectedPlatform", "");
-            String displayName = savedPrefs.getString("displayName"+membershipType, "");
 
-            //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
-            Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
-            intent.putExtra("displayName", displayName);
 
-            startActivity(intent);
-        });
+                //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
+                Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
+                intent.putExtra("displayName", displayName);
+
+                startActivity(intent);
+            });
+        }
+
+        hideShowMenuItems();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -178,6 +187,45 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void hideShowMenuItems() {
+
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String membershipType = savedPrefs.getString("selectedPlatform", "");
+        String displayName = savedPrefs.getString("displayName"+membershipType, "");
+
+        navigationView = findViewById(R.id.nav_view);
+        Menu navMenu = navigationView.getMenu();
+        faButton = findViewById(R.id.fab);
+
+        if((displayName != "") && (membershipType != "")) {
+
+
+            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
+            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
+
+
+            faButton.setOnClickListener(view -> {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null)
+//                        .show();
+
+
+                //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
+                Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
+                intent.putExtra("displayName", displayName);
+
+                startActivity(intent);
+            });
+        }
+        else { //not logged in
+            navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
+            navMenu.findItem(R.id.nav_characters).setVisible(false).setEnabled(false);
+            navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
+            faButton.hide();
+        }
+
+    }
+
     private void setFragment(LFGPostsFragment postsFragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -209,7 +257,13 @@ public class MainActivity extends AppCompatActivity
                             .into(emblemIcon);
                 }
             }
-
+            navigationView = findViewById(R.id.nav_view);
+            Menu navMenu = navigationView.getMenu();
+            faButton = findViewById(R.id.fab);
+            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
+            navMenu.findItem(R.id.nav_characters).setVisible(true).setEnabled(true);
+            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
+            faButton.show();
         }
     }
 
@@ -280,6 +334,7 @@ public class MainActivity extends AppCompatActivity
     private void getPlayerProfile() {
 //        TODO: shared_prefs(membershipType, membershipId, characterIds[],
 
+        showLoadingDialog();
 
         //Interceptor to add Authorization token
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -338,6 +393,8 @@ public class MainActivity extends AppCompatActivity
                     for (int i = 0; i < count; i++) {
 
                         try {
+
+                            memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
                             editor.putInt("membershipType" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
                                     response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
 
@@ -385,6 +442,7 @@ public class MainActivity extends AppCompatActivity
 
                         //String membershipId = response.body().getResponse().getDestinyMemberships().get(0).getMembershipId();
 
+//                        showLoadingDialog();
                         getCharacters(membershipType);
 //                        getCharacters.GetCharacterSummaries(MainActivity.this);
                     }
@@ -730,7 +788,7 @@ public class MainActivity extends AppCompatActivity
         //getCharacter summaries BEFORE UI update
 //        Context cont = getApplicationContext();
 //        getCharacters.GetCharacterSummaries(getApplicationContext());
-        showLoadingDialog();
+//        showLoadingDialog();
         getCharacters(selectedPlatform);
     }
 
@@ -873,7 +931,11 @@ public class MainActivity extends AppCompatActivity
                     updateNavUI(hView);
                 }
 
-                loadingDialog.dismiss();
+                DialogFragment loadingFragment = (DialogFragment)getFragmentManager().findFragmentByTag("loadingDialog");
+                if (loadingFragment != null){
+                    loadingFragment.dismiss();
+                }
+//                loadingDialog.dismiss();
             }
 
             @Override

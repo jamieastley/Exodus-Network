@@ -10,16 +10,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Dialogs.adapters.PlatformSelectionAdapter;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by jastl on 23/03/2018.
  */
 
 public class PlatformSelectionFragment extends DialogFragment {
+
+    @BindView(R.id.dialog_header_text)
+    TextView headerText;
 
     RecyclerView recyclerView;
     PlatformSelectionAdapter adapter;
@@ -35,7 +42,13 @@ public class PlatformSelectionFragment extends DialogFragment {
         Bundle args = getArguments();
         final String[] list = args.getStringArray("platforms");
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View titleView = getActivity().getLayoutInflater().inflate(R.layout.alert_dialog_layout, null);
+
+        ButterKnife.bind(this, titleView);
+
+        headerText.setText(R.string.select_platform);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setCustomTitle(titleView);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 

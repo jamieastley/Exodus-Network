@@ -66,7 +66,7 @@ public class CharacterInventoryFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private BungieAPI mBungieAPI;
     private List<InventoryItemModel> inventoryItems = new ArrayList<>();
-    private List<Collectables> mCollectablesList = new ArrayList<>();
+//    private List<Collectables> mCollectablesList = new ArrayList<>();
     private DatabaseHelper db;
 
     public CharacterInventoryFragment() {
@@ -98,7 +98,7 @@ public class CharacterInventoryFragment extends Fragment {
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
-            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
+//            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
         }
 
         db = new DatabaseHelper(getContext());
@@ -138,20 +138,16 @@ public class CharacterInventoryFragment extends Fragment {
 
         mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
 
-        if (savedInstanceState != null) {
-            inventoryItems = savedInstanceState.getParcelableArrayList("characterItems");
-            setRecyclerView(inventoryItems);
-        }
-        else {
+//        if (savedInstanceState != null) {
+//            inventoryItems = savedInstanceState.getParcelableArrayList("characterItems");
+//            setRecyclerView(inventoryItems);
+//        }
+//        else {
             getCharacterInventory(
                     mCharacter.getMembershipType(),
                     mCharacter.getMembershipId(),
                     mCharacter.getCharacterId());
-        }
-//        getCharacterInventory(
-//                mCharacter.getMembershipType(),
-//                mCharacter.getMembershipId(),
-//                mCharacter.getCharacterId());
+//        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -295,7 +291,7 @@ public class CharacterInventoryFragment extends Fragment {
     }
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
-        //create Recyclerview
+
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList);
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);

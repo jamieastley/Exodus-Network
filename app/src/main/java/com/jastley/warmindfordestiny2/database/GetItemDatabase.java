@@ -98,9 +98,9 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                     catch(Exception e){
                         System.out.println("Error getting manifest: " + e);
                     }
-
-                    delegate.onAsyncDone();
-
+                    finally {
+                        delegate.onAsyncDone();
+                    }
                 }
 
                 @Override

@@ -23,6 +23,12 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.inventory_item_name) TextView itemName;
     @BindView(R.id.inventory_item_type) TextView itemType;
     @BindView(R.id.inventory_item_image) ImageView itemImage;
+    @BindView(R.id.primary_stat_value) TextView statValue;
+
+    //Hidden values to retain for retrieval later
+    private String itemHash;
+    private String imageUrl;
+    private String primaryStatValue;
 
     protected View mRootView;
     Context context;
@@ -53,10 +59,25 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         return itemImage;
     }
 
-    public void setItemImage(String imageUrl, Context context) {
+    public void setItemImage(String url, Context context) {
 //        this.itemImage = itemImage;
+        this.imageUrl = url;
         Picasso.with(context)
-            .load(baseURL+imageUrl)
+            .load(baseURL+url)
+            .placeholder(R.drawable.missing_icon_d2)
             .into(this.itemImage);
+    }
+
+    public TextView getStatValue() {
+        return statValue;
+    }
+
+    public void setStatValue(String value) {
+//        if(value != null){
+            statValue.setText(value);
+//        }
+//        else {
+//            statValue.setVisibility(View.GONE);
+//        }
     }
 }

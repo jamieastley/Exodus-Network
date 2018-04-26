@@ -19,10 +19,6 @@ import java.util.List;
 
 public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<CharacterItemsViewHolder>{
 
-    private String itemHash;
-    private String itemName;
-    private String imageUrl;
-    private String primaryStatValue;
     private Context context;
 
     ItemSelectionListener mListener;
@@ -55,7 +51,7 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
 //        holder.setItemName(itemList.get(position).);
         holder.setItemName(itemList.get(position).getItemName());
         holder.setItemImage(itemList.get(position).getItemIcon(), context);
-
+        holder.setStatValue(itemList.get(position).getPrimaryStatValue());
     }
 
     @Override

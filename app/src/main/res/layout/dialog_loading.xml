@@ -2,7 +2,9 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/warmindCardBackground"
+    >
 
     <ProgressBar
         android:id="@+id/dialog_loading_progress_bar"
@@ -19,6 +21,7 @@
         android:layout_toRightOf="@id/dialog_loading_progress_bar"
         android:textAlignment="center"
         android:text="@string/loading"
+        android:textColor="@color/colorWhite"
         />
 
 </RelativeLayout>

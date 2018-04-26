@@ -6,8 +6,12 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.R;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by jamie on 26/3/18.
@@ -15,13 +19,19 @@ import com.jastley.warmindfordestiny2.R;
 
 public class LoadingDialogFragment extends DialogFragment {
 
-
+    @BindView(R.id.dialog_header_text) TextView headerText;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 //        return super.onCreateDialog(savedInstanceState);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        View titleView = getActivity().getLayoutInflater().inflate(R.layout.alert_dialog_layout, null);
+
+        ButterKnife.bind(this, titleView);
+
+        headerText.setText("Loading...");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setCustomTitle(titleView);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
