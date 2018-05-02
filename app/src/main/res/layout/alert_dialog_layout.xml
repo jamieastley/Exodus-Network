@@ -20,7 +20,7 @@
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:padding="10dp"
-            android:text="Exemption Sub Head"
+            android:text="Header text"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"

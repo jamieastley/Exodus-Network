@@ -14,7 +14,7 @@ import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 
 
 /**
- * Created by jastl on 23/03/2018.
+ * Created by jamie1192 on 23/03/2018.
  */
 
 public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHolder> implements DialogInterface{
@@ -36,12 +36,8 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
 
         final PlatformRVHolder mPlatformRVHolder = new PlatformRVHolder(mView);
 
-        mPlatformRVHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onPlatformSelection(view, mPlatformRVHolder.getAdapterPosition(), mPlatformRVHolder);
-            }
-        });
+        mPlatformRVHolder.itemView.setOnClickListener(view ->
+                listener.onPlatformSelection(view, mPlatformRVHolder.getAdapterPosition(), mPlatformRVHolder));
 
         return mPlatformRVHolder;
     }

@@ -23,7 +23,7 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
 
     ItemSelectionListener mListener;
 
-    List<InventoryItemModel> itemList = new ArrayList<>();
+    List<InventoryItemModel> itemList;
 
     public CharacterItemsRecyclerAdapter(Context context, List<InventoryItemModel> itemList) {
         this.context = context;

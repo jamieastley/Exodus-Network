@@ -2,33 +2,32 @@ package com.jastley.warmindfordestiny2.LFG;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DatabaseError;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
+
+import java.util.List;
 
 /**
  * Created by jamie1192 on 18/3/18.
  */
 
-public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFGPostViewHolder> {
+public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHolder> {
 
     private Context context;
     private ProgressBar lfgProgressBar;
+    List<LFGPost> posts;
 
     RecyclerViewClickListener listener;
 
-    public LFGPostRecyclerAdapter(@NonNull Context context, FirebaseRecyclerOptions<LFGPost> options, RecyclerViewClickListener listener) {
-        super(options);
+    public LFGPostRecyclerAdapter(Context context, List<LFGPost> lfgList, RecyclerViewClickListener listener) {
         this.context = context;
+        this.posts = lfgList;
         this.listener = listener;
     }
 
@@ -50,38 +49,35 @@ public class LFGPostRecyclerAdapter extends FirebaseRecyclerAdapter<LFGPost, LFG
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull final LFGPostViewHolder holder, final int position, @NonNull final LFGPost model) {
-        holder.setActivityTitle(model.getActivityTitle());
-        holder.setActivityCheckpoint(model.getActivityCheckpoint());
-        holder.setPlatformIcon(model.getMembershipType(), context);
-        holder.setClassType(model.getClassType());
-        holder.setDisplayName(model.getDisplayName());
-        holder.setLightLevel(model.getLightLevel());
-        holder.setMicIcon(model.getHasMic(), context);
-        holder.setDateTime(model.getDateTime());
+    public void onBindViewHolder(LFGPostViewHolder holder, int position) {
+        holder.setActivityTitle(posts.get(position).getActivityTitle());
+        holder.setActivityCheckpoint(posts.get(position).getActivityCheckpoint());
+        holder.setPlatformIcon(posts.get(position).getMembershipType(), context);
+        holder.setClassType(posts.get(position).getClassType());
+        holder.setDisplayName(posts.get(position).getDisplayName());
+        holder.setLightLevel(posts.get(position).getLightLevel());
+        holder.setMicIcon(posts.get(position).getHasMic(), context);
+        holder.setDateTime(posts.get(position).getDateTime());
 
         //won't be displayed, for retrieval when clicked
-        holder.setEmblemIcon(model.getEmblemIcon());
-        holder.setEmblemBackground(model.getEmblemBackground());
-        holder.setCharacterId(model.getCharacterId());
-        holder.setMembershipId(model.getMembershipId());
-        holder.setDescription(model.getDescription());
-    }
-
-    @NonNull
-    @Override
-    public LFGPost getItem(int position) {
-        return super.getItem(position);
+        holder.setEmblemIcon(posts.get(position).getEmblemIcon());
+        holder.setEmblemBackground(posts.get(position).getEmblemBackground());
+        holder.setCharacterId(posts.get(position).getCharacterId());
+        holder.setMembershipId(posts.get(position).getMembershipId());
+        holder.setDescription(posts.get(position).getDescription());
     }
 
     @Override
-    public void onError(@NonNull DatabaseError error) {
-        super.onError(error);
-
-        Toast.makeText(context, "A database error occurred, check your connection.", Toast.LENGTH_SHORT).show();
+    public int getItemCount() {
+        return posts.size();
     }
 
 
 
+//    @NonNull
+//    @Override
+//    public LFGPost getItem(int position) {
+//        return super.getItem(position);
+//    }
 
 }
