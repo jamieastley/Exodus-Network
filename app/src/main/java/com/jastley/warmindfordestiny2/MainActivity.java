@@ -31,9 +31,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.CharacterInventoryActivity;
@@ -73,6 +71,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mLFGRecyclerView;
     private FirebaseRecyclerAdapter mLFGPostAdapter;
     private DatabaseHelper db;
-
+    private DatabaseReference mDatabase;
     private LFGPostsFragment postsFragment;
     SharedPreferences savedPrefs;
     DialogFragment platformDialog;
@@ -96,13 +95,13 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton faButton;
 
     private String redirectUri = "warmindfordestiny://callback";
-    private String baseURL = "https://www.bungie.net";
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -185,6 +184,12 @@ public class MainActivity extends AppCompatActivity
 //        asyncGetCollectables();
         updateNavUI(hView);
 
+    }
+
+
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 
     private void hideShowMenuItems() {

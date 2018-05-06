@@ -18,16 +18,16 @@ import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 
 public class RetrofitHelper {
 
-    private static String baseURL = "https://www.bungie.net";
+//    private static String baseURL = "https://www.bungie.net";
 
 
-    public BungieAPI getBungieAPI() {
-        final Retrofit retrofit = createRetrofit();
+    public BungieAPI getBungieAPI(String baseURL) {
+        final Retrofit retrofit = createRetrofit(baseURL);
         return retrofit.create(BungieAPI.class);
     }
 
-    public BungieAPI getAuthBungieAPI(Context context) {
-        final Retrofit retrofit = createAuthRetrofit(context);
+    public BungieAPI getAuthBungieAPI(Context context, String baseURL) {
+        final Retrofit retrofit = createAuthRetrofit(context, baseURL);
         return retrofit.create(BungieAPI.class);
     }
 
@@ -48,7 +48,7 @@ public class RetrofitHelper {
     }
 
 
-    private Retrofit createRetrofit() {
+    private Retrofit createRetrofit(String baseURL) {
         return new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -78,7 +78,7 @@ public class RetrofitHelper {
         return httpClient.build();
     }
 
-    private Retrofit createAuthRetrofit(Context context) {
+    private Retrofit createAuthRetrofit(Context context, String baseURL) {
         return new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())

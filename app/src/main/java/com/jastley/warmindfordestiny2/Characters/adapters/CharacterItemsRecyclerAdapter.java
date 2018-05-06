@@ -25,9 +25,10 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
 
     List<InventoryItemModel> itemList;
 
-    public CharacterItemsRecyclerAdapter(Context context, List<InventoryItemModel> itemList) {
+    public CharacterItemsRecyclerAdapter(Context context, List<InventoryItemModel> itemList, ItemSelectionListener listener) {
         this.context = context;
         this.itemList = itemList;
+        this.mListener = listener;
     }
 
     @Override

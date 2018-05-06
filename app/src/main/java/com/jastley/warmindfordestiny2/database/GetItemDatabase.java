@@ -8,10 +8,16 @@ import android.widget.Toast;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
+import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.models.Collectables;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -21,11 +27,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by jamie on 6/4/18.
+ * Created by jamie1192 on 6/4/18.
  */
 
 public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 
+    private List<Collectables> collectables = new ArrayList<>();
 
     public interface AsyncResponse {
         void onAsyncDone();
@@ -45,6 +52,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
         SharedPreferences savedPrefs;
         savedPrefs = context.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
         Boolean firstRun = savedPrefs.getBoolean("firstRun", true);
+
 
 
         if(firstRun){
@@ -82,18 +90,26 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                             //store item definition object as string
                             final String currentItemDefinition = collectableObj.toString();
 
-                                //onResponse is on UI thread, move back onto worker thread for Room
-                                AsyncTask.execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Collectables collectable = new Collectables();
-                                        collectable.setKey(key);
-                                        collectable.setValue(currentItemDefinition);
+                            Collectables mCollectable = new Collectables();
+                            mCollectable.setKey(key);
+                            mCollectable.setValue(currentItemDefinition);
+                            collectables.add(mCollectable);
 
-                                        mCollectibleDAO.insert(collectable);
-                                    }
-                                });
+                                //onResponse is on UI thread, move back onto worker thread for Room
+//                                AsyncTask.execute(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        Collectables collectable = new Collectables();
+//                                        collectable.setKey(key);
+//                                        collectable.setValue(currentItemDefinition);
+//
+//                                        mCollectibleDAO.insert(collectable);
+//
+//                                    }
+//                                });
                         }
+
+                        AsyncTask.execute(() -> mCollectibleDAO.insertAll(collectables));
                     }
                     catch(Exception e){
                         System.out.println("Error getting manifest: " + e);

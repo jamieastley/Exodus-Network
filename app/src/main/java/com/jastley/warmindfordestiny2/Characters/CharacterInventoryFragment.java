@@ -14,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
+import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsViewHolder;
+import com.jastley.warmindfordestiny2.Characters.interfaces.ItemSelectionListener;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
@@ -38,6 +41,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,6 +73,8 @@ public class CharacterInventoryFragment extends Fragment {
     private List<InventoryItemModel> inventoryItems = new ArrayList<>();
 //    private List<Collectables> mCollectablesList = new ArrayList<>();
     private DatabaseHelper db;
+
+    boolean mIsRestoredFromBackstack;
 
     public CharacterInventoryFragment() {
         // Required empty public constructor
@@ -100,6 +107,8 @@ public class CharacterInventoryFragment extends Fragment {
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
 //            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
         }
+
+        mIsRestoredFromBackstack = false;
 
         db = new DatabaseHelper(getContext());
 //        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
@@ -136,7 +145,7 @@ public class CharacterInventoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        super.onViewCreated(view, savedInstanceState);
 
-        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext());
+        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext(), baseURL);
 
 //        if (savedInstanceState != null) {
 //            inventoryItems = savedInstanceState.getParcelableArrayList("characterItems");
@@ -175,6 +184,20 @@ public class CharacterInventoryFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(mIsRestoredFromBackstack){
+
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mIsRestoredFromBackstack = true;
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -204,6 +227,7 @@ public class CharacterInventoryFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
+                    inventoryItems.clear();
 //                    response.getResponse().getInventory().getData().getItems().
                     for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
@@ -293,7 +317,12 @@ public class CharacterInventoryFragment extends Fragment {
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
-        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList);
+        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
+            Toast.makeText(getContext(), holder.getItemName().getText().toString() + " clicked", Toast.LENGTH_SHORT).show();
+
+            ItemTransferDialogFragment transferModalDialog = new ItemTransferDialogFragment();
+            transferModalDialog.show(getFragmentManager(), transferModalDialog.getTag());
+        });
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
         loadingProgress.setVisibility(View.GONE);

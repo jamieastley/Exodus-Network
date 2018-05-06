@@ -73,6 +73,7 @@
         android:paddingRight="10dp"
         android:paddingStart="10dp"
         android:popupBackground="@color/warmindCardBackground"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toBottomOf="@id/micCheckBox"
         android:layout_marginTop="30dp"/>
 
@@ -83,6 +84,8 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingStart="10dp"
+        android:popupBackground="@color/warmindCardBackground"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toBottomOf="@id/activity_name_spinner"
         android:layout_marginTop="30dp"
         >

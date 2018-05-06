@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import com.google.firebase.database.*;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 
 import java.util.ArrayList;
@@ -46,7 +47,6 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 //        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
@@ -83,6 +83,14 @@ public class LFGPostsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.lfg_feed));
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -114,6 +122,8 @@ public class LFGPostsFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+
+
         Query query = mDatabase.child("lfg")
                 .orderByChild("dateTime");
 //                .limitToLast(3);
@@ -121,6 +131,7 @@ public class LFGPostsFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                lfgPosts.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()){
 
                     LFGPost post = ds.getValue(LFGPost.class);
@@ -171,6 +182,8 @@ public class LFGPostsFragment extends Fragment {
                     }
                 });
                 mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+                mLFGPostAdapter.notifyDataSetChanged();
+
             }
 
             @Override

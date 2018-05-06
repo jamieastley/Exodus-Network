@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2.LFG;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,8 @@ import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -41,7 +44,6 @@ public class LFGDetailsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private String baseURL = "https://www.bungie.net";
     LFGPost receivedPlayerClick;
     @BindView(R.id.lfg_details_display_name) TextView displayName;
     @BindView(R.id.lfg_details_emblem_background) ImageView emblemBackground;
@@ -67,7 +69,6 @@ public class LFGDetailsFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    @NonNull
     private BungieAPI mBungieAPI;
 
     public LFGDetailsFragment() {
@@ -99,26 +100,26 @@ public class LFGDetailsFragment extends Fragment {
             Bundle bundle = getArguments();
             receivedPlayerClick = bundle.getParcelable("clickedPlayer");
 
-            mBungieAPI = new RetrofitHelper().getBungieAPI();
+            mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
 
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        if(savedInstanceState != null){
-            LFGPost savedInstanceModel = savedInstanceState.getParcelable("savedPlayerClick");
-            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
-//            actionBar.setTitle(savedInstanceModel.getDisplayName());
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        else{
-            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
-            actionBar.setTitle(receivedPlayerClick.getDisplayName());
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+//        if(savedInstanceState != null){
+//            LFGPost savedInstanceModel = savedInstanceState.getParcelable("savedPlayerClick");
+//            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+////            actionBar.setTitle(savedInstanceModel.getDisplayName());
+//            actionBar.setHomeButtonEnabled(true);
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
+//
+//        else{
+//            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+//            actionBar.setTitle(receivedPlayerClick.getDisplayName());
+//            actionBar.setHomeButtonEnabled(true);
+//            actionBar.setDisplayHomeAsUpEnabled(true);
+//        }
 
 //        ((MainActivity)getActivity()).showUpButton();
 //        setHasOptionsMenu(true);
@@ -263,6 +264,16 @@ public class LFGDetailsFragment extends Fragment {
 //        }
 //    }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.postDetails));
+        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -344,6 +355,13 @@ public class LFGDetailsFragment extends Fragment {
                         kdRatio.setText("-");
                     }
                     statsValuesProgress.setVisibility(View.GONE);
+                }, error -> {
+                    playTime.setText("-");
+                    lifeSpan.setText("-");
+                    kdRatio.setText("-");
+                    Snackbar.make(getView(), "Couldn't get clan data.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .show();
                 });
     }
 

@@ -96,13 +96,14 @@ public class NewLFGPostActivity extends AppCompatActivity {
 /**       TODO: Store activityNames/checkpoints on Firebase and cache on device, save last update timestamp and
 *         TODO sync from Firebase if expired
 */
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, R.layout.spinner_list_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        ArrayAdapter<CharSequence> checkpointAdapter = ArrayAdapter.createFromResource(this, R.array.nightfall, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> checkpointAdapter = ArrayAdapter.createFromResource(this, R.array.nightfall, R.layout.spinner_list_item);
         checkpointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         activityNameSpinner.setAdapter(adapter);
+
         activityNameSpinner.setSelection(0, false);
         activityCheckpointSpinner.setAdapter(checkpointAdapter);
 
@@ -368,61 +369,61 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
             switch (result) {
                 case "PvP":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.pvp, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.pvp, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Nightfall":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.nightfall, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.nightfall, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Raid Lair":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.raidLair, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.raidLair, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Raid":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.raid, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.raid, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Raid - Misc":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.raidMisc, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.raidMisc, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Public Events":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.publicEvents, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.publicEvents, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Strikes":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.strikes, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.strikes, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Campaign":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.empty, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.empty, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Achievement":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.achievement, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.achievement, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);
                     break;
                 case "Social":
-                    adapter = ArrayAdapter.createFromResource(this, R.array.empty, android.R.layout.simple_spinner_item);
+                    adapter = ArrayAdapter.createFromResource(this, R.array.empty, R.layout.spinner_list_item);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                     activityCheckpointSpinner.setAdapter(adapter);

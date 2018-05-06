@@ -117,5 +117,8 @@
     <string name="pvpKdRatio">PVP KDR</string>
     <string name="title_activity_character_inventory">CharacterInventoryActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="postDetails">Post Details</string>
+    <string name="action_filter">Filter</string>
+    <string name="transferItem">Transfer item to..</string>
 
 </resources>

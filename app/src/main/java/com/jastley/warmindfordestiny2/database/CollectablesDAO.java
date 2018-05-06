@@ -26,6 +26,9 @@ public interface CollectablesDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Collectables collectables);
 
+    @Insert
+    void insertAll(List<Collectables> collectables);
+
     @Query("SELECT * FROM Collectables WHERE `key` = :itemKey")
     Maybe<Collectables> getItemByKey(String itemKey);
 

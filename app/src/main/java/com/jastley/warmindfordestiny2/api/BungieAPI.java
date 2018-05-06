@@ -17,7 +17,8 @@ import retrofit2.http.Path;
 
 public interface BungieAPI {
 
-    public static final String baseURL = "https://www.bungie.net";
+    String baseURL = "https://www.bungie.net";
+    String plumbingURL = "https://destiny.plumbing/en/";
 
     //OAuth
     @Headers("Accept: application/json")
