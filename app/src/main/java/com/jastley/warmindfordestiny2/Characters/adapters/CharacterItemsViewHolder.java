@@ -29,9 +29,12 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     private String itemHash;
     private String imageUrl;
     private String primaryStatValue;
+    private String bucketHash;
+    private String itemInstanceId;
+    private boolean isEquipped;
+    private boolean canEquip;
 
     protected View mRootView;
-    Context context;
 
     public CharacterItemsViewHolder(View itemView) {
         super(itemView);
@@ -79,5 +82,61 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
 //        else {
 //            statValue.setVisibility(View.GONE);
 //        }
+    }
+
+    public String getItemHash() {
+        return itemHash;
+    }
+
+    public void setItemHash(String itemHash) {
+        this.itemHash = itemHash;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getPrimaryStatValue() {
+        return primaryStatValue;
+    }
+
+    public void setPrimaryStatValue(String primaryStatValue) {
+        this.primaryStatValue = primaryStatValue;
+    }
+
+    public String getBucketHash() {
+        return bucketHash;
+    }
+
+    public void setBucketHash(String bucketHash) {
+        this.bucketHash = bucketHash;
+    }
+
+    public String getItemInstanceId() {
+        return itemInstanceId;
+    }
+
+    public void setItemInstanceId(String itemInstanceId) {
+        this.itemInstanceId = itemInstanceId;
+    }
+
+    public boolean getIsEquipped() {
+        return isEquipped;
+    }
+
+    public void setIsEquipped(boolean equipped) {
+        isEquipped = equipped;
+    }
+
+    public boolean getCanEquip() {
+        return canEquip;
+    }
+
+    public void setCanEquip(boolean canEquip) {
+        this.canEquip = canEquip;
     }
 }

@@ -277,7 +277,8 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                                 charObj.get("membershipId").getAsString(),
                                 charObj.get("characterId").getAsString(),
                                 charObj.get("membershipType").getAsString(),
-                                charObj.get("classType").getAsString()
+                                charObj.get("classType").getAsString(),
+                                charObj.get("emblemBackgroundPath").getAsString()
                         );
                         charactersList.add(character);
                     }
@@ -285,5 +286,9 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                     mViewPager.setAdapter(mSectionsPagerAdapter);
                     mTabLayout.setupWithViewPager(mViewPager);
                 });
+    }
+
+    public List<CharacterDatabaseModel> getCharactersList(){
+        return charactersList;
     }
 }

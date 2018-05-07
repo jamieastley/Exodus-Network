@@ -29,8 +29,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -83,7 +81,6 @@ public class MainActivity extends AppCompatActivity
                     LFGPostsFragment.OnFragmentInteractionListener {
 
     private RecyclerView mLFGRecyclerView;
-    private FirebaseRecyclerAdapter mLFGPostAdapter;
     private DatabaseHelper db;
     private DatabaseReference mDatabase;
     private LFGPostsFragment postsFragment;
@@ -292,11 +289,11 @@ public class MainActivity extends AppCompatActivity
 //        dataRef.keepSynced(true);
         //            TODO: query options, sort by dateTime
 
-        final FirebaseRecyclerOptions lfgOptions =
-                new FirebaseRecyclerOptions.Builder<LFGPost>()
-//                        .setQuery(query, LFGPost.class)
-                        .setIndexedQuery(query, dataRef, LFGPost.class)
-                        .build();
+//        final FirebaseRecyclerOptions lfgOptions =
+//                new FirebaseRecyclerOptions.Builder<LFGPost>()
+////                        .setQuery(query, LFGPost.class)
+//                        .setIndexedQuery(query, dataRef, LFGPost.class)
+//                        .build();
 
 
 //        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions, new RecyclerViewClickListener() {
@@ -411,7 +408,7 @@ public class MainActivity extends AppCompatActivity
 
                             editor.commit();
 
-                            //                    TODO: implement ProgressBar and hide it here
+                            //                    TODO: move this to the end of the loading sequence
                             Snackbar.make(findViewById(R.id.activity_main_content), "Account database updated.", Snackbar.LENGTH_SHORT)
                                     .setAction("Action", null)
                                     .show();

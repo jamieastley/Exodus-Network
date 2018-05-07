@@ -3,22 +3,58 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/warmindDark"
     >
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:text="Transfer item to..."
         android:textColor="@color/colorWhite"
         />
 
-    <ImageView
-        android:id="@+id/modal_transfer_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:src="@drawable/rasputin"
-        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <!--Transfer to character/vault-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/transfer_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
+
+
+        <!--Equip directly to character-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/equip_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

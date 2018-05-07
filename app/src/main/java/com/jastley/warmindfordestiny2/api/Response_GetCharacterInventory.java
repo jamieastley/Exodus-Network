@@ -115,7 +115,7 @@ public class Response_GetCharacterInventory {
         @SerializedName("quality")
         private int quality;
         @Expose
-        @SerializedName("isEquipped")
+        @SerializedName("getIsEquipped")
         private boolean isEquipped;
         @Expose
         @SerializedName("canEquip")
@@ -147,11 +147,11 @@ public class Response_GetCharacterInventory {
             return quality;
         }
 
-        public boolean isEquipped() {
+        public boolean getIsEquipped() {
             return isEquipped;
         }
 
-        public boolean isCanEquip() {
+        public boolean getCanEquip() {
             return canEquip;
         }
 

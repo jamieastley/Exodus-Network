@@ -13,12 +13,14 @@ public class CharacterDatabaseModel implements Parcelable {
     private String characterId;
     private String membershipType;
     private String classType;
+    private String emblemBackground;
 
-    public CharacterDatabaseModel(String membershipId, String characterId, String membershipType, String classType) {
+    public CharacterDatabaseModel(String membershipId, String characterId, String membershipType, String classType, String emblem) {
         this.membershipId = membershipId;
         this.characterId = characterId;
         this.membershipType = membershipType;
         this.classType = classType;
+        this.emblemBackground = emblem;
     }
 
     protected CharacterDatabaseModel(Parcel in) {
@@ -70,6 +72,14 @@ public class CharacterDatabaseModel implements Parcelable {
 
     public void setClassType(String classType) {
         this.classType = classType;
+    }
+
+    public String getEmblemBackground() {
+        return emblemBackground;
+    }
+
+    public void setEmblemBackground(String emblemBackground) {
+        this.emblemBackground = emblemBackground;
     }
 
     @Override

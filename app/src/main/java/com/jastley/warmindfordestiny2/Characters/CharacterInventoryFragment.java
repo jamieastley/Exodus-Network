@@ -15,27 +15,22 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import android.widget.Toast;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
-import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsViewHolder;
-import com.jastley.warmindfordestiny2.Characters.interfaces.ItemSelectionListener;
+import com.jastley.warmindfordestiny2.Characters.holders.TransferItemViewHolder;
+import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
-import com.jastley.warmindfordestiny2.database.AppDatabase;
-import com.jastley.warmindfordestiny2.database.CollectablesDAO;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
 import com.jastley.warmindfordestiny2.database.models.Collectables;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,7 +47,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
  * Use the {@link CharacterInventoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CharacterInventoryFragment extends Fragment {
+public class CharacterInventoryFragment extends Fragment implements TransferSelectListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -204,6 +199,11 @@ public class CharacterInventoryFragment extends Fragment {
         outState.putParcelableArrayList("characterItems", (ArrayList<? extends Parcelable>) inventoryItems);
     }
 
+    @Override
+    public void onTransferSelect(View view, int position, TransferItemViewHolder holder) {
+        Toast.makeText(getContext(), " selected", Toast.LENGTH_SHORT).show();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -237,9 +237,12 @@ public class CharacterInventoryFragment extends Fragment {
                         Boolean canEquip = false;
                         InventoryItemModel itemModel = new InventoryItemModel();
 
+                        itemModel.setItemHash(itemHash);
+
                         //Get instanceId to look up it's instanceData from the response
                         if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
                             itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
+                            itemModel.setItemInstanceId(itemInstanceId);
                         }
                             //Lookup manifest data for item
                         try {
@@ -270,15 +273,18 @@ public class CharacterInventoryFragment extends Fragment {
 //                                    });
 
 
-//                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).isCanEquip();
+//                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip();
                         try{
                             primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
                             itemModel.setPrimaryStatValue(primaryStatValue);
+                            itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
+                            itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
+
                         }
                         catch(Exception e){
                             System.out.println("Not an instance-specific item");
                         }
-                        itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
+//                        itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
 
 //                        }
 
@@ -304,12 +310,6 @@ public class CharacterInventoryFragment extends Fragment {
                     }
 
                     setRecyclerView(inventoryItems);
-//                    //create Recyclerview
-//                    LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
-//                    mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), inventoryItems);
-//                    mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
-//                    mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
-//                    loadingProgress.setVisibility(View.GONE);
                 });
 
     }
@@ -317,14 +317,31 @@ public class CharacterInventoryFragment extends Fragment {
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
             Toast.makeText(getContext(), holder.getItemName().getText().toString() + " clicked", Toast.LENGTH_SHORT).show();
 
+            //get properties of clicked item
+            InventoryItemModel clickedItem = new InventoryItemModel();
+            clickedItem.setBucketHash(holder.getBucketHash());
+            clickedItem.setItemInstanceId(holder.getItemInstanceId());
+            clickedItem.setIsEquipped(holder.getIsEquipped());
+            clickedItem.setCanEquip(holder.getCanEquip());
+            clickedItem.setItemHash(holder.getItemHash());
+            clickedItem.setItemName(holder.getItemName().getText().toString());
+            clickedItem.setItemIcon(holder.getImageUrl());
+            clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
+
             ItemTransferDialogFragment transferModalDialog = new ItemTransferDialogFragment();
+            Bundle args = new Bundle();
+            args.putParcelable("selectedItem", clickedItem);
+            transferModalDialog.setArguments(args);
+
             transferModalDialog.show(getFragmentManager(), transferModalDialog.getTag());
         });
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
         loadingProgress.setVisibility(View.GONE);
     }
+
 }

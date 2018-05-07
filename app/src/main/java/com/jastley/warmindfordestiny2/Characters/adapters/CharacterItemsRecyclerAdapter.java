@@ -53,6 +53,9 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
         holder.setItemName(itemList.get(position).getItemName());
         holder.setItemImage(itemList.get(position).getItemIcon(), context);
         holder.setStatValue(itemList.get(position).getPrimaryStatValue());
+        holder.setItemInstanceId(itemList.get(position).getItemInstanceId());
+        holder.setBucketHash(itemList.get(position).getBucketHash());
+        holder.setCanEquip(itemList.get(position).getCanEquip());
     }
 
     @Override
