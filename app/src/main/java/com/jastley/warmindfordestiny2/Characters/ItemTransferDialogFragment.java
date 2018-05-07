@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsViewHolder;
+import com.jastley.warmindfordestiny2.Characters.adapters.EquipItemRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.adapters.TransferItemRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
@@ -27,7 +27,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     @BindView(R.id.transfer_recycler_view) RecyclerView mTransferRecyclerView;
     @BindView(R.id.equip_recycler_view) RecyclerView mEquipRecyclerView;
 
-    TransferItemRecyclerAdapter mAdapter;
+    TransferItemRecyclerAdapter mTransferAdapter;
+    EquipItemRecyclerAdapter mEquipAdapter;
     List<CharacterDatabaseModel> mCharacters;
     TransferSelectListener mListener;
     InventoryItemModel selectedItem;
@@ -51,9 +52,9 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 //        mCharacters = activity.getCharactersList();
 //
 //        mTransferRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-//        mAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters);
+//        mTransferAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters);
 //
-//        mTransferRecyclerView.setAdapter(mAdapter);
+//        mTransferRecyclerView.setAdapter(mTransferAdapter);
 
 //        mTransferRecyclerView = contentView.findViewById(R.id.transfer_recycler_view);
 //
@@ -61,9 +62,9 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 //        mCharacters = activity.getCharactersList();
 //
 //        mTransferRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-//        mAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters);
+//        mTransferAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters);
 //
-//        mTransferRecyclerView.setAdapter(mAdapter);
+//        mTransferRecyclerView.setAdapter(mTransferAdapter);
 
 
 
@@ -92,15 +93,27 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         mCharacters = activity.getCharactersList();
 
 
-
+//        Transfer item row section
         mTransferRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters, (view, position, holder) -> {
+        mTransferAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters, (view, position, holder) -> {
 
-            //transfer item to character
+            //transfer item to character/vault
             Toast.makeText(getContext(), holder.getCharacterId(), Toast.LENGTH_SHORT).show();
         });
 
-        mTransferRecyclerView.setAdapter(mAdapter);
+
+        //Equip item methods
+
+        mEquipRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        mEquipAdapter = new EquipItemRecyclerAdapter(getContext(), mCharacters, (view, position, holder) -> {
+
+            //Equip item on character
+            Toast.makeText(getContext(), holder.getCharacterId(), Toast.LENGTH_SHORT).show();
+        });
+
+
+        mTransferRecyclerView.setAdapter(mTransferAdapter);
+        mEquipRecyclerView.setAdapter(mEquipAdapter);
 
         return super.onCreateView(inflater, container, savedInstanceState);
 

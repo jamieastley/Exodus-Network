@@ -16,13 +16,21 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
 
 //    @BindView(R.id.transfer_class_name) TextView classType;
     @BindView(R.id.transfer_emblem_background) ImageView emblemBackground;
-//    @BindView(R.id.transfer_light_level) TextView lightLevel;
+    @BindView(R.id.transfer_light_level) TextView mLightLevel;
+    @BindView(R.id.transfer_class_level) TextView mBaseLevel;
+    @BindView(R.id.transfer_class_type) TextView mClassType;
+
     private String characterId;
     private String characterLevel;
     private String imageURL;
+    private String classTypeValue;
+
+    private View mView;
 
     public TransferItemViewHolder(View itemView) {
+
         super(itemView);
+        this.mView = itemView;
 
         ButterKnife.bind(this, itemView);
     }
@@ -35,8 +43,30 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
 //        return classType;
 //    }
 
-    public void setClassType(String classType) {
-//        classType.setText(classType);
+    public String getClassTypeValue() {
+        return this.classTypeValue;
+    }
+
+    public void setClassType(String type) {
+
+        this.classTypeValue = type;
+
+        if (type.equals("0")) {
+            String titan = mView.getResources().getString(R.string.titan);
+            mClassType.setText(titan);
+        }
+        else if (type.equals("1")) {
+            String hunter = mView.getResources().getString(R.string.hunter);
+            mClassType.setText(hunter);
+        }
+        else if (type.equals("2")) {
+            String warlock = mView.getResources().getString(R.string.warlock);
+            mClassType.setText(warlock);
+        }
+        else {
+            String unknown = mView.getResources().getString(R.string.unknown);
+            mClassType.setText(unknown);
+        }
     }
 
     public ImageView getEmblemBackground() {
@@ -55,10 +85,11 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
 //    public TextView getLightLevel() {
 //        return lightLevel;
 //    }
-//
-//    public void setLightLevel(TextView lightLevel) {
-//        this.lightLevel = lightLevel;
-//    }
+
+    public void setLightLevel(String light) {
+        String lightLevel = mView.getResources().getString(R.string.lightIcon, light);
+        this.mLightLevel.setText(lightLevel);
+    }
 
     public String getCharacterId() {
         return characterId;
@@ -72,4 +103,14 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
     public void setCharacterLevel(String characterLevel) {
         this.characterLevel = characterLevel;
     }
+
+    public TextView getmBaseLevel() {
+        return mBaseLevel;
+    }
+
+    public void setmBaseLevel(String level) {
+        String baseLevel = mView.getResources().getString(R.string.level, level);
+        this.mBaseLevel.setText(baseLevel);
+    }
+
 }

@@ -13,14 +13,22 @@ public class CharacterDatabaseModel implements Parcelable {
     private String characterId;
     private String membershipType;
     private String classType;
+    private String emblemIcon;
     private String emblemBackground;
+    private String baseCharacterLevel;
+    private String lightLevel;
 
-    public CharacterDatabaseModel(String membershipId, String characterId, String membershipType, String classType, String emblem) {
+    public CharacterDatabaseModel(String membershipId, String characterId, String membershipType,
+                                  String classType, String emblemIcon, String emblemBackground,
+                                  String characterLevel, String light) {
         this.membershipId = membershipId;
         this.characterId = characterId;
         this.membershipType = membershipType;
         this.classType = classType;
-        this.emblemBackground = emblem;
+        this.emblemIcon = emblemIcon;
+        this.emblemBackground = emblemBackground;
+        this.baseCharacterLevel = characterLevel;
+        this.lightLevel = light;
     }
 
     protected CharacterDatabaseModel(Parcel in) {
@@ -74,12 +82,36 @@ public class CharacterDatabaseModel implements Parcelable {
         this.classType = classType;
     }
 
+    public String getEmblemIcon() {
+        return emblemIcon;
+    }
+
+    public void setEmblemIcon(String emblemIcon) {
+        this.emblemIcon = emblemIcon;
+    }
+
     public String getEmblemBackground() {
         return emblemBackground;
     }
 
     public void setEmblemBackground(String emblemBackground) {
         this.emblemBackground = emblemBackground;
+    }
+
+    public String getBaseCharacterLevel() {
+        return baseCharacterLevel;
+    }
+
+    public void setBaseCharacterLevel(String baseCharacterLevel) {
+        this.baseCharacterLevel = baseCharacterLevel;
+    }
+
+    public String getLightLevel() {
+        return lightLevel;
+    }
+
+    public void setLightLevel(String lightLevel) {
+        this.lightLevel = lightLevel;
     }
 
     @Override

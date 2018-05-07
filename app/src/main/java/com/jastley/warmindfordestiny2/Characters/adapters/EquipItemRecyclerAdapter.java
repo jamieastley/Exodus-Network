@@ -37,13 +37,15 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
             mListener.onEquipSelect(mView, mEquipViewHolder.getAdapterPosition(), mEquipViewHolder);
         });
 
-        return null;
+        return mEquipViewHolder;
     }
 
     @Override
     public void onBindViewHolder(EquipItemViewHolder holder, int position) {
 
-
+        holder.setEmblemIcon(mCharacters.get(position).getEmblemIcon(), mContext);
+        holder.setCharacterId(mCharacters.get(position).getCharacterId());
+        holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
 
     }
 

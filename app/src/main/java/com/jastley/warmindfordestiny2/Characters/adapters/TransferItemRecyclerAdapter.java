@@ -44,7 +44,9 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
     public void onBindViewHolder(final TransferItemViewHolder holder, int position) {
         holder.setEmblemBackground(mCharacters.get(position).getEmblemBackground(), mContext);
         holder.setCharacterId(mCharacters.get(position).getCharacterId());
-
+        holder.setLightLevel(mCharacters.get(position).getLightLevel());
+        holder.setmBaseLevel(mCharacters.get(position).getBaseCharacterLevel());
+        holder.setClassType(mCharacters.get(position).getClassType());
     }
 
     @Override

@@ -278,7 +278,10 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                                 charObj.get("characterId").getAsString(),
                                 charObj.get("membershipType").getAsString(),
                                 charObj.get("classType").getAsString(),
-                                charObj.get("emblemBackgroundPath").getAsString()
+                                charObj.get("emblemPath").getAsString(),
+                                charObj.get("emblemBackgroundPath").getAsString(),
+                                charObj.get("baseCharacterLevel").getAsString(),
+                                charObj.get("light").getAsString()
                         );
                         charactersList.add(character);
                     }
