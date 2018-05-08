@@ -256,6 +256,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
                             itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
                             itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                            itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
                         }
                         catch(Exception e){
                             System.out.println(e);
@@ -331,6 +332,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             clickedItem.setItemName(holder.getItemName().getText().toString());
             clickedItem.setItemIcon(holder.getImageUrl());
             clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
+            clickedItem.setItemTypeDisplayName(holder.getItemTypeDisplayName());
 
             ItemTransferDialogFragment transferModalDialog = new ItemTransferDialogFragment();
             Bundle args = new Bundle();

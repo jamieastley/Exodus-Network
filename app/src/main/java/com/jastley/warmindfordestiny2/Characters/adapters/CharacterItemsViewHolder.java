@@ -33,6 +33,7 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     private String itemInstanceId;
     private boolean isEquipped;
     private boolean canEquip;
+    private String itemTypeDisplayName;
 
     protected View mRootView;
 
@@ -71,17 +72,14 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
             .into(this.itemImage);
     }
 
-    public TextView getStatValue() {
-        return statValue;
+    public String getPrimaryStatValue() {
+        return primaryStatValue;
     }
 
-    public void setStatValue(String value) {
-//        if(value != null){
-            statValue.setText(value);
-//        }
-//        else {
-//            statValue.setVisibility(View.GONE);
-//        }
+    public void setPrimaryStatValue(String value) {
+
+        this.primaryStatValue = value;
+        statValue.setText(value);
     }
 
     public String getItemHash() {
@@ -100,13 +98,6 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         this.imageUrl = imageUrl;
     }
 
-    public String getPrimaryStatValue() {
-        return primaryStatValue;
-    }
-
-    public void setPrimaryStatValue(String primaryStatValue) {
-        this.primaryStatValue = primaryStatValue;
-    }
 
     public String getBucketHash() {
         return bucketHash;
@@ -138,5 +129,13 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
 
     public void setCanEquip(boolean canEquip) {
         this.canEquip = canEquip;
+    }
+
+    public String getItemTypeDisplayName() {
+        return itemTypeDisplayName;
+    }
+
+    public void setItemTypeDisplayName(String itemTypeDisplayName) {
+        this.itemTypeDisplayName = itemTypeDisplayName;
     }
 }

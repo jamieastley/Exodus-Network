@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,13 +21,23 @@ import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListen
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
+
 public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
+    //Equip/transfer
     @BindView(R.id.transfer_recycler_view) RecyclerView mTransferRecyclerView;
     @BindView(R.id.equip_recycler_view) RecyclerView mEquipRecyclerView;
+
+    //Selected item
+    @BindView(R.id.selected_item_image) ImageView itemImage;
+    @BindView(R.id.primary_stat_value) TextView primaryStatValue;
+    @BindView(R.id.selected_item_name) TextView itemName;
+    @BindView(R.id.selected_item_type) TextView itemType;
 
     TransferItemRecyclerAdapter mTransferAdapter;
     EquipItemRecyclerAdapter mEquipAdapter;
@@ -86,7 +98,14 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-
+        //Selected item details
+        itemName.setText(selectedItem.getItemName());
+        primaryStatValue.setText(selectedItem.getPrimaryStatValue());
+        itemType.setText(selectedItem.getItemTypeDisplayName());
+        Picasso.with(getContext())
+                .load(baseURL + selectedItem.getItemIcon())
+                .placeholder(R.drawable.missing_icon_d2)
+                .into(itemImage);
 
         //Get list of users' characters
         CharacterInventoryActivity activity = (CharacterInventoryActivity) getActivity();

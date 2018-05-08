@@ -2,14 +2,10 @@ package com.jastley.warmindfordestiny2.api;
 
 import com.google.gson.JsonElement;
 
+import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
 import io.reactivex.Observable;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.*;
 
 /**
  * Created by jamie1192 on 15/03/2018.
@@ -67,4 +63,8 @@ public interface BungieAPI {
     //Get Clan Data
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
     Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+
+    //Transfer item to vault
+    @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
+    Observable<Response_TransferItem> transferItem(@Body TransferItemRequestBody transferBody);
 }

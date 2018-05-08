@@ -23,6 +23,7 @@ public class InventoryItemModel implements Parcelable {
     private String classType;
     private String itemName;
     private String itemIcon;
+    private String itemTypeDisplayName;
 
 
     public InventoryItemModel(String itemHash, String itemInstanceId, String bucketHash, String primaryStatValue) {
@@ -129,6 +130,14 @@ public class InventoryItemModel implements Parcelable {
 
     public void setItemIcon(String itemIcon) {
         this.itemIcon = itemIcon;
+    }
+
+    public String getItemTypeDisplayName() {
+        return itemTypeDisplayName;
+    }
+
+    public void setItemTypeDisplayName(String itemTypeDisplayName) {
+        this.itemTypeDisplayName = itemTypeDisplayName;
     }
 
     @Override

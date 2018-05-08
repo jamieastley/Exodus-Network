@@ -4,17 +4,78 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="10dp"
     android:background="@color/warmindDark"
     >
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Transfer item to..."
-        android:textColor="@color/colorWhite"
-        />
+        android:layout_height="90dp"
+        >
 
+        <ImageView
+            android:id="@+id/selected_item_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/image_border"
+            />
+
+        <TextView
+            android:id="@+id/primary_stat_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/selected_item_image"
+            android:layout_alignEnd="@id/selected_item_image"
+            android:layout_alignRight="@id/selected_item_image"
+            android:padding="2dp"
+            android:background="#5b000000"
+            android:text="300"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/selected_item_image"
+            android:layout_toRightOf="@id/selected_item_image"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/selected_item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Item Name"
+                android:textSize="20sp"
+                android:textColor="@color/colorWhite"
+                />
+
+            <TextView
+                android:id="@+id/selected_item_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="asdsada"
+                android:textSize="15sp"
+                android:textColor="@color/colorWhite"
+                />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+
+    <!--RecyclerView container-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,6 +90,15 @@
             android:orientation="vertical"
             android:padding="5dp"
             >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Transfer item to..."
+                android:textColor="@color/colorWhite"
+                />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/transfer_recycler_view"
@@ -50,6 +120,15 @@
             android:orientation="vertical"
             android:padding="5dp"
             >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Equip on..."
+                android:textColor="@color/colorWhite"
+                />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/equip_recycler_view"

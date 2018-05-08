@@ -57,6 +57,7 @@
             app:layout_constraintTop_toBottomOf="@id/transfer_class_spacer_top"
             android:textColor="@color/colorWhite"
             android:text="Warlock"
+            android:textSize="15sp"
             />
 
         <!--top right spacer for light level-->
