@@ -31,6 +31,10 @@ public class CharacterDatabaseModel implements Parcelable {
         this.lightLevel = light;
     }
 
+    public CharacterDatabaseModel() {
+
+    }
+
     protected CharacterDatabaseModel(Parcel in) {
         membershipId = in.readString();
         characterId = in.readString();

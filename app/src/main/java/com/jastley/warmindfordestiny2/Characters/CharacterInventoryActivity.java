@@ -256,6 +256,8 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                     return "Hunter";
                 case "2":
                     return "Warlock";
+                case "vault":
+                    return "Vault";
             }
             return super.getPageTitle(position);
         }
@@ -270,6 +272,9 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accounts -> {
 
+                    String tempMembershipId = "0";
+                    String tempMembershipType = "0";
+
                     for(int i = 0; i < accounts.size(); i++){
                         System.out.println(accounts.get(i).getKey());
                         JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
@@ -283,8 +288,18 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                                 charObj.get("baseCharacterLevel").getAsString(),
                                 charObj.get("light").getAsString()
                         );
+                        tempMembershipId = charObj.get("membershipId").getAsString();
+                        tempMembershipType = charObj.get("membershipType").getAsString();
                         charactersList.add(character);
                     }
+
+                    //Add vault fragment on the end
+                    CharacterDatabaseModel vault = new CharacterDatabaseModel();
+                    vault.setMembershipId(tempMembershipId);
+                    vault.setMembershipType(tempMembershipType);
+                    vault.setClassType("vault");
+
+                    charactersList.add(vault);
 
                     mViewPager.setAdapter(mSectionsPagerAdapter);
                     mTabLayout.setupWithViewPager(mViewPager);

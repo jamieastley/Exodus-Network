@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.jastley.warmindfordestiny2.BucketDefinitions;
 import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.holders.TransferItemViewHolder;
 import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
@@ -147,11 +149,22 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 //            setRecyclerView(inventoryItems);
 //        }
 //        else {
-            getCharacterInventory(
+
+        String classType = mCharacter.getClassType();
+
+        if(classType.equals("vault")){
+            //get Vault items only
+            getVaultInventory(
                     mCharacter.getMembershipType(),
-                    mCharacter.getMembershipId(),
-                    mCharacter.getCharacterId());
-//        }
+                    mCharacter.getMembershipId());
+        }
+        else {
+            getCharacterInventory(
+                mCharacter.getMembershipType(),
+                mCharacter.getMembershipId(),
+                mCharacter.getCharacterId());
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -227,41 +240,46 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-                    inventoryItems.clear();
-//                    response.getResponse().getInventory().getData().getItems().
-                    for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
-                        String primaryStatValue;
-                        String itemInstanceId = null;
-                        String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
-                        Boolean canEquip = false;
-                        InventoryItemModel itemModel = new InventoryItemModel();
+                    //Error code checking
+                    switch(response.getErrorCode()){
+                        case 1: //Response successful
 
-                        itemModel.setItemHash(itemHash);
+                            inventoryItems.clear();
+                            for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
-                        //Get instanceId to look up it's instanceData from the response
-                        if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
-                            itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
-                            itemModel.setItemInstanceId(itemInstanceId);
-                        }
-                            //Lookup manifest data for item
-                        try {
+                                String primaryStatValue;
+                                String itemInstanceId = null;
+                                String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
+                                InventoryItemModel itemModel = new InventoryItemModel();
+
+                                itemModel.setItemHash(itemHash);
+
+                                //Get instanceId to look up it's instanceData from the response
+                                if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+                                    itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
+                                    itemModel.setItemInstanceId(itemInstanceId);
+                                }
+                                //Lookup manifest data for item
+                                try {
 //                                JsonArray json =  mCollectablesList;
 //                                String name = json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString();
 //                                itemModel.setItemName(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
 //                                itemModel.setItemIcon(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
 //                                //                                itemModel.setItemName(mCollectablesList.indexOf(1));
-                            OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
+                                    OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
 //                                String dataString = dbItem.getValue();
-                            JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
-                            itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
-                            itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
-                            itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
-                        }
-                        catch(Exception e){
-                            System.out.println(e);
-                        }
-                        db.close();
+                                    JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
+                                    itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                                    itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                                    itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
+                                    itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
+                                    itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
+                                }
+                                catch(Exception e){
+                                    System.out.println(e);
+                                }
+                                db.close();
 //                            CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(getContext()).getCollectablesDAO();
 //                            mCollectablesDAO.getItemByKey(itemHash)
 //                                    .subscribeOn(Schedulers.io())
@@ -275,45 +293,142 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
 
 //                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip();
-                        try{
-                            primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                            itemModel.setPrimaryStatValue(primaryStatValue);
-                            itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
-                            itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
-
-                        }
-                        catch(Exception e){
-                            System.out.println("Not an instance-specific item");
-                        }
-//                        itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
-
-//                        }
+                                try{
+                                    primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                                    itemModel.setPrimaryStatValue(primaryStatValue);
 
 
-                        //Cast to JsonObject as we don't have a model class for instance data (because dynamic key values)
-//                        JsonObject obj = new JsonParser().parse(response.getResponse().getItemComponents().getInstances().getInstanceData().getAsJsonObject());
+                                }
+                                catch(Exception e){
+                                    System.out.println("Not an instance-specific item");
+                                }
 //
-//                        //If we can equip the item (true), get the primaryStat value (damage/defense)
-//                        if(obj.get(itemInstanceId).getAsJsonObject().get("canEquip").getAsBoolean()){
-//                            primaryStatValue = obj.get(itemInstanceId).getAsJsonObject().get("primaryStat").getAsJsonObject().get("value").getAsDouble();
-//                            itemModel.setPrimaryStatValue(primaryStatValue);
-//                        }
-//                        if(canEquip){
-//                            primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-//                            itemModel.setPrimaryStatValue(primaryStatValue);
-//                            itemModel.setItemInstanceId(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId());
-//                        }
-
-                            //get inventory item
+                                //get inventory item
 //                            itemModel.setItemHash(String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash()));
-                            itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
-                            inventoryItems.add(itemModel);
+                                itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
+                                inventoryItems.add(itemModel);
+                            }
+
+                            setRecyclerView(inventoryItems);
+                            break;
+
+                        case 5: //maintainence
+                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Bungie servers are currently unavailable.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null)
+                                    .show();
+                            break;
                     }
 
-                    setRecyclerView(inventoryItems);
+
+                }, Throwable -> {
+                    Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve account data.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .show();
+//                        getActivity().onBackPressed();
+                    });
+
+    }
+
+    public void getVaultInventory(String membershipType, String membershipId) {
+
+        JsonParser parser = new JsonParser();
+
+        mBungieAPI.getVaultInventory(membershipType, membershipId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+
+                    //Error code checking
+                    switch(response.getErrorCode()){
+                        case 1: //Response successful
+
+                            inventoryItems.clear();
+                            for(int i = 0; i < response.getResponse().getProfileInventory().getData().getItems().size(); i++){
+
+                                String primaryStatValue;
+                                String itemInstanceId = null;
+                                String itemHash = String.valueOf(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash());
+                                InventoryItemModel itemModel = new InventoryItemModel();
+
+                                itemModel.setItemHash(itemHash);
+
+                                //Get instanceId to look up it's instanceData from the response
+                                if(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+                                    itemInstanceId = response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
+                                    itemModel.setItemInstanceId(itemInstanceId);
+                                }
+                                //Lookup manifest data for item
+                                try {
+//                                JsonArray json =  mCollectablesList;
+//                                String name = json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString();
+//                                itemModel.setItemName(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
+//                                itemModel.setItemIcon(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
+//                                //                                itemModel.setItemName(mCollectablesList.indexOf(1));
+                                    OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
+//                                String dataString = dbItem.getValue();
+                                    JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
+                                    itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                                    itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                                    itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
+                                    itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
+                                    itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
+                                }
+                                catch(Exception e){
+                                    System.out.println(e);
+                                }
+                                db.close();
+//                            CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(getContext()).getCollectablesDAO();
+//                            mCollectablesDAO.getItemByKey(itemHash)
+//                                    .subscribeOn(Schedulers.io())
+//                                    .subscribe(collectables -> {
+////                                       collectables.
+//                                        JsonParser parser = new JsonParser();
+//                                        JsonElement itemData = parser.parse(collectables.getValue());
+//                                        itemModel.setItemName(itemData.getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
+//                                        itemModel.setItemIcon(itemData.getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
+//                                    });
+
+
+//                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip();
+                                try{
+                                    primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                                    itemModel.setPrimaryStatValue(primaryStatValue);
+
+
+                                }
+                                catch(Exception e){
+                                    System.out.println("Not an instance-specific item");
+                                }
+//
+                                //get inventory item
+//                            itemModel.setItemHash(String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash()));
+                                String bucketHash = response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash();
+                                if(bucketHash.equals(BucketDefinitions.vault)) {
+                                    itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
+                                    inventoryItems.add(itemModel);
+                                }
+                            }
+
+                            setRecyclerView(inventoryItems);
+                            break;
+
+                        case 5: //maintainence
+                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Bungie servers are currently unavailable.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null)
+                                    .show();
+                            break;
+                    }
+
+
+                }, Throwable -> {
+                    Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve account data.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .show();
+//                        getActivity().onBackPressed();
                 });
 
     }
+
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 

@@ -21,6 +21,9 @@ import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListen
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.api.BungieAPI;
+import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -44,7 +47,9 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     List<CharacterDatabaseModel> mCharacters;
     TransferSelectListener mListener;
     InventoryItemModel selectedItem;
+    TransferItemRequestBody mTransferBody;
 
+    private BungieAPI mBungieApi;
 
 
     public ItemTransferDialogFragment() {
@@ -98,6 +103,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        mBungieApi = new RetrofitHelper().getAuthBungieAPI(getContext(), baseURL);
+
         //Selected item details
         itemName.setText(selectedItem.getItemName());
         primaryStatValue.setText(selectedItem.getPrimaryStatValue());
@@ -116,7 +123,20 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         mTransferRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mTransferAdapter = new TransferItemRecyclerAdapter(getContext(), mCharacters, (view, position, holder) -> {
 
+            System.out.println("position: " + position);
+            //Create transferBodyObject
+            mTransferBody = new TransferItemRequestBody(
+                    selectedItem.getItemHash(),
+                    "1",
+                    true, //TODO: change later, true if vault selected
+                    selectedItem.getItemInstanceId(),
+                    mCharacters.get(position).getMembershipType(),
+                    holder.getCharacterId()
+                );
+
             //transfer item to character/vault
+//            mBungieApi.transferItem()
+
             Toast.makeText(getContext(), holder.getCharacterId(), Toast.LENGTH_SHORT).show();
         });
 

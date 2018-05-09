@@ -48,8 +48,8 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
     public void onBindViewHolder(CharacterItemsViewHolder holder, int position) {
 
         //TODO: determine item group and sort RV's by category (Kinetic/Energy/Heavy)
-//        holder.setItemName(itemList.get(position).);
         holder.setItemName(itemList.get(position).getItemName());
+        holder.setItemHash(itemList.get(position).getItemHash());
         holder.setItemImage(itemList.get(position).getItemIcon(), context);
         holder.setPrimaryStatValue(itemList.get(position).getPrimaryStatValue());
         holder.setItemInstanceId(itemList.get(position).getItemInstanceId());

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -25,6 +26,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
 /**
  * Created by jamie1192 on 6/4/18.
@@ -55,47 +58,71 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 
 
 
-        if(firstRun){
+//        if(!firstRun){
 
-            final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
+            //get/check manifest version data
+        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
 
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            mBungieAPI.getDestinyPlumbing()
+                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(response_destinyPlumbing -> {
+
+                        String manifestVersion = response_destinyPlumbing.getBungieManifestVersion();
+                        String savedManifestVersion = savedPrefs.getString("manifestVersion", "");
+
+                        if(!manifestVersion.equals(savedManifestVersion)){
+
+                            //save new manifestVersion
+                            SharedPreferences.Editor editor = savedPrefs.edit();
+
+                            try{
+                                editor.putString("manifestVersion", manifestVersion);
+                                editor.apply();
+                            }
+                            catch(Exception e){
+                                System.out.println("ManifestVersion error: " + e);
+                            }
+
+                            final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
+
+                            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+                            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+                            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
 
-            Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl("https://destiny.plumbing/en/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(httpClient.build());
+                            Retrofit.Builder builder = new Retrofit.Builder()
+                                    .baseUrl("https://destiny.plumbing/en/")
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .client(httpClient.build());
 
-            Retrofit retrofit = builder.build();
+                            Retrofit retrofit = builder.build();
 
-            BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-            Call<JsonElement> getCollectablesManifest = bungieClient.getCollectablesDatabase();
+                            BungieAPI bungieClient = retrofit.create(BungieAPI.class);
+                            Call<JsonElement> getCollectablesManifest = bungieClient.getCollectablesDatabase();
 
-            getCollectablesManifest.enqueue(new Callback<JsonElement>() {
-                @Override
-                public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                            getCollectablesManifest.enqueue(new Callback<JsonElement>() {
+                                @Override
+                                public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
 
-                    JsonElement json = response.body();
-                    JsonObject responseObj = (JsonObject) json;
+                                    JsonElement json = response.body();
+                                    JsonObject responseObj = (JsonObject) json;
 
-                    try{
-                        for(Iterator iterator = responseObj.keySet().iterator(); iterator.hasNext();) {
+                                    try{
+                                        for(Iterator iterator = responseObj.keySet().iterator(); iterator.hasNext();) {
 
-                            final String key = (String)iterator.next();
-                            JsonObject collectableObj = (JsonObject) responseObj.get(key);
+                                            final String key = (String)iterator.next();
+                                            JsonObject collectableObj = (JsonObject) responseObj.get(key);
 
-                            //store item definition object as string
-                            final String currentItemDefinition = collectableObj.toString();
+                                            //store item definition object as string
+                                            final String currentItemDefinition = collectableObj.toString();
 
-                            Collectables mCollectable = new Collectables();
-                            mCollectable.setKey(key);
-                            mCollectable.setValue(currentItemDefinition);
-                            collectables.add(mCollectable);
+                                            Collectables mCollectable = new Collectables();
+                                            mCollectable.setKey(key);
+                                            mCollectable.setValue(currentItemDefinition);
+                                            collectables.add(mCollectable);
 
-                                //onResponse is on UI thread, move back onto worker thread for Room
+                                            //onResponse is on UI thread, move back onto worker thread for Room
 //                                AsyncTask.execute(new Runnable() {
 //                                    @Override
 //                                    public void run() {
@@ -107,43 +134,51 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 //
 //                                    }
 //                                });
-                        }
+                                        }
 
-                        AsyncTask.execute(() -> mCollectibleDAO.insertAll(collectables));
-                    }
-                    catch(Exception e){
-                        System.out.println("Error getting manifest: " + e);
-                    }
-                    finally {
-                        delegate.onAsyncDone();
-                    }
-                }
+                                        AsyncTask.execute(() -> mCollectibleDAO.insertAll(collectables));
+                                    }
+                                    catch(Exception e){
+                                        System.out.println("Error getting manifest: " + e);
+                                    }
+                                    finally {
+                                        delegate.onAsyncDone();
+                                    }
+                                }
 
-                @Override
-                public void onFailure(Call<JsonElement> call, Throwable t) {
-                    Toast.makeText(context, "Couldn't update manifest database.", Toast.LENGTH_SHORT).show();
-                    delegate.onAsyncDone();
-                }
-            });
+                                @Override
+                                public void onFailure(Call<JsonElement> call, Throwable t) {
+                                    Toast.makeText(context, "Couldn't update manifest database.", Toast.LENGTH_SHORT).show();
+                                    delegate.onAsyncDone();
+                                }
+                            });
 
 //            getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-            SharedPreferences.Editor editor = savedPrefs.edit();
+//                            SharedPreferences.Editor editor = savedPrefs.edit();
+//
+//                            try{
+//                                editor.putBoolean("firstRun", false);
+//                                editor.apply(); //TODO: UNCOMMENT THIS AFTER DEBUG
+//                            }
+//                            catch(Exception e){
+//                                System.out.println("onCompleteSplash: " + e);
+//                            }
 
-            try{
-                editor.putBoolean("firstRun", false);
-                editor.apply(); //TODO: UNCOMMENT THIS AFTER DEBUG
-            }
-            catch(Exception e){
-                System.out.println("onCompleteSplash: " + e);
-            }
-        }
+                        }
+                        else{
+                            delegate.onAsyncDone();
+                        }
+                    });
+
+
+//        }
 
         //if not first run
-        else{
-
-            //TODO: try pass intent jsonArray of character args to MainActivity
-            delegate.onAsyncDone();
-        }
+//        else{
+//
+//            //TODO: try pass intent jsonArray of character args to MainActivity
+//            delegate.onAsyncDone();
+//        }
         return true;
     }
 

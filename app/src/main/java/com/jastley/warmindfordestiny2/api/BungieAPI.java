@@ -46,9 +46,17 @@ public interface BungieAPI {
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200")
     Call<JsonElement> getProfile(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Get character inventory
+    //Get character inventory, with instance data(?components=300)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201&components=300")
     Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
+
+    //Get vault inventory, with instance data(?components=300)
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=102&components=300")
+    Observable<Response_GetCharacterInventory> getVaultInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+
+    //Get destiny.plumbing homepage to check manifest version/date
+    @GET("https://destiny.plumbing/")
+    Observable<Response_DestinyPlumbing> getDestinyPlumbing();
 
     //Collectable Items/Weapons/Armor
 //    @GET("reducedCollectableInventoryItems.json")

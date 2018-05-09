@@ -6,13 +6,15 @@ public class TransferItemRequestBody {
     private String stackSize;
     private boolean transferToVault;
     private String itemId;
+    private String membershipType;
     private String characterId;
 
-    public TransferItemRequestBody(String itemReferenceHash, String stackSize, boolean transferToVault, String itemId, String characterId) {
+    public TransferItemRequestBody(String itemReferenceHash, String stackSize, boolean transferToVault, String itemId, String membershipType, String characterId) {
         this.itemReferenceHash = itemReferenceHash;
         this.stackSize = stackSize;
         this.transferToVault = transferToVault;
         this.itemId = itemId;
+        this.membershipType = membershipType;
         this.characterId = characterId;
     }
 
@@ -46,6 +48,14 @@ public class TransferItemRequestBody {
 
     public void setItemId(String itemId) {
         this.itemId = itemId;
+    }
+
+    public String getMembershipType() {
+        return membershipType;
+    }
+
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
     }
 
     public String getCharacterId() {

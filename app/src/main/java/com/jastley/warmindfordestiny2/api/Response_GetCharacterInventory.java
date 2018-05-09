@@ -66,6 +66,9 @@ public class Response_GetCharacterInventory {
         @Expose
         @SerializedName("inventory")
         private Inventory inventory;
+        @Expose
+        @SerializedName("profileInventory")
+        private ProfileInventory profileInventory;
 
         public ItemComponents getItemComponents() {
             return itemComponents;
@@ -73,6 +76,10 @@ public class Response_GetCharacterInventory {
 
         public Inventory getInventory() {
             return inventory;
+        }
+
+        public ProfileInventory getProfileInventory() {
+            return profileInventory;
         }
     }
 
@@ -181,6 +188,23 @@ public class Response_GetCharacterInventory {
 
         public int getMaximumValue() {
             return maximumValue;
+        }
+    }
+
+    public static class ProfileInventory {
+        @Expose
+        @SerializedName("privacy")
+        private int privacy;
+        @Expose
+        @SerializedName("data")
+        private Data data;
+
+        public int getPrivacy() {
+            return privacy;
+        }
+
+        public Data getData() {
+            return data;
         }
     }
 
