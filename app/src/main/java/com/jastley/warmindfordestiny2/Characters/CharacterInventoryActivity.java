@@ -45,7 +45,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CharacterInventoryActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        CharacterInventoryFragment.OnFragmentInteractionListener{
+        CharacterInventoryFragment.OnFragmentInteractionListener,
+        ItemTransferDialogFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -178,7 +179,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(String uri) {
 
     }
 

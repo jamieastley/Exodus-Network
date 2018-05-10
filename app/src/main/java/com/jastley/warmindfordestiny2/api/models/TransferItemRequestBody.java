@@ -18,6 +18,9 @@ public class TransferItemRequestBody {
         this.characterId = characterId;
     }
 
+    public TransferItemRequestBody() {
+    }
+
     public String getItemReferenceHash() {
         return itemReferenceHash;
     }

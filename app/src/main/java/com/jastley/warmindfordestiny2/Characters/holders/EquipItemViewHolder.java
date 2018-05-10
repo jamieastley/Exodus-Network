@@ -18,6 +18,7 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
     private String characterId;
     private String characterLevel;
     private String imageURL;
+    private String classType;
 
     public EquipItemViewHolder(View itemView) {
         super(itemView);
@@ -60,5 +61,28 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String type) {
+
+        switch (type) {
+            case "0":
+                classType = "Titan";
+                break;
+            case "1":
+                classType = "Hunter";
+                break;
+            case "2":
+                classType = "Warlock";
+                break;
+            default:
+                classType = "Unknown";
+                break;
+        }
+
     }
 }

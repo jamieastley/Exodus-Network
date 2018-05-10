@@ -47,6 +47,8 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
         holder.setCharacterId(mCharacters.get(position).getCharacterId());
         holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
 
+
+
     }
 
     @Override

@@ -1,6 +1,9 @@
 package com.jastley.warmindfordestiny2.Characters;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +28,7 @@ import com.jastley.warmindfordestiny2.Definitions;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+import com.jastley.warmindfordestiny2.api.models.EquipItemRequestBody;
 import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
 import com.squareup.picasso.Picasso;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -50,16 +54,41 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     TransferItemRecyclerAdapter mTransferAdapter;
     EquipItemRecyclerAdapter mEquipAdapter;
     List<CharacterDatabaseModel> mCharacters;
-    TransferSelectListener mListener;
+//    TransferSelectListener mListener;
     InventoryItemModel selectedItem;
+
     TransferItemRequestBody mTransferBody;
+    EquipItemRequestBody mEquipBody;
+
 
     private BungieAPI mBungieApi;
     private int mTabIndex;
+    private OnFragmentInteractionListener mListener;
 
 
     public ItemTransferDialogFragment() {
         super();
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(String uri);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -105,7 +134,16 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         return super.onCreateDialog(savedInstanceState);
     }
 
-//
+//    @Override
+//    public void dismiss() {
+//        onDismiss(DialogInterface::dismiss);
+//        super.dismiss();
+//    }
+
+
+
+
+    //
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -172,7 +210,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                 //Send item to vault
                 mTransferBody = new TransferItemRequestBody(
                         selectedItem.getItemHash(),
-                        "1",
+                        "1", //TODO: allow stackSize selection if >1 item
                         true,
                         selectedItem.getItemInstanceId(),
                         mCharacters.get(position).getMembershipType(),
@@ -185,14 +223,15 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                 //send to character
                 mTransferBody = new TransferItemRequestBody(
                         selectedItem.getItemHash(),
-                        "1",
+                        "1", //TODO: allow stackSize selection if >1 item
                         false,
                         selectedItem.getItemInstanceId(),
                         mCharacters.get(position).getMembershipType(),
                         //                    holder.getVaultCharacterId()
-                        mCharacters.get(mTabIndex).getCharacterId()
+                        mCharacters.get(position).getCharacterId()
                 );
             }
+
 
             mBungieApi.transferItem(mTransferBody)
                     .subscribeOn(Schedulers.io())
@@ -200,6 +239,12 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     .subscribe(response -> {
 
                         System.out.println("Response: " + response.getErrorCode());
+
+//                        dismiss();
+//                        onDismiss(this);
+
+                        dismiss();
+
                         if(response.getErrorCode().equals("1")){
                             Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Item transferred to " + className, Snackbar.LENGTH_LONG)
                                     .setAction("Action", null)
@@ -207,17 +252,42 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                         }
                     });
 
-            Toast.makeText(getContext(), holder.getCharacterId(), Toast.LENGTH_SHORT).show();
         });
 
 
         //Equip item methods
-
         mEquipRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mEquipAdapter = new EquipItemRecyclerAdapter(getContext(), mCharacters, (view, position, holder) -> {
 
             //Equip item on character
             Toast.makeText(getContext(), holder.getCharacterId(), Toast.LENGTH_SHORT).show();
+
+            String className = holder.getClassType();
+
+            mEquipBody = new EquipItemRequestBody(
+                selectedItem.getItemInstanceId(),
+                mCharacters.get(position).getCharacterId(),
+                mCharacters.get(position).getMembershipType()
+            );
+            mBungieApi.equipItem(mEquipBody)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(response -> {
+
+                        System.out.println("Response: " + response.getErrorCode());
+                        dismiss();
+
+                        if(response.getErrorCode().equals("1")){
+                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Item transferred to " + className, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null)
+                                    .show();
+                        }
+                    });
+
+//            "itemId": 1331482397,
+//                    "characterId": 2305843009263480022,
+//                    "membershipType": 2
+//
         });
 
 
@@ -232,4 +302,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
 //        return rootView;
     }
+
+
+
+
 }

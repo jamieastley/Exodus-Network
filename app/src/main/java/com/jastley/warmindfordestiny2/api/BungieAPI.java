@@ -2,6 +2,7 @@ package com.jastley.warmindfordestiny2.api;
 
 import com.google.gson.JsonElement;
 
+import com.jastley.warmindfordestiny2.api.models.EquipItemRequestBody;
 import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -72,7 +73,12 @@ public interface BungieAPI {
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
     Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Transfer item to vault
+    //Transfer item to vault/character
     @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
     Observable<Response_TransferItem> transferItem(@Body TransferItemRequestBody transferBody);
+
+    @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
+    Observable<Response_TransferItem> equipItem(@Body EquipItemRequestBody equipBody);
+
+
 }

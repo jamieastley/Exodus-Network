@@ -1,6 +1,7 @@
 package com.jastley.warmindfordestiny2.Characters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -70,6 +71,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     private List<InventoryItemModel> inventoryItems = new ArrayList<>();
 //    private List<Collectables> mCollectablesList = new ArrayList<>();
     private DatabaseHelper db;
+    ItemTransferDialogFragment transferModalDialog;
 
     boolean mIsRestoredFromBackstack;
 
@@ -171,7 +173,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(String uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
@@ -182,11 +184,13 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            System.out.println("FragmentInteraction triggered");
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
 
     @Override
     public void onDetach() {
@@ -217,8 +221,11 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     @Override
     public void onTransferSelect(View view, int position, TransferItemViewHolder holder) {
-        Toast.makeText(getContext(), " selected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), " selected!!!?", Toast.LENGTH_SHORT).show();
+        System.out.println("onTransferSelect triggered");
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -232,7 +239,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String uri);
     }
 
     public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
@@ -491,17 +498,29 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             clickedItem.setTabIndex(holder.getTabIndex());
             clickedItem.setVaultCharacterId(mCharacter.getCharacterId());
 
-            ItemTransferDialogFragment transferModalDialog = new ItemTransferDialogFragment();
+            transferModalDialog = new ItemTransferDialogFragment();
             Bundle args = new Bundle();
             args.putParcelable("selectedItem", clickedItem);
             args.putInt("tabIndex", mTabNumber);
             transferModalDialog.setArguments(args);
 
             transferModalDialog.show(getFragmentManager(), transferModalDialog.getTag());
+
+//            transferModalDialog.onDismiss(new DialogInterface.OnDismissListener() {
+//                @Override
+//                public void onDismiss(DialogInterface dialog) {
+//
+//                }
+//            });
+//            transferModalDialog.onDismiss(dialog -> {
+//
+//
+//            });
         });
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
         loadingProgress.setVisibility(View.GONE);
     }
+
 
 }
