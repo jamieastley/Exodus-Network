@@ -19,7 +19,7 @@ public class Response_TransferItem {
     private int ThrottleSeconds;
     @Expose
     @SerializedName("ErrorCode")
-    private int ErrorCode;
+    private String ErrorCode;
     @Expose
     @SerializedName("Response")
     private int Response;
@@ -40,7 +40,7 @@ public class Response_TransferItem {
         return ThrottleSeconds;
     }
 
-    public int getErrorCode() {
+    public String getErrorCode() {
         return ErrorCode;
     }
 

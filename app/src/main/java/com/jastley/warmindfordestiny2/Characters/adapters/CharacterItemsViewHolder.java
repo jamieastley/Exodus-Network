@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jastley.warmindfordestiny2.Definitions;
 import com.jastley.warmindfordestiny2.R;
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +25,7 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.inventory_item_type) TextView itemType;
     @BindView(R.id.inventory_item_image) ImageView itemImage;
     @BindView(R.id.primary_stat_value) TextView statValue;
+    @BindView(R.id.item_modifier_icon) ImageView modifierIcon;
 
     //Hidden values to retain for retrieval later
     private String itemHash;
@@ -34,6 +36,8 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     private boolean isEquipped;
     private boolean canEquip;
     private String itemTypeDisplayName;
+    private int tabIndex;
+    private String damageType;
 
     protected View mRootView;
 
@@ -137,5 +141,59 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
 
     public void setItemTypeDisplayName(String itemTypeDisplayName) {
         this.itemTypeDisplayName = itemTypeDisplayName;
+    }
+
+    public int getTabIndex() {
+        return tabIndex;
+    }
+
+    public void setTabIndex(int tabIndex) {
+        this.tabIndex = tabIndex;
+    }
+
+    public ImageView getModifierIcon() {
+        return modifierIcon;
+    }
+
+    public void setModifierIcon(String type, Context context) {
+
+        //set damageType incase we need it later
+        if(type != null){
+
+            this.damageType = type;
+
+            switch(type){
+
+                //set damageType icon
+                case(Definitions.dmgTypeKinetic):
+                    //TODO - maybe
+                    break;
+
+                case(Definitions.dmgTypeArc):
+                    this.modifierIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.modifier_arc));
+                    break;
+
+                case(Definitions.dmgTypeThermal):
+                    this.modifierIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.modifier_solar));
+                    break;
+
+                case(Definitions.dmgTypeVoid):
+                    this.modifierIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.modifier_void));
+                    break;
+
+                case(Definitions.dmgTypeRaid):
+                    //TODO - maybe
+                    break;
+
+            }
+        }
+    }
+
+    public String getDamageType() {
+        return damageType;
+    }
+
+    public void setDamageType(String damageType) {
+        this.damageType = damageType;
     }
 }

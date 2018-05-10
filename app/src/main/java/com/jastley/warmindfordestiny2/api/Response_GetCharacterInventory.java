@@ -111,7 +111,7 @@ public class Response_GetCharacterInventory {
     public static class InstanceData {
         @Expose
         @SerializedName("damageType")
-        private int damageType;
+        private String damageType;
         @Expose
         @SerializedName("damageTypeHash")
         private Double damageTypeHash;
@@ -138,7 +138,7 @@ public class Response_GetCharacterInventory {
             return primaryStat;
         }
 
-        public int getDamageType() {
+        public String getDamageType() {
             return damageType;
         }
 

@@ -18,18 +18,36 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
     private List<CharacterDatabaseModel> mCharacters;
     private TransferSelectListener mListener;
 
+    //UI manipulation
+    private int tabIndex;
+    private int mPosition;
+    private String vaultCharacterId;
+
     public TransferItemRecyclerAdapter(Context context,
+                                       int index,
+                                       String vaultCharId,
                                        List<CharacterDatabaseModel> characters,
                                        TransferSelectListener listener) {
         this.mContext = context;
+        this.tabIndex = index;
+        this.vaultCharacterId = vaultCharId;
         this.mCharacters = characters;
         this.mListener = listener;
+
     }
 
     @Override
     public TransferItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.modal_emblem_transfer_row, parent, false);
+
+        System.out.println("Class type: " + mCharacters.get(mPosition).getClassType());
+        System.out.println("onCreateVH tabIndex: " + tabIndex);
+        System.out.println("adapter mPosition: " + mPosition);
+//        if(mPosition == tabIndex){
+//            mView.setEnabled(false);
+//            mView.setAlpha(0.3f);
+//        }
 
         final TransferItemViewHolder mTransferItemVH = new TransferItemViewHolder(mView);
 
@@ -42,11 +60,28 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
 
     @Override
     public void onBindViewHolder(final TransferItemViewHolder holder, int position) {
-        holder.setEmblemBackground(mCharacters.get(position).getEmblemBackground(), mContext);
-        holder.setCharacterId(mCharacters.get(position).getCharacterId());
-        holder.setLightLevel(mCharacters.get(position).getLightLevel());
-        holder.setmBaseLevel(mCharacters.get(position).getBaseCharacterLevel());
-        holder.setClassType(mCharacters.get(position).getClassType());
+
+//        this.mPosition = position;
+        System.out.println("VH position "+position+", class "+mCharacters.get(position).getClassType());
+
+        //if not vault position, set row with character details
+        if(!mCharacters.get(position).getClassType().equals("vault")){
+            holder.setEmblemBackground(mCharacters.get(position).getEmblemBackground(), mContext);
+            holder.setCharacterId(mCharacters.get(position).getCharacterId());
+            holder.setLightLevel(mCharacters.get(position).getLightLevel());
+            holder.setmBaseLevel(mCharacters.get(position).getBaseCharacterLevel());
+            holder.setClassType(mCharacters.get(position).getClassType());
+            holder.setVaultCharacterId(vaultCharacterId);
+        }
+        else{ //still need a characterId to transfer to vault
+//            holder.setCharacterId(mCharacters.get(position-1).getCharacterId());
+            holder.setClassType("vault");
+        }
+
+        //Disable transferring item to character it already exists on
+        if(position == tabIndex){
+            holder.setDisabled();
+        }
     }
 
     @Override

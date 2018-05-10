@@ -122,5 +122,6 @@
     <string name="transferItem">Transfer item to..</string>
     <string name="level">Level %1$s</string>
     <string name="unknown">Unknown</string>
+    <string name="vault">Vault</string>
 
 </resources>

@@ -18,6 +18,7 @@ public class InventoryItemModel implements Parcelable {
     private boolean isEquipped;
     private boolean canEquip;
     private String primaryStatValue;
+    private String damageType;
 
     //Manifest data
     private String classType;
@@ -25,6 +26,9 @@ public class InventoryItemModel implements Parcelable {
     private String itemIcon;
     private String itemTypeDisplayName;
 
+    //Transferring/equipping
+    private int tabIndex;
+    private String vaultCharacterId;
 
     public InventoryItemModel(String itemHash, String itemInstanceId, String bucketHash, String primaryStatValue) {
         this.itemHash = itemHash;
@@ -47,6 +51,7 @@ public class InventoryItemModel implements Parcelable {
         itemName = in.readString();
         itemIcon = in.readString();
     }
+
 
     public static final Creator<InventoryItemModel> CREATOR = new Creator<InventoryItemModel>() {
         @Override
@@ -140,6 +145,30 @@ public class InventoryItemModel implements Parcelable {
         this.itemTypeDisplayName = itemTypeDisplayName;
     }
 
+    public int getTabIndex() {
+        return tabIndex;
+    }
+
+    public void setTabIndex(int tabIndex) {
+        this.tabIndex = tabIndex;
+    }
+
+    public String getDamageType() {
+        return damageType;
+    }
+
+    public void setDamageType(String type) {
+        this.damageType = type;
+    }
+
+    public String getVaultCharacterId() {
+        return vaultCharacterId;
+    }
+
+    public void setVaultCharacterId(String vaultCharacterId) {
+        this.vaultCharacterId = vaultCharacterId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -147,14 +176,20 @@ public class InventoryItemModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         dest.writeString(itemHash);
         dest.writeString(itemInstanceId);
         dest.writeString(bucketHash);
         dest.writeByte((byte) (isEquipped ? 1 : 0));
         dest.writeByte((byte) (canEquip ? 1 : 0));
         dest.writeString(primaryStatValue);
+        dest.writeString(damageType);
         dest.writeString(classType);
         dest.writeString(itemName);
         dest.writeString(itemIcon);
+        dest.writeString(itemTypeDisplayName);
+        dest.writeInt(tabIndex);
     }
+
+
 }

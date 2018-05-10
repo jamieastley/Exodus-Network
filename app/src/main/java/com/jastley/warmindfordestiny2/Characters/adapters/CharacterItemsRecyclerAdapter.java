@@ -56,6 +56,7 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
         holder.setBucketHash(itemList.get(position).getBucketHash());
         holder.setCanEquip(itemList.get(position).getCanEquip());
         holder.setItemTypeDisplayName(itemList.get(position).getItemTypeDisplayName());
+        holder.setModifierIcon(itemList.get(position).getDamageType(), context);
     }
 
     @Override
@@ -64,4 +65,8 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
     }
 
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 }

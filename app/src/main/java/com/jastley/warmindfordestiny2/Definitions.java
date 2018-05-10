@@ -1,7 +1,8 @@
 package com.jastley.warmindfordestiny2;
 
-public class BucketDefinitions {
+public class Definitions {
 
+//    Bucket Definitions
     public static final String chestArmor = "14239492";
     public static final String shaders = "18606351";
     public static final String legArmor = "20886954";
@@ -34,5 +35,15 @@ public class BucketDefinitions {
     public static final String ghost = "4023194814";
     public static final String emblems = "4274335291";
     public static final String clanBanners = "4292445962";
+
+
+//    Damage type definitions
+    public static final String dmgTypeNone = "0";
+    public static final String dmgTypeKinetic = "1";
+    public static final String dmgTypeArc = "2";
+    public static final String dmgTypeThermal = "3";
+    public static final String dmgTypeVoid = "4";
+    public static final String dmgTypeRaid = "5";
+
 
 }

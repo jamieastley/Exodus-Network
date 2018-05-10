@@ -25,6 +25,9 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
     private String imageURL;
     private String classTypeValue;
 
+    //for vault transfer
+    private String vaultCharacterId;
+
     private View mView;
 
     public TransferItemViewHolder(View itemView) {
@@ -47,6 +50,10 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
         return this.classTypeValue;
     }
 
+    public String getClassType() {
+        return mClassType.getText().toString();
+    }
+
     public void setClassType(String type) {
 
         this.classTypeValue = type;
@@ -62,6 +69,9 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
         else if (type.equals("2")) {
             String warlock = mView.getResources().getString(R.string.warlock);
             mClassType.setText(warlock);
+        }
+        else if (type.equals("vault")) {
+            mClassType.setText("Vault");
         }
         else {
             String unknown = mView.getResources().getString(R.string.unknown);
@@ -113,4 +123,16 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
         this.mBaseLevel.setText(baseLevel);
     }
 
+    public void setDisabled() {
+        mView.setEnabled(false);
+        mView.setAlpha(0.3f);
+    }
+
+    public String getVaultCharacterId() {
+        return vaultCharacterId;
+    }
+
+    public void setVaultCharacterId(String vaultCharacterId) {
+        this.vaultCharacterId = vaultCharacterId;
+    }
 }

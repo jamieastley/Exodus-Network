@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/primary_stat_value"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/selected_item_image"
             android:layout_alignEnd="@id/selected_item_image"
@@ -35,8 +35,22 @@
             android:text="300"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textAlignment="viewEnd"
             android:textColor="@color/colorWhite"
+            android:gravity="end"
             />
+
+        <!--set ImageView after textView so it stacks on top of background alpha-->
+        <ImageView
+            android:id="@+id/item_modifier_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignTop="@id/selected_item_image"
+            android:layout_alignLeft="@id/selected_item_image"
+            android:layout_alignStart="@id/selected_item_image"
+            android:layout_margin="2dp"
+            />
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -103,7 +117,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/transfer_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="220dp"
                 >
 
             </android.support.v7.widget.RecyclerView>

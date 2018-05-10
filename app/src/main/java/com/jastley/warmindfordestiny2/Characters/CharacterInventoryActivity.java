@@ -60,6 +60,9 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
     private List<CharacterDatabaseModel> charactersList = new ArrayList<>();
     private ArrayList<Collectables> collectablesManifest = new ArrayList<>();
     private JsonObject collectablesObject = new JsonObject();
+
+    private int tabIndexCount;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -232,7 +235,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
 //            return PlaceholderFragment.newInstance(position + 1);
 
-            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
+//            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
             return CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
         }
 
@@ -248,6 +251,8 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
         @Override
         public CharSequence getPageTitle(int position) {
 //            return super.getPageTitle(position);
+
+            tabIndexCount = position;
 
             switch(charactersList.get(position).getClassType()){
                 case "0":
@@ -276,7 +281,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
                     String tempMembershipType = "0";
 
                     for(int i = 0; i < accounts.size(); i++){
-                        System.out.println(accounts.get(i).getKey());
+                        System.out.println("forLoop " + accounts.get(i).getKey());
                         JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
                         CharacterDatabaseModel character = new CharacterDatabaseModel(
                                 charObj.get("membershipId").getAsString(),
@@ -303,6 +308,22 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 
                     mViewPager.setAdapter(mSectionsPagerAdapter);
                     mTabLayout.setupWithViewPager(mViewPager);
+                    mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                        @Override
+                        public void onTabSelected(TabLayout.Tab tab) {
+                            System.out.println("tabSelectedListener: tab " + tab.getPosition());
+                        }
+
+                        @Override
+                        public void onTabUnselected(TabLayout.Tab tab) {
+
+                        }
+
+                        @Override
+                        public void onTabReselected(TabLayout.Tab tab) {
+
+                        }
+                    });
                 });
     }
 

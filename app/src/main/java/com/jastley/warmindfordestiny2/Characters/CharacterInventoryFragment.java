@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.jastley.warmindfordestiny2.BucketDefinitions;
+import com.jastley.warmindfordestiny2.Definitions;
 import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.holders.TransferItemViewHolder;
 import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
@@ -89,10 +89,12 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public static CharacterInventoryFragment newInstance(int tabNumber, CharacterDatabaseModel character, ArrayList<Collectables> collectablesManifest) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
         Bundle args = new Bundle();
+        System.out.println("Fragment created, tabIndex: " + tabNumber);
         args.putInt("ARG_TAB_NUMBER", tabNumber);
         args.putParcelable("ARG_CHARACTER_DATA", character);
         args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", collectablesManifest);
         fragment.setArguments(args);
+//        fragment.setRetainInstance(true);
         return fragment;
     }
 
@@ -102,6 +104,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
+            System.out.println("onCreate tab "+mTabNumber+", "+mCharacter.getClassType());
 //            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
         }
 
@@ -259,6 +262,12 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
                                     itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
                                     itemModel.setItemInstanceId(itemInstanceId);
+
+                                    //get damageType (if != null)
+                                    if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+                                        itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
+                                    }
+
                                 }
                                 //Lookup manifest data for item
                                 try {
@@ -275,6 +284,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
                                     itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
                                     itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
+
+
+
                                 }
                                 catch(Exception e){
                                     System.out.println(e);
@@ -306,6 +318,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 //get inventory item
 //                            itemModel.setItemHash(String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash()));
                                 itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
+                                //Required to manipulate UI on transfer/equip modal
+                                itemModel.setClassType(mCharacter.getClassType());
+                                itemModel.setTabIndex(mTabNumber);
                                 inventoryItems.add(itemModel);
                             }
 
@@ -356,6 +371,11 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 if(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
                                     itemInstanceId = response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
                                     itemModel.setItemInstanceId(itemInstanceId);
+
+                                    //get damageType (if != null)
+                                    if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+                                        itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
+                                    }
                                 }
                                 //Lookup manifest data for item
                                 try {
@@ -372,6 +392,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
                                     itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
                                     itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
+
+
                                 }
                                 catch(Exception e){
                                     System.out.println(e);
@@ -403,8 +425,11 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 //get inventory item
 //                            itemModel.setItemHash(String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash()));
                                 String bucketHash = response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash();
-                                if(bucketHash.equals(BucketDefinitions.vault)) {
+                                if(bucketHash.equals(Definitions.vault)) {
                                     itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
+                                    //Required to manipulate UI on transfer/equip modal
+                                    itemModel.setClassType(mCharacter.getClassType());
+                                    itemModel.setTabIndex(mTabNumber);
                                     inventoryItems.add(itemModel);
                                 }
                             }
@@ -417,11 +442,23 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     .setAction("Action", null)
                                     .show();
                             break;
+
+                        case 7: //ParameterParseFailure
+                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "ParameterParseFailure: Developer broke something here, sorry :(.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null)
+                                    .show();
+                            break;
+
+                        case 8: //ParameterInvalidRange
+                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "ParameterInvalidRange: Developer broke something here, sorry :(", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null)
+                                    .show();
+                            break;
                     }
 
 
                 }, Throwable -> {
-                    Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve account data.", Snackbar.LENGTH_LONG)
+                    Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve/parse account data.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null)
                             .show();
 //                        getActivity().onBackPressed();
@@ -448,10 +485,16 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             clickedItem.setItemIcon(holder.getImageUrl());
             clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
             clickedItem.setItemTypeDisplayName(holder.getItemTypeDisplayName());
+            clickedItem.setDamageType(holder.getDamageType());
+
+            //for transferring TO vault
+            clickedItem.setTabIndex(holder.getTabIndex());
+            clickedItem.setVaultCharacterId(mCharacter.getCharacterId());
 
             ItemTransferDialogFragment transferModalDialog = new ItemTransferDialogFragment();
             Bundle args = new Bundle();
             args.putParcelable("selectedItem", clickedItem);
+            args.putInt("tabIndex", mTabNumber);
             transferModalDialog.setArguments(args);
 
             transferModalDialog.show(getFragmentManager(), transferModalDialog.getTag());
