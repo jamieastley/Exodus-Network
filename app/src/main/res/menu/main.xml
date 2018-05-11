@@ -8,6 +8,12 @@
         <!--android:title="@string/action_lfg_pause"-->
         <!--app:showAsAction="ifRoom"/>-->
 
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_refresh_icon"
+        app:showAsAction="always"
+        android:title="@string/refresh"
+    />
 
     <item
         android:id="@+id/action_filter"

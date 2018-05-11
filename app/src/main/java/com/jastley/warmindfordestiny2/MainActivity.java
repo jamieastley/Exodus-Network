@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -36,7 +35,6 @@ import com.jastley.warmindfordestiny2.Characters.CharacterInventoryActivity;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment;
-import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.LFGPostsFragment;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
@@ -87,9 +85,11 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences savedPrefs;
     DialogFragment platformDialog;
     DialogFragment loadingDialog;// = new LoadingDialogFragment();
+    ActionBarDrawerToggle toggle;
 
     NavigationView navigationView;
     FloatingActionButton faButton;
+
 
     private String redirectUri = "warmindfordestiny://callback";
 
@@ -131,9 +131,11 @@ public class MainActivity extends AppCompatActivity
         hideShowMenuItems();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
+
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -195,6 +197,10 @@ public class MainActivity extends AppCompatActivity
         String membershipType = savedPrefs.getString("selectedPlatform", "");
         String displayName = savedPrefs.getString("displayName"+membershipType, "");
 
+        //Battle.Net tags
+        if(displayName.contains("%23")){
+            displayName = displayName.replace("%23", "#");
+        }
         navigationView = findViewById(R.id.nav_view);
         Menu navMenu = navigationView.getMenu();
         faButton = findViewById(R.id.fab);
@@ -206,6 +212,7 @@ public class MainActivity extends AppCompatActivity
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
 
 
+            String finalDisplayName = displayName;
             faButton.setOnClickListener(view -> {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null)
@@ -214,7 +221,7 @@ public class MainActivity extends AppCompatActivity
 
                 //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
-                intent.putExtra("displayName", displayName);
+                intent.putExtra("displayName", finalDisplayName);
 
                 startActivity(intent);
             });
@@ -241,6 +248,10 @@ public class MainActivity extends AppCompatActivity
 
         if(selectedPlatform != "") {
             String name = savedPrefs.getString("displayName"+selectedPlatform, "");
+            //Battle.Net tags
+            if(name.contains("%23")){
+                name = name.replace("%23", "#");
+            }
             TextView displayName = hView.findViewById(R.id.nav_displayName);
             displayName.setText(name);
 
@@ -400,12 +411,28 @@ public class MainActivity extends AppCompatActivity
                             editor.putInt("membershipType" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
                                     response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
 
+                            String membershipType = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
+
                             editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
                                     response.body().getResponse().getDestinyMemberships().get(i).getMembershipId());
 
-                            editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                    response.body().getResponse().getDestinyMemberships().get(i).getDisplayName());
+                            //sanitise for Firebase
+                            if(membershipType.equals("4")){
 
+                                String displayName = response.body().getResponse().getDestinyMemberships().get(i).getDisplayName();
+
+                                //Battle.Net tags
+                                if(displayName.contains("#")){
+                                    displayName = displayName.replace("#", "%23");
+                                    editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                            displayName);
+                                }
+                            }
+
+                            else{
+                                editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
+                                      response.body().getResponse().getDestinyMemberships().get(i).getDisplayName());
+                            }
                             editor.commit();
 
                             //                    TODO: move this to the end of the loading sequence
@@ -535,9 +562,9 @@ public class MainActivity extends AppCompatActivity
 //
 //        }
 
-        if (id == R.id.action_filter){
-            Toast.makeText(this, "TODO: filter items", Toast.LENGTH_SHORT).show();
-        }
+//        if (id == R.id.action_filter){
+//            Toast.makeText(this, "TODO: filter items", Toast.LENGTH_SHORT).show();
+//        }
 
 //        if (id == R.id.pause_live_lfg_feed) {
 //            mLFGPostAdapter.stopListening();
@@ -973,4 +1000,12 @@ public class MainActivity extends AppCompatActivity
 //
 //        }
 //    }
+
+    public void setDrawerHomeIcon() {
+//        toggle.setHomeAsUpIndicator(R.drawable.ic_back_button);
+        toggle.setDrawerIndicatorEnabled(true);
+
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toggle.syncState();
+    }
 }

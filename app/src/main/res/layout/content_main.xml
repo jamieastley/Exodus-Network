@@ -17,12 +17,9 @@
         android:paddingTop="5dp"
         >
 
-        <!--<android.support.v4.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/lfg_swipe_refresh"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--&gt;-->
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/lfg_recycler_view"
@@ -38,9 +35,8 @@
 
         </android.support.v7.widget.RecyclerView>
 
+        </ScrollView>
 
     </FrameLayout>
-
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
 </android.support.constraint.ConstraintLayout>

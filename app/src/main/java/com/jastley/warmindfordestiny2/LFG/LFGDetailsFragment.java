@@ -3,15 +3,15 @@ package com.jastley.warmindfordestiny2.LFG;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.widget.Toolbar;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -71,6 +71,10 @@ public class LFGDetailsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private BungieAPI mBungieAPI;
 
+    Toolbar toolbar;
+    AppCompatActivity appCompatActivity;
+    FloatingActionButton mFab;
+
     public LFGDetailsFragment() {
         // Required empty public constructor
     }
@@ -105,10 +109,12 @@ public class LFGDetailsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
 
 //        if(savedInstanceState != null){
 //            LFGPost savedInstanceModel = savedInstanceState.getParcelable("savedPlayerClick");
 //            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
+
 ////            actionBar.setTitle(savedInstanceModel.getDisplayName());
 //            actionBar.setHomeButtonEnabled(true);
 //            actionBar.setDisplayHomeAsUpEnabled(true);
@@ -134,6 +140,30 @@ public class LFGDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_lfgdetails, container, false);
 
+        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
+        mFab.setVisibility(View.INVISIBLE);
+
+        toolbar = getActivity().findViewById(R.id.toolbar);
+
+        appCompatActivity = (AppCompatActivity)getActivity();
+        appCompatActivity.setSupportActionBar(toolbar);
+
+//        DrawerLayout drawer = getActivity().findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//
+//        toggle.setDrawerIndicatorEnabled(false);
+
+//        ((MainActivity) getActivity()).setDrawerHomeIcon();
+
+        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        appCompatActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_padded);
+//
+//        appCompatActivity.getSupportActionBar().setHomeButtonEnabled(true);
+
+
+
+//        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
 //        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
 //        toolbar.setTitle("Test");
 
@@ -192,7 +222,6 @@ public class LFGDetailsFragment extends Fragment {
         }
 
         else {
-
             displayName.setText(receivedPlayerClick.getDisplayName());
             lightLevel.setText(receivedPlayerClick.getLightLevel());
             classType.setText(receivedPlayerClick.getClassType());
@@ -231,7 +260,6 @@ public class LFGDetailsFragment extends Fragment {
             getGroupDetails(membershipType, membershipId);
         }
 
-        setHasOptionsMenu(true);
 
         return view;
 
@@ -251,18 +279,33 @@ public class LFGDetailsFragment extends Fragment {
 //    }
 
 
-
     @Override
-    public void setHasOptionsMenu(boolean hasMenu) {
-        super.setHasOptionsMenu(hasMenu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        //clear actionBar buttons from previous fragment (filter/refresh)
+//        menu.clear();
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        inflater.inflate(R.menu.app_bar_new_lfg, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-////            mListener.onFragmentInteraction();
-//        }
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+
+            case android.R.id.home:
+                appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(false);
+                appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//                appCompatActivity.getSupportActionBar().set
+                getActivity().onBackPressed();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     @Override
@@ -290,6 +333,8 @@ public class LFGDetailsFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
 //    @Override
 //    public void onFragmentInteraction(SelectedPlayerModel playerModel) {
@@ -325,10 +370,21 @@ public class LFGDetailsFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-                            groupName.setText(response.getResponse().getResults().get(0).getGroup().getName());
-                            groupNameProgress.setVisibility(View.GONE);
-                        },
-                        error -> groupName.setText(""));
+
+                    //Something went wrong
+                    if(!response.getErrorCode().equals("1")) {
+                        String errorMessage = response.getMessage();
+                        Snackbar.make(getView(), errorMessage, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+                    }
+                     else {
+                        groupName.setText(response.getResponse().getResults().get(0).getGroup().getName());
+
+                    }
+                    groupNameProgress.setVisibility(View.GONE);
+                },
+                error -> groupName.setText(""));
     }
 
     public void getHistoricalStatsAccount(String membershipType, String membershipId) {
@@ -337,22 +393,37 @@ public class LFGDetailsFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
-                    try {
-                        playTime.setText(response.getResponse().getMergedAllCharacters().getMerged().getAccountAllTime().getSecondsPlayed().getBasic().getDisplayValue());
-                    } catch (Exception e) {
+
+                    //Something went wrong
+                    if(!response.getErrorCode().equals("1")){
+                        String errorMessage = response.getMessage();
+                        Snackbar.make(getView(), errorMessage, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+
                         playTime.setText("-");
-                    }
-
-                    try {
-                        lifeSpan.setText(response.getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getAverageLifespan().getBasic().getDisplayValue());
-                    } catch (Exception e) {
                         lifeSpan.setText("-");
+                        kdRatio.setText("-");
                     }
 
-                    try {
-                        kdRatio.setText(response.getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getKillsDeathsRatio().getBasic().getDisplayValue());
-                    } catch (Exception e) {
-                        kdRatio.setText("-");
+                    else {
+                        try {
+                            playTime.setText(response.getResponse().getMergedAllCharacters().getMerged().getAccountAllTime().getSecondsPlayed().getBasic().getDisplayValue());
+                        } catch (Exception e) {
+                            playTime.setText("-");
+                        }
+
+                        try {
+                            lifeSpan.setText(response.getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getAverageLifespan().getBasic().getDisplayValue());
+                        } catch (Exception e) {
+                            lifeSpan.setText("-");
+                        }
+
+                        try {
+                            kdRatio.setText(response.getResponse().getMergedAllCharacters().getResults().getAllPvP().getAllTime().getKillsDeathsRatio().getBasic().getDisplayValue());
+                        } catch (Exception e) {
+                            kdRatio.setText("-");
+                        }
                     }
                     statsValuesProgress.setVisibility(View.GONE);
                 }, error -> {

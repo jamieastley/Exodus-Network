@@ -16,7 +16,7 @@ public class Response_GetGroupsForMember {
     private Response response;
     @SerializedName("ErrorCode")
     @Expose
-    private int errorCode;
+    private String errorCode;
     @SerializedName("ThrottleSeconds")
     @Expose
     private int throttleSeconds;
@@ -38,11 +38,11 @@ public class Response_GetGroupsForMember {
         this.response = response;
     }
 
-    public int getErrorCode() {
+    public String getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(int errorCode) {
+    public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
     }
 

@@ -4,14 +4,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,12 +34,16 @@ import java.util.List;
 public class LFGPostsFragment extends Fragment {
 
     @BindView(R.id.lfg_recycler_view) RecyclerView mLFGRecyclerView;
+    @BindView(R.id.lfg_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.lfg_progress_bar) ProgressBar mLFGProgressBar;
 
     private OnFragmentInteractionListener mListener;
 
     private DatabaseReference mDatabase;
     private LFGPostRecyclerAdapter mLFGPostAdapter;
     private List<LFGPost> lfgPosts = new ArrayList<>();
+
+    FloatingActionButton mFab;
 
     public LFGPostsFragment() {
         // Required empty public constructor
@@ -47,6 +52,7 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 //        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
 
@@ -72,6 +78,8 @@ public class LFGPostsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        super.onViewCreated(view, savedInstanceState);
 
+        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
+        mFab.setVisibility(View.VISIBLE);
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this.getContext());
         mLinearLayoutManager.setReverseLayout(true);
@@ -80,6 +88,31 @@ public class LFGPostsFragment extends Fragment {
 
         //Load LFG posts from Firebase
         loadLFGPosts();
+
+        //Hide FAB when scrolling
+        mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE){
+                    mFab.show();
+                }
+
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 ||dy<0 && mFab.isShown())
+                    mFab.hide();
+            }
+        });
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            loadLFGPosts();
+            mLFGPostAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -107,6 +140,29 @@ public class LFGPostsFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+
+            case R.id.action_refresh:
+                mSwipeRefreshLayout.setRefreshing(true);
+                loadLFGPosts();
+                mLFGPostAdapter.notifyDataSetChanged();
+                break;
+            case R.id.action_filter:
+                Toast.makeText(getContext(), "it works", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -131,6 +187,7 @@ public class LFGPostsFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 lfgPosts.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()){
 
@@ -141,7 +198,7 @@ public class LFGPostsFragment extends Fragment {
                 mLFGPostAdapter = new LFGPostRecyclerAdapter(getContext(), lfgPosts, new RecyclerViewClickListener() {
                     @Override
                     public void onClick(View view, int position, LFGPostViewHolder holder) {
-                        Toast.makeText(getContext(), "Do stuff here", Toast.LENGTH_SHORT).show();
+
                         LFGPost selectedPost = new LFGPost();
 
                         selectedPost.setDisplayName(holder.getDisplayName().getText().toString());
@@ -183,7 +240,7 @@ public class LFGPostsFragment extends Fragment {
                 });
                 mLFGRecyclerView.setAdapter(mLFGPostAdapter);
                 mLFGPostAdapter.notifyDataSetChanged();
-
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -193,70 +250,6 @@ public class LFGPostsFragment extends Fragment {
         });
 
 
-//        mLFGPostAdapter = new LFGPostRecyclerAdapter(getActivity(), lfgOptions, new RecyclerViewClickListener() {
-//            @Override
-//            public void onClick(View view, int position, LFGPostViewHolder holder) {
-//
-////                SelectedPlayerModel selectedPlayer = new SelectedPlayerModel();
-//                LFGPost selectedPost = new LFGPost();
-//
-//
-//                selectedPost.setDisplayName(holder.getDisplayName().getText().toString());
-//                selectedPost.setMembershipId(holder.getMembershipId());
-//                selectedPost.setMembershipType(holder.getMembershipType());
-//                selectedPost.setLightLevel(holder.getLightLevel().getText().toString());
-//                selectedPost.setCharacterId(holder.getCharacterId());
-//                selectedPost.setClassType(holder.getClassType().getText().toString());
-//                selectedPost.setEmblemBackground(holder.getEmblemBackground());
-//                selectedPost.setActivityTitle(holder.getActivityTitle().getText().toString());
-//                selectedPost.setActivityCheckpoint(holder.getActivityCheckpoint().getText().toString());
-//                selectedPost.setHasMic(holder.getHasMic());
-//                selectedPost.setDescription(holder.getDescription());
-//
-////                mListener.onFragmentInteraction(selectedPlayer);
-//
-//
-//
-//                Fragment playerFragment;
-//                playerFragment = new LFGDetailsFragment();
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelable("clickedPlayer", selectedPost);
-//
-//                playerFragment.setArguments(bundle);
-//                FragmentManager fragmentManager = getFragmentManager();
-//
-//                fragmentManager.beginTransaction()
-////                        .setTransition(FragmentTransaction.TR)
-//                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
-//                        .replace(R.id.lfg_content_frame, playerFragment)
-//                        .addToBackStack("lfgStack")
-//                        .commit();
-//
-////
-////
-////                Toast.makeText(MainActivity.this, holder.getDisplayName().getText() + " clicked", Toast.LENGTH_SHORT).show();
-//
-////                Intent lfgFeed = new Intent(this, MainActivity.class);
-////                Intent intent = new Intent(getBaseContext(), LFGPlayerDetails.class);
-////                intent.putExtra("displayName", holder.getDisplayName().getText());
-////                intent.putExtra("membershipId", holder.getMembershipId());
-////                intent.putExtra("characterId", holder.getCharacterId());
-////                intent.putExtra("classType", holder.getClassType().getText());
-////                intent.putExtra("emblemBackground", holder.getEmblemBackground());
-////                startActivity(intent);
-//
-//
-//            }
-//
-//            @Override
-//            public void onLongClick(View view, int position) {
-//
-//            }
-//        });
-//        mLFGRecyclerView.setAdapter(mLFGPostAdapter);
-
-//        mLFGPostAdapter.startListening();
 
     }
 
@@ -271,7 +264,6 @@ public class LFGPostsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(SelectedPlayerModel playerModel);
     }
-
 
 
 

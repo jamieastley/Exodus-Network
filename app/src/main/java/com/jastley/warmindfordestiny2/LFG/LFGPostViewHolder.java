@@ -79,6 +79,11 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void setDisplayName(String name) {
+
+        //Battle.Net tags
+        if(name.contains("%23")){
+            name = name.replace("%23", "#");
+        }
         displayName.setText(name);
     }
 

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -64,6 +65,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     @BindView(R.id.inventory_items_recyclerview) RecyclerView mItemsRecyclerView;
     @BindView(R.id.inventory_items_progress) ProgressBar loadingProgress;
+    @BindView(R.id.inventory_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private CharacterItemsRecyclerAdapter mItemsRecyclerAdapter;
 
     private OnFragmentInteractionListener mListener;
@@ -169,6 +171,24 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 mCharacter.getMembershipId(),
                 mCharacter.getCharacterId());
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+
+            mSwipeRefreshLayout.setRefreshing(true);
+
+            if(classType.equals("vault")){
+                //get Vault items only
+                getVaultInventory(
+                        mCharacter.getMembershipType(),
+                        mCharacter.getMembershipId());
+            }
+            else {
+                getCharacterInventory(
+                        mCharacter.getMembershipType(),
+                        mCharacter.getMembershipId(),
+                        mCharacter.getCharacterId());
+            }
+        });
 
     }
 
@@ -504,7 +524,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             args.putInt("tabIndex", mTabNumber);
             transferModalDialog.setArguments(args);
 
-            transferModalDialog.show(getFragmentManager(), transferModalDialog.getTag());
+            transferModalDialog.show(getChildFragmentManager(), "transferModalDialog");
+
 
 //            transferModalDialog.onDismiss(new DialogInterface.OnDismissListener() {
 //                @Override
@@ -517,10 +538,28 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 //
 //            });
         });
+        mSwipeRefreshLayout.setRefreshing(false);
+
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
         loadingProgress.setVisibility(View.GONE);
     }
 
+    public void refreshInventory() {
+        String classType = mCharacter.getClassType();
+
+        if(classType.equals("vault")){
+            //get Vault items only
+            getVaultInventory(
+                    mCharacter.getMembershipType(),
+                    mCharacter.getMembershipId());
+        }
+        else {
+            getCharacterInventory(
+                    mCharacter.getMembershipType(),
+                    mCharacter.getMembershipId(),
+                    mCharacter.getCharacterId());
+        }
+    }
 
 }
