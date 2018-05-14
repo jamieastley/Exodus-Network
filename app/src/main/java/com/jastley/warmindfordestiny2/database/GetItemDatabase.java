@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import com.jastley.warmindfordestiny2.database.models.Factions;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -28,6 +26,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
+import static com.jastley.warmindfordestiny2.api.BungieAPI.plumbingURL;
 
 /**
  * Created by jamie1192 on 6/4/18.
@@ -142,7 +141,45 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                                         System.out.println("Error getting manifest: " + e);
                                     }
                                     finally {
-                                        delegate.onAsyncDone();
+//                                        delegate.onAsyncDone();
+
+                                        BungieAPI mBungieFactionAPI = new RetrofitHelper().getBungieAPI(plumbingURL);
+
+                                        mBungieFactionAPI.getFactionDefinitions()
+                                                .subscribeOn(Schedulers.io())
+                                                .subscribe(factionResponse -> {
+
+                                                    List<Factions> factionList = new ArrayList<>();
+
+                                                    JsonObject factionResponseObj = (JsonObject) factionResponse;
+
+
+
+                                                    for(Iterator iterator = factionResponseObj.keySet().iterator(); iterator.hasNext();){
+
+                                                        final String key = (String)iterator.next();
+
+//                                                        Response_FactionDefinitions.FactionObject faction = gson.fromJson(responseObj.get(key).getAsJsonObject(), Response_FactionDefinitions.FactionObject.class);
+                                                        JsonObject singleFactionObj = (JsonObject) factionResponseObj.get(key);
+
+                                                        String factionDetails = singleFactionObj.toString();
+
+                                                        Factions factionModel = new Factions();
+
+                                                        factionModel.setKey(key);
+                                                        factionModel.setValue(factionDetails);
+                                                        factionList.add(factionModel);
+                                                    }
+//                                                    final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
+                                                    System.out.println(response);
+                                                    FactionsDAO mFactionsDAO = AppDatabase.getAppDatabase(context).getFactionsDAO();
+
+                                                    mFactionsDAO.insertAll(factionList);
+                                                    delegate.onAsyncDone();
+
+                                                }, error -> {
+                                                    System.out.println("something");
+                                                });
                                     }
                                 }
 
@@ -188,7 +225,12 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 
     }
 
-//    @Override
+    @Override
+    protected void onProgressUpdate(Void... values) {
+        super.onProgressUpdate(values);
+    }
+
+    //    @Override
 //    protected void onPostExecute(Void aVoid) {
 //        super.onPostExecute(aVoid);
 //
@@ -202,5 +244,12 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 //          delegate.onAsyncDone(aBoolean);
     }
 
+    public void getCollectables() {
+
+    }
+
+    public void getFactions() {
+
+    }
 
 }

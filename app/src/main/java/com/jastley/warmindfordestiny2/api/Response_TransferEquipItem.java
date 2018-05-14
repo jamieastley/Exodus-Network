@@ -3,7 +3,7 @@ package com.jastley.warmindfordestiny2.api;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Response_TransferItem {
+public class Response_TransferEquipItem {
 
     @Expose
     @SerializedName("MessageData")

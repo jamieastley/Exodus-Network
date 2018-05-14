@@ -47,7 +47,7 @@ public interface BungieAPI {
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200")
     Call<JsonElement> getProfile(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Get character inventory, with instance data(?components=300)
+    //Get character inventory(?components=201), with item instance data(?components=300)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201&components=300")
     Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
 
@@ -55,12 +55,20 @@ public interface BungieAPI {
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=102&components=300")
     Observable<Response_GetCharacterInventory> getVaultInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Get destiny.plumbing homepage to check manifest version/date
+    //Get destiny.plumbing homepage to check manifest version/date (full URL overrides baseURL)
     @GET("https://destiny.plumbing/")
     Observable<Response_DestinyPlumbing> getDestinyPlumbing();
 
+    //Get FactionDefinition data
+    @GET("https://destiny.plumbing/en/raw/DestinyFactionDefinition.json")
+    Observable<JsonElement> getFactionDefinitions();
+
+    //Get Weekly Xur stock
+    @GET("/api/?request=history&for=xur")
+    Observable<Response_GetVendor> getXurWeeklyInventory();
+
     //Collectable Items/Weapons/Armor
-//    @GET("reducedCollectableInventoryItems.json")
+    //@GET("reducedCollectableInventoryItems.json")
     @GET("raw/DestinyInventoryItemDefinition.json")
     Call<JsonElement> getCollectablesDatabase();
 
@@ -75,10 +83,10 @@ public interface BungieAPI {
 
     //Transfer item to vault/character
     @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
-    Observable<Response_TransferItem> transferItem(@Body TransferItemRequestBody transferBody);
+    Observable<Response_TransferEquipItem> transferItem(@Body TransferItemRequestBody transferBody);
 
     @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
-    Observable<Response_TransferItem> equipItem(@Body EquipItemRequestBody equipBody);
+    Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
 
 
 }

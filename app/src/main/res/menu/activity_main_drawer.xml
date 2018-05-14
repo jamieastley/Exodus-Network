@@ -14,6 +14,12 @@
             android:id="@+id/nav_characters"
             android:icon="@drawable/ic_group_black_24dp"
             android:title="@string/characters" />
+
+        <item
+            android:id="@+id/xur"
+            android:icon="@drawable/xur_icon_large"
+            android:title="@string/xur" />
+
         <item
             android:visible="true"
             android:id="@+id/nav_refresh_account"

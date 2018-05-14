@@ -180,7 +180,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 
     @Override
     public void onFragmentInteraction(String uri) {
-
+        System.out.println(uri);
     }
 
     /**

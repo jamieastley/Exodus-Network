@@ -2,6 +2,7 @@ package com.jastley.warmindfordestiny2;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.*;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.CharacterInventoryActivity;
@@ -41,9 +43,8 @@ import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.User.GetCharacters;
 import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
-import com.jastley.warmindfordestiny2.api.AccessToken;
-import com.jastley.warmindfordestiny2.api.BungieAPI;
-import com.jastley.warmindfordestiny2.api.Response_GetCurrentUser;
+import com.jastley.warmindfordestiny2.Vendors.XurFragment;
+import com.jastley.warmindfordestiny2.api.*;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
@@ -56,6 +57,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -68,6 +71,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
+import static com.jastley.warmindfordestiny2.api.BungieAPI.plumbingURL;
 import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
@@ -76,7 +80,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     PlatformSelectionListener, GetCharacters.GetCharacterResponseInterface,
                     LFGDetailsFragment.OnFragmentInteractionListener,
-                    LFGPostsFragment.OnFragmentInteractionListener {
+                    LFGPostsFragment.OnFragmentInteractionListener,
+                    XurFragment.OnFragmentInteractionListener {
 
     private RecyclerView mLFGRecyclerView;
     private DatabaseHelper db;
@@ -90,6 +95,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     FloatingActionButton faButton;
 
+    BungieAPI mBungieApi;
 
     private String redirectUri = "warmindfordestiny://callback";
 
@@ -182,6 +188,35 @@ public class MainActivity extends AppCompatActivity
 //        }
 //        asyncGetCollectables();
         updateNavUI(hView);
+
+        mBungieApi = new RetrofitHelper().getAuthBungieAPI(this, plumbingURL);
+
+        mBungieApi.getFactionDefinitions()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+
+                    JsonObject responseObj = (JsonObject) response;
+                    Gson gson = new Gson();
+                    for(Iterator iterator = responseObj.keySet().iterator(); iterator.hasNext();){
+
+                        final String key = (String)iterator.next();
+
+                        Response_FactionDefinitions.FactionObject faction = gson.fromJson(responseObj.get(key).getAsJsonObject(), Response_FactionDefinitions.FactionObject.class);
+                        String definition = faction.getDisplayProperties().getDescription();
+                        String name = faction.getDisplayProperties().getName();
+
+                        String vendorImg = faction.getVendors().get(0).getBackgroundImagePath();
+
+                    }
+
+                    System.out.println(response);
+//                    for(int i = 0; i < response.getFactionDefinitions().size(); i++) {
+//                        System.out.println(response.getFactionDefinitions().get(i).getDisplayProperties().getDescription());
+//                    }
+                }, error -> {
+                    System.out.println("something");
+                });
 
     }
 
@@ -756,6 +791,17 @@ public class MainActivity extends AppCompatActivity
             Intent accountCharacters = new Intent(this, CharacterInventoryActivity.class);
             startActivity(accountCharacters);
         }
+        else if (id == R.id.xur) {
+            fragment = new XurFragment();
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.lfg_content_frame, fragment)
+                    .addToBackStack("xurStack")
+                    .commit();
+        }
+
         else if (id == R.id.nav_refresh_account) {
             getPlayerProfile();
         }
@@ -1007,5 +1053,10 @@ public class MainActivity extends AppCompatActivity
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toggle.syncState();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

@@ -542,6 +542,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+        mItemsRecyclerAdapter.notifyDataSetChanged();
         loadingProgress.setVisibility(View.GONE);
     }
 

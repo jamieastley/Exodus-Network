@@ -244,8 +244,10 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 //                        onDismiss(this);
 
                         dismiss();
-                        CharacterInventoryFragment parentFragment = (CharacterInventoryFragment) getParentFragment();
-                        parentFragment.refreshInventory();
+//                        CharacterInventoryFragment parentFragment = (CharacterInventoryFragment) getParentFragment();
+//                        parentFragment.refreshInventory();
+
+                        mListener.onFragmentInteraction("done");
 
                         if(response.getErrorCode().equals("1")){
                             Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Item transferred to " + className, Snackbar.LENGTH_LONG)

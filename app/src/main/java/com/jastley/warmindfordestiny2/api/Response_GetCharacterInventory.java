@@ -97,15 +97,10 @@ public class Response_GetCharacterInventory {
         @Expose
         @SerializedName("data")
         private Map<String, InstanceData>  data;
-//        private InstanceData instanceData;
 
         public Map<String, InstanceData> getInstanceData() {
             return data;
         }
-
-//        public InstanceData getInstanceData() {
-//            return instanceData;
-//        }
     }
 
     public static class InstanceData {
