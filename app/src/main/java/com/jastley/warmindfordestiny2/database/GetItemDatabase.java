@@ -178,7 +178,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                                                     delegate.onAsyncDone();
 
                                                 }, error -> {
-                                                    System.out.println("something");
+                                                    System.out.println(error.getLocalizedMessage());
                                                 });
                                     }
                                 }
@@ -205,6 +205,9 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                         else{
                             delegate.onAsyncDone();
                         }
+                    }, error -> {
+                        Toast.makeText(context, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        delegate.onAsyncDone();
                     });
 
 

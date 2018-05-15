@@ -71,6 +71,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     private OnFragmentInteractionListener mListener;
     private BungieAPI mBungieAPI;
     private List<InventoryItemModel> inventoryItems = new ArrayList<>();
+    private List<CharacterDatabaseModel> mCharacterList = new ArrayList<>();
 //    private List<Collectables> mCollectablesList = new ArrayList<>();
     private DatabaseHelper db;
     ItemTransferDialogFragment transferModalDialog;
@@ -90,12 +91,16 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
      * @return A new instance of fragment CharacterInventoryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CharacterInventoryFragment newInstance(int tabNumber, CharacterDatabaseModel character, ArrayList<Collectables> collectablesManifest) {
+    public static CharacterInventoryFragment newInstance(int tabNumber,
+                                                         CharacterDatabaseModel character,
+                                                         ArrayList<CharacterDatabaseModel> characterList,
+                                                         ArrayList<Collectables> collectablesManifest) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
         Bundle args = new Bundle();
         System.out.println("Fragment created, tabIndex: " + tabNumber);
         args.putInt("ARG_TAB_NUMBER", tabNumber);
         args.putParcelable("ARG_CHARACTER_DATA", character);
+        args.putParcelableArrayList("ARG_CHARACTER_LIST", characterList);
         args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", collectablesManifest);
         fragment.setArguments(args);
 //        fragment.setRetainInstance(true);
@@ -108,6 +113,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
+            mCharacterList = getArguments().getParcelableArrayList("ARG_CHARACTER_LIST");
             System.out.println("onCreate tab "+mTabNumber+", "+mCharacter.getClassType());
 //            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
         }
@@ -521,6 +527,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             transferModalDialog = new ItemTransferDialogFragment();
             Bundle args = new Bundle();
             args.putParcelable("selectedItem", clickedItem);
+            args.putParcelableArrayList("characterList", (ArrayList<? extends Parcelable>) mCharacterList); //TODO HERERERERE
             args.putInt("tabIndex", mTabNumber);
             transferModalDialog.setArguments(args);
 

@@ -259,6 +259,7 @@ public class XurFragment extends Fragment {
                                 }//end for loop
                                 mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext(), xurItemsList);
                                 mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                mXurRecyclerView.setNestedScrollingEnabled(false);
                                 mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
                                 progressBar.setVisibility(View.GONE);
                             }

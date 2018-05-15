@@ -21,6 +21,10 @@
             android:title="@string/xur" />
 
         <item
+            android:id="@+id/fragment_test"
+            android:title="Test"
+            />
+        <item
             android:visible="true"
             android:id="@+id/nav_refresh_account"
             android:icon="@drawable/ic_refresh_black_24dp"

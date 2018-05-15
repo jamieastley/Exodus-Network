@@ -10,6 +10,7 @@ import com.jastley.warmindfordestiny2.Characters.interfaces.EquipSelectListener;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemViewHolder> {

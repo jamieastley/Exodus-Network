@@ -34,6 +34,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.CharacterInventoryActivity;
+import com.jastley.warmindfordestiny2.Characters.CharacterInventoryFragment;
+import com.jastley.warmindfordestiny2.Characters.InventoryFragment;
+import com.jastley.warmindfordestiny2.Characters.ItemTransferDialogFragment;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.LFGDetailsFragment;
@@ -81,7 +84,10 @@ public class MainActivity extends AppCompatActivity
                     PlatformSelectionListener, GetCharacters.GetCharacterResponseInterface,
                     LFGDetailsFragment.OnFragmentInteractionListener,
                     LFGPostsFragment.OnFragmentInteractionListener,
-                    XurFragment.OnFragmentInteractionListener {
+                    XurFragment.OnFragmentInteractionListener,
+                    CharacterInventoryFragment.OnFragmentInteractionListener,
+                    ItemTransferDialogFragment.OnFragmentInteractionListener,
+                    InventoryFragment.OnFragmentInteractionListener {
 
     private RecyclerView mLFGRecyclerView;
     private DatabaseHelper db;
@@ -800,6 +806,16 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("xurStack")
                     .commit();
         }
+        else if (id == R.id.fragment_test) {
+            Fragment fragment = InventoryFragment.newInstance("string", "string2");
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.lfg_content_frame, fragment)
+                    .addToBackStack("inventoryFragment")
+                    .commit();
+        }
 
         else if (id == R.id.nav_refresh_account) {
             getPlayerProfile();
@@ -1056,6 +1072,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(String uri) {
 
     }
 }

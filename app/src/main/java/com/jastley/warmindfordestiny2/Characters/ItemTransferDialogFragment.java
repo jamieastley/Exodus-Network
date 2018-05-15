@@ -34,6 +34,7 @@ import com.squareup.picasso.Picasso;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
@@ -130,6 +131,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         Bundle args = getArguments();
         selectedItem = args.getParcelable("selectedItem");
         mTabIndex = args.getInt("tabIndex");
+        mCharacters = args.getParcelableArrayList("characterList");
 
         return super.onCreateDialog(savedInstanceState);
     }
@@ -187,8 +189,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                 .into(itemImage);
 
         //Get list of users' characters
-        CharacterInventoryActivity activity = (CharacterInventoryActivity) getActivity();
-        mCharacters = activity.getCharactersList();
+//        CharacterInventoryActivity activity = (CharacterInventoryActivity) getActivity();
+//        mCharacters = activity.getCharactersList();
 
 
 //        Transfer item row section
@@ -291,10 +293,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                         }
                     });
 
-//            "itemId": 1331482397,
-//                    "characterId": 2305843009263480022,
-//                    "membershipType": 2
-//
+
         });
 
 
