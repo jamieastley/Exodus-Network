@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jastley.warmindfordestiny2.Characters.holders.CharacterItemsViewHolder;
 import com.jastley.warmindfordestiny2.Characters.interfaces.ItemSelectionListener;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;

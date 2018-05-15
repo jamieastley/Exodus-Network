@@ -40,6 +40,8 @@ public interface BungieAPI {
         @Field("refresh_token") String refreshToken
     );
 
+    /** CHARACTER/ACCOUNT ENDPOINTS **/
+
     //Get membership data across all platforms for member
     @GET("/Platform/User/GetMembershipsForCurrentUser/")
     Call<Response_GetCurrentUser> getCurrentUser();
@@ -60,6 +62,30 @@ public interface BungieAPI {
     Observable<Response_GetCharacterInventory> getVaultInventory(@Path("membershipType") String membershipType,
                                                                  @Path("membershipId") String membershipId);
 
+    //HistoricalStatsForAccount
+    @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Stats/")
+    Observable<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType,
+                                                                             @Path("membershipId") String membershipId);
+    //Get Clan Data
+    @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
+    Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+
+    //Transfer item to vault/character
+    @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
+    Observable<Response_TransferEquipItem> transferItem(@Body TransferItemRequestBody transferBody);
+
+    @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
+    Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
+
+    //Get Faction progression for character(?components=202)
+    @GET("/Platform//Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
+    Observable<Response_FactionProgression> getFactionProgress(@Path("membershipType") String membershipType,
+                                                               @Path("membershipId") String membershipId,
+                                                               @Path("characterId") String characterId);
+
+
+    /** MANIFEST DATA **/
+
     //Get destiny.plumbing homepage to check manifest version/date (full URL overrides baseURL)
     @GET("https://destiny.plumbing/")
     Observable<Response_DestinyPlumbing> getDestinyPlumbing();
@@ -73,21 +99,9 @@ public interface BungieAPI {
     @GET("raw/DestinyInventoryItemDefinition.json")
     Call<JsonElement> getCollectablesDatabase();
 
-    //HistoricalStatsForAccount
-    @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Stats/")
-    Observable<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType,
-                                                                             @Path("membershipId") String membershipId);
 
-    //Get Clan Data
-    @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
-    Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Transfer item to vault/character
-    @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
-    Observable<Response_TransferEquipItem> transferItem(@Body TransferItemRequestBody transferBody);
 
-    @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
-    Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
 
 
     /***** XUR ******/

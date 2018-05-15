@@ -129,5 +129,6 @@
     <string name="xur">Xur</string>
     <string name="xurInventory">Xur\'s Inventory</string>
     <string name="manageInventory">Inventory</string>
+    <string name="factionicon">Faction Icon</string>
 
 </resources>

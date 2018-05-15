@@ -1,8 +1,6 @@
-package com.jastley.warmindfordestiny2.Characters;
+package com.jastley.warmindfordestiny2.Characters.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;

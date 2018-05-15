@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters.adapters;
+package com.jastley.warmindfordestiny2.Characters.holders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

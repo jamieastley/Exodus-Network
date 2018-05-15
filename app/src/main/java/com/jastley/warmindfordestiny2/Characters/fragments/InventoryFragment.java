@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters;
+package com.jastley.warmindfordestiny2.Characters.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -26,7 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.

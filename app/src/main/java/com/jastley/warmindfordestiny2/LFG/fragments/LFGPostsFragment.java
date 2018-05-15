@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.LFG.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,6 +18,9 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.firebase.database.*;
+import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
+import com.jastley.warmindfordestiny2.LFG.adapters.LFGPostRecyclerAdapter;
+import com.jastley.warmindfordestiny2.LFG.holders.LFGPostViewHolder;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.MainActivity;

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.LFG.holders;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

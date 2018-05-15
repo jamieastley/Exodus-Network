@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.LFG.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 
+import com.jastley.warmindfordestiny2.LFG.holders.LFGPostViewHolder;
+import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
 

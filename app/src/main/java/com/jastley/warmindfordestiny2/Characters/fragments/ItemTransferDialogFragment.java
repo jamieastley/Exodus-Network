@@ -1,9 +1,7 @@
-package com.jastley.warmindfordestiny2.Characters;
+package com.jastley.warmindfordestiny2.Characters.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +19,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.jastley.warmindfordestiny2.Characters.adapters.EquipItemRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.adapters.TransferItemRecyclerAdapter;
-import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Definitions;
@@ -34,7 +31,6 @@ import com.squareup.picasso.Picasso;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.LFG.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,9 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
@@ -443,6 +440,11 @@ public class LFGDetailsFragment extends Fragment {
                 });
     }
 
+
+    public void getFactionStats(String membershipType, String membershipId, String characterId){
+
+
+    }
 }
 
 

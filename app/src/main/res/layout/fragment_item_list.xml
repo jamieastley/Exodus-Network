@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.jastley.warmindfordestiny2.LFG.ItemFragment"
+    tools:context="com.jastley.warmindfordestiny2.LFG.fragments.ItemFragment"
     tools:listitem="@layout/fragment_item" />
