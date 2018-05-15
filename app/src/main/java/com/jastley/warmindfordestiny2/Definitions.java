@@ -46,4 +46,7 @@ public class Definitions {
     public static final String dmgTypeRaid = "5";
 
 
+    //Faction
+    public static final String theNine = "1357903713";
+
 }

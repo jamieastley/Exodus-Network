@@ -165,7 +165,12 @@ public class Response_GetXurWeekly {
 
         @Expose
         @SerializedName("equippingBlock")
-        private String equippingBlock;
+        private EquippingBlock equippingBlock;
+
+        @Expose
+        @SerializedName("cost")
+        private Cost cost;
+
 
         public String getSales() {
             return sales;
@@ -191,8 +196,91 @@ public class Response_GetXurWeekly {
             return equippable;
         }
 
-        public String getEquippingBlock() {
+        public EquippingBlock getEquippingBlock() {
             return equippingBlock;
+        }
+
+        public Cost getCost() {
+            return cost;
+        }
+
+    }
+
+    public static class Cost {
+
+        @Expose
+        @SerializedName("quantity")
+        private String quantity;
+
+        @Expose
+        @SerializedName("icon")
+        private String icon;
+
+        public String getQuantity() {
+            return quantity;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+    }
+
+    public static class EquippingBlock {
+
+        @Expose
+        @SerializedName("uniqueLabel")
+        private String uniqueLabel;
+
+        @Expose
+        @SerializedName("uniqueLabelHash")
+        private String uniqueLabelHash;
+
+        @Expose
+        @SerializedName("equipmentSlotTypeHash")
+        private String equipmentSlotTypeHash;
+
+        @Expose
+        @SerializedName("attributes")
+        private String attributes;
+
+        @Expose
+        @SerializedName("equippingSoundHash")
+        private String equippingSoundHash;
+
+        @Expose
+        @SerializedName("hornSoundHash")
+        private String hornSoundHash;
+
+        @Expose
+        @SerializedName("displayStrings")
+        private List<String> displayStrings;
+
+        public String getUniqueLabel() {
+            return uniqueLabel;
+        }
+
+        public String getUniqueuLabelHash() {
+            return uniqueLabelHash;
+        }
+
+        public String getEquipmentSlotTypeHash() {
+            return equipmentSlotTypeHash;
+        }
+
+        public String getAttributes() {
+            return attributes;
+        }
+
+        public String getEquippingSoundHash() {
+            return equippingSoundHash;
+        }
+
+        public String getHornSoundHash() {
+            return hornSoundHash;
+        }
+
+        public List<String> getDisplayStrings() {
+            return displayStrings;
         }
     }
 

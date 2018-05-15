@@ -21,7 +21,7 @@ import io.reactivex.Maybe;
 public interface CollectablesDAO {
 
     @Query("SELECT * FROM Collectables")
-    Flowable <List<Collectables>> getAllCollectables();
+    Maybe<List<Collectables>> getAllCollectables();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Collectables collectables);
@@ -31,6 +31,7 @@ public interface CollectablesDAO {
 
     @Query("SELECT * FROM Collectables WHERE `key` = :itemKey")
     Maybe<Collectables> getItemByKey(String itemKey);
+
 
     @Update
     void update(Collectables collectablesRow);

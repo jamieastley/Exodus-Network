@@ -306,7 +306,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
 //                                String dataString = dbItem.getValue();
                                     JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
-                                    itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                                        itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
                                     itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
                                     itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
                                     itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());

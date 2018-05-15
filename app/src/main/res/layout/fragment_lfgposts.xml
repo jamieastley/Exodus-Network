@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"
         android:visibility="invisible"
-        android:progressTint="@color/colorAccent"/>
+        />
 
     <android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/lfg_swipe_refresh"

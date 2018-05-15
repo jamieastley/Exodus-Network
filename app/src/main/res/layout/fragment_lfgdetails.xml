@@ -61,7 +61,6 @@
                     android:layout_alignLeft="@id/lfg_details_display_name"
                     android:layout_alignStart="@id/lfg_details_display_name"
                     android:layout_below="@id/lfg_details_display_name"
-                    android:indeterminateTint="@color/colorWhite"
                      />
 
                 <TextView

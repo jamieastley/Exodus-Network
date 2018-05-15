@@ -372,9 +372,10 @@ public class LFGDetailsFragment extends Fragment {
                 .subscribe(response -> {
 
                     //Something went wrong
-                    if(!response.getErrorCode().equals("1")) {
+                    String errorCode = response.getErrorCode();
+                    if(!errorCode.equals("1")) {
                         String errorMessage = response.getMessage();
-                        Snackbar.make(getView(), errorMessage, Snackbar.LENGTH_LONG)
+                        Snackbar.make(getView(),  "Error "+ errorCode +": "+ errorMessage, Snackbar.LENGTH_LONG)
                                 .setAction("Action", null)
                                 .show();
                     }

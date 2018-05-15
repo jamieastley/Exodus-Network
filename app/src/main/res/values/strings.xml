@@ -125,5 +125,6 @@
     <string name="vault">Vault</string>
     <string name="refresh">Refresh</string>
     <string name="xur">Xur</string>
+    <string name="xurInventory">Xur\'s Inventory</string>
 
 </resources>

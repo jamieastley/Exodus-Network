@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import com.jastley.warmindfordestiny2.api.models.EquipItemRequestBody;
 import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -39,21 +40,25 @@ public interface BungieAPI {
         @Field("refresh_token") String refreshToken
     );
 
-    //GetCurrentUser
+    //Get membership data across all platforms for member
     @GET("/Platform/User/GetMembershipsForCurrentUser/")
     Call<Response_GetCurrentUser> getCurrentUser();
 
     //Get profile summary
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200")
-    Call<JsonElement> getProfile(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+    Call<JsonElement> getProfile(@Path("membershipType") String membershipType,
+                                 @Path("membershipId") String membershipId);
 
     //Get character inventory(?components=201), with item instance data(?components=300)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201&components=300")
-    Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId, @Path("characterId") String characterId);
+    Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType,
+                                                                     @Path("membershipId") String membershipId,
+                                                                     @Path("characterId") String characterId);
 
     //Get vault inventory, with instance data(?components=300)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=102&components=300")
-    Observable<Response_GetCharacterInventory> getVaultInventory(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
+    Observable<Response_GetCharacterInventory> getVaultInventory(@Path("membershipType") String membershipType,
+                                                                 @Path("membershipId") String membershipId);
 
     //Get destiny.plumbing homepage to check manifest version/date (full URL overrides baseURL)
     @GET("https://destiny.plumbing/")
@@ -63,10 +68,6 @@ public interface BungieAPI {
     @GET("https://destiny.plumbing/en/raw/DestinyFactionDefinition.json")
     Observable<JsonElement> getFactionDefinitions();
 
-    //Get Weekly Xur stock
-    @GET("/api/?request=history&for=xur")
-    Observable<Response_GetVendor> getXurWeeklyInventory();
-
     //Collectable Items/Weapons/Armor
     //@GET("reducedCollectableInventoryItems.json")
     @GET("raw/DestinyInventoryItemDefinition.json")
@@ -74,8 +75,8 @@ public interface BungieAPI {
 
     //HistoricalStatsForAccount
     @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Stats/")
-    Observable<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
-
+    Observable<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType,
+                                                                             @Path("membershipId") String membershipId);
 
     //Get Clan Data
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
@@ -89,4 +90,16 @@ public interface BungieAPI {
     Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
 
 
+    /***** XUR ******/
+
+
+    //Get Weekly Xur stock
+    @GET("/api/?request=history&for=xur")
+    Observable<Response_GetXurWeekly> getXurWeeklyInventory();
+
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/Vendors/{vendorHash}/?components=400,402")
+    Observable<Response_GetVendor> getVendorData(@Path("membershipType") String membershipType,
+                                                 @Path("membershipId") String membershipId,
+                                                 @Path("characterId") String characterId,
+                                                 @Path("vendorHash") String vendorHash);
 }

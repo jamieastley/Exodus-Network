@@ -87,6 +87,7 @@ public class LFGPostsFragment extends Fragment {
         mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         //Load LFG posts from Firebase
+        mSwipeRefreshLayout.setRefreshing(true);
         loadLFGPosts();
 
         //Hide FAB when scrolling

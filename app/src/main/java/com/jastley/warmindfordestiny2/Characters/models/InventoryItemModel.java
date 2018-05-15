@@ -30,6 +30,11 @@ public class InventoryItemModel implements Parcelable {
     private int tabIndex;
     private String vaultCharacterId;
 
+    //Xur
+    private String equippingBlock;
+    private String costItemIcon;
+    private String costsQuantity;
+
     public InventoryItemModel(String itemHash, String itemInstanceId, String bucketHash, String primaryStatValue) {
         this.itemHash = itemHash;
         this.itemInstanceId = itemInstanceId;
@@ -167,6 +172,30 @@ public class InventoryItemModel implements Parcelable {
 
     public void setVaultCharacterId(String vaultCharacterId) {
         this.vaultCharacterId = vaultCharacterId;
+    }
+
+    public String getEquippingBlock() {
+        return equippingBlock;
+    }
+
+    public void setEquippingBlock(String equippingBlock) {
+        this.equippingBlock = equippingBlock;
+    }
+
+    public String getCostItemIcon() {
+        return costItemIcon;
+    }
+
+    public void setCostItemIcon(String costItemIcon) {
+        this.costItemIcon = costItemIcon;
+    }
+
+    public String getCostsQuantity() {
+        return costsQuantity;
+    }
+
+    public void setCostsQuantity(String costsQuantity) {
+        this.costsQuantity = costsQuantity;
     }
 
     @Override

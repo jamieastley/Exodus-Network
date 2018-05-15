@@ -779,7 +779,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
-        Fragment fragment = new Fragment();
         int id = item.getItemId();
 
         if (id == R.id.nav_lfg) {
@@ -792,7 +791,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(accountCharacters);
         }
         else if (id == R.id.xur) {
-            fragment = new XurFragment();
+            Fragment fragment = XurFragment.newInstance("something", "else");
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 
