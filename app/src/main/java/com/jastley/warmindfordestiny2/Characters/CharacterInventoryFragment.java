@@ -361,7 +361,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             break;
 
                         case 5: //maintainence
-                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Bungie servers are currently unavailable.", Snackbar.LENGTH_LONG)
+                            Snackbar.make(getParentFragment().getView().findViewById(R.id.activity_inventory_main_content), "Bungie servers are currently unavailable.", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null)
                                     .show();
                             break;
@@ -369,7 +369,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
 
                 }, Throwable -> {
-                    Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve account data.", Snackbar.LENGTH_LONG)
+                    Snackbar.make(getParentFragment().getView().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve account data.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null)
                             .show();
 //                        getActivity().onBackPressed();

@@ -6,13 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -79,8 +79,10 @@ public class XurFragment extends Fragment {
     @BindView(R.id.xur_location_banner) ImageView xurImageBanner;
     @BindView(R.id.xur_items_recycler_view) RecyclerView mXurRecyclerView;
     @BindView(R.id.xur_progress_bar) ProgressBar progressBar;
+    @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
 
     XurItemsRecyclerAdapter mXurRecyclerAdapter;
+    FloatingActionButton mFab;
 
 
 //    final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
@@ -113,6 +115,8 @@ public class XurFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -123,6 +127,9 @@ public class XurFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
+        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
+        mFab.setVisibility(View.INVISIBLE);
+
         // Inflate the layout for this fragment
         return rootView;
 
@@ -130,11 +137,24 @@ public class XurFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        menu.clear();
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+
+    @Override
     public void onResume() {
         super.onResume();
 
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.xurInventory));
+
+        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+
+        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -226,6 +246,7 @@ public class XurFragment extends Fragment {
                                     xurItem.setItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getIcon());
                                     xurItem.setItemHash(response_getXurWeekly.getResponse().getData().getItems().get(i).getHash());
                                     xurItem.setItemTypeDisplayName(response_getXurWeekly.getResponse().getData().getItems().get(i).getItemTypeDisplayName());
+                                    xurItem.setSaleHistoryCount(response_getXurWeekly.getResponse().getData().getItems().get(i).getSalesCount());
 
                                     try{ //if item has a cost
                                         xurItem.setCostItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getIcon());
@@ -241,18 +262,6 @@ public class XurFragment extends Fragment {
                                     catch(Exception e){
                                         System.out.println("No equippingBlock set for item "+ i);
                                     }
-
-                                    //get currency info from manifest //TODO THIS CAN"T RUN HERE, NEED BACKGROUND THREAD
-//                                    mCollectablesDAO.getItemByKey(response_getXurWeekly.getResponse().getData().getItems().get(i).getHash())
-//                                            .observeOn(Schedulers.io())
-//                                            .subscribe(collectableManifest -> {
-//
-//                                                JsonParser dbParser = new JsonParser();
-//                                                JsonObject collectableObj = (JsonObject) dbParser.parse(collectableManifest.getValue());
-//
-//                                                System.out.println("Item name: " + collectableObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
-//                                                System.out.println("Item icon:" + collectableObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
-//                                            });
 
                                     xurItemsList.add(xurItem);
 
@@ -278,11 +287,6 @@ public class XurFragment extends Fragment {
                 );
     }
 
-    public void getXurSales(List<InventoryItemModel> itemList, String locationIndex){
-
-        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
-    }
-
     public void getLocationBanner() {
         FactionsDAO mFactionsDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
         mFactionsDAO.getFactionByKey(theNine)
@@ -300,6 +304,9 @@ public class XurFragment extends Fragment {
                     Picasso.with(getContext())
                             .load(baseURL +"/"+ locationBanner)
                             .into(xurImageBanner);
+
+                    //Only set icon if result successful/Xur is around
+                    xurIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.xur_icon));
                 });
     }
 }

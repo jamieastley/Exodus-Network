@@ -3,17 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_marginTop="5dp"
     android:layout_marginStart="10dp"
     android:layout_marginEnd="10dp"
-    >
+    app:cardBackgroundColor="@color/bungieCard">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
-
-        android:background="@color/warmindCardBackground"
         >
 
         <ImageView
@@ -26,17 +25,7 @@
             android:background="@drawable/image_border"
             />
 
-
         <!--set ImageView after textView so it stacks on top of background alpha-->
-        <ImageView
-            android:id="@+id/xur_modifier_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignTop="@id/xur_item_image"
-            android:layout_alignLeft="@id/xur_item_image"
-            android:layout_alignStart="@id/xur_item_image"
-            android:layout_margin="2dp"
-            />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -52,8 +41,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Item Name"
                 android:textSize="16sp"
+                android:textStyle="bold"
                 android:textColor="@color/colorWhite"
                 />
 
@@ -68,32 +57,71 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/xur_item_cost_text"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/xur_item_cost"
-            android:layout_toLeftOf="@id/xur_item_cost"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_centerVertical="true"
-            android:textSize="20sp"
-            android:textColor="@color/colorWhite"
-
-             />
-
-        <ImageView
-            android:id="@+id/xur_item_cost"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            />
+            android:orientation="vertical"
+            >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:id="@+id/xur_item_cost_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/xur_item_cost"
+                    android:layout_toLeftOf="@id/xur_item_cost"
+                    android:layout_centerVertical="true"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorWhite"
 
 
+                     />
+
+                <ImageView
+                    android:id="@+id/xur_item_cost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_centerVertical="true"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                >
+
+                <TextView
+                    android:id="@+id/xur_total_sales_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/colorWhite"
+                    android:textStyle="italic"
+                    />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
 
     </RelativeLayout>
 

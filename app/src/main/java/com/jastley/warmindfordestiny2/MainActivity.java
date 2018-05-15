@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity
         }
         else { //not logged in
             navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
-            navMenu.findItem(R.id.nav_characters).setVisible(false).setEnabled(false);
+            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
             faButton.hide();
         }
@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity
             Menu navMenu = navigationView.getMenu();
             faButton = findViewById(R.id.fab);
             navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
-            navMenu.findItem(R.id.nav_characters).setVisible(true).setEnabled(true);
+            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
             faButton.show();
         }
@@ -791,11 +791,11 @@ public class MainActivity extends AppCompatActivity
             Intent lfgFeed = new Intent(this, MainActivity.class);
             startActivity(lfgFeed);
         }
-        else if (id == R.id.nav_characters) {
-
-            Intent accountCharacters = new Intent(this, CharacterInventoryActivity.class);
-            startActivity(accountCharacters);
-        }
+//        else if (id == R.id.nav_characters) {
+//
+//            Intent accountCharacters = new Intent(this, CharacterInventoryActivity.class);
+//            startActivity(accountCharacters);
+//        }
         else if (id == R.id.xur) {
             Fragment fragment = XurFragment.newInstance("something", "else");
 
@@ -806,7 +806,7 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack("xurStack")
                     .commit();
         }
-        else if (id == R.id.fragment_test) {
+        else if (id == R.id.nav_inventory_fragment) {
             Fragment fragment = InventoryFragment.newInstance("string", "string2");
 
             FragmentManager fragmentManager = getSupportFragmentManager();

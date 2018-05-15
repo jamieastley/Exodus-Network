@@ -141,7 +141,7 @@ public class Response_GetXurWeekly {
 
         @Expose
         @SerializedName("sales")
-        private String sales;
+        private String salesCount;
 
         @Expose
         @SerializedName("hash")
@@ -172,8 +172,8 @@ public class Response_GetXurWeekly {
         private Cost cost;
 
 
-        public String getSales() {
-            return sales;
+        public String getSalesCount() {
+            return salesCount;
         }
 
         public String getHash() {

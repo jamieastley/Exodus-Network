@@ -34,6 +34,7 @@ public class InventoryItemModel implements Parcelable {
     private String equippingBlock;
     private String costItemIcon;
     private String costsQuantity;
+    private String saleHistoryCount;
 
     public InventoryItemModel(String itemHash, String itemInstanceId, String bucketHash, String primaryStatValue) {
         this.itemHash = itemHash;
@@ -196,6 +197,14 @@ public class InventoryItemModel implements Parcelable {
 
     public void setCostsQuantity(String costsQuantity) {
         this.costsQuantity = costsQuantity;
+    }
+
+    public String getSaleHistoryCount() {
+        return saleHistoryCount;
+    }
+
+    public void setSaleHistoryCount(String saleHistoryCount) {
+        this.saleHistoryCount = saleHistoryCount;
     }
 
     @Override

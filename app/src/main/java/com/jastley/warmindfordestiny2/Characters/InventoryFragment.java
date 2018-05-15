@@ -47,7 +47,8 @@ public class InventoryFragment extends Fragment {
     private String mParam2;
 
     @BindView(R.id.parent_inventory_viewpager) ViewPager mViewPager;
-    @BindView(R.id.sliding_tabs) TabLayout mTabLayout;
+//    @BindView((getActivity())R.id.inventory_sliding_tabs)
+    TabLayout mTabLayout;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private OnFragmentInteractionListener mListener;
@@ -95,6 +96,10 @@ public class InventoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_inventory, container, false);
 
         ButterKnife.bind(this, rootView);
+
+        mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+
+        mTabLayout.setVisibility(View.VISIBLE);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
 

@@ -42,6 +42,8 @@
     <string name="lfgDescription">(Optional) Description..</string>
     <string name="haveMic">Mic?</string>
 
+    <string name="xurSoldCount">Sold %1$s</string>
+
     <string-array name="activities">
         <item>Nightfall</item>
         <item>PvP</item>
@@ -126,5 +128,6 @@
     <string name="refresh">Refresh</string>
     <string name="xur">Xur</string>
     <string name="xurInventory">Xur\'s Inventory</string>
+    <string name="manageInventory">Inventory</string>
 
 </resources>

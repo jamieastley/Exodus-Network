@@ -9,22 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/sliding_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabTextColor="@color/warmindAccent"
-        android:background="@color/warmindDark"
-        app:tabBackground="@color/warmindPrimary"
-        app:tabMode="fixed"
-        />
+    <!--<android.support.design.widget.TabLayout-->
+        <!--android:id="@+id/sliding_tabs"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:tabTextColor="@color/warmindAccent"-->
+        <!--android:background="@color/warmindDark"-->
+        <!--app:tabBackground="@color/warmindPrimary"-->
+        <!--app:tabMode="fixed"-->
+        <!--/>-->
 
     <android.support.v4.view.ViewPager
         android:id="@+id/parent_inventory_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/sliding_tabs"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
     </RelativeLayout>
 

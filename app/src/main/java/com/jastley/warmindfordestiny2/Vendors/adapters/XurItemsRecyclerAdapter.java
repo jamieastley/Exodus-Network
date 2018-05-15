@@ -37,6 +37,7 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
         holder.setItemCostImage(xurItems.get(position).getCostItemIcon(), mContext);
         holder.setItemCostText(xurItems.get(position).getCostsQuantity());
+        holder.setSalesCount(xurItems.get(position).getSaleHistoryCount());
     }
 
     @Override

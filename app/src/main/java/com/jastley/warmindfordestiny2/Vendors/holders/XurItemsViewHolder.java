@@ -19,6 +19,7 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.xur_item_name) TextView itemName;
     @BindView(R.id.xur_item_cost) ImageView itemCostImage;
     @BindView(R.id.xur_item_cost_text) TextView itemCostText;
+    @BindView(R.id.xur_total_sales_count) TextView salesCount;
 
     private String imageUrl;
     private String costIconUrl;
@@ -79,5 +80,24 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
 
     public void setItemCostText(String cost) {
         itemCostText.setText(cost);
+    }
+
+    public String getSalesCount() {
+        return salesCount.getText().toString();
+    }
+
+    public void setSalesCount(String count) {
+//        this.salesCount = count;
+
+        if(count.equals("1")) {
+
+            String countText = "First time!";
+            salesCount.setText(countText);
+
+        }
+        else {
+            String countText = "Sold " + count + " times";
+            salesCount.setText(countText);
+        }
     }
 }

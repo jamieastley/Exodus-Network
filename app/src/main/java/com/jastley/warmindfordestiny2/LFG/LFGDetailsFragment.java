@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -315,6 +316,10 @@ public class LFGDetailsFragment extends Fragment {
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.postDetails));
         ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+
+        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+
+        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -333,6 +338,7 @@ public class LFGDetailsFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
 
 
