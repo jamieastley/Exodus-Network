@@ -78,6 +78,7 @@
                     android:layout_toStartOf="@id/xur_item_cost"
                     android:layout_toLeftOf="@id/xur_item_cost"
                     android:layout_centerVertical="true"
+                    android:text="32"
                     android:textSize="20sp"
                     android:textColor="@color/colorWhite"
 
@@ -87,11 +88,9 @@
                 <ImageView
                     android:id="@+id/xur_item_cost"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginStart="5dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"

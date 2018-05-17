@@ -78,7 +78,7 @@ public interface BungieAPI {
     Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
 
     //Get Faction progression for character(?components=202)
-    @GET("/Platform//Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
     Observable<Response_FactionProgression> getFactionProgress(@Path("membershipType") String membershipType,
                                                                @Path("membershipId") String membershipId,
                                                                @Path("characterId") String characterId);
@@ -108,8 +108,11 @@ public interface BungieAPI {
 
 
     //Get Weekly Xur stock
-    @GET("/api/?request=history&for=xur")
-    Observable<Response_GetXurWeekly> getXurWeeklyInventory();
+//    @GET("/api/?request=history&for=xur")
+    @GET("https://braytech.org/api/")
+    Observable<Response_GetXurWeekly> getXurWeeklyInventory(@Query("key") String key,
+                                                            @Query("request") String request,
+                                                            @Query("for") String forVendor);
 
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/Vendors/{vendorHash}/?components=400,402")
     Observable<Response_GetVendor> getVendorData(@Path("membershipType") String membershipType,

@@ -14,6 +14,7 @@
     <color name="warmindPrimary">#181d25</color>
     <color name="warmindDark">#12161b</color>
     <color name="warmindAccent">#ffd700</color>
+    <color name="warmindAccentBackground">#544b16</color>
     <color name="bungieBackground">#12171c</color>
     <color name="bungieCard">#1a2028</color>
     <color name="warmindCardBackground">#2a333e</color>

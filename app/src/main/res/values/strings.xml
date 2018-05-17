@@ -130,5 +130,7 @@
     <string name="xurInventory">Xur\'s Inventory</string>
     <string name="manageInventory">Inventory</string>
     <string name="factionicon">Faction Icon</string>
+    <string name="concatFactionLevel">Level %1$s</string>
+    <string name="concatFactionProgress">%1$s / %2$s</string>
 
 </resources>

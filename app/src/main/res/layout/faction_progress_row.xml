@@ -30,7 +30,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/faction_name"
+                    android:id="@+id/faction_level"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     app:layout_constraintHeight_default="percent"
@@ -38,7 +38,17 @@
                     app:layout_constraintBottom_toTopOf="@id/faction_progression_bar"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_gravity="end|top"
-                    android:text="Failsafe"
+                    android:textColor="@color/colorWhite"
+                    />
+
+                <TextView
+                    android:id="@+id/faction_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.45"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/faction_progression_bar"
                     android:textColor="@color/colorWhite"
                     />
 
@@ -66,7 +76,6 @@
                     app:layout_constraintTop_toBottomOf="@id/faction_progression_bar"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_alignParentBottom="true"
-                    android:text="100/2000"
                     android:textColor="@color/colorWhite"
                     />
 

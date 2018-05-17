@@ -47,6 +47,7 @@ import java.util.List;
 
 import static com.jastley.warmindfordestiny2.Definitions.theNine;
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
+import static com.jastley.warmindfordestiny2.api.apiKey.braytechApiKey;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -209,7 +210,7 @@ public class XurFragment extends Fragment {
         BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(xurURL);
 
 
-        mBungieAPI.getXurWeeklyInventory()
+        mBungieAPI.getXurWeeklyInventory(braytechApiKey, "history", "xur")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response_getXurWeekly -> {

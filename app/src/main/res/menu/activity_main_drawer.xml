@@ -23,7 +23,7 @@
 
         <item
             android:id="@+id/xur"
-            android:icon="@drawable/xur_icon_large"
+            android:icon="@drawable/test_xur"
             android:title="@string/xur" />
 
 

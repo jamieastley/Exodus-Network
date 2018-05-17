@@ -5,8 +5,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.jastley.warmindfordestiny2.LFG.fragments.LFGDetailsFragment">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <RelativeLayout
+        <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -212,6 +215,7 @@
         <!--Post body container-->
 
         <android.support.v7.widget.CardView
+            android:id="@+id/lfg_details_body_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -285,6 +289,38 @@
 
         </android.support.v7.widget.CardView>
 
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lfg_details_body_card"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            app:cardBackgroundColor="@color/bungieCard"
+            >
+
+            <ProgressBar
+                android:id="@+id/faction_loading_progress_bar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/lfg_details_body_card"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/faction_progress_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v7.widget.CardView>
+
     </RelativeLayout>
 
+    </ScrollView>
 </FrameLayout>
