@@ -21,7 +21,7 @@ import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
-import com.jastley.warmindfordestiny2.database.models.Collectables;
+import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -52,7 +52,7 @@ public class InventoryFragment extends Fragment {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private OnFragmentInteractionListener mListener;
     private ArrayList<CharacterDatabaseModel> charactersList = new ArrayList<>();
-    private ArrayList<Collectables> collectablesManifest = new ArrayList<>();
+    private ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest = new ArrayList<>();
 
     private int tabIndexCount;
 
@@ -159,11 +159,11 @@ public class InventoryFragment extends Fragment {
 //            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
 //            return PlaceholderFragment.newInstance(position + 1);
 
-//            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
+//            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), destinyInventoryItemDefinitionManifest);
             return CharacterInventoryFragment.newInstance(position,
                                                         charactersList.get(position),
                                                         charactersList,
-                                                        collectablesManifest);
+                    destinyInventoryItemDefinitionManifest);
         }
 
         @Override

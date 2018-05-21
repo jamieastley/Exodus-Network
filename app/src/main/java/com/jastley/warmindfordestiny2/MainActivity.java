@@ -193,36 +193,6 @@ public class MainActivity extends AppCompatActivity
 //        }
 //        asyncGetCollectables();
         updateNavUI(hView);
-
-        mBungieApi = new RetrofitHelper().getAuthBungieAPI(this, plumbingURL);
-
-        mBungieApi.getFactionDefinitions()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> {
-
-                    JsonObject responseObj = (JsonObject) response;
-                    Gson gson = new Gson();
-                    for(Iterator iterator = responseObj.keySet().iterator(); iterator.hasNext();){
-
-                        final String key = (String)iterator.next();
-
-                        Response_FactionDefinitions.FactionObject faction = gson.fromJson(responseObj.get(key).getAsJsonObject(), Response_FactionDefinitions.FactionObject.class);
-                        String definition = faction.getDisplayProperties().getDescription();
-                        String name = faction.getDisplayProperties().getName();
-
-                        String vendorImg = faction.getVendors().get(0).getBackgroundImagePath();
-
-                    }
-
-                    System.out.println(response);
-//                    for(int i = 0; i < response.getFactionDefinitions().size(); i++) {
-//                        System.out.println(response.getFactionDefinitions().get(i).getDisplayProperties().getDescription());
-//                    }
-                }, error -> {
-                    System.out.println("something");
-                });
-
     }
 
 

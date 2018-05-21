@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +26,14 @@ import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListen
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
+import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
-import com.jastley.warmindfordestiny2.database.models.Collectables;
+import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +74,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     private BungieAPI mBungieAPI;
     private List<InventoryItemModel> inventoryItems = new ArrayList<>();
     private List<CharacterDatabaseModel> mCharacterList = new ArrayList<>();
-//    private List<Collectables> mCollectablesList = new ArrayList<>();
+//    private List<DestinyInventoryItemDefinition> mCollectablesList = new ArrayList<>();
     private DatabaseHelper db;
     ItemTransferDialogFragment transferModalDialog;
 
@@ -92,14 +96,14 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public static CharacterInventoryFragment newInstance(int tabNumber,
                                                          CharacterDatabaseModel character,
                                                          ArrayList<CharacterDatabaseModel> characterList,
-                                                         ArrayList<Collectables> collectablesManifest) {
+                                                         ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
         Bundle args = new Bundle();
         System.out.println("Fragment created, tabIndex: " + tabNumber);
         args.putInt("ARG_TAB_NUMBER", tabNumber);
         args.putParcelable("ARG_CHARACTER_DATA", character);
         args.putParcelableArrayList("ARG_CHARACTER_LIST", characterList);
-        args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", collectablesManifest);
+        args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", destinyInventoryItemDefinitionManifest);
         fragment.setArguments(args);
 //        fragment.setRetainInstance(true);
         return fragment;
@@ -279,12 +283,22 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                     switch(response.getErrorCode()){
                         case 1: //Response successful
 
+                            List<String> itemHashList = new ArrayList<>();
+                            List<String> unsignedHashList = new ArrayList<>();
+
                             inventoryItems.clear();
                             for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
                                 String primaryStatValue;
                                 String itemInstanceId = null;
+
+                                //add/calculate hashes
                                 String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
+                                String unsignedHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
+                                itemHashList.add(itemHash);
+                                unsignedHashList.add(unsignedHash);
+
+
                                 InventoryItemModel itemModel = new InventoryItemModel();
 
                                 itemModel.setItemHash(itemHash);
@@ -300,42 +314,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     }
 
                                 }
-                                //Lookup manifest data for item
-                                try {
-//                                JsonArray json =  mCollectablesList;
-//                                String name = json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString();
-//                                itemModel.setItemName(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
-//                                itemModel.setItemIcon(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
-//                                //                                itemModel.setItemName(mCollectablesList.indexOf(1));
-                                    OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
-//                                String dataString = dbItem.getValue();
-                                    JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
-                                        itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
-                                    itemModel.setItemIcon(itemData.get("displayProperties").getAsJsonObject().get("icon").getAsString());
-                                    itemModel.setItemTypeDisplayName(itemData.get("itemTypeDisplayName").getAsString());
-                                    itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
-                                    itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
 
-
-
-                                }
-                                catch(Exception e){
-                                    System.out.println(e);
-                                }
-                                db.close();
-//                            CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(getContext()).getCollectablesDAO();
-//                            mCollectablesDAO.getItemByKey(itemHash)
-//                                    .subscribeOn(Schedulers.io())
-//                                    .subscribe(collectables -> {
-////                                       collectables.
-//                                        JsonParser parser = new JsonParser();
-//                                        JsonElement itemData = parser.parse(collectables.getValue());
-//                                        itemModel.setItemName(itemData.getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
-//                                        itemModel.setItemIcon(itemData.getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
-//                                    });
-
-
-//                            canEquip = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip();
                                 try{
                                     primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
                                     itemModel.setPrimaryStatValue(primaryStatValue);
@@ -346,8 +325,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     System.out.println("Not an instance-specific item");
                                 }
 //
-                                //get inventory item
-//                            itemModel.setItemHash(String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash()));
                                 itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
                                 //Required to manipulate UI on transfer/equip modal
                                 itemModel.setClassType(mCharacter.getClassType());
@@ -355,7 +332,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 inventoryItems.add(itemModel);
                             }
 
-                            setRecyclerView(inventoryItems);
+                            getManifestData(itemHashList, unsignedHashList);
+//                            setRecyclerView(inventoryItems);
                             break;
 
                         case 5: //maintainence
@@ -415,7 +393,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 //                                itemModel.setItemName(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("name").getAsString());
 //                                itemModel.setItemIcon(json.getAsJsonObject().get(itemHash).getAsJsonObject().get("displayProperties").getAsJsonObject().get("icon").getAsString());
 //                                //                                itemModel.setItemName(mCollectablesList.indexOf(1));
-                                    OldDatabaseModel dbItem = db.getCollectablesData("Collectables", itemHash);
+                                    OldDatabaseModel dbItem = db.getCollectablesData("DestinyInventoryItemDefinition", itemHash);
 //                                String dataString = dbItem.getValue();
                                     JsonObject itemData = (JsonObject) parser.parse(dbItem.getValue());
                                     itemModel.setItemName(itemData.get("displayProperties").getAsJsonObject().get("name").getAsString());
@@ -430,7 +408,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                     System.out.println(e);
                                 }
                                 db.close();
-//                            CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(getContext()).getCollectablesDAO();
+//                            InventoryItemDAO mCollectablesDAO = AppDatabase.getAppDatabase(getContext()).getInventoryItemDAO();
 //                            mCollectablesDAO.getItemByKey(itemHash)
 //                                    .subscribeOn(Schedulers.io())
 //                                    .subscribe(collectables -> {
@@ -497,6 +475,43 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     }
 
+
+    public void getManifestData(List<String> itemList, List<String> unsigned){
+
+        InventoryItemDAO mInventoryItemDAO = AppDatabase.getAppDatabase(getContext()).getInventoryItemDAO();
+
+        mInventoryItemDAO.getItemsListByKey(itemList, unsigned)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(items -> {
+
+                    for (int i = 0; i < items.size(); i++) {
+
+                        JsonParser parser = new JsonParser();
+                        JsonObject itemObj = (JsonObject) parser.parse(items.get(i).getValue());
+
+                        /* Room returns manifest values in alphanumeric key order, so use
+                        inner loop to ensure that the item in each list is the same within each list we are iterating through */
+                        for (int j = 0; j < inventoryItems.size(); j++) {
+
+                            if(inventoryItems.get(j).getItemHash().equals(itemObj.get("hash").getAsString())){
+
+                                Log.d("InventoryAPIListHash: ", inventoryItems.get(j).getItemHash());
+                                Log.d("ManifestItemHash: ", itemObj.get("hash").getAsString());
+                                inventoryItems.get(j).setItemName(itemObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                                try{
+                                    inventoryItems.get(j).setItemIcon(itemObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                                }
+                                catch(Exception e){
+                                    Log.d("getManifestData: ", e.getLocalizedMessage());
+                                }
+                            }
+                        }
+
+                    }
+                    setRecyclerView(inventoryItems);
+                });
+    }
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 

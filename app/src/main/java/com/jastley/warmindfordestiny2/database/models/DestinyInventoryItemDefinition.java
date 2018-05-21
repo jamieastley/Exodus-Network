@@ -12,21 +12,22 @@ import android.support.annotation.NonNull;
  */
 
 @Entity
-public class Collectables implements Parcelable {
+public class DestinyInventoryItemDefinition implements Parcelable {
 
     @PrimaryKey
     @NonNull
-    private String key;
+    @ColumnInfo(name = "id")
+    private String id;
 
-    @ColumnInfo(name = "value")
+    @ColumnInfo(name = "json")
     private String value;
 
-    public String getKey() {
-        return key;
+    public String getId() {
+        return id;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getValue() {

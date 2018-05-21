@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
-import com.jastley.warmindfordestiny2.database.models.Collectables;
+import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
 public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 
-    private List<Collectables> collectables = new ArrayList<>();
+    private List<DestinyInventoryItemDefinition> collectables = new ArrayList<>();
 
     public interface AsyncResponse {
         void onAsyncDone();
@@ -75,7 +75,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
                                 System.out.println("ManifestVersion error: " + e);
                             }
 
-                            final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
+                            final InventoryItemDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getInventoryItemDAO();
 
                             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
                             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -108,7 +108,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 //                                            //store item definition object as string
 //                                            final String currentItemDefinition = collectableObj.toString();
 //
-//                                            Collectables mCollectable = new Collectables();
+//                                            DestinyInventoryItemDefinition mCollectable = new DestinyInventoryItemDefinition();
 //                                            mCollectable.setId(key);
 //                                            mCollectable.setValue(currentItemDefinition);
 //                                            collectables.add(mCollectable);
@@ -117,7 +117,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 ////                                AsyncTask.execute(new Runnable() {
 ////                                    @Override
 ////                                    public void run() {
-////                                        Collectables collectable = new Collectables();
+////                                        DestinyInventoryItemDefinition collectable = new DestinyInventoryItemDefinition();
 ////                                        collectable.setId(key);
 ////                                        collectable.setValue(currentItemDefinition);
 ////
@@ -162,7 +162,7 @@ public class GetItemDatabase extends AsyncTask<Context, Void, Boolean> {
 //                                                        factionModel.setValue(factionDetails);
 //                                                        factionList.add(factionModel);
 //                                                    }
-////                                                    final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
+////                                                    final InventoryItemDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getInventoryItemDAO();
 //                                                    System.out.println(response);
 //                                                    FactionsDAO mFactionsDAO = AppDatabase.getAppDatabase(context).getFactionsDAO();
 //

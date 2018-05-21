@@ -93,53 +93,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void testSearch() {
-        FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(this).getFactionsDAO();
-
-        Long hash = 2550874616L;
-        Long subtract = 4294967296L;
-        Long val = -1744092680L;
-        String valStr = String.valueOf(hash);
-        String converted = String.valueOf(hash - subtract);
-//        mFactionDAO.getAllFactions()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new MaybeObserver<List<DestinyFactionDefinition>>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//                        Log.d("Found: ", d.toString());
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(List<DestinyFactionDefinition> destinyFactionDefinitions) {
-//                        Log.d("Found: ", destinyFactionDefinitions.get(0).getId());
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//
-//                    }
-//                });
-
-//                    String result = destinyFactionDefinition.get(0).getValue();
-
-        mFactionDAO.getFactionByKey(valStr, converted)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(destinyFactionDefinition -> {
-                    Log.d("Found: ", destinyFactionDefinition.getId());
-                });
-
-    }
-
-    public void checkManifestsVersion() {
-
-
+    private void checkManifestsVersion() {
 
         SharedPreferences savedPrefs;
         savedPrefs = this.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
@@ -185,7 +139,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 });
     }
 
-    public void getUpdateManifests(String url){
+    private void getUpdateManifests(String url){
 
         BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
 
@@ -251,7 +205,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
-    public void unzipManifest(String path){
+    private void unzipManifest(String path){
 
         InputStream is;
         ZipInputStream zis;

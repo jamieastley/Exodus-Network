@@ -520,12 +520,18 @@ public class LFGDetailsFragment extends Fragment {
                         JsonParser parser = new JsonParser();
                         JsonObject factionObj = (JsonObject) parser.parse(factions.get(i).getValue());
 
-                        System.out.println("inside forLoop: " + factionProgressionsList.get(i).getFactionHash());
-                        System.out.println("Room: " + factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                        for (int j = 0; j < factionProgressionsList.size(); j++) {
 
-                        //Append manifest data to faction progressions for character
-                        factionProgressionsList.get(i).setFactionName(factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
-                        factionProgressionsList.get(i).setFactionIconUrl(factionObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                            if(factionProgressionsList.get(j).getFactionHash().toString().equals(factionObj.get("hash").getAsString())){
+
+                                System.out.println("inside forLoop: " + factionProgressionsList.get(i).getFactionHash());
+                                System.out.println("Room: " + factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+
+                                //Append manifest data to faction progressions for character
+                                factionProgressionsList.get(j).setFactionName(factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                                factionProgressionsList.get(j).setFactionIconUrl(factionObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                            }
+                        }
                     }
 
                     mFactionProgressRecyclerAdapter = new LFGFactionsRecyclerAdapter(getContext(), factionProgressionsList);

@@ -1,7 +1,6 @@
 package com.jastley.warmindfordestiny2.Vendors;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,20 +25,11 @@ import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Vendors.adapters.XurItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
-import com.jastley.warmindfordestiny2.api.Response_GetXurWeekly;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
-import com.jastley.warmindfordestiny2.database.CollectablesDAO;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.squareup.picasso.Picasso;
-import io.reactivex.MaybeObserver;
-import io.reactivex.MaybeSource;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
@@ -86,7 +76,7 @@ public class XurFragment extends Fragment {
     FloatingActionButton mFab;
 
 
-//    final CollectablesDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getCollectablesDAO();
+//    final InventoryItemDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getInventoryItemDAO();
     public XurFragment() {
         // Required empty public constructor
     }

@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private static final String TABLE_ACCOUNT = "Account";
-    private static final String TABLE_COLLECTABLES = "Collectables";
+    private static final String TABLE_COLLECTABLES = "DestinyInventoryItemDefinition";
     private static final String TABLE_FACTIONS = "DestinyFactionDefinition";
 //    private static final String
 

@@ -17,7 +17,7 @@ import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFra
 import com.jastley.warmindfordestiny2.Characters.fragments.ItemTransferDialogFragment;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
-import com.jastley.warmindfordestiny2.database.models.Collectables;
+import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //    private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private List<CharacterDatabaseModel> charactersList = new ArrayList<>();
-    private ArrayList<Collectables> collectablesManifest = new ArrayList<>();
+    private ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest = new ArrayList<>();
     private JsonObject collectablesObject = new JsonObject();
 
     private int tabIndexCount;
@@ -72,7 +72,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 
 //        JsonParser parser = new JsonParser();
 
-//        CollectablesDAO mCollectablesDAO = AppDatabase.getAppDatabase(this).getCollectablesDAO();
+//        InventoryItemDAO mCollectablesDAO = AppDatabase.getAppDatabase(this).getInventoryItemDAO();
 //        mCollectablesDAO.getAllCollectables()
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -84,10 +84,10 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //////                        JsonObject obj = (JsonObject) parser.parse(collectables.get(i).getValue());
 //
 ////                        collectablesObject.add(key, value);
-//                        Collectables collectableData = new Collectables();
+//                        DestinyInventoryItemDefinition collectableData = new DestinyInventoryItemDefinition();
 //                        collectableData.setId(collectables.get(i).getId());
 //                        collectableData.setValue(collectables.get(i).getValue());
-//                        collectablesManifest.add(collectableData);
+//                        destinyInventoryItemDefinitionManifest.add(collectableData);
 //                    }
 
 //        getAccountCharacters();
@@ -218,8 +218,8 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //////            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
 //////            return PlaceholderFragment.newInstance(position + 1);
 ////
-//////            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
-////            return CharacterInventoryFragment.newInstance(position, charactersList.get(position), collectablesManifest);
+//////            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), destinyInventoryItemDefinitionManifest);
+////            return CharacterInventoryFragment.newInstance(position, charactersList.get(position), destinyInventoryItemDefinitionManifest);
 ////        }
 //
 //        @Override
