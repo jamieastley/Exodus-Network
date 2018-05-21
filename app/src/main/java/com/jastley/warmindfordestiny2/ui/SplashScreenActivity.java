@@ -83,28 +83,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         splashText.setText(R.string.checkingManifest);
 
-//        GetItemDatabase items = new GetItemDatabase(new GetItemDatabase.AsyncResponse() {
-//            @Override
-//            public void onAsyncDone() {
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
-//
-//        items.execute(this);
-
-
-            testSearch();
-//        checkManifestsVersion();
-
-//                0xFFFFFFFFL;
-
-//        intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-//
-//        //set flags so pressing back won't trigger launching splash screen again
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        startActivity(intent);
-//        finish();
+        checkManifestsVersion();
 
     }
 
@@ -117,7 +96,11 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void testSearch() {
         FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(this).getFactionsDAO();
 
-        String val = "-1744092680";
+        Long hash = 2550874616L;
+        Long subtract = 4294967296L;
+        Long val = -1744092680L;
+        String valStr = String.valueOf(hash);
+        String converted = String.valueOf(hash - subtract);
 //        mFactionDAO.getAllFactions()
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -145,7 +128,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
 //                    String result = destinyFactionDefinition.get(0).getValue();
 
-        mFactionDAO.getFactionByKey(val)
+        mFactionDAO.getFactionByKey(valStr, converted)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(destinyFactionDefinition -> {
@@ -174,18 +157,26 @@ public class SplashScreenActivity extends AppCompatActivity {
                     //Download/update stored manifests
                     if(!manifestVersion.equals(savedManifestVersion)){
 
-//                        SharedPreferences.Editor editor = savedPrefs.edit();
+                        SharedPreferences.Editor editor = savedPrefs.edit();
 
-//                        try{
-//                            editor.putString("manifestVersion", manifestVersion);
-//                            editor.apply();
-//                        }
-//                        catch (Exception e){
-//                            Log.e("MANIFEST_ERR", e.getLocalizedMessage());
-//                        }
+                        try{
+                            editor.putString("manifestVersion", manifestVersion);
+                            editor.apply();
+                        }
+                        catch (Exception e){
+                            Log.e("MANIFEST_ERR", e.getLocalizedMessage());
+                        }
                         splashText.setText(R.string.gettingItemDatabase);
                         String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
                         getUpdateManifests(contentUrl);
+                    }
+                    else {
+                        intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+
+                        //set flags so pressing back won't trigger launching splash screen again
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
                     }
 
                 }, error -> {
@@ -205,7 +196,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                     try {
 
-                        String databasePath = "/data/data/"+getPackageName()+"/databases";
+                        //dynamically retrieve the /databases path for the device, database filename is irrelevant
+                        String databasePath = this.getDatabasePath("bungieAccount.db").getParent();
+//                                getFilesDir().getPath()+"/"+getPackageName()+"/databases";
                         File manifestFile = new File(databasePath, "manifest.zip");
 
                         InputStream inputStream = null;
@@ -235,7 +228,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                             }
 
                         } catch (IOException e) {
-                            Log.d("something", e.getLocalizedMessage());
+                            Log.d("Content download: ", e.getLocalizedMessage());
                         } finally {
                             if (inputStream != null) {
                                 inputStream.close();
@@ -277,8 +270,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             {
                 filename = ze.getName();
 
-                // Need to create directories if not exists, or
-                // it will generate an Exception...
+                // Create directory if it doesn't exist
                 if (ze.isDirectory()) {
                     File fmd = new File(path + filename);
                     fmd.mkdirs();
@@ -287,7 +279,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                 FileOutputStream fout = new FileOutputStream(bungieDB);
 
-                // cteni zipu a zapis
                 while ((count = zis.read(buffer)) != -1)
                 {
                     fout.write(buffer, 0, count);
@@ -309,7 +300,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             //set flags so pressing back won't trigger launching splash screen again
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-                finish();
+            finish();
         }
     }
 

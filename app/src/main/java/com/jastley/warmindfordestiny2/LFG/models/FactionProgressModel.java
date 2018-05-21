@@ -3,7 +3,7 @@ package com.jastley.warmindfordestiny2.LFG.models;
 public class FactionProgressModel {
 
     private String factionName;
-    private String factionHash;
+    private Long factionHash;
     private String progressionHash;
     private String currentProgress;
     private String level;
@@ -22,11 +22,11 @@ public class FactionProgressModel {
         this.factionName = factionName;
     }
 
-    public String getFactionHash() {
+    public Long getFactionHash() {
         return factionHash;
     }
 
-    public void setFactionHash(String factionHash) {
+    public void setFactionHash(Long factionHash) {
         this.factionHash = factionHash;
     }
 

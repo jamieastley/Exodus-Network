@@ -24,6 +24,7 @@ import com.jastley.warmindfordestiny2.LFG.models.FactionProgressModel;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
@@ -473,7 +474,8 @@ public class LFGDetailsFragment extends Fragment {
                                 .show();
                     }
                     else{
-                        List<Long> factionHashList = new ArrayList<>();
+                        List<String> factionHashList = new ArrayList<>();
+                        List<String> unsignedFactionHashList = new ArrayList<>();
 
                         //get stats from API response, keySet required for iteration instead of forLoop .get(i)
                         for(Iterator iterator = response_factionProgression.getResponse().getProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext();){
@@ -482,12 +484,13 @@ public class LFGDetailsFragment extends Fragment {
 
                             Long factionHashTest = response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash();
 
-                            factionHashList.add(factionHashTest);
-
+                            String unsignedTotal = UnsignedHashConverter.convert(factionHashTest);
+                            factionHashList.add(factionHashTest.toString());
+                            unsignedFactionHashList.add(unsignedTotal);
 
 
                             System.out.println("forLoop: " + factionHashTest);
-//                            factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
+                            factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
                             factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
                             factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
                             factionProgressModel.setLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getLevel());
@@ -495,7 +498,7 @@ public class LFGDetailsFragment extends Fragment {
 
                             factionProgressionsList.add(factionProgressModel);
                         }
-                        getFactionData(factionHashList);
+                        getFactionData(factionHashList, unsignedFactionHashList);
                     }
                 },throwable -> Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
                         .show());
@@ -503,12 +506,11 @@ public class LFGDetailsFragment extends Fragment {
 
 
 
-    public void getFactionData(List<Long> hashes) {
+    public void getFactionData(List<String> hashes, List<String> unsigned) {
 
         FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
 
-//        Long suros = 2856683562L;
-        mFactionDAO.getFactionsListByKey(hashes)
+        mFactionDAO.getFactionsListByKey(hashes, unsigned)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(factions -> {

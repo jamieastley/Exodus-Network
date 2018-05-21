@@ -290,7 +290,7 @@ public class XurFragment extends Fragment {
 
     public void getLocationBanner() {
         FactionsDAO mFactionsDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
-        mFactionsDAO.getFactionByKey(theNine)
+        mFactionsDAO.getFactionByKey(theNine, "shsh")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(faction -> {
