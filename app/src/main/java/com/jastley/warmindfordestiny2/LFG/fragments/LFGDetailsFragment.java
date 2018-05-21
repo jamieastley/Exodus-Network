@@ -473,18 +473,21 @@ public class LFGDetailsFragment extends Fragment {
                                 .show();
                     }
                     else{
-                        List<String> factionHashList = new ArrayList<>();
+                        List<Long> factionHashList = new ArrayList<>();
 
                         //get stats from API response, keySet required for iteration instead of forLoop .get(i)
                         for(Iterator iterator = response_factionProgression.getResponse().getProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext();){
                             FactionProgressModel factionProgressModel = new FactionProgressModel();
                             String currentKey = (String)iterator.next();
 
-                            String factionHashTest = response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash();
+                            Long factionHashTest = response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash();
+
                             factionHashList.add(factionHashTest);
 
+
+
                             System.out.println("forLoop: " + factionHashTest);
-                            factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
+//                            factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
                             factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
                             factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
                             factionProgressModel.setLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getLevel());
@@ -498,10 +501,13 @@ public class LFGDetailsFragment extends Fragment {
                         .show());
     }
 
-    public void getFactionData(List<String> hashes) {
+
+
+    public void getFactionData(List<Long> hashes) {
 
         FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
 
+//        Long suros = 2856683562L;
         mFactionDAO.getFactionsListByKey(hashes)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

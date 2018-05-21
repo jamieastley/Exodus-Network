@@ -10,20 +10,38 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.Response_DestinyPlumbing;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.jastley.warmindfordestiny2.database.GetItemDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.jastley.warmindfordestiny2.database.models.DestinyFactionDefinition;
+import io.reactivex.MaybeObserver;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
+import java.io.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 import static com.jastley.warmindfordestiny2.api.BungieAPI.plumbingURL;
 
 /**
@@ -47,10 +65,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         ButterKnife.bind(this);
 
-        intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-
-        //set flags so pressing back won't trigger launching splash screen again
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         //Transparent Status Bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -67,18 +81,30 @@ public class SplashScreenActivity extends AppCompatActivity {
         alphaAnimator.setRepeatCount(ValueAnimator.INFINITE);
         alphaAnimator.start();
 
-        splashText.setText(R.string.gettingItemDatabase);
+        splashText.setText(R.string.checkingManifest);
 
-        GetItemDatabase items = new GetItemDatabase(new GetItemDatabase.AsyncResponse() {
-            @Override
-            public void onAsyncDone() {
-                startActivity(intent);
-                finish();
-            }
-        });
+//        GetItemDatabase items = new GetItemDatabase(new GetItemDatabase.AsyncResponse() {
+//            @Override
+//            public void onAsyncDone() {
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
+//
+//        items.execute(this);
 
-        items.execute(this);
 
+            testSearch();
+//        checkManifestsVersion();
+
+//                0xFFFFFFFFL;
+
+//        intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+//
+//        //set flags so pressing back won't trigger launching splash screen again
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        startActivity(intent);
+//        finish();
 
     }
 
@@ -87,4 +113,204 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
+
+    public void testSearch() {
+        FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(this).getFactionsDAO();
+
+        String val = "-1744092680";
+//        mFactionDAO.getAllFactions()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new MaybeObserver<List<DestinyFactionDefinition>>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//                        Log.d("Found: ", d.toString());
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(List<DestinyFactionDefinition> destinyFactionDefinitions) {
+//                        Log.d("Found: ", destinyFactionDefinitions.get(0).getId());
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+
+//                    String result = destinyFactionDefinition.get(0).getValue();
+
+        mFactionDAO.getFactionByKey(val)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(destinyFactionDefinition -> {
+                    Log.d("Found: ", destinyFactionDefinition.getId());
+                });
+
+    }
+
+    public void checkManifestsVersion() {
+
+
+
+        SharedPreferences savedPrefs;
+        savedPrefs = this.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
+
+        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
+
+        mBungieAPI.getBungieManifests()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response_getBungieManifest -> {
+
+                    String manifestVersion = response_getBungieManifest.getResponse().getVersion();
+                    String savedManifestVersion = savedPrefs.getString("manifestVersion", "");
+
+                    //Download/update stored manifests
+                    if(!manifestVersion.equals(savedManifestVersion)){
+
+//                        SharedPreferences.Editor editor = savedPrefs.edit();
+
+//                        try{
+//                            editor.putString("manifestVersion", manifestVersion);
+//                            editor.apply();
+//                        }
+//                        catch (Exception e){
+//                            Log.e("MANIFEST_ERR", e.getLocalizedMessage());
+//                        }
+                        splashText.setText(R.string.gettingItemDatabase);
+                        String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
+                        getUpdateManifests(contentUrl);
+                    }
+
+                }, error -> {
+                    Log.e("CHECK_MANIFEST_ERROR", error.getLocalizedMessage());
+                    //TODO: Error dialogFragment?
+                });
+    }
+
+    public void getUpdateManifests(String url){
+
+        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
+
+        mBungieAPI.downloadManifestContent(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(responseBody -> {
+
+                    try {
+
+                        String databasePath = "/data/data/"+getPackageName()+"/databases";
+                        File manifestFile = new File(databasePath, "manifest.zip");
+
+                        InputStream inputStream = null;
+                        OutputStream outputStream = null;
+
+                        try {
+                            byte[] fileReader = new byte[4096];
+
+                            long fileSize = responseBody.contentLength();
+                            long fileSizeDownloaded = 0;
+
+                            inputStream = responseBody.byteStream();
+                            outputStream = new FileOutputStream(manifestFile);
+
+                            boolean test = true;
+                            while (test) {
+                                int read = inputStream.read(fileReader);
+
+                                if (read == -1) {
+                                    break;
+                                }
+
+                                outputStream.write(fileReader, 0, read);
+                                fileSizeDownloaded += read;
+                                Log.d("File Download: ", fileSizeDownloaded + " of " + fileSize);
+                                outputStream.flush();
+                            }
+
+                        } catch (IOException e) {
+                            Log.d("something", e.getLocalizedMessage());
+                        } finally {
+                            if (inputStream != null) {
+                                inputStream.close();
+                            }
+
+                            if (outputStream != null) {
+                                outputStream.close();
+                            }
+                            unzipManifest(databasePath);
+                        }
+                    }
+                    catch(IOException e){
+                        Log.d("OUTER_CATCH", e.getLocalizedMessage());
+                    }
+
+                    }, throwable -> {
+                        Log.e("GET_UPDATE_MANIFESTS_ER", throwable.getLocalizedMessage());
+
+                    });
+
+    }
+
+    public void unzipManifest(String path){
+
+        InputStream is;
+        ZipInputStream zis;
+        try
+        {
+            String zipname = "manifest.zip";
+            String filename;
+            File bungieDB = new File(path, "bungieAccount.db");
+            is = new FileInputStream(path +"/"+ zipname);
+            zis = new ZipInputStream(new BufferedInputStream(is));
+            ZipEntry ze;
+            byte[] buffer = new byte[1024];
+            int count;
+
+            while ((ze = zis.getNextEntry()) != null)
+            {
+                filename = ze.getName();
+
+                // Need to create directories if not exists, or
+                // it will generate an Exception...
+                if (ze.isDirectory()) {
+                    File fmd = new File(path + filename);
+                    fmd.mkdirs();
+                    continue;
+                }
+
+                FileOutputStream fout = new FileOutputStream(bungieDB);
+
+                // cteni zipu a zapis
+                while ((count = zis.read(buffer)) != -1)
+                {
+                    fout.write(buffer, 0, count);
+                }
+
+                fout.close();
+                zis.closeEntry();
+            }
+
+            zis.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally {
+            intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+
+            //set flags so pressing back won't trigger launching splash screen again
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+                finish();
+        }
+    }
+
 }

@@ -79,13 +79,13 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //                .subscribe(collectables -> {
 //                    for(int i = 0; i < collectables.size(); i++){
 //
-////                        String key = collectables.get(i).getKey();
+////                        String key = collectables.get(i).getId();
 ////                        JsonElement value = (JsonElement) parser.parse(collectables.get(i).getValue());
 //////                        JsonObject obj = (JsonObject) parser.parse(collectables.get(i).getValue());
 //
 ////                        collectablesObject.add(key, value);
 //                        Collectables collectableData = new Collectables();
-//                        collectableData.setKey(collectables.get(i).getKey());
+//                        collectableData.setId(collectables.get(i).getId());
 //                        collectableData.setValue(collectables.get(i).getValue());
 //                        collectablesManifest.add(collectableData);
 //                    }
@@ -101,7 +101,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //                .subscribe(accounts -> {
 //
 //                    for(int i = 0; i < accounts.size(); i++){
-//                        System.out.println(accounts.get(i).getKey());
+//                        System.out.println(accounts.get(i).getId());
 //                        JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
 //                        CharacterDatabaseModel character = new CharacterDatabaseModel(
 //                                charObj.get("membershipId").getAsString(),
@@ -264,7 +264,7 @@ public class CharacterInventoryActivity extends AppCompatActivity implements
 //                    String tempMembershipType = "0";
 //
 //                    for(int i = 0; i < accounts.size(); i++){
-//                        System.out.println("forLoop " + accounts.get(i).getKey());
+//                        System.out.println("forLoop " + accounts.get(i).getId());
 //                        JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
 //                        CharacterDatabaseModel character = new CharacterDatabaseModel(
 //                                charObj.get("membershipId").getAsString(),

@@ -5,8 +5,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.database.Observable;
-import com.jastley.warmindfordestiny2.database.models.Factions;
-import io.reactivex.Flowable;
+import com.jastley.warmindfordestiny2.database.models.DestinyFactionDefinition;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
@@ -15,25 +14,29 @@ import java.util.List;
 @Dao
 public interface FactionsDAO {
 
-    @Query("SELECT * FROM Factions")
-    Maybe<List<Factions>> getAllFactions();
+    Long test = 0xFFFFFFFFL;
+//    + 4294967296
+
+    @Query("SELECT * FROM DestinyFactionDefinition")
+    Maybe<List<DestinyFactionDefinition>> getAllFactions();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Factions faction);
+    void insert(DestinyFactionDefinition faction);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<Factions> faction);
+    void insertAll(List<DestinyFactionDefinition> faction);
 
-    @Query("SELECT * FROM Factions WHERE `key` = :itemKey")
-    Maybe<Factions> getFactionByKey(String itemKey);
+    @Query("SELECT * FROM DestinyFactionDefinition WHERE `id` = :itemKey")
+    Single<DestinyFactionDefinition> getFactionByKey(String itemKey);
 
-//    @Query("SELECT * FROM Factions WHERE `key` = :itemKey")
-//    Observable<Factions> getFactionByKeyObsv(String itemKey);
+//    @Query("SELECT * FROM DestinyFactionDefinition WHERE `key` = :itemKey")
+//    Observable<DestinyFactionDefinition> getFactionByKeyObsv(String itemKey);
 
-//    @Query("SELECT * FROM Factions WHERE `key` = :itemKey ")
-//    Maybe<List<Factions>> getFactionsListByKey(List<String> itemKey);
+//    @Query("SELECT * FROM DestinyFactionDefinition WHERE `key` = :itemKey ")
+//    Maybe<List<DestinyFactionDefinition>> getFactionsListByKey(List<String> itemKey);
 
 
-    @Query("SELECT * FROM Factions WHERE `key` IN (:itemKey) ")
-    Maybe<List<Factions>> getFactionsListByKey(List<String> itemKey);
+    @Query("SELECT * FROM DestinyFactionDefinition WHERE id IN (:itemKey) - CAST(4294967296 as Long) OR id IN (:itemKey)")
+//    @Query("SELECT CASE WHEN id < 0 THEN id + 4294967296 IN (:itemKey) OR `id` IN (:itemKey) END FROM DestinyFactionDefinition")
+    Maybe<List<DestinyFactionDefinition>> getFactionsListByKey(List<Long> itemKey);
 }

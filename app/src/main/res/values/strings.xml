@@ -38,7 +38,7 @@
     <string name="titan">Titan</string>
     <string name="hunter">Hunter</string>
     <string name="warlock">Warlock</string>
-    <string name="gettingItemDatabase">Getting Item Database...</string>
+    <string name="gettingItemDatabase">Updating database, please wait...</string>
     <string name="lfgDescription">(Optional) Description..</string>
     <string name="haveMic">Mic?</string>
 
@@ -132,5 +132,6 @@
     <string name="factionicon">Faction Icon</string>
     <string name="concatFactionLevel">Level %1$s</string>
     <string name="concatFactionProgress">%1$s / %2$s</string>
+    <string name="checkingManifest">Checking manifest version...</string>
 
 </resources>

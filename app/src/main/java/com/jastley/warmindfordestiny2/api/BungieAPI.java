@@ -2,10 +2,12 @@ package com.jastley.warmindfordestiny2.api;
 
 import com.google.gson.JsonElement;
 
+import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.api.models.EquipItemRequestBody;
 import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -97,11 +99,16 @@ public interface BungieAPI {
     //Collectable Items/Weapons/Armor
     //@GET("reducedCollectableInventoryItems.json")
     @GET("raw/DestinyInventoryItemDefinition.json")
-    Call<JsonElement> getCollectablesDatabase();
+    Observable<JsonElement> getCollectablesDatabase();
 
+    //Official Bungie Manifests
+    @GET("/Platform/Destiny2/Manifest/")
+    Observable<Response_GetBungieManifest> getBungieManifests();
 
-
-
+    //Download .content manifest file
+    @Streaming
+    @GET
+    Observable<ResponseBody> downloadManifestContent(@Url String fileUrl);
 
 
     /***** XUR ******/
