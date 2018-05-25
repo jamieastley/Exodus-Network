@@ -15,34 +15,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
-import com.jastley.warmindfordestiny2.api.Response_DestinyPlumbing;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
-import com.jastley.warmindfordestiny2.database.AppDatabase;
-import com.jastley.warmindfordestiny2.database.FactionsDAO;
-import com.jastley.warmindfordestiny2.database.GetItemDatabase;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.jastley.warmindfordestiny2.database.models.DestinyFactionDefinition;
-import io.reactivex.MaybeObserver;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
-import static com.jastley.warmindfordestiny2.api.BungieAPI.plumbingURL;
 
 /**
  * Created by jamie on 7/4/18.
@@ -50,13 +37,11 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.plumbingURL;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-//    implements GetItemDatabase.AsyncResponse
 
     @BindView(R.id.splash_icon) ImageView splashIcon;
     @BindView(R.id.splash_text) TextView splashText;
-    private static final int SPLASH_TIME = 2000;
 
-    Intent intent;
+    private Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,13 +103,14 @@ public class SplashScreenActivity extends AppCompatActivity {
                             editor.apply();
                         }
                         catch (Exception e){
-                            Log.e("MANIFEST_ERR", e.getLocalizedMessage());
+                            Log.e("MANIFEST_PREFS_ERR", e.getLocalizedMessage());
                         }
                         splashText.setText(R.string.gettingItemDatabase);
                         String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
                         getUpdateManifests(contentUrl);
                     }
-                    else {
+                    else { //already have the latest manifest
+
                         intent = new Intent(SplashScreenActivity.this, MainActivity.class);
 
                         //set flags so pressing back won't trigger launching splash screen again
@@ -143,16 +129,15 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
 
-        mBungieAPI.downloadManifestContent(url)
+        mBungieAPI.downloadUrlContent(url)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(responseBody -> {
 
                     try {
 
-                        //dynamically retrieve the /databases path for the device, database filename is irrelevant
+                        //dynamically retrieve the /data/databases path for the device, database filename is irrelevant
                         String databasePath = this.getDatabasePath("bungieAccount.db").getParent();
-//                                getFilesDir().getPath()+"/"+getPackageName()+"/databases";
                         File manifestFile = new File(databasePath, "manifest.zip");
 
                         InputStream inputStream = null;
@@ -177,7 +162,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                                 outputStream.write(fileReader, 0, read);
                                 fileSizeDownloaded += read;
-                                Log.d("File Download: ", fileSizeDownloaded + " of " + fileSize);
+                                Log.d("Manifest Download", fileSizeDownloaded + " of " + fileSize);
                                 outputStream.flush();
                             }
 
@@ -257,5 +242,4 @@ public class SplashScreenActivity extends AppCompatActivity {
             finish();
         }
     }
-
 }

@@ -37,6 +37,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.database.AccountDAO;
+import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
 import com.squareup.picasso.Picasso;
@@ -48,6 +50,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
@@ -60,7 +64,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
     @BindView(R.id.micCheckBox) CheckBox micCheckBox;
     private String key;
     private String displayName;
-    private Long dateTime;
     private boolean hasMic = false;
     private boolean onCreateFlag = true;
     JsonArray characterArray = new JsonArray();
@@ -108,150 +111,203 @@ public class NewLFGPostActivity extends AppCompatActivity {
         activityCheckpointSpinner.setAdapter(checkpointAdapter);
 
 
-//        activityName = findViewById(R.id.activity_name_input);
-//        activityCheckpoint = findViewById(R.id.activity_checkpoint_input);
 
-//        ActionBar actionBar = getSupportActionBar();  //to support lower version too
-//        actionBar.setDisplayShowCustomEnabled(true);
-//        View customView=getLayoutInflater().inflate(R.layout.yourlayout, null);
-//        actionBar.setCustomView(customView);
+//        final JsonParser parser = new JsonParser();
+//
+//        final Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
+//        coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+//
+//        for(int i = 0; i < 3; i++){
+//
+//            OldDatabaseModel characters = db.getAccountData("account", "character"+i);
+//            String characterValue = characters.getValue();
+//
+//            JsonObject json = (JsonObject) parser.parse(characterValue);
+//            characterArray.add(json);
+//
+//            String characterId = json.get("characterId").getAsString();
+//            int characterType = json.get("classType").getAsInt();
+//            String emblem = json.get("emblemPath").getAsString();
+//
+//            final RadioButton btn = new RadioButton(this);
+//
+//            //get class name
+//            switch(characterType) {
+//                case 0: //Titan
+//                    btn.setText(R.string.titan);
+//                    break;
+//                case 1: //Hunter
+//                    btn.setText(R.string.hunter);
+//                    break;
+//                case 2: //Warlock
+//                    btn.setText(R.string.warlock);
+//                break;
+//            }
+//
+//            btn.setId(i);
+//            btn.setGravity(Gravity.CENTER);
+//            btn.setButtonDrawable(new StateListDrawable());
+//            btn.setTextColor(getResources().getColor(R.color.colorWhite));
+//            btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
+//            btn.setLayoutParams(new RadioGroup.LayoutParams(
+//                    RadioGroup.LayoutParams.WRAP_CONTENT, //width
+//                    RadioGroup.LayoutParams.WRAP_CONTENT, //height
+//                    1.0f
+//            ));
+//
+//            if(i == 0){ //always set first button as checked to prevent null selection
+//                btn.setChecked(true);
+//            }
+//            else {
+//                btn.setChecked(false);
+//                btn.setAlpha(0.3f);
+//            }
+//
+//            String baseURL = "https://www.bungie.net";
+//
+//            File directory = getDir("playerEmblems", Context.MODE_PRIVATE);
+//            File path = new File(directory, i + ".jpeg");
+//
+//            Picasso.with(this)
+//                    .load(Uri.fromFile(path))
+//                    .placeholder(coloredPlaceholder)
+//                    .transform(new CropCircleTransformation())
+//                    .into(new Target() {
+//                            //Load image into target so the bitmap can be converted to a drawable
+//                              @Override
+//                              public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                                  Drawable draw = new BitmapDrawable(getResources(), bitmap);
+//
+//                                  //setBounds required for setCompoundDrawables
+//                                  draw.setBounds(0,0, 150, 150);
+//                                  btn.setCompoundDrawables(null, draw, null, null);
+//                              }
+//
+//                              @Override
+//                              public void onBitmapFailed(Drawable errorDrawable) {
+//                                //TODO: set emblemIcon error placeholders if all else fails
+//                              }
+//
+//                              @Override
+//                              public void onPrepareLoad(Drawable placeHolderDrawable) {
+//                                  btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
+//                              }
+//                          });
+//            characterRadioGroup.addView(btn);
+//        }
+//        db.close();
+//
+////        TODO: remove hardcoded variables and replace with user account details
+////        lightLevel = "278";
+////        membershipType = "4";
+////        displayName = "Last player";
+////        classType = "2";
+//
+//        characterRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
+//
+//            View radioButton = characterRadioGroup.findViewById(i);
+//            int index = characterRadioGroup.indexOfChild(radioButton);
+//
+//            //get button count for alpha modification
+//            int childCount = characterRadioGroup.getChildCount();
+//
+//            switch (index) {
+//                case 0: // first button
+//                    characterRadioGroup.getChildAt(0).setAlpha(1f);
+//                    if(childCount > 1){
+//                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+//                        if(childCount > 2){
+//                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+//                        }
+//                    }
+//                    break;
+//                case 1: // secondbutton
+//                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+//                    if(childCount > 1){
+//                        characterRadioGroup.getChildAt(1).setAlpha(1f);
+//                        if(childCount > 2){
+//                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+//                        }
+//                    }
+//                    break;
+//                case 2:
+//                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+//                    characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+//                    characterRadioGroup.getChildAt(2).setAlpha(1f);
+//                    break;
+//            }
+//        });
+//
+////        radioButton.getTag(); //TODO: store characterId here?
+//
+//
+//
+//
+////        submitBtn.setOnClickListener(this);
+//
+//        key = DATABASE.getReference().push().getKey();
+        getAccountCharacters();
+    }
 
-//        final AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+    private void getAccountCharacters(){
 
-        final JsonParser parser = new JsonParser();
+        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
 
-        final Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
-        coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+        mAccountDAO.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(characters -> {
 
-        for(int i = 0; i < 3; i++){
+                    Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
+                    coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 
-            OldDatabaseModel characters = db.getAccountData("account", "character"+i);
-            String characterValue = characters.getValue();
+                    for (int i = 0; i < characters.size(); i++) {
 
-            JsonObject json = (JsonObject) parser.parse(characterValue);
-            characterArray.add(json);
+                        JsonParser parser = new JsonParser();
+                        JsonObject characterObj = (JsonObject) parser.parse(characters.get(i).getValue());
 
-            String characterId = json.get("characterId").getAsString();
-            int characterType = json.get("classType").getAsInt();
-            String emblem = json.get("emblemPath").getAsString();
+                        //required for post submit OnClick
+                        characterArray.add(characterObj);
 
-            final RadioButton btn = new RadioButton(this);
+                        int classType = characterObj.get("classType").getAsInt();
 
-            //get class name
-            switch(characterType) {
-                case 0: //Titan
-                    btn.setText(R.string.titan);
-                    break;
-                case 1: //Hunter
-                    btn.setText(R.string.hunter);
-                    break;
-                case 2: //Warlock
-                    btn.setText(R.string.warlock);
-                break;
-            }
+                        RadioButton radioButton = new RadioButton(this);
 
-            btn.setId(i);
-            btn.setGravity(Gravity.CENTER);
-            btn.setButtonDrawable(new StateListDrawable());
-            btn.setTextColor(getResources().getColor(R.color.colorWhite));
-            btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
-            btn.setLayoutParams(new RadioGroup.LayoutParams(
-                    RadioGroup.LayoutParams.WRAP_CONTENT, //width
-                    RadioGroup.LayoutParams.WRAP_CONTENT, //height
-                    1.0f
-            ));
+                        switch(classType){
 
-            if(i == 0){ //always set first button as checked to prevent null selection
-                btn.setChecked(true);
-            }
-            else {
-                btn.setChecked(false);
-                btn.setAlpha(0.3f);
-            }
-
-            String baseURL = "https://www.bungie.net";
-
-            File directory = getDir("playerEmblems", Context.MODE_PRIVATE);
-            File path = new File(directory, i + ".jpeg");
-
-            Picasso.with(this)
-                    .load(Uri.fromFile(path))
-                    .placeholder(coloredPlaceholder)
-                    .transform(new CropCircleTransformation())
-                    .into(new Target() {
-                            //Load image into target so the bitmap can be converted to a drawable
-                              @Override
-                              public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                  Drawable draw = new BitmapDrawable(getResources(), bitmap);
-
-                                  //setBounds required for setCompoundDrawables
-                                  draw.setBounds(0,0, 150, 150);
-                                  btn.setCompoundDrawables(null, draw, null, null);
-                              }
-
-                              @Override
-                              public void onBitmapFailed(Drawable errorDrawable) {
-                                //TODO: set emblemIcon error placeholders if all else fails
-                              }
-
-                              @Override
-                              public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                  btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
-                              }
-                          });
-            characterRadioGroup.addView(btn);
-        }
-        db.close();
-
-//        TODO: remove hardcoded variables and replace with user account details
-//        lightLevel = "278";
-//        membershipType = "4";
-//        displayName = "Last player";
-//        classType = "2";
-
-        characterRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
-
-            View radioButton = characterRadioGroup.findViewById(i);
-            int index = characterRadioGroup.indexOfChild(radioButton);
-
-            //get button count for alpha modification
-            int childCount = characterRadioGroup.getChildCount();
-
-            switch (index) {
-                case 0: // first button
-                    characterRadioGroup.getChildAt(0).setAlpha(1f);
-                    if(childCount > 1){
-                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-                        if(childCount > 2){
-                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                            case 0: //Titan
+                                radioButton.setText(R.string.titan);
+                                break;
+                            case 1: //Hunter
+                                radioButton.setText(R.string.hunter);
+                                break;
+                            case 2: // Warlock
+                                radioButton.setText(R.string.warlock);
+                                break;
                         }
-                    }
-                    break;
-                case 1: // secondbutton
-                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
-                    if(childCount > 1){
-                        characterRadioGroup.getChildAt(1).setAlpha(1f);
-                        if(childCount > 2){
-                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+
+                        radioButton.setId(i);
+                        radioButton.setGravity(Gravity.CENTER);
+                        radioButton.setButtonDrawable(new StateListDrawable());
+                        radioButton.setTextColor(getResources().getColor(R.color.colorWhite));
+                        radioButton.setCompoundDrawables(null, coloredPlaceholder, null, null);
+                        radioButton.setLayoutParams(new RadioGroup.LayoutParams(
+                                RadioGroup.LayoutParams.WRAP_CONTENT, //width
+                                RadioGroup.LayoutParams.WRAP_CONTENT, //height
+                                1.0f
+                        ));
+
+                        if(i == 0){ //always ensure an option is preselected onCreate
+                            radioButton.setChecked(true);
                         }
+                        else{
+                            radioButton.setChecked(false);
+                            radioButton.setAlpha(0.3f);
+                        }
+
+                        characterRadioGroup.addView(radioButton);
                     }
-                    break;
-                case 2:
-                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
-                    characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-                    characterRadioGroup.getChildAt(2).setAlpha(1f);
-                    break;
-            }
-        });
-
-//        radioButton.getTag(); //TODO: store characterId here?
-
-        dateTime = System.currentTimeMillis();
-
-
-//        submitBtn.setOnClickListener(this);
-
-        key = DATABASE.getReference().push().getKey();
+                });
     }
 
 
@@ -301,7 +357,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                     String characterId = characterObject.get("characterId").getAsString();
                     String classType = characterObject.get("classType").getAsString();
 
-                    //TODO: check for null values before writing to Firebase
+                    Long dateTime = System.currentTimeMillis();
 
                     LFGPost newPost = new LFGPost(
                             activityNameSpinner.getSelectedItem().toString(),
@@ -315,14 +371,11 @@ public class NewLFGPostActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
                         finish();
+                        //TODO: interface here to MainActivity to trigger Snackbar and refresh
                     }
 
                 });
                 break;
-
-//            case R.id.lfg_post_close:
-//                onBackPressed();
-//                break;
 
         }
         return super.onOptionsItemSelected(item);

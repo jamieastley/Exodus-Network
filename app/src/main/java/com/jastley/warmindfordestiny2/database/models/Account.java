@@ -14,6 +14,7 @@ public class Account {
 
     @PrimaryKey
     @NonNull
+    @ColumnInfo(name = "key")
     private String key;
 
     @ColumnInfo(name = "value")

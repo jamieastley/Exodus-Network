@@ -22,6 +22,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.*;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
@@ -47,6 +47,7 @@ import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.Vendors.XurFragment;
 import com.jastley.warmindfordestiny2.api.*;
+import com.jastley.warmindfordestiny2.api.models.Response_GetCurrentUser;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
@@ -73,7 +74,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
-import static com.jastley.warmindfordestiny2.api.BungieAPI.plumbingURL;
 import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
@@ -290,69 +290,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    private void asyncTest() {
-////        new FetchUserDetails().execute(this);
-//    }
-
-//    private void asyncGetCollectables(){
-//        new GetItemDatabase().execute(this);
-//    }
-
-    private void loadLFGPosts() {
-
-        FirebaseDatabase.getInstance(); //.setPersistenceEnabled(true);
-
-        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference();
-        //        DatabaseReference datetimeQuery = postRef.orderByChild("dateTime");
-        DatabaseReference dataRef = postRef.child("lfg");
-//        dataRef.keepSynced(true);
-        Query query = dataRef.orderByChild("dateTime").limitToLast(20);
-//        dataRef.keepSynced(true);
-        //            TODO: query options, sort by dateTime
-
-//        final FirebaseRecyclerOptions lfgOptions =
-//                new FirebaseRecyclerOptions.Builder<LFGPost>()
-////                        .setQuery(query, LFGPost.class)
-//                        .setIndexedQuery(query, dataRef, LFGPost.class)
-//                        .build();
-
-
-//        mLFGPostAdapter = new LFGPostRecyclerAdapter(MainActivity.this, lfgOptions, new RecyclerViewClickListener() {
-//            @Override
-//            public void onClick(View view, int position, LFGPostViewHolder holder) {
-//
-//                Fragment playerFragment = null;
-//                playerFragment = new LFGDetailsFragment();
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                fragmentManager.beginTransaction()
-//                        .replace(R.id.lfg_content_frame, playerFragment)
-//                        .commit();
-
-
-//                Toast.makeText(MainActivity.this, holder.getDisplayName().getText() + " clicked", Toast.LENGTH_SHORT).show();
-
-//                Intent lfgFeed = new Intent(this, MainActivity.class);
-//                Intent intent = new Intent(getBaseContext(), LFGPlayerDetails.class);
-//                intent.putExtra("displayName", holder.getDisplayName().getText());
-//                intent.putExtra("membershipId", holder.getMembershipId());
-//                intent.putExtra("characterId", holder.getCharacterId());
-//                intent.putExtra("classType", holder.getClassType().getText());
-//                intent.putExtra("emblemBackground", holder.getEmblemBackground());
-//                startActivity(intent);
-
-
-//            }
-//
-//            @Override
-//            public void onLongClick(View view, int position) {
-//
-//            }
-//        });
-//        mLFGRecyclerView.setAdapter(mLFGPostAdapter);
-
-//        mLFGPostAdapter.startListening();
-
-    }
 
     private void getPlayerProfile() {
 //        TODO: shared_prefs(membershipType, membershipId, characterIds[],
@@ -610,65 +547,7 @@ public class MainActivity extends AppCompatActivity
         if (uri != null && uri.toString().startsWith(redirectUri)) {
             final String code = uri.getQueryParameter("code");
 
-            //Network logging - debug
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            // set your desired log level
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
-            httpClient.addInterceptor(logging);
-
-            Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(baseURL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(httpClient.build());
-
-            Retrofit retrofit = builder.build();
-
-            BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-            Call<AccessToken> accessTokenCall = bungieClient.getAccessToken(
-                    clientId,
-                    clientSecret,
-                    "authorization_code",
-                    code
-            );
-
-            accessTokenCall.enqueue(new Callback<AccessToken>() {
-                @Override
-                public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-
-                    //show Loading Dialog to block UI and prevent navigating away before authorised
-//                    showLoadingDialog();
-
-                    try{
-                        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = savedPrefs.edit();
-
-                        editor.putString("access_token", response.body().getAccessToken());
-                        editor.putString("refresh_token", response.body().getRefreshToken());
-                        editor.putLong("token_age", System.currentTimeMillis());
-                        editor.apply();
-    //                    System.out.println("accessToken: " + response.body().getAccessToken());
-                        Toast.makeText(MainActivity.this, "Acquired access_token!", Toast.LENGTH_SHORT).show();
-
-                        //Now logged in and authorised, get currentUser profile
-                        //We're authorised, now get currentUser playerProfile
-                        getPlayerProfile();
-                    }
-                    catch(Exception e){
-                        System.out.println("Callback was probably accidentally triggered: " + e);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<AccessToken> call, Throwable t) {
-                    Toast.makeText(MainActivity.this, "Couldn't acquire access token!", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-//            TODO: Account picker if user is active on >1 platform
-//            showLoadingDialog();
+            getAccessToken(code);
 
         } //callback from browser
 
@@ -689,64 +568,85 @@ public class MainActivity extends AppCompatActivity
                 Long timespan = now - timestamp;
 
                 if (timespan > hour) {
-                    savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-                    String refreshToken = savedPrefs.getString("refresh_token", "");
 
-                    HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-                    logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+                    refreshAccessToken();
 
-                    OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
-                    httpClient.addInterceptor(logging);
-
-                    Retrofit.Builder builder = new Retrofit.Builder()
-                            .baseUrl(baseURL)
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .client(httpClient.build());
-
-                    Retrofit retrofit = builder.build();
-
-                    BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-                    Call<AccessToken> renewTokenCall = bungieClient.renewAccessToken(
-                            clientId,
-                            clientSecret,
-                            "refresh_token",
-                            refreshToken
-                    );
-
-                    renewTokenCall.enqueue(new Callback<AccessToken>() {
-
-                        @Override
-                        public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                            getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = savedPrefs.edit();
-
-                            try {
-                                editor.putString("access_token", response.body().getAccessToken());
-                                editor.putLong("token_age", System.currentTimeMillis());
-                                editor.apply();
-                                Snackbar.make(findViewById(R.id.activity_main_content), "OAuth access refreshed", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null)
-                                        .show();
-
-                            } catch (Exception e) {
-                                Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null)
-                                        .show();
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<AccessToken> call, Throwable t) {
-                            Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null)
-                                    .show();
-                        }
-                    });
                 }
             }
         }
+    }
+
+    private void getAccessToken(String code){
+        BungieAPI mBungieAPI = new RetrofitHelper().getOAuthRequestBungieAPI(baseURL);
+
+        mBungieAPI.getAccessToken(
+                clientId,
+                clientSecret,
+                "authorization_code",
+                code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(accessToken -> {
+
+                    try{
+                        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = savedPrefs.edit();
+
+                        editor.putString("access_token", accessToken.getAccessToken());
+                        editor.putString("refresh_token", accessToken.getRefreshToken());
+                        editor.putLong("token_age", System.currentTimeMillis());
+                        editor.apply();
+
+                        Log.d("ACCESS_TOKEN", accessToken.toString());
+
+
+                        //We're authorised, now get currentUser player profile
+                        getPlayerProfile();
+                    }
+                    catch(Exception e){
+                        Log.d("ACCESS_TOKEN(CALLBACK?)", e.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.activity_main_content), "An error occurred while trying to authorize.", Snackbar.LENGTH_LONG)
+                                .show();
+                    }
+                });
+    }
+
+    private void refreshAccessToken() {
+
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String refreshToken = savedPrefs.getString("refresh_token", "");
+
+        BungieAPI mBungieAPI = new RetrofitHelper().getOAuthRequestBungieAPI( baseURL);
+
+        mBungieAPI.renewAccessToken(
+                    clientId,
+                    clientSecret,
+                    "refresh_token",
+                    refreshToken)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(accessToken -> {
+
+                    SharedPreferences.Editor editor = savedPrefs.edit();
+
+                    try {
+                        editor.putString("access_token", accessToken.getAccessToken());
+                        editor.putLong("token_age", System.currentTimeMillis());
+                        editor.apply();
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Authorization refreshed.", Snackbar.LENGTH_LONG)
+                                .show();
+
+                    } catch (Exception e) {
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null) //TODO: Retry button here
+                                .show();
+                    }
+                }, throwable -> {
+                    Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
+                    Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null) //TODO: Retry button here
+                            .show();
+                });
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -915,7 +815,7 @@ public class MainActivity extends AppCompatActivity
                     final String characterDB = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key).toString();
 
                     //Append character count to key name and store in sqlite
-                    final String currentCharacter = "character" + count;
+                    final String currentCharacter = selectedPlatform+"character" + count;
                     try {
                         editor.putString("emblemIcon" + count, characterIdObj.get("emblemPath").getAsString());
                         editor.putString("emblemBackground" + count, characterIdObj.get("emblemBackgroundPath").getAsString());

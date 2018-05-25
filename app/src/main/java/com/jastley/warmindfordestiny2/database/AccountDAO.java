@@ -10,7 +10,7 @@ import com.jastley.warmindfordestiny2.database.models.Account;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
 /**
  * Created by jamie on 9/4/18.
@@ -20,7 +20,7 @@ import io.reactivex.Flowable;
 public interface AccountDAO {
 
     @Query("SELECT * FROM Account")
-    Flowable <List<Account>> getAll();
+    Maybe<List<Account>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Account account);
@@ -28,6 +28,6 @@ public interface AccountDAO {
     @Update
     void update(Account accountRow);
 
-    @Query("SELECT * FROM Account WHERE key = :key")
-    Account getByKey(String key);
+    @Query("SELECT * FROM Account WHERE key = :accountKey")
+    Account getByKey(String accountKey);
 }

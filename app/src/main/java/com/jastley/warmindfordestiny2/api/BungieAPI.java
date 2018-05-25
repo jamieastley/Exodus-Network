@@ -2,10 +2,7 @@ package com.jastley.warmindfordestiny2.api;
 
 import com.google.gson.JsonElement;
 
-import com.google.gson.JsonObject;
-import com.jastley.warmindfordestiny2.api.models.EquipItemRequestBody;
-import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
-import io.reactivex.Maybe;
+import com.jastley.warmindfordestiny2.api.models.*;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -24,7 +21,7 @@ public interface BungieAPI {
     @Headers("Accept: application/json")
     @POST("/Platform/App/OAuth/Token/")
     @FormUrlEncoded
-    Call<AccessToken> getAccessToken(
+    Observable<AccessToken> getAccessToken(
         @Field("client_id") String clientId,
         @Field("client_secret") String clientSecret,
         @Field("grant_type") String grantType,
@@ -35,7 +32,7 @@ public interface BungieAPI {
     @Headers("Accept: application/json")
     @POST("/Platform/App/OAuth/Token/")
     @FormUrlEncoded
-    Call<AccessToken> renewAccessToken(
+    Observable<AccessToken> renewAccessToken(
         @Field("client_id") String clientId,
         @Field("client_secret") String clientSecret,
         @Field("grant_type") String grantType,
@@ -108,7 +105,7 @@ public interface BungieAPI {
     //Download .content manifest file
     @Streaming
     @GET
-    Observable<ResponseBody> downloadManifestContent(@Url String fileUrl);
+    Observable<ResponseBody> downloadUrlContent(@Url String fileUrl);
 
 
     /***** XUR ******/

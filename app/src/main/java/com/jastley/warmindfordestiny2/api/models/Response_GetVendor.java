@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.api;
+package com.jastley.warmindfordestiny2.api.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

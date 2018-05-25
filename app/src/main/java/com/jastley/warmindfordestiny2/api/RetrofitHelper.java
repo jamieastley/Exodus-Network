@@ -18,8 +18,7 @@ import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 
 public class RetrofitHelper {
 
-//    private static String baseURL = "https://www.bungie.net";
-
+    /** SERVICE **/
 
     public BungieAPI getBungieAPI(String baseURL) {
         final Retrofit retrofit = createRetrofit(baseURL);
@@ -31,6 +30,13 @@ public class RetrofitHelper {
         return retrofit.create(BungieAPI.class);
     }
 
+    public BungieAPI getOAuthRequestBungieAPI(String baseURL) {
+        final Retrofit retrofit = createOAuthRetrofit(baseURL);
+                return retrofit.create(BungieAPI.class);
+    }
+
+
+    /** INTERCEPTORS **/
 
     private OkHttpClient createOkHttpClient() {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -45,17 +51,6 @@ public class RetrofitHelper {
         });
 
         return httpClient.build();
-    }
-
-
-    private Retrofit createRetrofit(String baseURL) {
-        return new Retrofit.Builder()
-                .baseUrl(baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(createOkHttpClient())
-                .build();
-
     }
 
     private OkHttpClient createAuthOkHttpClient(Context context) {
@@ -78,12 +73,52 @@ public class RetrofitHelper {
         return httpClient.build();
     }
 
+    private OkHttpClient createOAuthClient() {
+        final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(chain -> {
+            final Request original = chain.request();
+
+            //Get access_token from shared_prefs
+//            SharedPreferences settings = context.getSharedPreferences("saved_prefs", MODE_PRIVATE);
+//            String accessToken = settings.getString("access_token", "");
+
+            final Request.Builder requestBuilder = original.newBuilder();
+
+            final Request request = requestBuilder.build();
+            return chain.proceed(request);
+        });
+
+        return httpClient.build();
+    }
+
+
+    /** RETROFIT **/
+
+    private Retrofit createRetrofit(String baseURL) {
+        return new Retrofit.Builder()
+                .baseUrl(baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(createOkHttpClient())
+                .build();
+
+    }
+
     private Retrofit createAuthRetrofit(Context context, String baseURL) {
         return new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(createAuthOkHttpClient(context))
+                .build();
+    }
+
+    private Retrofit createOAuthRetrofit(String baseURL) {
+        return new Retrofit.Builder()
+                .baseUrl(baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(createOAuthClient())
                 .build();
     }
 }
