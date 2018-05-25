@@ -26,7 +26,7 @@ public class Response_GetCurrentUser {
     private int ThrottleSeconds;
     @Expose
     @SerializedName("ErrorCode")
-    private int ErrorCode;
+    private String ErrorCode;
     @Expose
     @SerializedName("Response")
     private Response Response;
@@ -47,7 +47,7 @@ public class Response_GetCurrentUser {
         return ThrottleSeconds;
     }
 
-    public int getErrorCode() {
+    public String getErrorCode() {
         return ErrorCode;
     }
 
@@ -282,7 +282,7 @@ public class Response_GetCurrentUser {
         private String membershipId;
         @Expose
         @SerializedName("membershipType")
-        private int membershipType;
+        private String membershipType;
         @Expose
         @SerializedName("iconPath")
         private String iconPath;
@@ -295,7 +295,7 @@ public class Response_GetCurrentUser {
             return membershipId;
         }
 
-        public int getMembershipType() {
+        public String getMembershipType() {
             return membershipType;
         }
 

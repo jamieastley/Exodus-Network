@@ -43,7 +43,7 @@ public interface BungieAPI {
 
     //Get membership data across all platforms for member
     @GET("/Platform/User/GetMembershipsForCurrentUser/")
-    Call<Response_GetCurrentUser> getCurrentUser();
+    Observable<Response_GetCurrentUser> getMembershipsCurrentUser();
 
     //Get profile summary
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200")

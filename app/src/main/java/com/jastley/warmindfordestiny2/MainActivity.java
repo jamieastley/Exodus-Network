@@ -290,155 +290,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    private void getPlayerProfile() {
-//        TODO: shared_prefs(membershipType, membershipId, characterIds[],
-
-        showLoadingDialog();
-
-        //Interceptor to add Authorization token
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-
-                Request original = chain.request();
-
-                //Get access_token from shared_prefs
-                SharedPreferences settings = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-                String accessToken = settings.getString("access_token", "");
-
-                //add request header
-                Request.Builder requestBuilder = original.newBuilder()
-                        .header("X-API-Key", apiKey)
-                        .header("Authorization", "Bearer " + accessToken);
-
-                Request request = requestBuilder.build();
-
-                return chain.proceed(request);
-            }
-
-        });
-
-        httpClient.addInterceptor(logging);
-
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build());
-
-        Retrofit retrofit = builder.build();
-
-        BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-        Call<Response_GetCurrentUser> getCurrentUserCall = bungieClient.getCurrentUser();
-
-        getCurrentUserCall.enqueue(new Callback<Response_GetCurrentUser>() {
-            @Override
-            public void onResponse(Call<Response_GetCurrentUser> call, Response<Response_GetCurrentUser> response) {
-
-                try {
-                    //Store specific user/character ids for reference later
-                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = savedPrefs.edit();
-
-                    //TODO: move below membership counting and fragment to onResume after OAuth callback
-                    int count = response.body().getResponse().getDestinyMemberships().size();
-
-                    String[] memberships = new String[count];
-
-                    //write all found membership details to sharedPrefs
-                    for (int i = 0; i < count; i++) {
-
-                        try {
-
-                            memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
-                            editor.putInt("membershipType" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                    response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
-
-                            String membershipType = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
-
-                            editor.putString("membershipId" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                    response.body().getResponse().getDestinyMemberships().get(i).getMembershipId());
-
-                            //sanitise for Firebase
-                            if(membershipType.equals("4")){
-
-                                String displayName = response.body().getResponse().getDestinyMemberships().get(i).getDisplayName();
-
-                                //Battle.Net tags
-                                if(displayName.contains("#")){
-                                    displayName = displayName.replace("#", "%23");
-                                    editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                            displayName);
-                                }
-                            }
-
-                            else{
-                                editor.putString("displayName" + String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType()),
-                                      response.body().getResponse().getDestinyMemberships().get(i).getDisplayName());
-                            }
-                            editor.commit();
-
-                            //                    TODO: move this to the end of the loading sequence
-                            Snackbar.make(findViewById(R.id.activity_main_content), "Account database updated.", Snackbar.LENGTH_SHORT)
-                                    .setAction("Action", null)
-                                    .show();
-                        } catch (Exception e) {
-                            Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
-                                    .setAction("Action", null)
-                                    .show();
-                        }
-                    }
-
-                    if (count > 1) { //get membershipType to pass to dialogFragment
-
-                        for (int i = 0; i < count; i++) {
-                            memberships[i] = String.valueOf(response.body().getResponse().getDestinyMemberships().get(i).getMembershipType());
-                        }
-
-                        platformDialog = new PlatformSelectionFragment();
-                        Bundle args = new Bundle();
-                        args.putStringArray("platforms", memberships);
-
-                        platformDialog.setArguments(args);
-                        platformDialog.setCancelable(false);
-
-                        platformDialog.show(getFragmentManager(), "platformSelectDialog");
-                    }
-
-                    //Only one platform found, no need for selectionDialog
-                    else {
-                        String membershipType = memberships[0];
-                        editor = savedPrefs.edit();
-                        editor.putString("selectedPlatform", membershipType);
-                        editor.apply();
-
-                        //String membershipId = response.body().getResponse().getDestinyMemberships().get(0).getMembershipId();
-
-//                        showLoadingDialog();
-                        getCharacters(membershipType);
-//                        getCharacters.GetCharacterSummaries(MainActivity.this);
-                    }
-
-                }
-                catch(Exception e){
-                    Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't retrieve account.", Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null)
-                            .show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<Response_GetCurrentUser> call, Throwable t) {
-
-            }
-        });
-    }
-
     public void showDialog(String[] memberships) {
         platformDialog = new PlatformSelectionFragment();
         Bundle args = new Bundle();
@@ -601,7 +452,8 @@ public class MainActivity extends AppCompatActivity
 
 
                         //We're authorised, now get currentUser player profile
-                        getPlayerProfile();
+//                        getPlayerProfile();
+                        getMembershipsForCurrentUser();
                     }
                     catch(Exception e){
                         Log.d("ACCESS_TOKEN(CALLBACK?)", e.getLocalizedMessage());
@@ -649,6 +501,103 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+    //AKA getPlayerProfile()
+    private void getMembershipsForCurrentUser() {
+
+        //block UI interaction and show loader while membershipData is being retrieved
+        showLoadingDialog();
+
+        BungieAPI mBungieAPI = new RetrofitHelper().getAuthBungieAPI(this, baseURL);
+
+        mBungieAPI.getMembershipsCurrentUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(currentUser -> {
+
+                    if(!currentUser.getErrorCode().equals("1")){
+                        Log.d("GET_CURRENT_USER", currentUser.getMessage());
+                        Snackbar.make(findViewById(R.id.activity_main_content), currentUser.getMessage(), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null) //TODO: Retry button here
+                                .show();
+                    }
+                    else {
+
+                        try {
+                            SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = savedPrefs.edit();
+
+                            int membershipsCount = currentUser.getResponse().getDestinyMemberships().size();
+
+                            String[] memberships = new String[membershipsCount];
+
+                            //store all found membership details
+                            for (int i = 0; i < membershipsCount; i++) {
+
+                                try {
+                                    memberships[i] = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
+                                    editor.putString("membershipType" + memberships[i], memberships[i]);
+                                    editor.putString("membershipId" + memberships[i], currentUser.getResponse().getDestinyMemberships().get(i).getMembershipId());
+
+                                    //sanitise BattleNet displayName for Firebase
+                                    if(currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType().equals("4")){
+
+                                        String displayName = currentUser.getResponse().getBungieNetUser().getBlizzardDisplayName();
+                                        if(displayName.contains("#")){
+                                            displayName = displayName.replace("#", "%23");
+                                            editor.putString("displayName" + memberships[i], displayName);
+                                        }
+                                    }
+                                    //PlayStation/Xbox players
+                                    else {
+                                        editor.putString("displayName" + memberships[i], currentUser.getResponse().getDestinyMemberships().get(i).getDisplayName());
+                                    }
+                                    editor.apply();
+                                }
+                                catch(Exception e){
+                                    Log.d("GET_CURRENT_USER_PARSE", e.getLocalizedMessage());
+                                    Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
+                                            .setAction("Action", null)
+                                            .show();
+                                }
+                            }
+
+                            //ask user to select which platform they want to use
+                            if(membershipsCount > 1) {
+
+                                for (int i = 0; i < membershipsCount; i++) {
+                                    memberships[i] = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
+                                }
+
+                                platformDialog = new PlatformSelectionFragment();
+                                Bundle args = new Bundle();
+                                args.putStringArray("platforms", memberships);
+
+                                platformDialog.setArguments(args);
+                                platformDialog.setCancelable(false);
+                                platformDialog.show(getFragmentManager(), "platformSelectDialog");
+                            }
+
+                            //only one active platform
+                            else {
+                                String membershipType = memberships[0];
+                                editor = savedPrefs.edit();
+                                editor.putString("selectedPlatform", membershipType);
+                                editor.apply();
+
+                                getCharacters(membershipType);
+                            }
+
+                        }
+                        catch(Exception e){
+                            Log.d("GET_CURRENT_USER", e.getLocalizedMessage());
+                            Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't retrieve membership data.", Snackbar.LENGTH_SHORT)
+                                    .setAction("Action", null)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -687,7 +636,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         else if (id == R.id.nav_refresh_account) {
-            getPlayerProfile();
+//            getPlayerProfile();
+            getMembershipsForCurrentUser();
         }
         else if (id == R.id.nav_log_in) {
             Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
