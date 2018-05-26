@@ -2,14 +2,12 @@ package com.jastley.warmindfordestiny2;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -20,7 +18,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -30,8 +27,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.*;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
 import com.jastley.warmindfordestiny2.Characters.fragments.InventoryFragment;
@@ -42,45 +37,30 @@ import com.jastley.warmindfordestiny2.LFG.fragments.LFGDetailsFragment;
 import com.jastley.warmindfordestiny2.LFG.fragments.LFGPostsFragment;
 import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
-import com.jastley.warmindfordestiny2.User.GetCharacters;
 import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.Vendors.XurFragment;
 import com.jastley.warmindfordestiny2.api.*;
-import com.jastley.warmindfordestiny2.api.models.Response_GetCurrentUser;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
-import com.jastley.warmindfordestiny2.database.DatabaseHelper;
 import com.jastley.warmindfordestiny2.database.models.Account;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
-import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    PlatformSelectionListener, GetCharacters.GetCharacterResponseInterface,
+                    PlatformSelectionListener,
                     LFGDetailsFragment.OnFragmentInteractionListener,
                     LFGPostsFragment.OnFragmentInteractionListener,
                     XurFragment.OnFragmentInteractionListener,
@@ -88,9 +68,7 @@ public class MainActivity extends AppCompatActivity
                     ItemTransferDialogFragment.OnFragmentInteractionListener,
                     InventoryFragment.OnFragmentInteractionListener {
 
-    private RecyclerView mLFGRecyclerView;
-    private DatabaseHelper db;
-    private DatabaseReference mDatabase;
+
     private LFGPostsFragment postsFragment;
     SharedPreferences savedPrefs;
     DialogFragment platformDialog;
@@ -99,8 +77,6 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView;
     FloatingActionButton faButton;
-
-    BungieAPI mBungieApi;
 
     private String redirectUri = "warmindfordestiny://callback";
 
@@ -290,16 +266,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void showDialog(String[] memberships) {
-        platformDialog = new PlatformSelectionFragment();
-        Bundle args = new Bundle();
-        args.putStringArray("platforms", memberships);
-
-        platformDialog.setArguments(args);
-        platformDialog.setCancelable(false); //TODO uncomment later when onClicks work
-        platformDialog.show(getFragmentManager(), "platformSelectDialog");
-    }
-
     public void showLoadingDialog() {
         loadingDialog = new LoadingDialogFragment();
         loadingDialog.setCancelable(false);
@@ -452,7 +418,6 @@ public class MainActivity extends AppCompatActivity
 
 
                         //We're authorised, now get currentUser player profile
-//                        getPlayerProfile();
                         getMembershipsForCurrentUser();
                     }
                     catch(Exception e){
@@ -558,6 +523,7 @@ public class MainActivity extends AppCompatActivity
                                     Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
                                             .setAction("Action", null)
                                             .show();
+                                    dismissLoadingFragment();
                                 }
                             }
 
@@ -584,7 +550,7 @@ public class MainActivity extends AppCompatActivity
                                 editor.putString("selectedPlatform", membershipType);
                                 editor.apply();
 
-                                getCharacters(membershipType);
+                                getAllCharacters(membershipType);
                             }
 
                         }
@@ -593,9 +559,113 @@ public class MainActivity extends AppCompatActivity
                             Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't retrieve membership data.", Snackbar.LENGTH_SHORT)
                                     .setAction("Action", null)
                                     .show();
+                            dismissLoadingFragment();
                         }
                     }
                 });
+    }
+
+    //PlatformSelection dialog clickListener
+    @Override
+    public void onPlatformSelection(View view, int position, PlatformRVHolder holder) {
+        Toast.makeText(this, holder.getPlatformName().getText().toString()
+                + " ("
+                + holder.getPlatformType().getText().toString() + ") selected", Toast.LENGTH_SHORT).show();
+
+        String selectedPlatform = holder.getPlatformType().getText().toString();
+
+        platformDialog.dismiss();
+
+        getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = savedPrefs.edit();
+
+        editor.putString("selectedPlatform", selectedPlatform);
+        editor.apply();
+
+        getAllCharacters(selectedPlatform);
+    }
+
+    private void getAllCharacters(String platform) {
+
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String membershipId = savedPrefs.getString("membershipId"+platform, "");
+
+        BungieAPI mBungieAPI = new RetrofitHelper().getAuthBungieAPI(this, baseURL);
+
+        mBungieAPI.getAllCharacters(platform, membershipId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(allCharacters -> {
+
+                    //can't use gson because we need the whole characterData obj as a string
+                    JsonObject charactersObj = (JsonObject) allCharacters;
+
+                    if(!charactersObj.get("ErrorCode").getAsString().equals("1")) {
+                        Log.d("GET_ALL_CHARACTERS", charactersObj.get("Message").getAsString());
+                        Snackbar.make(findViewById(R.id.activity_main_content), charactersObj.get("Message").getAsString(), Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null) //TODO: retry button
+                                .show();
+                    }
+                    else {
+
+                        List<Account> mAccountList = new ArrayList<>();
+                        int count = 0;
+
+                        for(Iterator iterator = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().keySet().iterator(); iterator.hasNext(); ) {
+
+                            String key = (String) iterator.next();
+
+                            //create list of characters to store in Room
+                            Account mAccount = new Account();
+                            mAccount.setKey(platform+"character"+count);
+                            mAccount.setValue(charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().toString());
+                            mAccountList.add(mAccount);
+
+                            try{
+                                SharedPreferences.Editor editor = savedPrefs.edit();
+                                editor.putString(platform+"emblemIcon"+count, charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemPath").getAsString());
+                                editor.putString(platform+"emblemBackgroundPath"+count, charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemBackgroundPath").getAsString());
+                                editor.apply();
+                            }
+                            catch(Exception e){
+                                Log.d("EMBLEM_PREFS_INSERT", e.getLocalizedMessage());
+                            }
+
+                            //update character count
+                            /** used counter instead of classType in keys because players can have more than one of the same classType **/
+                            count++;
+                        }
+
+                        //Insert into Room
+                        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+                        mAccountDAO.insertAll(mAccountList);
+
+                        //Get back onto mainThread to do UI stuff
+                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                        Runnable mRunnable = () -> {
+                            NavigationView navigationView = findViewById(R.id.nav_view);
+                            View hView =  navigationView.getHeaderView(0);
+
+                            updateNavUI(hView);
+                            dismissLoadingFragment();
+                        };
+                        mainHandler.post(mRunnable);
+                    }
+
+                }, throwable -> {
+                    Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
+                    Snackbar.make(findViewById(R.id.activity_main_content), throwable.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null)
+                            .show();
+                    dismissLoadingFragment();
+                });
+    }
+
+    private void dismissLoadingFragment() {
+        DialogFragment loadingFragment = (DialogFragment)getFragmentManager().findFragmentByTag("loadingDialog");
+        if (loadingFragment != null){
+            loadingFragment.dismiss();
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -674,198 +744,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-
-    //PlatformSelection dialog clickListener
-    @Override
-    public void onPlatformSelection(View view, int position, PlatformRVHolder holder) {
-        Toast.makeText(this, holder.getPlatformName().getText().toString()
-                + " ("
-                + holder.getPlatformType().getText().toString() + ") selected", Toast.LENGTH_SHORT).show();
-
-        String selectedPlatform = holder.getPlatformType().getText().toString();
-
-        platformDialog.dismiss();
-
-        getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = savedPrefs.edit();
-
-        editor.putString("selectedPlatform", selectedPlatform);
-        editor.apply();
-
-        //getCharacter summaries BEFORE UI update
-//        Context cont = getApplicationContext();
-//        getCharacters.GetCharacterSummaries(getApplicationContext());
-//        showLoadingDialog();
-        getCharacters(selectedPlatform);
-    }
-
-    public void getCharacters(String selectedPlatform){
-
-        //Get membershipId and selectedPlatform from SharedPrefs and use for request
-//        db = new DatabaseHelper(this);
-
-        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
-        String membershipId = savedPrefs.getString("membershipId"+selectedPlatform, "");
-
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-
-                Request original = chain.request();
-
-                Request.Builder requestBuilder = original.newBuilder()
-                        .header("X-API-Key", apiKey);
-
-                Request request = requestBuilder.build();
-
-                return chain.proceed(request);
-            }
-        });
-
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(baseURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build());
-
-        Retrofit retrofit = builder.build();
-
-        BungieAPI bungieClient = retrofit.create(BungieAPI.class);
-        Call<JsonElement> getProfileCall = bungieClient.getProfile(
-                selectedPlatform,
-                membershipId
-        );
-
-        getProfileCall.enqueue(new Callback<JsonElement>() {
-
-            @Override
-            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
-
-                JsonElement json = response.body();
-                JsonObject responseObj = (JsonObject) json;
-
-                Integer count = 0;
-
-                final AccountDAO mAccountDAO = AppDatabase.getAppDatabase(MainActivity.this).getAccountDAO();
-
-                savedPrefs = getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = savedPrefs.edit();
-
-                //Iterate through dynamic keys (characterIds)
-                for (Iterator iterator = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").keySet().iterator(); iterator.hasNext(); ) {
-                    String key = (String) iterator.next();
-                    JsonObject characterIdObj = (JsonObject) responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key);
-
-                    //Each character object toString();
-                    final String characterDB = responseObj.getAsJsonObject("Response").getAsJsonObject("characters").getAsJsonObject("data").get(key).toString();
-
-                    //Append character count to key name and store in sqlite
-                    final String currentCharacter = selectedPlatform+"character" + count;
-                    try {
-                        editor.putString("emblemIcon" + count, characterIdObj.get("emblemPath").getAsString());
-                        editor.putString("emblemBackground" + count, characterIdObj.get("emblemBackgroundPath").getAsString());
-                        editor.apply();
-
-                        Integer finalCount1 = count;
-                        AsyncTask.execute(() -> {
-                            Account account = new Account();
-                            account.setKey(currentCharacter);
-                            account.setValue(characterDB);
-                            mAccountDAO.insert(account);
-
-
-                        });
-                        Integer finalCount = finalCount1;
-                        Picasso.with(getBaseContext())
-                                .load(baseURL+characterIdObj.get("emblemPath").getAsString())
-//                            .fit()
-                                .into(new Target() {
-                                    @Override
-                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                        try{
-                                            File directory = getDir("playerEmblems", Context.MODE_PRIVATE);
-                                            if (!directory.exists()) {
-                                                directory.mkdir();
-                                            }
-
-                                            File path = new File(directory, finalCount + ".jpeg");
-                                            FileOutputStream fos = new FileOutputStream(path);
-                                            int quality = 100;
-                                            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
-                                            fos.flush();
-                                            fos.close();
-//                                                emblemIcon.setImageURI(Uri.fromFile(path));
-                                        }
-                                        catch(Exception e) {
-                                            Toast.makeText(MainActivity.this, "Couldn't download character emblems!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onBitmapFailed(Drawable errorDrawable) {
-
-                                    }
-
-                                    @Override
-                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                                    }
-                                });
-//                        db.insertAccountData("account", currentCharacter, characterDB);
-                    } catch (Exception e) {
-                        System.out.println("Can't insert: " + e);
-                        e.printStackTrace();
-
-                        //Update existing
-//                        try{
-//                            db.updateData("account", currentCharacter, characterDB);
-//                        }
-//                        catch(Exception err){
-//                            System.out.println("Couldn't update");
-//                            err.printStackTrace();
-//                        }
-                    }
-
-                    count++;
-                    System.out.println("character string: " + characterDB);
-
-                    NavigationView navigationView = findViewById(R.id.nav_view);
-//                    navigationView.setNavigationItemSelectedListener(this);
-                    View hView =  navigationView.getHeaderView(0);
-                    updateNavUI(hView);
-                }
-
-                DialogFragment loadingFragment = (DialogFragment)getFragmentManager().findFragmentByTag("loadingDialog");
-                if (loadingFragment != null){
-                    loadingFragment.dismiss();
-                }
-//                loadingDialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
-                Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't get Bungie profile", Snackbar.LENGTH_LONG)
-//                        .setAction("Retry", new retryListener())
-                        .show();
-            }
-
-        });
-    }
-
-    //onComplete listener for GetCharacters
-    @Override
-    public void onComplete() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View hView =  navigationView.getHeaderView(0);
-        updateNavUI(hView);
-
-//        loadingDialog.dismiss();
     }
 
     @Override

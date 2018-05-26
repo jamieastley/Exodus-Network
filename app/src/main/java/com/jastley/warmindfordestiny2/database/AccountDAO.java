@@ -25,9 +25,12 @@ public interface AccountDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Account account);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Account> account);
+
     @Update
     void update(Account accountRow);
 
-    @Query("SELECT * FROM Account WHERE key = :accountKey")
+    @Query("SELECT * FROM Account WHERE `key` = :accountKey")
     Account getByKey(String accountKey);
 }

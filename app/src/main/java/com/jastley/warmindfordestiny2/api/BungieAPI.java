@@ -45,9 +45,9 @@ public interface BungieAPI {
     @GET("/Platform/User/GetMembershipsForCurrentUser/")
     Observable<Response_GetCurrentUser> getMembershipsCurrentUser();
 
-    //Get profile summary
+    //Get all characters
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200")
-    Call<JsonElement> getProfile(@Path("membershipType") String membershipType,
+    Observable<JsonElement> getAllCharacters(@Path("membershipType") String membershipType,
                                  @Path("membershipId") String membershipId);
 
     //Get character inventory(?components=201), with item instance data(?components=300)

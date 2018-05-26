@@ -32,11 +32,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.DatabaseHelper;
@@ -265,6 +264,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                         JsonParser parser = new JsonParser();
                         JsonObject characterObj = (JsonObject) parser.parse(characters.get(i).getValue());
+
+                        Gson gson = new GsonBuilder().create();
+                        Response_GetAllCharacters.CharacterData character =  gson.fromJson(characters.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
 
                         //required for post submit OnClick
                         characterArray.add(characterObj);

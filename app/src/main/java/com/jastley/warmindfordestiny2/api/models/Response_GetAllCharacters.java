@@ -71,9 +71,7 @@ public class Response_GetAllCharacters {
         @Expose
         @SerializedName("light")
         private String light;
-        @Expose
-        @SerializedName("stats")
-        private Map<String, Stats> stats;
+
         @Expose
         @SerializedName("raceHash")
         private String raceHash;
@@ -136,10 +134,6 @@ public class Response_GetAllCharacters {
             return light;
         }
 
-        public Map<String, Stats> getStats() {
-            return stats;
-        }
-
         public String getRaceHash() {
             return raceHash;
         }
@@ -183,10 +177,6 @@ public class Response_GetAllCharacters {
         public String getPercentToNextLevel() {
             return percentToNextLevel;
         }
-    }
-
-    public static class Stats {
-
     }
 
     public static class EmblemColor {
