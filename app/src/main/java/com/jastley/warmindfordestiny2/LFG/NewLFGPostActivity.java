@@ -2,6 +2,7 @@ package com.jastley.warmindfordestiny2.LFG;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,16 +20,9 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.Toast;
+import android.widget.*;
 
+import butterknife.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
@@ -44,11 +38,9 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnItemSelected;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -61,14 +53,12 @@ public class NewLFGPostActivity extends AppCompatActivity {
     @BindView(R.id.activity_checkpoint_spinner) Spinner activityCheckpointSpinner;
     @BindView(R.id.lfg_description_input) EditText description;
     @BindView(R.id.micCheckBox) CheckBox micCheckBox;
-    private String key;
     private String displayName;
     private boolean hasMic = false;
     private boolean onCreateFlag = true;
-    JsonArray characterArray = new JsonArray();
+    List<Response_GetAllCharacters.CharacterData> mCharacterList = new ArrayList<>();
 
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
-    private DatabaseHelper db;
 
 
     @Override
@@ -83,8 +73,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
             description.setText((String)savedInstanceState.getSerializable("description"));
         }
-
-        db = new DatabaseHelper(this);
 
         Toolbar myToolbar = findViewById(R.id.lfg_toolbar);
         myToolbar.setTitle(R.string.submitPost);
@@ -109,142 +97,42 @@ public class NewLFGPostActivity extends AppCompatActivity {
         activityNameSpinner.setSelection(0, false);
         activityCheckpointSpinner.setAdapter(checkpointAdapter);
 
+//
+        characterRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
 
+            View radioButton = characterRadioGroup.findViewById(i);
+            int index = characterRadioGroup.indexOfChild(radioButton);
 
-//        final JsonParser parser = new JsonParser();
-//
-//        final Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
-//        coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-//
-//        for(int i = 0; i < 3; i++){
-//
-//            OldDatabaseModel characters = db.getAccountData("account", "character"+i);
-//            String characterValue = characters.getValue();
-//
-//            JsonObject json = (JsonObject) parser.parse(characterValue);
-//            characterArray.add(json);
-//
-//            String characterId = json.get("characterId").getAsString();
-//            int characterType = json.get("classType").getAsInt();
-//            String emblem = json.get("emblemPath").getAsString();
-//
-//            final RadioButton btn = new RadioButton(this);
-//
-//            //get class name
-//            switch(characterType) {
-//                case 0: //Titan
-//                    btn.setText(R.string.titan);
-//                    break;
-//                case 1: //Hunter
-//                    btn.setText(R.string.hunter);
-//                    break;
-//                case 2: //Warlock
-//                    btn.setText(R.string.warlock);
-//                break;
-//            }
-//
-//            btn.setId(i);
-//            btn.setGravity(Gravity.CENTER);
-//            btn.setButtonDrawable(new StateListDrawable());
-//            btn.setTextColor(getResources().getColor(R.color.colorWhite));
-//            btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
-//            btn.setLayoutParams(new RadioGroup.LayoutParams(
-//                    RadioGroup.LayoutParams.WRAP_CONTENT, //width
-//                    RadioGroup.LayoutParams.WRAP_CONTENT, //height
-//                    1.0f
-//            ));
-//
-//            if(i == 0){ //always set first button as checked to prevent null selection
-//                btn.setChecked(true);
-//            }
-//            else {
-//                btn.setChecked(false);
-//                btn.setAlpha(0.3f);
-//            }
-//
-//            String baseURL = "https://www.bungie.net";
-//
-//            File directory = getDir("playerEmblems", Context.MODE_PRIVATE);
-//            File path = new File(directory, i + ".jpeg");
-//
-//            Picasso.with(this)
-//                    .load(Uri.fromFile(path))
-//                    .placeholder(coloredPlaceholder)
-//                    .transform(new CropCircleTransformation())
-//                    .into(new Target() {
-//                            //Load image into target so the bitmap can be converted to a drawable
-//                              @Override
-//                              public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                                  Drawable draw = new BitmapDrawable(getResources(), bitmap);
-//
-//                                  //setBounds required for setCompoundDrawables
-//                                  draw.setBounds(0,0, 150, 150);
-//                                  btn.setCompoundDrawables(null, draw, null, null);
-//                              }
-//
-//                              @Override
-//                              public void onBitmapFailed(Drawable errorDrawable) {
-//                                //TODO: set emblemIcon error placeholders if all else fails
-//                              }
-//
-//                              @Override
-//                              public void onPrepareLoad(Drawable placeHolderDrawable) {
-//                                  btn.setCompoundDrawables(null, coloredPlaceholder, null, null);
-//                              }
-//                          });
-//            characterRadioGroup.addView(btn);
-//        }
-//        db.close();
-//
-////        TODO: remove hardcoded variables and replace with user account details
-////        lightLevel = "278";
-////        membershipType = "4";
-////        displayName = "Last player";
-////        classType = "2";
-//
-//        characterRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
-//
-//            View radioButton = characterRadioGroup.findViewById(i);
-//            int index = characterRadioGroup.indexOfChild(radioButton);
-//
-//            //get button count for alpha modification
-//            int childCount = characterRadioGroup.getChildCount();
-//
-//            switch (index) {
-//                case 0: // first button
-//                    characterRadioGroup.getChildAt(0).setAlpha(1f);
-//                    if(childCount > 1){
-//                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-//                        if(childCount > 2){
-//                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
-//                        }
-//                    }
-//                    break;
-//                case 1: // secondbutton
-//                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
-//                    if(childCount > 1){
-//                        characterRadioGroup.getChildAt(1).setAlpha(1f);
-//                        if(childCount > 2){
-//                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
-//                        }
-//                    }
-//                    break;
-//                case 2:
-//                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
-//                    characterRadioGroup.getChildAt(1).setAlpha(0.3f);
-//                    characterRadioGroup.getChildAt(2).setAlpha(1f);
-//                    break;
-//            }
-//        });
-//
-////        radioButton.getTag(); //TODO: store characterId here?
-//
-//
-//
-//
-////        submitBtn.setOnClickListener(this);
-//
-//        key = DATABASE.getReference().push().getKey();
+            //get button count for alpha modification
+            int childCount = characterRadioGroup.getChildCount();
+
+            switch (index) {
+                case 0: // first button
+                    characterRadioGroup.getChildAt(0).setAlpha(1f);
+                    if(childCount > 1){
+                        characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+                        if(childCount > 2){
+                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                        }
+                    }
+                    break;
+                case 1: // secondbutton
+                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+                    if(childCount > 1){
+                        characterRadioGroup.getChildAt(1).setAlpha(1f);
+                        if(childCount > 2){
+                            characterRadioGroup.getChildAt(2).setAlpha(0.3f);
+                        }
+                    }
+                    break;
+                case 2:
+                    characterRadioGroup.getChildAt(0).setAlpha(0.3f);
+                    characterRadioGroup.getChildAt(1).setAlpha(0.3f);
+                    characterRadioGroup.getChildAt(2).setAlpha(1f);
+                    break;
+            }
+        });
+
         getAccountCharacters();
     }
 
@@ -260,35 +148,42 @@ public class NewLFGPostActivity extends AppCompatActivity {
                     Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
                     coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 
+                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+
                     for (int i = 0; i < characters.size(); i++) {
 
-                        JsonParser parser = new JsonParser();
-                        JsonObject characterObj = (JsonObject) parser.parse(characters.get(i).getValue());
-
+                        //Deserialize and bind data to model class
                         Gson gson = new GsonBuilder().create();
-                        Response_GetAllCharacters.CharacterData character =  gson.fromJson(characters.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
+                        Response_GetAllCharacters.CharacterData character = gson.fromJson(characters.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
 
-                        //required for post submit OnClick
-                        characterArray.add(characterObj);
+                        //only get characters for the selectedPlatform
+                        if (character.getMembershipType().equals(selectedPlatform)) {
+                            //required for post submit OnClick
+                            mCharacterList.add(character);
+                        }
+                    }
 
-                        int classType = characterObj.get("classType").getAsInt();
+                    for (int j = 0; j < mCharacterList.size(); j++) {
+
+                        String classType = mCharacterList.get(j).getClassType();
 
                         RadioButton radioButton = new RadioButton(this);
 
                         switch(classType){
 
-                            case 0: //Titan
+                            case "0": //Titan
                                 radioButton.setText(R.string.titan);
                                 break;
-                            case 1: //Hunter
+                            case "1": //Hunter
                                 radioButton.setText(R.string.hunter);
                                 break;
-                            case 2: // Warlock
+                            case "2": // Warlock
                                 radioButton.setText(R.string.warlock);
                                 break;
                         }
 
-                        radioButton.setId(i);
+                        radioButton.setId(j);
                         radioButton.setGravity(Gravity.CENTER);
                         radioButton.setButtonDrawable(new StateListDrawable());
                         radioButton.setTextColor(getResources().getColor(R.color.colorWhite));
@@ -299,7 +194,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                                 1.0f
                         ));
 
-                        if(i == 0){ //always ensure an option is preselected onCreate
+                        if(j == 0){ //always ensure an option is preselected onCreate
                             radioButton.setChecked(true);
                         }
                         else{
@@ -311,6 +206,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
 
     @Override
@@ -345,19 +241,22 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                     //Which object in characterArray to pass along to Firebase
                     int index = selectedCharacter.getId();
-                    JsonObject characterObject = characterArray.get(index).getAsJsonObject();
+                    Response_GetAllCharacters.CharacterData selectedCharacterData = new Response_GetAllCharacters.CharacterData();
+
+                    selectedCharacterData = mCharacterList.get(index);
+//                    JsonObject characterObject = characterArray.get(index).getAsJsonObject();
 
                     if(micCheckBox.isChecked()){
                         hasMic = true;
                     }
 
-                    String light = characterObject.get("light").getAsString();
-                    String membershipType = characterObject.get("membershipType").getAsString();
-                    String membershipId = characterObject.get("membershipId").getAsString();
-                    String emblemIcon = characterObject.get("emblemPath").getAsString();
-                    String emblemBackground = characterObject.get("emblemBackgroundPath").getAsString();
-                    String characterId = characterObject.get("characterId").getAsString();
-                    String classType = characterObject.get("classType").getAsString();
+                    String light = selectedCharacterData.getLight();
+                    String membershipType = selectedCharacterData.getMembershipType();
+                    String membershipId = selectedCharacterData.getMembershipId();
+                    String emblemIcon = selectedCharacterData.getEmblemPath();
+                    String emblemBackground = selectedCharacterData.getEmblemBackgroundPath();
+                    String characterId = selectedCharacterData.getCharacterId();
+                    String classType = selectedCharacterData.getClassType();
 
                     Long dateTime = System.currentTimeMillis();
 

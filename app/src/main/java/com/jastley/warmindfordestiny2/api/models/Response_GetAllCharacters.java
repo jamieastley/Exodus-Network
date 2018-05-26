@@ -72,6 +72,8 @@ public class Response_GetAllCharacters {
         @SerializedName("light")
         private String light;
 
+        //stats removed from here
+
         @Expose
         @SerializedName("raceHash")
         private String raceHash;
@@ -81,6 +83,9 @@ public class Response_GetAllCharacters {
         @Expose
         @SerializedName("classHash")
         private String classHash;
+        @Expose
+        @SerializedName("classType")
+        private String classType;
         @Expose
         @SerializedName("genderType")
         private String genderType;
@@ -144,6 +149,10 @@ public class Response_GetAllCharacters {
 
         public String getClassHash() {
             return classHash;
+        }
+
+        public String getClassType() {
+            return classType;
         }
 
         public String getGenderType() {
