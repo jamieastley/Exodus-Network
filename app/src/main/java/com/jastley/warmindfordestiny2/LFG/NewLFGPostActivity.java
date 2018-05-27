@@ -2,13 +2,9 @@ package com.jastley.warmindfordestiny2.LFG;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -35,11 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 public class NewLFGPostActivity extends AppCompatActivity {
@@ -128,41 +121,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
         });
 
         getAccountCharacters();
-    }
-
-    private void getEmblemDrawables(){
-
-        List<Bitmap> emblemList = new ArrayList<>();
-
-        //set emblem icons
-        for (int i = 0; i < 3; i++) {
-            File dir = getDir("emblems", MODE_PRIVATE);
-            File path = new File(dir, i+".jpeg");
-            if(path.exists()){
-                Picasso.with(this)
-                    .load(Uri.fromFile(path))
-                    .transform(new CropCircleTransformation())
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            emblemList.add(bitmap);
-
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Drawable missing = getDrawable(R.drawable.missing_icon_d2);
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
-            }
-        }
-
     }
 
     private void getAccountCharacters(){
