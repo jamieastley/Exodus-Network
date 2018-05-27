@@ -16,6 +16,8 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -57,7 +59,6 @@ import java.util.List;
 import com.squareup.picasso.Target;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 import static com.jastley.warmindfordestiny2.api.clientKeys.clientId;
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
                 intent.putExtra("displayName", displayName);
 
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             });
         }
 
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity
                 Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
                 intent.putExtra("displayName", finalDisplayName);
 
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             });
         }
         else { //not logged in
@@ -239,6 +240,7 @@ public class MainActivity extends AppCompatActivity
 
         if(selectedPlatform != "") {
             String name = savedPrefs.getString("displayName"+selectedPlatform, "");
+
             //Battle.Net tags
             if(name.contains("%23")){
                 name = name.replace("%23", "#");
@@ -260,11 +262,10 @@ public class MainActivity extends AppCompatActivity
                     File dir = getDir("emblems", MODE_PRIVATE);
                     File path = new File(dir, i+".jpeg");
                     if(path.exists()){
-                        Picasso.with(this)
-                                .load(Uri.fromFile(path))
-                                .fit()
-                                .transform(new CropCircleTransformation())
-                                .into(emblemIcon);
+
+                        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
+                        roundedDrawable.setCircular(true);
+                        emblemIcon.setImageDrawable(roundedDrawable);
                     }
                 }
             }
@@ -714,12 +715,12 @@ public class MainActivity extends AppCompatActivity
                                 fos.flush();
                                 fos.close();
 
-                                if(finalI == emblems.size() -1){
-                                    NavigationView navigationView = findViewById(R.id.nav_view);
-                                    View hView =  navigationView.getHeaderView(0);
-                                    updateNavUI(hView);
-                                    dismissLoadingFragment();
-                                }
+//                                if(finalI == emblems.size() -1){
+//                                    NavigationView navigationView = findViewById(R.id.nav_view);
+//                                    View hView =  navigationView.getHeaderView(0);
+//                                    updateNavUI(hView);
+//                                    dismissLoadingFragment();
+//                                }
                             }
                             catch(Exception e){
                                 Log.d("EMBLEM_DOWNLOAD", e.getLocalizedMessage());
@@ -737,6 +738,10 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
         }
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View hView =  navigationView.getHeaderView(0);
+        updateNavUI(hView);
+        dismissLoadingFragment();
 
     }
 
@@ -854,5 +859,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(String uri) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == 1){
+            Snackbar.make(findViewById(R.id.activity_main_content), "Post submitted!", Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null)
+                    .show();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.jastley.warmindfordestiny2.LFG;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -21,6 +22,7 @@ import android.widget.*;
 import butterknife.*;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.*;
+import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
@@ -45,7 +47,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
     private String displayName;
     private boolean hasMic = false;
     private boolean onCreateFlag = true;
+    DialogFragment loadingDialog;// = new LoadingDialogFragment();
     List<Response_GetAllCharacters.CharacterData> mCharacterList = new ArrayList<>();
+
 
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
 
@@ -55,8 +59,12 @@ public class NewLFGPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
 
-        Intent intent = getIntent();
-        displayName = intent.getStringExtra("displayName");
+
+//        Intent intent = getIntent();
+//        displayName = intent.getStringExtra("displayName");
+        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+        displayName = savedPrefs.getString("displayName"+selectedPlatform, "");
 
         if ((savedInstanceState != null)) {
 
@@ -232,6 +240,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                 if(!description.getText().toString().matches("")) {
                     descriptionText = "No description provided.";
                 }
+                    showLoadingDialog();
                     item.setEnabled(false);
 
                     int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
@@ -267,12 +276,16 @@ public class NewLFGPostActivity extends AppCompatActivity {
                             membershipType, displayName, classType, descriptionText, dateTime, hasMic,
                             membershipId, emblemIcon, emblemBackground, characterId);
 
-                //            TODO: Network/submit error
+
+                //            TODO: Loading dialog
                 DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
-                        Toast.makeText(getApplicationContext(), "Post submitted!", Toast.LENGTH_SHORT).show();
+
+                        dismissLoadingFragment();
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("result", 1);
+                        setResult(1);
                         finish();
-                        //TODO: interface here to MainActivity to trigger Snackbar and refresh
                     }
 
                 });
@@ -388,4 +401,16 @@ public class NewLFGPostActivity extends AppCompatActivity {
         }
     }
 
+    public void showLoadingDialog() {
+        loadingDialog = new LoadingDialogFragment();
+        loadingDialog.setCancelable(false);
+        loadingDialog.show(getFragmentManager(), "loadingDialog");
+    }
+
+    private void dismissLoadingFragment() {
+        DialogFragment loadingFragment = (DialogFragment)getFragmentManager().findFragmentByTag("loadingDialog");
+        if (loadingFragment != null){
+            loadingFragment.dismiss();
+        }
+    }
 }

@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -74,6 +75,7 @@ public class LFGDetailsFragment extends Fragment {
     @BindView(R.id.stats_values_progress_bar) ProgressBar statsValuesProgress;
     @BindView(R.id.lfg_details_group_progress) ProgressBar groupNameProgress;
     @BindView(R.id.faction_loading_progress_bar) ProgressBar factionLoadingBar;
+    @BindView(R.id.faction_card_view) CardView factionCardView;
 
     @BindView(R.id.faction_progress_recyclerview) RecyclerView mFactionProgressRecyclerView;
     LFGFactionsRecyclerAdapter mFactionProgressRecyclerAdapter;
@@ -500,8 +502,12 @@ public class LFGDetailsFragment extends Fragment {
                         }
                         getFactionData(factionHashList, unsignedFactionHashList);
                     }
-                },throwable -> Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
-                        .show());
+                },throwable -> {
+                    Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
+                        .show();
+//                    factionLoadingBar.setVisibility(View.GONE);
+//                    factionCardView.setVisibility(View.GONE);
+        });
     }
 
 
@@ -541,6 +547,11 @@ public class LFGDetailsFragment extends Fragment {
                     mFactionProgressRecyclerView.setNestedScrollingEnabled(false);
                     mFactionProgressRecyclerView.setAdapter(mFactionProgressRecyclerAdapter);
                     factionLoadingBar.setVisibility(View.GONE);
+                }, throwable -> {
+                    Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
+                        .show();
+                    factionLoadingBar.setVisibility(View.GONE);
+                    factionCardView.setVisibility(View.GONE);
                 });
     }
 }
