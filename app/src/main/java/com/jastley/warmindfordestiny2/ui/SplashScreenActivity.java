@@ -136,7 +136,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                     try {
 
-                        //dynamically retrieve the /data/databases path for the device, database filename is irrelevant
+                        //dynamically retrieve the /data/databases path for the device, database filename here is irrelevant
                         String databasePath = this.getDatabasePath("bungieAccount.db").getParent();
                         File manifestFile = new File(databasePath, "manifest.zip");
 

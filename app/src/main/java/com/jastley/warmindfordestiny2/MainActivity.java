@@ -2,6 +2,8 @@ package com.jastley.warmindfordestiny2;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentManager;
@@ -46,10 +48,13 @@ import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.models.Account;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.squareup.picasso.Target;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -244,16 +249,23 @@ public class MainActivity extends AppCompatActivity
             for(int i = 0; i < 3; i++){
 
                 int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
-                String emblem = savedPrefs.getString("emblemIcon"+i, "");
+                String emblem = savedPrefs.getString(selectedPlatform+"emblemIcon"+i, "");
+                ImageView emblemIcon = hView.findViewById(resID);
+
+                //if switching between accounts, reset drawables (required if other account has less characters than previous account)
+                emblemIcon.setImageDrawable(null);
+
                 if(emblem != ""){
 
-                    ImageView emblemIcon = hView.findViewById(resID);
-
-                    Picasso.with(this)
-                            .load(baseURL+emblem)
-                            .fit()
-                            .transform(new CropCircleTransformation())
-                            .into(emblemIcon);
+                    File dir = getDir("emblems", MODE_PRIVATE);
+                    File path = new File(dir, i+".jpeg");
+                    if(path.exists()){
+                        Picasso.with(this)
+                                .load(Uri.fromFile(path))
+                                .fit()
+                                .transform(new CropCircleTransformation())
+                                .into(emblemIcon);
+                    }
                 }
             }
             navigationView = findViewById(R.id.nav_view);
@@ -611,6 +623,8 @@ public class MainActivity extends AppCompatActivity
                         List<Account> mAccountList = new ArrayList<>();
                         int count = 0;
 
+                        List<String> emblemIconList = new ArrayList<>();
+
                         for(Iterator iterator = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().keySet().iterator(); iterator.hasNext(); ) {
 
                             String key = (String) iterator.next();
@@ -623,7 +637,13 @@ public class MainActivity extends AppCompatActivity
 
                             try{
                                 SharedPreferences.Editor editor = savedPrefs.edit();
-                                editor.putString(platform+"emblemIcon"+count, charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemPath").getAsString());
+                                String emblemIcon = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemPath").getAsString();
+                                String currentMembershipType = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("membershipType").getAsString();
+
+                                if(platform.equals(currentMembershipType)){
+                                    emblemIconList.add(emblemIcon);
+                                }
+                                editor.putString(platform+"emblemIcon"+count, emblemIcon);
                                 editor.putString(platform+"emblemBackgroundPath"+count, charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemBackgroundPath").getAsString());
                                 editor.apply();
                             }
@@ -643,13 +663,15 @@ public class MainActivity extends AppCompatActivity
                         //Get back onto mainThread to do UI stuff
                         Handler mainHandler = new Handler(Looper.getMainLooper());
                         Runnable mRunnable = () -> {
-                            NavigationView navigationView = findViewById(R.id.nav_view);
-                            View hView =  navigationView.getHeaderView(0);
-
-                            updateNavUI(hView);
-                            dismissLoadingFragment();
+////                            NavigationView navigationView = findViewById(R.id.nav_view);
+////                            View hView =  navigationView.getHeaderView(0);
+//
+////                            updateNavUI(hView);
+////                            dismissLoadingFragment();
+                            downloadEmblems(emblemIconList);
                         };
                         mainHandler.post(mRunnable);
+
                     }
 
                 }, throwable -> {
@@ -659,6 +681,63 @@ public class MainActivity extends AppCompatActivity
                             .show();
                     dismissLoadingFragment();
                 });
+    }
+
+    private void downloadEmblems(List<String> emblems) {
+
+
+        for (int i = 0; i < emblems.size(); i++) {
+
+            int finalI = i;
+            Picasso.with(this)
+                    .load(baseURL + emblems.get(i))
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                            try{
+                                File dir = getDir("emblems", MODE_PRIVATE);
+                                if(!dir.exists()){
+                                    dir.mkdir();
+                                }
+
+                                File path = new File(dir, finalI +".jpeg");
+                                //delete file if already exists, player may have updated their emblem so we need the new one
+                                if(path.exists()){
+                                    if(path.delete()){
+                                        Log.d("EMBLEM_DOWNLOAD_DELETE", path.toString() + " deleted.");
+                                    }
+                                }
+                                FileOutputStream fos = new FileOutputStream(path);
+                                int quality = 100;
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+                                fos.flush();
+                                fos.close();
+
+                                if(finalI == emblems.size() -1){
+                                    NavigationView navigationView = findViewById(R.id.nav_view);
+                                    View hView =  navigationView.getHeaderView(0);
+                                    updateNavUI(hView);
+                                    dismissLoadingFragment();
+                                }
+                            }
+                            catch(Exception e){
+                                Log.d("EMBLEM_DOWNLOAD", e.getLocalizedMessage());
+                            }
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+        }
+
     }
 
     private void dismissLoadingFragment() {

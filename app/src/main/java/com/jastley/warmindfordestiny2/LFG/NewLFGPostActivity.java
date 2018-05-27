@@ -1,17 +1,17 @@
 package com.jastley.warmindfordestiny2.LFG;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,8 +23,6 @@ import android.view.View;
 import android.widget.*;
 
 import butterknife.*;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.*;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
@@ -32,15 +30,13 @@ import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
-import com.jastley.warmindfordestiny2.database.DatabaseHelper;
-import com.jastley.warmindfordestiny2.database.OldDatabaseModel;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -83,9 +79,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-/**       TODO: Store activityNames/checkpoints on Firebase and cache on device, save last update timestamp and
-*         TODO sync from Firebase if expired
-*/
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, R.layout.spinner_list_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -134,6 +128,41 @@ public class NewLFGPostActivity extends AppCompatActivity {
         });
 
         getAccountCharacters();
+    }
+
+    private void getEmblemDrawables(){
+
+        List<Bitmap> emblemList = new ArrayList<>();
+
+        //set emblem icons
+        for (int i = 0; i < 3; i++) {
+            File dir = getDir("emblems", MODE_PRIVATE);
+            File path = new File(dir, i+".jpeg");
+            if(path.exists()){
+                Picasso.with(this)
+                    .load(Uri.fromFile(path))
+                    .transform(new CropCircleTransformation())
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            emblemList.add(bitmap);
+
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Drawable missing = getDrawable(R.drawable.missing_icon_d2);
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+            }
+        }
+
     }
 
     private void getAccountCharacters(){
@@ -185,9 +214,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                         radioButton.setId(j);
                         radioButton.setGravity(Gravity.CENTER);
+
                         radioButton.setButtonDrawable(new StateListDrawable());
                         radioButton.setTextColor(getResources().getColor(R.color.colorWhite));
-                        radioButton.setCompoundDrawables(null, coloredPlaceholder, null, null);
                         radioButton.setLayoutParams(new RadioGroup.LayoutParams(
                                 RadioGroup.LayoutParams.WRAP_CONTENT, //width
                                 RadioGroup.LayoutParams.WRAP_CONTENT, //height
@@ -200,6 +229,19 @@ public class NewLFGPostActivity extends AppCompatActivity {
                         else{
                             radioButton.setChecked(false);
                             radioButton.setAlpha(0.3f);
+                        }
+
+                        //set emblem icons
+                        File dir = getDir("emblems", MODE_PRIVATE);
+                        File path = new File(dir, j+".jpeg");
+                        if(path.exists()){
+
+                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
+                            roundedDrawable.setCircular(true);
+
+                            //bounds necessary for compoundDrawables
+                            roundedDrawable.setBounds(0,0, 150, 150);
+                            radioButton.setCompoundDrawables(null, roundedDrawable, null, null);
                         }
 
                         characterRadioGroup.addView(radioButton);
