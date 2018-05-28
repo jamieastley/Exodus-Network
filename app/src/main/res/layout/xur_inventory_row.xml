@@ -20,7 +20,6 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:background="@drawable/image_border"
             />
@@ -31,7 +30,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_toEndOf="@id/xur_item_image"
-            android:layout_toRightOf="@id/xur_item_image"
             android:layout_margin="10dp"
             android:orientation="vertical"
             >

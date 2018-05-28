@@ -27,7 +27,7 @@ public class Response_GetCharacterInventory {
     private int ThrottleSeconds;
     @Expose
     @SerializedName("ErrorCode")
-    private int ErrorCode;
+    private String ErrorCode;
     @Expose
     @SerializedName("Response")
     private Response Response;
@@ -48,7 +48,7 @@ public class Response_GetCharacterInventory {
         return ThrottleSeconds;
     }
 
-    public int getErrorCode() {
+    public String getErrorCode() {
         return ErrorCode;
     }
 

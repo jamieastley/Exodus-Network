@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.*;
 
 import android.widget.ImageView;
@@ -224,7 +225,6 @@ public class XurFragment extends Fragment {
                                     region = region.replace("&rsquo;", "'");
                                 }
                                 xurRegionText.setText(region);
-
                                 locationIndex = response_getXurWeekly.getResponse().getData().getLocation().getId();
 
                                 int listSize = response_getXurWeekly.getResponse().getData().getItems().size();
@@ -266,20 +266,15 @@ public class XurFragment extends Fragment {
                                 progressBar.setVisibility(View.GONE);
                             }
 
-
-
-                    //then cross reference with Vendor definitions to get currency info for each item
                 }, err -> {
-//                        Snackbar.make(getView(), "Couldn't connect to the server", Snackbar.LENGTH_LONG)
-//                                .setAction("Action", null)
-//                                .show();
-//                            progressBar.setVisibility(View.GONE);
-//                            System.out.println(err.getLocalizedMessage());
-                            if(err instanceof NoNetworkException){
-                                showErrorDialog("No network detected", "An active internet connection is required!");
-                            }
-                        },
-                        this::getLocationBanner
+                        if(err instanceof NoNetworkException){
+                            Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", v -> getXurInventory())
+                                    .show();
+
+                        }
+                    },
+                    this::getLocationBanner
                 );
     }
 
@@ -303,11 +298,11 @@ public class XurFragment extends Fragment {
 
                     //Only set icon if result successful/Xur is around
                     xurIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.xur_icon));
+                }, throwable -> {
+                    Log.d("GET_XUR_BANNER", throwable.getLocalizedMessage());
+                    Snackbar.make(getView(), "Couldn't get Xur's location", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", v -> getLocationBanner())
+                            .show();
                 });
-    }
-
-    private void showErrorDialog(String title, String message) {
-        ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(title, message, (dialog, which) -> getXurInventory());
-        fragment.show(getActivity().getFragmentManager(), "errorDialog");
     }
 }

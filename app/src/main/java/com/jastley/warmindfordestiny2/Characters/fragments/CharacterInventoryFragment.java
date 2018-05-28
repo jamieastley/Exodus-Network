@@ -30,6 +30,7 @@ import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.Utils.fragments.ErrorDialogFragment;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
@@ -249,7 +250,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
     private void showLoadingDialog(String title, String message) {
-//        loadingDialog = new LoadingDialogFragment();
         LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
         fragment.setCancelable(false);
         fragment.show(getActivity().getFragmentManager(), "loadingDialog");
@@ -285,75 +285,70 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 .subscribe(response -> {
 
                     //Error code checking
-                    switch(response.getErrorCode()){
-                        case 1: //Response successful
+                    if(!response.getErrorCode().equals("1")){
+                        Snackbar.make(getParentFragment().getView(), response.getMessage(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> refreshInventory())
+                                .show();
+                    }
+                    else {
 
-                            List<String> itemHashList = new ArrayList<>();
-                            List<String> unsignedHashList = new ArrayList<>();
+                        List<String> itemHashList = new ArrayList<>();
+                        List<String> unsignedHashList = new ArrayList<>();
 
-                            itemList.clear();
-                            for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
+                        itemList.clear();
+                        for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
-                                String primaryStatValue;
-                                String itemInstanceId = null;
+                            String primaryStatValue;
+                            String itemInstanceId = null;
 
-                                //add/calculate hashes
-                                String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
-                                String unsignedHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
-                                itemHashList.add(itemHash);
-                                unsignedHashList.add(unsignedHash);
+                            //add/calculate hashes
+                            String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
+                            String unsignedHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
+                            itemHashList.add(itemHash);
+                            unsignedHashList.add(unsignedHash);
 
 
-                                InventoryItemModel itemModel = new InventoryItemModel();
+                            InventoryItemModel itemModel = new InventoryItemModel();
+                            itemModel.setItemHash(itemHash);
 
-                                itemModel.setItemHash(itemHash);
+                            //Get instanceId to look up it's instanceData from the response
+                            if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+                                itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
+                                itemModel.setItemInstanceId(itemInstanceId);
 
-                                //Get instanceId to look up it's instanceData from the response
-                                if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
-                                    itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
-                                    itemModel.setItemInstanceId(itemInstanceId);
-
-                                    //get damageType (if != null)
-                                    if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
-                                        itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
-                                    }
-
+                                //get damageType (if != null)
+                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
                                 }
 
-                                try{
-                                    primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                                    itemModel.setPrimaryStatValue(primaryStatValue);
-
-
-                                }
-                                catch(Exception e){
-                                    System.out.println("Not an instance-specific item");
-                                }
-//
-                                itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
-                                //Required to manipulate UI on transfer/equip modal
-                                itemModel.setClassType(mCharacter.getClassType());
-                                itemModel.setTabIndex(mTabNumber);
-                                itemList.add(itemModel);
                             }
 
-                            getManifestData(itemHashList, unsignedHashList);
-//                            setRecyclerView(itemList);
-                            break;
+                            try{
+                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                                itemModel.setPrimaryStatValue(primaryStatValue);
 
-                        case 5: //maintainence
-                            Snackbar.make(getParentFragment().getView().findViewById(R.id.activity_inventory_main_content), "Bungie servers are currently unavailable.", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null)
-                                    .show();
-                            break;
+
+                            }
+                            catch(Exception e){
+                                System.out.println("Not an instance-specific item");
+                            }
+//
+                            itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
+                            //Required to manipulate UI on transfer/equip modal
+                            itemModel.setClassType(mCharacter.getClassType());
+                            itemModel.setTabIndex(mTabNumber);
+                            itemList.add(itemModel);
+                        }
+
+                        getManifestData(itemHashList, unsignedHashList);
                     }
 
 
-                }, Throwable -> {
-                    Snackbar.make(getParentFragment().getView().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve account data.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
+                }, throwable -> {
+                    Log.d("GET_CHARACTER_INVENTORY", throwable.getMessage());
+                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", v -> refreshInventory())
                             .show();
-//                        getActivity().onBackPressed();
                     });
 
     }
@@ -366,87 +361,71 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 .subscribe(response -> {
 
                     //Error code checking
-                    switch(response.getErrorCode()){
-                        case 1: //Response successful
+                    if(!response.getErrorCode().equals("1")){
+                        Snackbar.make(getParentFragment().getView(), response.getMessage(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> refreshInventory())
+                                .show();
+                    }
+                    else {
 
-                            List<String> itemHashList = new ArrayList<>();
-                            List<String> unsignedHashList = new ArrayList<>();
+                        List<String> itemHashList = new ArrayList<>();
+                        List<String> unsignedHashList = new ArrayList<>();
 
-                            itemList.clear();
-                            /** FOR VAULT INVENTORY, USE getProfileInventory(), NOT getInventory() **/
-                            for(int i = 0; i < response.getResponse().getProfileInventory().getData().getItems().size(); i++){
+                        itemList.clear();
+                        /** FOR VAULT INVENTORY, USE getProfileInventory(), NOT getInventory() **/
+                        for(int i = 0; i < response.getResponse().getProfileInventory().getData().getItems().size(); i++){
 
-                                String primaryStatValue;
-                                String itemInstanceId = null;
+                            String primaryStatValue;
+                            String itemInstanceId = null;
 
-                                //add/calculate hashes
-                                String itemHash = String.valueOf(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash());
-                                String unsignedHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
-                                itemHashList.add(itemHash);
-                                unsignedHashList.add(unsignedHash);
+                            //add/calculate hashes
+                            String itemHash = String.valueOf(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash());
+                            String unsignedHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
+                            itemHashList.add(itemHash);
+                            unsignedHashList.add(unsignedHash);
 
 
-                                InventoryItemModel itemModel = new InventoryItemModel();
+                            InventoryItemModel itemModel = new InventoryItemModel();
 
-                                itemModel.setItemHash(itemHash);
+                            itemModel.setItemHash(itemHash);
 
-                                //Get instanceId to look up it's instanceData from the response
-                                if(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
-                                    itemInstanceId = response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
-                                    itemModel.setItemInstanceId(itemInstanceId);
+                            //Get instanceId to look up it's instanceData from the response
+                            if(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+                                itemInstanceId = response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
+                                itemModel.setItemInstanceId(itemInstanceId);
 
-                                    //get damageType (if != null)
-                                    if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
-                                        itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
-                                    }
-
+                                //get damageType (if != null)
+                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
                                 }
 
-                                try{
-                                    primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                                    itemModel.setPrimaryStatValue(primaryStatValue);
-
-
-                                }
-                                catch(Exception e){
-                                    System.out.println("Not an instance-specific item");
-                                }
-//
-                                itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
-                                //Required to manipulate UI on transfer/equip modal
-                                itemModel.setClassType(mCharacter.getClassType());
-                                itemModel.setTabIndex(mTabNumber);
-                                itemList.add(itemModel);
                             }
 
-                            getManifestData(itemHashList, unsignedHashList);
-                            break;
+                            try{
+                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                                itemModel.setPrimaryStatValue(primaryStatValue);
 
-                        case 5: //maintainence
-                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Bungie servers are currently unavailable.", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null)
-                                    .show();
-                            break;
 
-                        case 7: //ParameterParseFailure
-                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "ParameterParseFailure: Developer broke something here, sorry :(.", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null)
-                                    .show();
-                            break;
+                            }
+                            catch(Exception e){
+                                System.out.println("Not an instance-specific item");
+                            }
+//
+                            itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
+                            //Required to manipulate UI on transfer/equip modal
+                            itemModel.setClassType(mCharacter.getClassType());
+                            itemModel.setTabIndex(mTabNumber);
+                            itemList.add(itemModel);
+                        }
 
-                        case 8: //ParameterInvalidRange
-                            Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "ParameterInvalidRange: Developer broke something here, sorry :(", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null)
-                                    .show();
-                            break;
+                        getManifestData(itemHashList, unsignedHashList);
                     }
 
 
-                }, Throwable -> {
-                    Snackbar.make(getActivity().findViewById(R.id.activity_inventory_main_content), "Couldn't retrieve/parse account data.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
+                }, throwable -> {
+                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", v -> refreshInventory())
                             .show();
-//                        getActivity().onBackPressed();
                 });
 
     }
@@ -492,6 +471,11 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
                 }, throwable -> {
                     Log.d("GET_MANIFEST_DATA", throwable.getLocalizedMessage());
+                    itemList.clear();
+                    mItemsRecyclerAdapter.notifyDataSetChanged();
+                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", v -> refreshInventory())
+                            .show();
                 });
     }
 
@@ -539,24 +523,22 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         loadingProgress.setVisibility(View.GONE);
     }
 
-//    public void refreshInventory() {
-//        itemList.clear();
-//        mItemsRecyclerAdapter.notifyDataSetChanged();
-//        String classType = mCharacter.getClassType();
-//
-//        if(classType.equals("vault")){
-//            //get Vault items only
-//            getVaultInventory(
-//                    mCharacter.getMembershipType(),
-//                    mCharacter.getMembershipId());
-//        }
-//        else {
-////            mItemsRecyclerAdapter.notifyDataSetChanged();
-//            getCharacterInventory(
-//                    mCharacter.getMembershipType(),
-//                    mCharacter.getMembershipId(),
-//                    mCharacter.getCharacterId());
-//        }
-//    }
+    public void refreshInventory() {
+        String classType = mCharacter.getClassType();
+
+        if(classType.equals("vault")){
+            //get Vault items only
+            getVaultInventory(
+                    mCharacter.getMembershipType(),
+                    mCharacter.getMembershipId());
+        }
+        else {
+//            mItemsRecyclerAdapter.notifyDataSetChanged();
+            getCharacterInventory(
+                    mCharacter.getMembershipType(),
+                    mCharacter.getMembershipId(),
+                    mCharacter.getCharacterId());
+        }
+    }
 
 }
