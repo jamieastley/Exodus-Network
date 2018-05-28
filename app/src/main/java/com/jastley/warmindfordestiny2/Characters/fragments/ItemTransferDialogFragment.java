@@ -146,7 +146,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mBungieApi = new RetrofitHelper().getAuthBungieAPI(getContext(), baseURL);
+        mBungieApi = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
 
         //Selected item details
         itemName.setText(selectedItem.getItemName());

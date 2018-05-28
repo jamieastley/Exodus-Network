@@ -2,9 +2,6 @@ package com.jastley.warmindfordestiny2.database.models;
 
 import android.arch.persistence.room.*;
 import android.support.annotation.NonNull;
-import com.jastley.warmindfordestiny2.database.Converter;
-
-import java.sql.Blob;
 
 @Entity
 public class DestinyFactionDefinition {

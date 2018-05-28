@@ -9,6 +9,7 @@
         <item name="android:windowBackground">@color/bungieBackground</item>
         <item name="android:tabWidgetStyle">@style/Base.Widget.Design.TabLayout</item>
         <item name="android:alertDialogTheme">@style/AlertDialogCustom</item>
+        <item name="alertDialogStyle">@style/AlertDialogCustom</item>
     <!--<style name="dialog" parent="@android:style/Theme.Dialog">-->
     </style>
 

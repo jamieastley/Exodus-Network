@@ -40,10 +40,6 @@
             </intent-filter>
         </activity>
         <!-- <activity android:name=".LFG.LFGPlayerDetails"></activity> -->
-        <activity
-            android:name=".Characters.CharacterInventoryActivity"
-            android:label="@string/title_activity_character_inventory"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

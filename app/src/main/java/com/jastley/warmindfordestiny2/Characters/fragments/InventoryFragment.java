@@ -1,6 +1,7 @@
 package com.jastley.warmindfordestiny2.Characters.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,10 +16,13 @@ import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
@@ -26,6 +30,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -196,7 +202,6 @@ public class InventoryFragment extends Fragment {
     }
 
     public void getAccountCharacters() {
-        JsonParser parser = new JsonParser();
 
         AccountDAO mAccountDAO = AppDatabase.getAppDatabase(getContext()).getAccountDAO();
         mAccountDAO.getAll()
@@ -206,23 +211,32 @@ public class InventoryFragment extends Fragment {
 
                     String tempMembershipId = "0";
                     String tempMembershipType = "0";
+                    SharedPreferences savedPrefs = getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
+                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
 
                     for(int i = 0; i < accounts.size(); i++){
-                        System.out.println("forLoop " + accounts.get(i).getKey());
-                        JsonObject charObj = (JsonObject) parser.parse(accounts.get(i).getValue());
-                        CharacterDatabaseModel character = new CharacterDatabaseModel(
-                                charObj.get("membershipId").getAsString(),
-                                charObj.get("characterId").getAsString(),
-                                charObj.get("membershipType").getAsString(),
-                                charObj.get("classType").getAsString(),
-                                charObj.get("emblemPath").getAsString(),
-                                charObj.get("emblemBackgroundPath").getAsString(),
-                                charObj.get("baseCharacterLevel").getAsString(),
-                                charObj.get("light").getAsString()
-                        );
-                        tempMembershipId = charObj.get("membershipId").getAsString();
-                        tempMembershipType = charObj.get("membershipType").getAsString();
-                        charactersList.add(character);
+
+                        Gson gson = new GsonBuilder().create();
+                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(accounts.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
+
+                        //only get characters for selectedPlatform
+                        if(accountCharacter.getMembershipType().equals(selectedPlatform)){
+                            System.out.println("forLoop " + accounts.get(i).getKey());
+                            CharacterDatabaseModel character = new CharacterDatabaseModel(
+                                    accountCharacter.getMembershipId(),
+                                    accountCharacter.getCharacterId(),
+                                    accountCharacter.getMembershipType(),
+                                    accountCharacter.getClassType(),
+                                    accountCharacter.getEmblemPath(),
+                                    accountCharacter.getEmblemBackgroundPath(),
+                                    accountCharacter.getBaseCharacterLevel(),
+                                    accountCharacter.getLight()
+                            );
+                            tempMembershipId = accountCharacter.getMembershipId();
+                            tempMembershipType = accountCharacter.getMembershipType();
+                            charactersList.add(character);
+                        }
+
                     }
 
                     //Add vault fragment on the end
