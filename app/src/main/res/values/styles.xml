@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/warmindAccent</item>
         <item name="android:windowBackground">@color/bungieBackground</item>
         <item name="android:tabWidgetStyle">@style/Base.Widget.Design.TabLayout</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogCustom</item>
     <!--<style name="dialog" parent="@android:style/Theme.Dialog">-->
     </style>
 
@@ -19,6 +20,14 @@
     <style name="Base.Widget.Design.TabLayout" parent="">
         <item name="tabSelectedTextColor">@android:color/white</item>
         <item name="tabTextColor">@color/warmindAccent</item>
+    </style>
+
+    <style name="AlertDialogCustom" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="colorPrimary">@color/warmindPrimary</item>
+        <item name="colorPrimaryDark">@color/warmindDark</item>
+        <item name="colorAccent">@color/warmindAccent</item>
+        <item name="android:windowBackground">@color/bungieBackground</item>
     </style>
 
     <!--<style name="SpinnerItemStyle" parent="@style/Widget.AppCompat.Spinner.DropDown">-->

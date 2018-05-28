@@ -123,7 +123,7 @@ public class LFGDetailsFragment extends Fragment {
             Bundle bundle = getArguments();
             receivedPlayerClick = bundle.getParcelable("clickedPlayer");
 
-            mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
+            mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, getContext());
 
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);

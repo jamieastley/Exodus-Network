@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getAccessToken(String code){
-        BungieAPI mBungieAPI = new RetrofitHelper().getOAuthRequestBungieAPI(baseURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getOAuthRequestBungieAPI(baseURL, this);
 
         mBungieAPI.getAccessToken(
                 clientId,
@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String refreshToken = savedPrefs.getString("refresh_token", "");
 
-        BungieAPI mBungieAPI = new RetrofitHelper().getOAuthRequestBungieAPI( baseURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getOAuthRequestBungieAPI( baseURL, this);
 
         mBungieAPI.renewAccessToken(
                     clientId,
@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity
         //block UI interaction and show loader while membershipData is being retrieved
         showLoadingDialog();
 
-        BungieAPI mBungieAPI = new RetrofitHelper().getAuthBungieAPI(this, baseURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
 
         mBungieAPI.getMembershipsCurrentUser()
                 .subscribeOn(Schedulers.io())
@@ -603,7 +603,7 @@ public class MainActivity extends AppCompatActivity
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String membershipId = savedPrefs.getString("membershipId"+platform, "");
 
-        BungieAPI mBungieAPI = new RetrofitHelper().getAuthBungieAPI(this, baseURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
 
         mBungieAPI.getAllCharacters(platform, membershipId)
                 .subscribeOn(Schedulers.io())

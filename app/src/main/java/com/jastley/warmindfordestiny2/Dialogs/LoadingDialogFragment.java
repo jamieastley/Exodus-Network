@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.R;
@@ -25,8 +26,8 @@ public class LoadingDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 //        return super.onCreateDialog(savedInstanceState);
 
-
-        View titleView = getActivity().getLayoutInflater().inflate(R.layout.alert_dialog_layout, null);
+        final ViewGroup nullParent = null;
+        View titleView = getActivity().getLayoutInflater().inflate(R.layout.alert_dialog_layout, nullParent, false);
 
         ButterKnife.bind(this, titleView);
 

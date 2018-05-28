@@ -23,6 +23,8 @@ import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
+import com.jastley.warmindfordestiny2.Utils.fragments.ErrorDialogFragment;
 import com.jastley.warmindfordestiny2.Vendors.adapters.XurItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
@@ -197,7 +199,7 @@ public class XurFragment extends Fragment {
     public void getXurInventory() {
 
         //get Xur inventory from WhatsXurGot API (throw error if Xur not available)
-        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(xurURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(xurURL, getContext());
 
 
         mBungieAPI.getXurWeeklyInventory(braytechApiKey, "history", "xur")
@@ -268,11 +270,14 @@ public class XurFragment extends Fragment {
 
                     //then cross reference with Vendor definitions to get currency info for each item
                 }, err -> {
-                        Snackbar.make(getView(), "Couldn't connect to the server", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null)
-                                .show();
-                            progressBar.setVisibility(View.GONE);
-                            System.out.println(err.getLocalizedMessage());
+//                        Snackbar.make(getView(), "Couldn't connect to the server", Snackbar.LENGTH_LONG)
+//                                .setAction("Action", null)
+//                                .show();
+//                            progressBar.setVisibility(View.GONE);
+//                            System.out.println(err.getLocalizedMessage());
+                            if(err instanceof NoNetworkException){
+                                showErrorDialog("No network detected", "An active internet connection is required!");
+                            }
                         },
                         this::getLocationBanner
                 );
@@ -299,5 +304,10 @@ public class XurFragment extends Fragment {
                     //Only set icon if result successful/Xur is around
                     xurIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.xur_icon));
                 });
+    }
+
+    private void showErrorDialog(String title, String message) {
+        ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(title, message, (dialog, which) -> getXurInventory());
+        fragment.show(getActivity().getFragmentManager(), "errorDialog");
     }
 }

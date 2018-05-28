@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2.api;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.jastley.warmindfordestiny2.Utils.NetworkInterceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
@@ -20,26 +21,27 @@ public class RetrofitHelper {
 
     /** SERVICE **/
 
-    public BungieAPI getBungieAPI(String baseURL) {
-        final Retrofit retrofit = createRetrofit(baseURL);
+    public static BungieAPI getBungieAPI(String baseURL, Context context) {
+        final Retrofit retrofit = createRetrofit(baseURL, context);
         return retrofit.create(BungieAPI.class);
     }
 
-    public BungieAPI getAuthBungieAPI(Context context, String baseURL) {
+    public static BungieAPI getAuthBungieAPI(Context context, String baseURL) {
         final Retrofit retrofit = createAuthRetrofit(context, baseURL);
         return retrofit.create(BungieAPI.class);
     }
 
-    public BungieAPI getOAuthRequestBungieAPI(String baseURL) {
-        final Retrofit retrofit = createOAuthRetrofit(baseURL);
+    public static BungieAPI getOAuthRequestBungieAPI(String baseURL, Context context) {
+        final Retrofit retrofit = createOAuthRetrofit(baseURL, context);
                 return retrofit.create(BungieAPI.class);
     }
 
 
     /** INTERCEPTORS **/
 
-    private OkHttpClient createOkHttpClient() {
+    private static OkHttpClient createOkHttpClient(Context context) {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(new NetworkInterceptor(context));
         httpClient.addInterceptor(chain -> {
             final Request original = chain.request();
 
@@ -53,8 +55,9 @@ public class RetrofitHelper {
         return httpClient.build();
     }
 
-    private OkHttpClient createAuthOkHttpClient(Context context) {
+    private static OkHttpClient createAuthOkHttpClient(Context context) {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(new NetworkInterceptor(context));
         httpClient.addInterceptor(chain -> {
             final Request original = chain.request();
 
@@ -70,11 +73,13 @@ public class RetrofitHelper {
             return chain.proceed(request);
         });
 
+
         return httpClient.build();
     }
 
-    private OkHttpClient createOAuthClient() {
+    private static OkHttpClient createOAuthClient(Context context) {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(new NetworkInterceptor(context));
         httpClient.addInterceptor(chain -> {
             final Request original = chain.request();
 
@@ -94,17 +99,16 @@ public class RetrofitHelper {
 
     /** RETROFIT **/
 
-    private Retrofit createRetrofit(String baseURL) {
+    private static Retrofit createRetrofit(String baseURL, Context context) {
         return new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(createOkHttpClient())
+                .client(createOkHttpClient(context))
                 .build();
-
     }
 
-    private Retrofit createAuthRetrofit(Context context, String baseURL) {
+    private static Retrofit createAuthRetrofit(Context context, String baseURL) {
         return new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -113,12 +117,12 @@ public class RetrofitHelper {
                 .build();
     }
 
-    private Retrofit createOAuthRetrofit(String baseURL) {
+    private static Retrofit createOAuthRetrofit(String baseURL, Context context) {
         return new Retrofit.Builder()
                 .baseUrl(baseURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(createOAuthClient())
+                .client(createOAuthClient(context))
                 .build();
     }
 }

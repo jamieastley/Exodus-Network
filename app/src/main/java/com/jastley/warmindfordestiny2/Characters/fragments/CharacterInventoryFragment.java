@@ -157,7 +157,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        super.onViewCreated(view, savedInstanceState);
 
-        mBungieAPI = new RetrofitHelper().getAuthBungieAPI(getContext(), baseURL);
+        mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
 
 //        if (savedInstanceState != null) {
 //            inventoryItems = savedInstanceState.getParcelableArrayList("characterItems");
@@ -271,8 +271,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
     public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
-
-        JsonParser parser = new JsonParser();
 
         mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
                 .subscribeOn(Schedulers.io())

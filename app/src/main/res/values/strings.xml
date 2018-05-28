@@ -133,5 +133,7 @@
     <string name="concatFactionLevel">Level %1$s</string>
     <string name="concatFactionProgress">%1$s / %2$s</string>
     <string name="checkingManifest">Checking manifest version...</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
 
 </resources>

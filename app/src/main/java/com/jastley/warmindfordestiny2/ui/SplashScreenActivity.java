@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
+import com.jastley.warmindfordestiny2.Utils.fragments.ErrorDialogFragment;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 
@@ -40,7 +42,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     @BindView(R.id.splash_icon) ImageView splashIcon;
     @BindView(R.id.splash_text) TextView splashText;
-
     private Intent intent;
 
     @Override
@@ -69,7 +70,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         splashText.setText(R.string.checkingManifest);
 
         checkManifestsVersion();
-
     }
 
 
@@ -83,51 +83,54 @@ public class SplashScreenActivity extends AppCompatActivity {
         SharedPreferences savedPrefs;
         savedPrefs = this.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
 
-        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
-
+        BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, this);
         mBungieAPI.getBungieManifests()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response_getBungieManifest -> {
 
-                    String manifestVersion = response_getBungieManifest.getResponse().getVersion();
-                    String savedManifestVersion = savedPrefs.getString("manifestVersion", "");
-
-                    //Download/update stored manifests
-                    if(!manifestVersion.equals(savedManifestVersion)){
-
-                        SharedPreferences.Editor editor = savedPrefs.edit();
-
-                        try{
-                            editor.putString("manifestVersion", manifestVersion);
-                            editor.apply();
-                        }
-                        catch (Exception e){
-                            Log.e("MANIFEST_PREFS_ERR", e.getLocalizedMessage());
-                        }
-                        splashText.setText(R.string.gettingItemDatabase);
-                        String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
-                        getUpdateManifests(contentUrl);
+                    if(!response_getBungieManifest.getErrorCode().equals("1")){
+                        showErrorDialog("An error occurred", response_getBungieManifest.getMessage());
                     }
-                    else { //already have the latest manifest
+                    else {
+                        String manifestVersion = response_getBungieManifest.getResponse().getVersion();
+                        String savedManifestVersion = savedPrefs.getString("manifestVersion", "");
 
-                        intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                        //Download/update stored manifests
+                        if (!manifestVersion.equals(savedManifestVersion)) {
 
-                        //set flags so pressing back won't trigger launching splash screen again
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
+                            SharedPreferences.Editor editor = savedPrefs.edit();
+
+                            try {
+                                editor.putString("manifestVersion", manifestVersion);
+                                editor.apply();
+                            } catch (Exception e) {
+                                Log.e("MANIFEST_PREFS_ERR", e.getLocalizedMessage());
+                            }
+                            splashText.setText(R.string.gettingItemDatabase);
+                            String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
+                            getUpdateManifests(contentUrl);
+                        } else { //already have the latest manifest
+
+                            intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+
+                            //set flags so pressing back won't trigger launching splash screen again
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
                     }
-
                 }, error -> {
                     Log.e("CHECK_MANIFEST_ERROR", error.getLocalizedMessage());
-                    //TODO: Error dialogFragment?
+                    if(error instanceof NoNetworkException){
+                        showErrorDialog("No network detected", "An active internet connection is required!");
+                    }
                 });
     }
 
     private void getUpdateManifests(String url){
 
-        BungieAPI mBungieAPI = new RetrofitHelper().getBungieAPI(baseURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, this);
 
         mBungieAPI.downloadUrlContent(url)
                 .subscribeOn(Schedulers.io())
@@ -241,5 +244,10 @@ public class SplashScreenActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    private void showErrorDialog(String title, String message) {
+        ErrorDialogFragment fragment = ErrorDialogFragment.newInstance(title, message, (dialog, which) -> checkManifestsVersion());
+        fragment.show(getFragmentManager(), "errorDialog");
     }
 }
