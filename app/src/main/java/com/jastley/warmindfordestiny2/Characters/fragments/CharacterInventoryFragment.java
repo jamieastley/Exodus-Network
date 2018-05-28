@@ -2,10 +2,13 @@ package com.jastley.warmindfordestiny2.Characters.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,11 +24,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Characters.holders.TransferItemViewHolder;
+import com.jastley.warmindfordestiny2.Characters.interfaces.SuccessListener;
 import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
+import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
+import com.jastley.warmindfordestiny2.Utils.fragments.ErrorDialogFragment;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
@@ -33,6 +39,8 @@ import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,7 +58,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
  * Use the {@link CharacterInventoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CharacterInventoryFragment extends Fragment implements TransferSelectListener {
+public class CharacterInventoryFragment extends Fragment implements TransferSelectListener, SuccessListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -71,24 +79,14 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     private BungieAPI mBungieAPI;
     private List<InventoryItemModel> itemList = new ArrayList<>();
     private List<CharacterDatabaseModel> mCharacterList = new ArrayList<>();
-//    private List<DestinyInventoryItemDefinition> mCollectablesList = new ArrayList<>();
-    ItemTransferDialogFragment transferModalDialog;
 
-    boolean mIsRestoredFromBackstack;
+//    boolean mIsRestoredFromBackstack;
 
     public CharacterInventoryFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-     * @return A new instance of fragment CharacterInventoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static CharacterInventoryFragment newInstance(int tabNumber,
                                                          CharacterDatabaseModel character,
                                                          ArrayList<CharacterDatabaseModel> characterList,
@@ -101,7 +99,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         args.putParcelableArrayList("ARG_CHARACTER_LIST", characterList);
         args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", destinyInventoryItemDefinitionManifest);
         fragment.setArguments(args);
-//        fragment.setRetainInstance(true);
         return fragment;
     }
 
@@ -116,7 +113,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 //            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
         }
 
-        mIsRestoredFromBackstack = false;
+//        mIsRestoredFromBackstack = false;
 
     }
 
@@ -207,22 +204,18 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     @Override
     public void onResume() {
         super.onResume();
-        if(mIsRestoredFromBackstack){
-
-        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mIsRestoredFromBackstack = true;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList("characterItems", (ArrayList<? extends Parcelable>) itemList);
+//        outState.putParcelableArrayList("characterItems", (ArrayList<? extends Parcelable>) itemList);
     }
 
     @Override
@@ -231,7 +224,43 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         System.out.println("onTransferSelect triggered");
     }
 
+    @Override
+    public void inProgress() {
+        showLoadingDialog("Transferring...", "Please wait");
+    }
 
+    @Override
+    public void onSuccess(int position, boolean wasSuccessful, String message) {
+
+        dismissLoadingFragment();
+
+        if(wasSuccessful) {
+
+            itemList.remove(position);
+            mItemsRecyclerAdapter.notifyItemRemoved(position);
+            Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+        else {
+            //Error handling
+            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private void showLoadingDialog(String title, String message) {
+//        loadingDialog = new LoadingDialogFragment();
+        LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
+        fragment.setCancelable(false);
+        fragment.show(getActivity().getFragmentManager(), "loadingDialog");
+    }
+
+    private void dismissLoadingFragment() {
+        LoadingDialogFragment loadingFragment = (LoadingDialogFragment)getActivity().getFragmentManager().findFragmentByTag("loadingDialog");
+        if (loadingFragment != null){
+            loadingFragment.dismiss();
+        }
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -252,7 +281,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
         mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(response -> {
 
                     //Error code checking
@@ -333,7 +362,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
         mBungieAPI.getVaultInventory(membershipType, membershipId)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(response -> {
 
                     //Error code checking
@@ -423,13 +452,13 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
 
-    public void getManifestData(List<String> itemList, List<String> unsigned){
+    public void getManifestData(List<String> hashes, List<String> unsigned){
 
         InventoryItemDAO mInventoryItemDAO = AppDatabase.getAppDatabase(getContext()).getInventoryItemDAO();
 
-        mInventoryItemDAO.getItemsListByKey(itemList, unsigned)
+        mInventoryItemDAO.getItemsListByKey(hashes, unsigned)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(items -> {
 
                     for (int i = 0; i < items.size(); i++) {
@@ -454,9 +483,15 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 }
                             }
                         }
-
                     }
-                    setRecyclerView(this.itemList);
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    Runnable mRunnable = () -> {
+                        setRecyclerView(this.itemList);
+                    };
+                    mainHandler.post(mRunnable);
+
+                }, throwable -> {
+                    Log.d("GET_MANIFEST_DATA", throwable.getLocalizedMessage());
                 });
     }
 
@@ -465,7 +500,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
 
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
-            Toast.makeText(getContext(), holder.getItemName().getText().toString() + " clicked", Toast.LENGTH_SHORT).show();
+            Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
 
             //get properties of clicked item
             InventoryItemModel clickedItem = new InventoryItemModel();
@@ -479,31 +514,22 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
             clickedItem.setItemTypeDisplayName(holder.getItemTypeDisplayName());
             clickedItem.setDamageType(holder.getDamageType());
+            clickedItem.setCurrentPosition(position);
 
             //for transferring TO vault
             clickedItem.setTabIndex(holder.getTabIndex());
             clickedItem.setVaultCharacterId(mCharacter.getCharacterId());
 
-            transferModalDialog = new ItemTransferDialogFragment();
+//            transferModalDialog = new ItemTransferDialogFragment();
+            ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(clickedItem, mTabNumber, mCharacterList, this);
             Bundle args = new Bundle();
             args.putParcelable("selectedItem", clickedItem);
             args.putParcelableArrayList("characterList", (ArrayList<? extends Parcelable>) mCharacterList); //TODO HERERERERE
             args.putInt("tabIndex", mTabNumber);
-            transferModalDialog.setArguments(args);
+            transferDialogFragment.setArguments(args);
 
-            transferModalDialog.show(getChildFragmentManager(), "transferModalDialog");
+            transferDialogFragment.show(getChildFragmentManager(), "transferModalDialog");
 
-
-//            transferModalDialog.onDismiss(new DialogInterface.OnDismissListener() {
-//                @Override
-//                public void onDismiss(DialogInterface dialog) {
-//
-//                }
-//            });
-//            transferModalDialog.onDismiss(dialog -> {
-//
-//
-//            });
         });
         mSwipeRefreshLayout.setRefreshing(false);
 
@@ -513,21 +539,24 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         loadingProgress.setVisibility(View.GONE);
     }
 
-    public void refreshInventory() {
-        String classType = mCharacter.getClassType();
-
-        if(classType.equals("vault")){
-            //get Vault items only
-            getVaultInventory(
-                    mCharacter.getMembershipType(),
-                    mCharacter.getMembershipId());
-        }
-        else {
-            getCharacterInventory(
-                    mCharacter.getMembershipType(),
-                    mCharacter.getMembershipId(),
-                    mCharacter.getCharacterId());
-        }
-    }
+//    public void refreshInventory() {
+//        itemList.clear();
+//        mItemsRecyclerAdapter.notifyDataSetChanged();
+//        String classType = mCharacter.getClassType();
+//
+//        if(classType.equals("vault")){
+//            //get Vault items only
+//            getVaultInventory(
+//                    mCharacter.getMembershipType(),
+//                    mCharacter.getMembershipId());
+//        }
+//        else {
+////            mItemsRecyclerAdapter.notifyDataSetChanged();
+//            getCharacterInventory(
+//                    mCharacter.getMembershipType(),
+//                    mCharacter.getMembershipId(),
+//                    mCharacter.getCharacterId());
+//        }
+//    }
 
 }

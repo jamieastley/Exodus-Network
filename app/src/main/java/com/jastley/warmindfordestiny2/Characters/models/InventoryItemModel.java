@@ -3,6 +3,8 @@ package com.jastley.warmindfordestiny2.Characters.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Comparator;
+
 /**
  * Created by jamie1192 on 24/4/18.
  */
@@ -25,10 +27,12 @@ public class InventoryItemModel implements Parcelable {
     private String itemName;
     private String itemIcon;
     private String itemTypeDisplayName;
+    private Long itemUnsignedHash;
 
     //Transferring/equipping
     private int tabIndex;
     private String vaultCharacterId;
+    private int currentPosition;
 
     //Xur
     private String equippingBlock;
@@ -205,6 +209,22 @@ public class InventoryItemModel implements Parcelable {
 
     public void setSaleHistoryCount(String saleHistoryCount) {
         this.saleHistoryCount = saleHistoryCount;
+    }
+
+    public Long getItemUnsignedHash() {
+        return itemUnsignedHash;
+    }
+
+    public void setItemUnsignedHash(Long itemUnsignedHash) {
+        this.itemUnsignedHash = itemUnsignedHash;
+    }
+
+    public int getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentPosition(int currentPosition) {
+        this.currentPosition = currentPosition;
     }
 
     @Override

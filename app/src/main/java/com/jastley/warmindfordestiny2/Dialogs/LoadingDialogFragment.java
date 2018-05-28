@@ -22,16 +22,28 @@ public class LoadingDialogFragment extends DialogFragment {
 
     @BindView(R.id.dialog_header_text) TextView headerText;
 
+    public static LoadingDialogFragment newInstance(String title, String message) {
+        LoadingDialogFragment fragment = new LoadingDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        args.putString("message", message);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 //        return super.onCreateDialog(savedInstanceState);
+
+        String title = getArguments().getString("title");
+        String message = getArguments().getString("message");
 
         final ViewGroup nullParent = null;
         View titleView = getActivity().getLayoutInflater().inflate(R.layout.alert_dialog_layout, nullParent, false);
 
         ButterKnife.bind(this, titleView);
 
-        headerText.setText("Loading...");
+        headerText.setText(title);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setCustomTitle(titleView);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -39,7 +51,7 @@ public class LoadingDialogFragment extends DialogFragment {
         View rootView = inflater.inflate(R.layout.dialog_loading, null);
 
         builder.setView(rootView);
-        builder.setTitle("Loading...");
+        builder.setTitle(title);
 
         return builder.create();
     }

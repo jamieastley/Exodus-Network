@@ -25,6 +25,7 @@ import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.models.Account;
 import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -214,14 +215,14 @@ public class InventoryFragment extends Fragment {
                     SharedPreferences savedPrefs = getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
                     String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
 
-                    for(int i = 0; i < accounts.size(); i++){
+                    for (Account account : accounts) {
 
                         Gson gson = new GsonBuilder().create();
-                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(accounts.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
+                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(account.getValue(), Response_GetAllCharacters.CharacterData.class);
 
                         //only get characters for selectedPlatform
-                        if(accountCharacter.getMembershipType().equals(selectedPlatform)){
-                            System.out.println("forLoop " + accounts.get(i).getKey());
+                        if (accountCharacter.getMembershipType().equals(selectedPlatform)) {
+                            System.out.println("forLoop " + account.getKey());
                             CharacterDatabaseModel character = new CharacterDatabaseModel(
                                     accountCharacter.getMembershipId(),
                                     accountCharacter.getCharacterId(),

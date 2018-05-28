@@ -279,10 +279,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void showLoadingDialog() {
-        loadingDialog = new LoadingDialogFragment();
-        loadingDialog.setCancelable(false);
-        loadingDialog.show(getFragmentManager(), "loadingDialog");
+    public void showLoadingDialog(String title, String message) {
+//        loadingDialog = new LoadingDialogFragment();
+        LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
+        fragment.setCancelable(false);
+        fragment.show(getFragmentManager(), "loadingDialog");
     }
 
 
@@ -483,7 +484,7 @@ public class MainActivity extends AppCompatActivity
     private void getMembershipsForCurrentUser() {
 
         //block UI interaction and show loader while membershipData is being retrieved
-        showLoadingDialog();
+        showLoadingDialog("Loading...", "Please wait");
 
         BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
 
