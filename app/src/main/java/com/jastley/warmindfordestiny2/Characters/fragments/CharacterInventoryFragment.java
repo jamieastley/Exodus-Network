@@ -231,16 +231,24 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
     @Override
-    public void onSuccess(int position, boolean wasSuccessful, String message) {
+    public void onSuccess(int position, boolean wasSuccessful, String message, boolean isTransfer) {
 
         dismissLoadingFragment();
 
         if(wasSuccessful) {
 
-            itemList.remove(position);
-            mItemsRecyclerAdapter.notifyItemRemoved(position);
-            Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
-                    .show();
+            if(isTransfer){
+//                itemList.remove(position);
+//                mItemsRecyclerAdapter.notifyItemRemoved(position);
+                Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+            else {
+                itemList.remove(position);
+                mItemsRecyclerAdapter.notifyItemRemoved(position);
+                Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
+                        .show();
+            }
         }
         else {
             //Error handling

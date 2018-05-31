@@ -88,4 +88,9 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
     public int getItemCount() {
         return mCharacters.size();
     }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
 }

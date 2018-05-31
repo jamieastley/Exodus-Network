@@ -47,13 +47,16 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
         holder.setEmblemIcon(mCharacters.get(position).getEmblemIcon(), mContext);
         holder.setCharacterId(mCharacters.get(position).getCharacterId());
         holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
-
-
-
+        holder.setClassType(mCharacters.get(position).getClassType());
     }
 
     @Override
     public int getItemCount() {
         return mCharacters.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 }

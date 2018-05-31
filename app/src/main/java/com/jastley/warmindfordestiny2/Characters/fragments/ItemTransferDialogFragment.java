@@ -55,9 +55,12 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     List<CharacterDatabaseModel> mCharacters;
     InventoryItemModel selectedItem;
 
-    TransferItemRequestBody mTransferBody;
+    TransferItemRequestBody mTransferVaultBody;
+    TransferItemRequestBody mTransferCharacterBody;
     EquipItemRequestBody mEquipBody;
 
+    //class variable so equipping can access
+    String className;
 
     private BungieAPI mBungieApi;
     private int mTabIndex;
@@ -176,54 +179,48 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
             dismiss();
             mSuccessListener.inProgress();
 
-            String className = holder.getClassType();
+            className = holder.getClassType();
             System.out.println("position: " + position);
             if(holder.getClassType().toLowerCase().equals("vault")){
 
-                //Send item to vault
-                mTransferBody = new TransferItemRequestBody(
+                //Send item straight to vault
+                mTransferVaultBody = new TransferItemRequestBody(
                         selectedItem.getItemHash(),
                         "1", //TODO: allow stackSize selection if >1 item
                         true,
                         selectedItem.getItemInstanceId(),
                         mCharacters.get(position).getMembershipType(),
-                        mCharacters.get(mTabIndex).getCharacterId()
+                        mCharacters.get(mTabIndex).getCharacterId() //originating character
                         );
-            }
-            else {
 
-                //send to character
-                mTransferBody = new TransferItemRequestBody(
+                transferToVault(mTransferVaultBody, null, null, false);
+            }
+            else { //Transferring from character to different character
+
+                //1.
+                //Send item to vault
+                mTransferVaultBody = new TransferItemRequestBody(
+                        selectedItem.getItemHash(),
+                        "1", //TODO: allow stackSize selection if >1 item
+                        true,
+                        selectedItem.getItemInstanceId(),
+                        mCharacters.get(position).getMembershipType(),
+                        mCharacters.get(mTabIndex).getCharacterId() //originating character
+                );
+
+                //2.
+                //where to send item after vault transfer
+                mTransferCharacterBody = new TransferItemRequestBody(
                         selectedItem.getItemHash(),
                         "1", //TODO: allow stackSize selection if >1 item
                         false,
                         selectedItem.getItemInstanceId(),
                         mCharacters.get(position).getMembershipType(),
-                        mCharacters.get(position).getCharacterId()
+                        mCharacters.get(position).getCharacterId() //destination character
                 );
+
+                transferToVault(mTransferVaultBody, mTransferCharacterBody, null, false);
             }
-
-
-            mBungieApi.transferItem(mTransferBody)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> {
-
-                        if(!response.getErrorCode().equals("1")){
-                            Log.d("TRANSFER_ERROR: "+response.getErrorCode(), response.getMessage());
-                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(),
-                                                            false,
-                                                                response.getErrorCode()+": "+response.getMessage());
-                        }
-                        else {
-                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className);
-                        }
-
-                    }, throwable -> {
-                        Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
-                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage());
-                    });
-
         });
 
 
@@ -233,33 +230,36 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
             dismiss();
             mSuccessListener.inProgress();
+            className = holder.getClassType();
 
-            //Equip item on character
+            //Set equip body for the row clicked before anything else
             mEquipBody = new EquipItemRequestBody(
                 selectedItem.getItemInstanceId(),
                 mCharacters.get(position).getCharacterId(),
                 mCharacters.get(position).getMembershipType()
             );
-            mBungieApi.equipItem(mEquipBody)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(response -> {
 
-                        if(!response.getErrorCode().equals("1")){
-                            Log.d("EQUIP_ERROR: "+response.getErrorCode(), response.getMessage());
-                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(),
-                                    false,
-                                    response.getErrorCode()+": "+response.getMessage());
-                        }
-                        else {
+            //FIRST REQUEST - transfer to vault
+            mTransferVaultBody = new TransferItemRequestBody(
+                    selectedItem.getItemHash(),
+                    "1", //TODO: allow stackSize selection if >1 item
+                    true,
+                    selectedItem.getItemInstanceId(),
+                    mCharacters.get(position).getMembershipType(),
+                    mCharacters.get(mTabIndex).getCharacterId() //originating character
+            );
 
-                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, mCharacters.get(position).getClassType());
-                        }
+            //where to send item after vault transfer
+            mTransferCharacterBody = new TransferItemRequestBody(
+                    selectedItem.getItemHash(),
+                    "1", //TODO: allow stackSize selection if >1 item
+                    false,
+                    selectedItem.getItemInstanceId(),
+                    mCharacters.get(position).getMembershipType(),
+                    mCharacters.get(position).getCharacterId() //destination character
+            );
 
-                    }, throwable -> {
-                        Log.d("EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
-                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage());
-                    });
+            transferToVault(mTransferVaultBody, mTransferCharacterBody, mEquipBody, true);
 
         });
 
@@ -269,6 +269,95 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    private void transferToVault(TransferItemRequestBody transferBody,
+                                 TransferItemRequestBody toCharacterBody,
+                                 EquipItemRequestBody equipBody,
+                                 boolean isEquipping){
+
+        mBungieApi.transferItem(transferBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+
+                    if(!response.getErrorCode().equals("1")){
+                        Log.d("TRANSFER_ERROR: "+response.getErrorCode(), response.getMessage());
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(),
+                                false,
+                                response.getMessage(),
+                                true);
+                    }
+                    else { //item is transferred, now equip to that character
+                        if(isEquipping){
+
+                            transferToCharacter(toCharacterBody, equipBody, true);
+                        }
+                        else { //just transferring an item, we're done
+                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, true);
+                        }
+                    }
+
+                }, throwable -> {
+                    Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
+                    mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
+                });
+
+
+    }
+
+    private void transferToCharacter(TransferItemRequestBody toCharacterBody,
+                                      EquipItemRequestBody equipBody,
+                                      boolean isEquipping) {
+
+        mBungieApi.transferItem(toCharacterBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+
+                    if(!response.getErrorCode().equals("1")){
+                        Log.d("TRANSFER_ERROR: "+response.getErrorCode(), response.getMessage());
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(),
+                                false,
+                                response.getMessage(),
+                                true);
+                    }
+                    else { //item is transferred, now equip to that character
+                        if(isEquipping){
+                            equipItem(equipBody);
+                        }
+                        else { //just transferring an item, we're done
+                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, true);
+                        }
+                    }
+
+                }, throwable -> {
+                    Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
+                    mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
+                });
+    }
+
+    private void equipItem(EquipItemRequestBody body) {
+
+        mBungieApi.equipItem(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+
+                    if(!response.getErrorCode().equals("1")){
+                        Log.d("EQUIP_ERROR: "+response.getErrorCode(), response.getMessage());
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(),
+                                false,
+                                response.getErrorCode()+": "+response.getMessage(),
+                                false);
+                    }
+                    else {
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, false);
+                    }
+
+                }, throwable -> {
+                    Log.d("EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
+                    mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), false);
+                });
+    }
 
 
 }

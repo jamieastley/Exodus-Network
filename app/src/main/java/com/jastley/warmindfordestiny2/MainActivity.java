@@ -776,7 +776,7 @@ public class MainActivity extends AppCompatActivity
 
             fragmentManager.beginTransaction()
                     .replace(R.id.lfg_content_frame, fragment)
-                    .addToBackStack("xurStack")
+//                    .addToBackStack("xurStack")
                     .commit();
         }
         else if (id == R.id.nav_inventory_fragment) {
@@ -786,7 +786,7 @@ public class MainActivity extends AppCompatActivity
 
             fragmentManager.beginTransaction()
                     .replace(R.id.lfg_content_frame, fragment)
-                    .addToBackStack("inventoryFragment")
+//                    .addToBackStack("inventoryFragment")
                     .commit();
         }
 
