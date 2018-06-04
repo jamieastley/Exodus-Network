@@ -761,14 +761,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_lfg) {
-            Intent lfgFeed = new Intent(this, MainActivity.class);
-            startActivity(lfgFeed);
+
+            Fragment fragment = LFGPostsFragment.newInstance();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.lfg_content_frame, fragment)
+                    .commit();
         }
-//        else if (id == R.id.nav_characters) {
-//
-//            Intent accountCharacters = new Intent(this, CharacterInventoryActivity.class);
-//            startActivity(accountCharacters);
-//        }
+
         else if (id == R.id.xur) {
             Fragment fragment = XurFragment.newInstance("something", "else");
 
@@ -798,33 +799,6 @@ public class MainActivity extends AppCompatActivity
             Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
             startActivity(oauthIntent);
         }
-
-//        switch(item.getItemId()){
-//            case R.id.nav_lfg:
-//                fragment = new LFGPostsFragment();
-//                break;
-//
-//            case R.id.nav_characters:
-//                //TODO: CHANGE THIS LATER
-////                fragment = new InventoryFragment();
-//                break;
-//
-//            case R.id.nav_refresh_account:
-//                getPlayerProfile();
-//                break;
-//
-//            case R.id.nav_log_in:
-//                Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
-//                startActivity(oauthIntent);
-//                break;
-//        }
-//
-//        item.setChecked(true);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.lfg_content_frame, fragment)
-//                .commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -14,7 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.*;
 
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.firebase.database.*;
@@ -51,6 +50,11 @@ public class LFGPostsFragment extends Fragment {
 
     public LFGPostsFragment() {
         // Required empty public constructor
+    }
+
+    public static LFGPostsFragment newInstance() {
+
+        return new LFGPostsFragment();
     }
 
     @Override

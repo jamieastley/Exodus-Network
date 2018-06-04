@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.jastley.warmindfordestiny2.LFG.fragments.LFGPostsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <ProgressBar
         android:id="@+id/lfg_progress_bar"
         style="?android:attr/progressBarStyleHorizontal"

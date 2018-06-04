@@ -2,6 +2,7 @@ package com.jastley.warmindfordestiny2.Characters.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 
 import java.util.Comparator;
 
@@ -80,7 +81,14 @@ public class InventoryItemModel implements Parcelable {
     }
 
     public void setItemHash(String itemHash) {
-        this.itemHash = itemHash;
+
+        Long converted = Long.valueOf(itemHash);
+        if(converted > 2147483647L){
+            this.itemHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
+        }
+        else {
+            this.itemHash = itemHash;
+        }
     }
 
     public String getItemInstanceId() {

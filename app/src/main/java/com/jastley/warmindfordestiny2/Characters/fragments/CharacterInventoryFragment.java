@@ -348,6 +348,17 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             itemList.add(itemModel);
                         }
 
+                        //TODO: sort list
+//                        Comparator<InventoryItemModel> sortedItems = (o1, o2) -> {
+//
+//                            String itemHash1 = o1.getItemHash();
+//                            String itemHash2 = o2.getItemHash();
+//
+//                            return itemHash1.compareTo(itemHash2);
+//                        };
+//
+//                        itemList = sortedItems;
+
                         getManifestData(itemHashList, unsignedHashList);
                     }
 
