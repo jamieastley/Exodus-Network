@@ -20,5 +20,27 @@
         android:icon="@drawable/icon_filter_white"
         android:orderInCategory="100"
         android:title="@string/action_filter"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+
+        >
+
+        <menu>
+            <item
+                android:id="@+id/filter_none"
+                android:icon="@drawable/icon_clear"
+                android:title="@string/none"/>
+            <item
+                android:id="@+id/filter_psn"
+                android:icon="@drawable/icon_psn"
+                android:title="@string/psn"/>
+            <item
+                android:id="@+id/filter_xbox"
+                android:icon="@drawable/icon_xbl"
+                android:title="@string/xbox"/>
+            <item
+                android:id="@+id/filter_bnet"
+                android:icon="@drawable/icon_blizzard"
+                android:title="@string/battlenet"/>
+        </menu>
+    </item>
 </menu>

@@ -31,6 +31,14 @@
         <item name="android:windowBackground">@color/bungieBackground</item>
     </style>
 
+    <style name="ToolbarDropdownTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="colorPrimary">@color/warmindPrimary</item>
+        <item name="colorPrimaryDark">@color/warmindDark</item>
+        <item name="colorAccent">@color/warmindAccent</item>
+        <item name="android:colorBackground">@color/bungieBackground</item>
+    </style>
+
     <!--<style name="SpinnerItemStyle" parent="@style/Widget.AppCompat.Spinner.DropDown">-->
     <!--<item name="android:textColor">@color/colorWhite</item>-->
     <!--<item name="android:background">@color/warmindCardBackground</item>-->

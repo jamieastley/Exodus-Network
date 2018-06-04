@@ -92,7 +92,7 @@ public class LFGPostsFragment extends Fragment {
 
         //Load LFG posts from Firebase
 //        mSwipeRefreshLayout.setRefreshing(true);
-        loadLFGPosts();
+        loadLFGPosts(null);
 
         //Hide FAB when scrolling
         mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -115,7 +115,7 @@ public class LFGPostsFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 //            mSwipeRefreshLayout.setRefreshing(true);
-            loadLFGPosts();
+            loadLFGPosts(null);
             mLFGPostAdapter.notifyDataSetChanged();
         });
     }
@@ -157,15 +157,41 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        Query query;
+
         switch(item.getItemId()){
 
             case R.id.action_refresh:
                 mSwipeRefreshLayout.setRefreshing(true);
-                loadLFGPosts();
+                loadLFGPosts(null);
                 mLFGPostAdapter.notifyDataSetChanged();
                 break;
             case R.id.action_filter:
-                Toast.makeText(getContext(), "it works", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.filter_none:
+                loadLFGPosts(null);
+                break;
+
+            case R.id.filter_psn:
+                query = mDatabase.child("lfg")
+                        .orderByChild("membershipType")
+                        .equalTo("2");
+                loadLFGPosts(query);
+                break;
+
+            case R.id.filter_xbox:
+                query = mDatabase.child("lfg")
+                        .orderByChild("membershipType")
+                        .equalTo("1");
+                loadLFGPosts(query);
+                break;
+
+            case R.id.filter_bnet:
+                query = mDatabase.child("lfg")
+                        .orderByChild("membershipType")
+                        .equalTo("4");
+                loadLFGPosts(query);
                 break;
         }
 
@@ -183,18 +209,19 @@ public class LFGPostsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
 
-    public void loadLFGPosts() {
+    public void loadLFGPosts(Query lfgQuery) {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mSwipeRefreshLayout.setRefreshing(true);
 
-
-        Query query = mDatabase.child("lfg")
+        //load all posts, don't filter
+        if(lfgQuery == null){
+        lfgQuery = mDatabase.child("lfg")
                 .orderByChild("dateTime");
-//                .limitToLast(3);
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        }
+        lfgQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

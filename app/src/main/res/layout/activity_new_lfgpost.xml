@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity">
+    tools:context="com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity"
+    android:id="@+id/new_LFG_coordinator_layout"
+    >
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -115,3 +122,5 @@
 
 
 </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

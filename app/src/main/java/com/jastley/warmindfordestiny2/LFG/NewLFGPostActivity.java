@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -47,7 +48,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
     private String displayName;
     private boolean hasMic = false;
     private boolean onCreateFlag = true;
-    DialogFragment loadingDialog;// = new LoadingDialogFragment();
     List<Response_GetAllCharacters.CharacterData> mCharacterList = new ArrayList<>();
 
 
@@ -59,9 +59,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
 
-
-//        Intent intent = getIntent();
-//        displayName = intent.getStringExtra("displayName");
         SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
         displayName = savedPrefs.getString("displayName"+selectedPlatform, "");
@@ -277,7 +274,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
                             membershipId, emblemIcon, emblemBackground, characterId);
 
 
-                //            TODO: Loading dialog
                 DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
 
@@ -286,6 +282,11 @@ public class NewLFGPostActivity extends AppCompatActivity {
                         returnIntent.putExtra("result", 1);
                         setResult(1);
                         finish();
+                    }
+                    else {
+                        dismissLoadingFragment();
+                        Snackbar.make(findViewById(R.id.new_LFG_coordinator_layout), "Couldn't submit post!", Snackbar.LENGTH_LONG)
+                                .show();
                     }
 
                 });
