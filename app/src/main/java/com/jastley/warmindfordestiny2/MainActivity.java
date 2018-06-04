@@ -867,6 +867,11 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == 1){
+
+            LFGPostsFragment postsFragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
+
+            postsFragment.loadLFGPosts();
+
             Snackbar.make(findViewById(R.id.activity_main_content), "Post submitted!", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null)
                     .show();

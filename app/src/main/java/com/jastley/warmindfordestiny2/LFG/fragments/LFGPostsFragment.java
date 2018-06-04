@@ -91,7 +91,7 @@ public class LFGPostsFragment extends Fragment {
         mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         //Load LFG posts from Firebase
-        mSwipeRefreshLayout.setRefreshing(true);
+//        mSwipeRefreshLayout.setRefreshing(true);
         loadLFGPosts();
 
         //Hide FAB when scrolling
@@ -114,7 +114,7 @@ public class LFGPostsFragment extends Fragment {
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mSwipeRefreshLayout.setRefreshing(true);
+//            mSwipeRefreshLayout.setRefreshing(true);
             loadLFGPosts();
             mLFGPostAdapter.notifyDataSetChanged();
         });
@@ -183,10 +183,11 @@ public class LFGPostsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
 
-    private void loadLFGPosts() {
+    public void loadLFGPosts() {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        mSwipeRefreshLayout.setRefreshing(true);
 
 
         Query query = mDatabase.child("lfg")

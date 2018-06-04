@@ -237,10 +237,10 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                 String descriptionText = description.getText().toString().trim();
 
-                if(!description.getText().toString().matches("")) {
+                if(description.getText().toString().matches("")) {
                     descriptionText = "No description provided.";
                 }
-                    showLoadingDialog();
+                    showLoadingDialog("Submitting...", "Please wait");
                     item.setEnabled(false);
 
                     int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
@@ -401,10 +401,10 @@ public class NewLFGPostActivity extends AppCompatActivity {
         }
     }
 
-    public void showLoadingDialog() {
-        loadingDialog = new LoadingDialogFragment();
-        loadingDialog.setCancelable(false);
-        loadingDialog.show(getFragmentManager(), "loadingDialog");
+    private void showLoadingDialog(String title, String message) {
+        LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
+        fragment.setCancelable(false);
+        fragment.show(this.getFragmentManager(), "loadingDialog");
     }
 
     private void dismissLoadingFragment() {
