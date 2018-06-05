@@ -292,7 +292,7 @@ public class XurFragment extends Fragment {
                     String locationBanner = factionObj.get("vendors").getAsJsonArray().get(vendorIndex).getAsJsonObject().get("backgroundImagePath").getAsString();
 
                     System.out.println(locationBanner);
-                    Picasso.with(getContext())
+                    Picasso.get()
                             .load(baseURL +"/"+ locationBanner)
                             .into(xurImageBanner);
 

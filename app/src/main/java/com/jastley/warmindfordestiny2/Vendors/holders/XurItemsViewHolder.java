@@ -37,7 +37,7 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
     public void setItemIcon(String url, Context context) {
         this.imageUrl = url;
 
-        Picasso.with(context)
+        Picasso.get()
                 .load(baseURL + url)
                 .placeholder(R.drawable.missing_icon_d2)
                 .into(itemIcon);
@@ -67,7 +67,7 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
         this.costIconUrl = url;
 
         if(url != null){
-            Picasso.with(context)
+            Picasso.get()
                 .load(baseURL + url)
                 .placeholder(R.drawable.missing_icon_d2)
                 .into(this.itemCostImage);

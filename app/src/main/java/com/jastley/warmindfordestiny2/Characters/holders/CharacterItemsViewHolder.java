@@ -70,7 +70,7 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     public void setItemImage(String url, Context context) {
 //        this.itemImage = itemImage;
         this.imageUrl = url;
-        Picasso.with(context)
+        Picasso.get()
             .load(baseURL+url)
             .placeholder(R.drawable.missing_icon_d2)
             .into(this.itemImage);

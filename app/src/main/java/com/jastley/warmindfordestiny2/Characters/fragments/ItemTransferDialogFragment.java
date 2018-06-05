@@ -161,7 +161,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
             }
         }
-        Picasso.with(getContext())
+        Picasso.get()
                 .load(baseURL + selectedItem.getItemIcon())
                 .placeholder(R.drawable.missing_icon_d2)
                 .into(itemImage);

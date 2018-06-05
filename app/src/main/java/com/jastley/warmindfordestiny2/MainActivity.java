@@ -691,7 +691,7 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < emblems.size(); i++) {
 
             int finalI = i;
-            Picasso.with(this)
+            Picasso.get()
                     .load(baseURL + emblems.get(i))
                     .into(new Target() {
                         @Override
@@ -729,8 +729,8 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                            Log.d("PICASSO_EMBLEM_DOWNLOAD", e.getLocalizedMessage());
                         }
 
                         @Override

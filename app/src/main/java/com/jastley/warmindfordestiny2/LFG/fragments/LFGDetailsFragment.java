@@ -231,7 +231,7 @@ public class LFGDetailsFragment extends Fragment {
             String membershipId = savedInstanceModel.getMembershipId();
             String membershipType = savedInstanceModel.getMembershipType();
 
-            Picasso.with(getContext())
+            Picasso.get()
                     .load(baseURL+savedInstanceModel.getEmblemBackground())
                     .into(emblemBackground);
 
@@ -272,7 +272,7 @@ public class LFGDetailsFragment extends Fragment {
             String membershipType = receivedPlayerClick.getMembershipType();
             String characterId = receivedPlayerClick.getCharacterId();
 
-            Picasso.with(getContext())
+            Picasso.get()
                     .load(baseURL+receivedPlayerClick.getEmblemBackground())
                     .into(emblemBackground);
 

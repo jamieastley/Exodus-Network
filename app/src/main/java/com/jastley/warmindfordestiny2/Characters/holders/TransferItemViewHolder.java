@@ -87,9 +87,10 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
 
         this.imageURL = url;
 
-        Picasso.with(context)
-                .load(baseURL+ url)
+        Picasso.get()
+                .load(baseURL + url)
                 .into(this.emblemBackground);
+
     }
 
 //    public TextView getLightLevel() {

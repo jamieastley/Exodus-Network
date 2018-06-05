@@ -40,7 +40,7 @@ public class LFGFactionsViewHolder extends RecyclerView.ViewHolder {
     public void setFactionIcon(String url, Context context) {
 //        this.factionIcon = factionIcon;
 
-        Picasso.with(context)
+        Picasso.get()
                 .load(baseURL + url)
                 .placeholder(R.drawable.missing_icon_d2)
                 .into(this.factionIcon);

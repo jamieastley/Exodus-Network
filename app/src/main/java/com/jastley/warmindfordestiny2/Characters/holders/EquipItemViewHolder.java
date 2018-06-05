@@ -34,7 +34,7 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
 
         this.imageURL = iconUrl;
 
-        Picasso.with(context)
+        Picasso.get()
                 .load(baseURL + iconUrl)
                 .into(this.emblemIcon);
     }
