@@ -59,7 +59,6 @@ dependencies {
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.0'
     implementation 'android.arch.persistence.room:rxjava2:1.1.0'
 
-    compile 'com.google.firebase:firebase-core:16.0.0'
     compile 'com.google.firebase:firebase-database:16.0.1'
 
 
