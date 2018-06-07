@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,7 +12,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.ButterKnife;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
 import com.jastley.warmindfordestiny2.Characters.fragments.InventoryFragment;
@@ -39,7 +40,6 @@ import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.fragments.LFGDetailsFragment;
 import com.jastley.warmindfordestiny2.LFG.fragments.LFGPostsFragment;
-import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
@@ -67,7 +67,7 @@ import static com.jastley.warmindfordestiny2.api.clientKeys.clientSecret;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
                     PlatformSelectionListener,
-                    LFGDetailsFragment.OnFragmentInteractionListener,
+                    LFGDetailsFragment.OnDetailsFragmentInteraction,
                     LFGPostsFragment.OnFragmentInteractionListener,
                     XurFragment.OnFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,
@@ -82,7 +82,8 @@ public class MainActivity extends AppCompatActivity
     ActionBarDrawerToggle toggle;
 
     NavigationView navigationView;
-    FloatingActionButton faButton;
+    DrawerLayout mDrawer;
+//    @BindView(R.id.fab) FloatingActionButton faButton;
 
     private String redirectUri = "warmindfordestiny://callback";
 
@@ -94,40 +95,22 @@ public class MainActivity extends AppCompatActivity
 //        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.lfg_feed);
         setSupportActionBar(toolbar);
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-        String membershipType = savedPrefs.getString("selectedPlatform", "");
-        String displayName = savedPrefs.getString("displayName"+membershipType, "");
-
-        if((displayName != "") && (membershipType != "")) {
-
-            FloatingActionButton fab = findViewById(R.id.fab);
-            fab.setOnClickListener(view -> {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null)
-//                        .show();
 
 
-                //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
-                Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
-                intent.putExtra("displayName", displayName);
 
-                startActivityForResult(intent, 1);
-            });
-        }
 
-        hideShowMenuItems();
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        mDrawer = findViewById(R.id.drawer_layout);
 
         toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
 
         toggle.syncState();
 
@@ -137,44 +120,10 @@ public class MainActivity extends AppCompatActivity
 
         postsFragment = new LFGPostsFragment();
         setFragment(postsFragment);
-//        TextView displayName = hView.findViewById(R.id.nav_displayName);
 
-//        mLFGRecyclerView = findViewById(R.id.lfg_recycler_view);
-//        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this);
-//        mLinearLayoutManager.setReverseLayout(true);
-//        mLinearLayoutManager.setStackFromEnd(true);
-//        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
-//
-////        mLFGRecyclerView.setAdapter(mLFGPostAdapter); //TODO: may need to remove?
-//
-//                //Load LFG posts from Firebase
-//                loadLFGPosts();
-//                mLFGPostAdapter.startListening();
 
-//        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
-//        if(selectedPlatform != "") {
-//            String name = savedPrefs.getString("displayName"+selectedPlatform, "");
-//            displayName.setText(name);
-//
-//            for(int i = 0; i < 3; i++){
-//
-//                int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
-//                String emblem = savedPrefs.getString("emblemIcon"+i, "");
-//                if(emblem != ""){
-//
-//                    ImageView emblemIcon = hView.findViewById(resID);
-//
-//                    Picasso.with(this)
-//                        .load(baseURL+emblem)
-//                        .fit()
-//                        .transform(new CropCircleTransformation())
-//                        .into(emblemIcon);
-//                }
-//            }
-//        }
-//        asyncGetCollectables();
         updateNavUI(hView);
+        hideShowMenuItems();
     }
 
 
@@ -195,7 +144,8 @@ public class MainActivity extends AppCompatActivity
         }
         navigationView = findViewById(R.id.nav_view);
         Menu navMenu = navigationView.getMenu();
-        faButton = findViewById(R.id.fab);
+
+//        Bundle args = new Bundle();
 
         if((displayName != "") && (membershipType != "")) {
 
@@ -203,27 +153,20 @@ public class MainActivity extends AppCompatActivity
             navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
 
-
-            String finalDisplayName = displayName;
-            faButton.setOnClickListener(view -> {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null)
-//                        .show();
-
-
-                //TODO: try passing emblemIcon links and other sharedPrefs values here via intentArgs
-                Intent intent = new Intent(getApplicationContext(), NewLFGPostActivity.class);
-                intent.putExtra("displayName", finalDisplayName);
-
-                startActivityForResult(intent, 1);
-            });
+//            postsFragment.isFabVisible(true);
+//            args.putString("fab", "show");
+//            faButton.show();
         }
         else { //not logged in
             navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
-            faButton.hide();
+//            faButton.hide();
+//            args.putString("fab", "hide");
+//            postsFragment.isFabVisible(false);
         }
+
+//        postsFragment.putArguments(args);
 
     }
 
@@ -271,16 +214,15 @@ public class MainActivity extends AppCompatActivity
             }
             navigationView = findViewById(R.id.nav_view);
             Menu navMenu = navigationView.getMenu();
-            faButton = findViewById(R.id.fab);
+
             navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
-            faButton.show();
+//            faButton.show();
         }
     }
 
     public void showLoadingDialog(String title, String message) {
-//        loadingDialog = new LoadingDialogFragment();
         LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
         fragment.setCancelable(false);
         fragment.show(getFragmentManager(), "loadingDialog");
@@ -352,11 +294,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showUpButton() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().ge
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void hideUpButton() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
 
     @Override
@@ -436,7 +379,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     catch(Exception e){
                         Log.d("ACCESS_TOKEN(CALLBACK?)", e.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.activity_main_content), "An error occurred while trying to authorize.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "An error occurred while trying to authorize.", Snackbar.LENGTH_LONG)
                                 .show();
                     }
                 });
@@ -464,17 +407,17 @@ public class MainActivity extends AppCompatActivity
                         editor.putString("access_token", accessToken.getAccessToken());
                         editor.putLong("token_age", System.currentTimeMillis());
                         editor.apply();
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Authorization refreshed.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Authorization refreshed.", Snackbar.LENGTH_LONG)
                                 .show();
 
                     } catch (Exception e) {
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null) //TODO: Retry button here
                                 .show();
                     }
                 }, throwable -> {
                     Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
-                    Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null) //TODO: Retry button here
                             .show();
                 });
@@ -495,7 +438,7 @@ public class MainActivity extends AppCompatActivity
 
                     if(!currentUser.getErrorCode().equals("1")){
                         Log.d("GET_CURRENT_USER", currentUser.getMessage());
-                        Snackbar.make(findViewById(R.id.activity_main_content), currentUser.getMessage(), Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), currentUser.getMessage(), Snackbar.LENGTH_LONG)
                                 .setAction("Action", null) //TODO: Retry button here
                                 .show();
                     }
@@ -534,7 +477,7 @@ public class MainActivity extends AppCompatActivity
                                 }
                                 catch(Exception e){
                                     Log.d("GET_CURRENT_USER_PARSE", e.getLocalizedMessage());
-                                    Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
+                                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
                                             .setAction("Action", null)
                                             .show();
                                     dismissLoadingFragment();
@@ -570,12 +513,18 @@ public class MainActivity extends AppCompatActivity
                         }
                         catch(Exception e){
                             Log.d("GET_CURRENT_USER", e.getLocalizedMessage());
-                            Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't retrieve membership data.", Snackbar.LENGTH_SHORT)
+                            Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't retrieve membership data.", Snackbar.LENGTH_SHORT)
                                     .setAction("Action", null)
                                     .show();
                             dismissLoadingFragment();
                         }
                     }
+                }, throwable -> {
+                    Log.d("GET_CURRENT_USER", throwable.getLocalizedMessage());
+                    dismissLoadingFragment();
+                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Retry", v -> getMembershipsForCurrentUser())
+                            .show();
                 });
     }
 
@@ -616,7 +565,7 @@ public class MainActivity extends AppCompatActivity
 
                     if(!charactersObj.get("ErrorCode").getAsString().equals("1")) {
                         Log.d("GET_ALL_CHARACTERS", charactersObj.get("Message").getAsString());
-                        Snackbar.make(findViewById(R.id.activity_main_content), charactersObj.get("Message").getAsString(), Snackbar.LENGTH_SHORT)
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), charactersObj.get("Message").getAsString(), Snackbar.LENGTH_SHORT)
                                 .setAction("Action", null) //TODO: retry button
                                 .show();
                     }
@@ -678,7 +627,7 @@ public class MainActivity extends AppCompatActivity
 
                 }, throwable -> {
                     Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
-                    Snackbar.make(findViewById(R.id.activity_main_content), throwable.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
+                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), throwable.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
                             .setAction("Action", null)
                             .show();
                     dismissLoadingFragment();
@@ -687,6 +636,8 @@ public class MainActivity extends AppCompatActivity
 
     private void downloadEmblems(List<String> emblems) {
 
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View hView =  navigationView.getHeaderView(0);
 
         for (int i = 0; i < emblems.size(); i++) {
 
@@ -716,12 +667,13 @@ public class MainActivity extends AppCompatActivity
                                 fos.flush();
                                 fos.close();
 
-//                                if(finalI == emblems.size() -1){
-//                                    NavigationView navigationView = findViewById(R.id.nav_view);
-//                                    View hView =  navigationView.getHeaderView(0);
-//                                    updateNavUI(hView);
-//                                    dismissLoadingFragment();
-//                                }
+                                int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+
+                                ImageView emblemIcon = hView.findViewById(resID);
+
+                                RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
+                                roundedDrawable.setCircular(true);
+                                emblemIcon.setImageDrawable(roundedDrawable);
                             }
                             catch(Exception e){
                                 Log.d("EMBLEM_DOWNLOAD", e.getLocalizedMessage());
@@ -731,16 +683,31 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                             Log.d("PICASSO_EMBLEM_DOWNLOAD", e.getLocalizedMessage());
+                            int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+
+                            ImageView emblemIcon = hView.findViewById(resID);
+                            Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
+
+                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
+                            roundedDrawable.setCircular(true);
+                            emblemIcon.setImageDrawable(roundedDrawable);
                         }
 
                         @Override
                         public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
 
+                            ImageView emblemIcon = hView.findViewById(resID);
+                            Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
+
+                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
+                            roundedDrawable.setCircular(true);
+                            emblemIcon.setImageDrawable(roundedDrawable);
                         }
                     });
         }
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        View hView =  navigationView.getHeaderView(0);
+
+        toggleFab();
         updateNavUI(hView);
         dismissLoadingFragment();
 
@@ -807,7 +774,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(SelectedPlayerModel playerModel) {
-//        LFGDetailsFragment.OnFragmentInteractionListener.onFra;
+//        LFGDetailsFragment.OnDetailsFragmentInteraction.onFra;
     }
 
 //    public class retryListener implements View.OnClickListener{
@@ -846,9 +813,22 @@ public class MainActivity extends AppCompatActivity
 
             postsFragment.loadLFGPosts(null);
 
-            Snackbar.make(findViewById(R.id.activity_main_content), "Post submitted!", Snackbar.LENGTH_SHORT)
+            Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Post submitted!", Snackbar.LENGTH_SHORT)
                     .setAction("Action", null)
                     .show();
         }
     }
+
+    @Override
+    public void LFGDetailsListener() {
+//        faButton.hide();
+    }
+
+   public void toggleFab() {
+        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
+        if(fragment != null){
+            fragment.toggleFAButton();
+        }
+
+   }
 }

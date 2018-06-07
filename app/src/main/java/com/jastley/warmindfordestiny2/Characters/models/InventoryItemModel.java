@@ -82,13 +82,13 @@ public class InventoryItemModel implements Parcelable {
 
     public void setItemHash(String itemHash) {
 
-        Long converted = Long.valueOf(itemHash);
-        if(converted > 2147483647L){
-            this.itemHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
-        }
-        else {
+//        Long converted = Long.valueOf(itemHash);
+//        if(converted > 2147483647L){
+//            this.itemHash = UnsignedHashConverter.convert(Long.valueOf(itemHash));
+//        }
+//        else {
             this.itemHash = itemHash;
-        }
+//        }
     }
 
     public String getItemInstanceId() {

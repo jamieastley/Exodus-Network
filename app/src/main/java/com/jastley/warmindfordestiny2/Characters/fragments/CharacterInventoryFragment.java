@@ -191,7 +191,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             System.out.println("FragmentInteraction triggered");
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDetailsFragmentInteraction");
         }
     }
 

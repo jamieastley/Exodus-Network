@@ -1,22 +1,29 @@
 package com.jastley.warmindfordestiny2.LFG.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.*;
 
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.google.firebase.database.*;
+import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
 import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
 import com.jastley.warmindfordestiny2.LFG.adapters.LFGPostRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.holders.LFGPostViewHolder;
@@ -27,6 +34,8 @@ import com.jastley.warmindfordestiny2.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,8 +54,11 @@ public class LFGPostsFragment extends Fragment {
     private DatabaseReference mDatabase;
     private LFGPostRecyclerAdapter mLFGPostAdapter;
     private List<LFGPost> lfgPosts = new ArrayList<>();
+    private SharedPreferences savedPrefs;
 
-    FloatingActionButton mFab;
+    private String displayName = "";
+
+    @BindView(R.id.fab) FloatingActionButton mFab;
 
     public LFGPostsFragment() {
         // Required empty public constructor
@@ -86,8 +98,8 @@ public class LFGPostsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        super.onViewCreated(view, savedInstanceState);
 
-        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
-        mFab.setVisibility(View.VISIBLE);
+//        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
+//        mFab.setVisibility(View.VISIBLE);
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this.getContext());
         mLinearLayoutManager.setReverseLayout(true);
@@ -98,24 +110,31 @@ public class LFGPostsFragment extends Fragment {
 //        mSwipeRefreshLayout.setRefreshing(true);
         loadLFGPosts(null);
 
-        //Hide FAB when scrolling
-        mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        showHideFab();
 
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                    mFab.show();
+        //Hide FAB when scrolling
+//        if(mFab.isShown()){
+            mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        mFab.show();
+                    }
+
+                    super.onScrollStateChanged(recyclerView, newState);
                 }
 
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    if (dy > 0 ||dy<0 && mFab.isShown())
+                        mFab.hide();
+                }
+            });
+//        }
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0 ||dy<0 && mFab.isShown())
-                    mFab.hide();
-            }
-        });
+
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 //            mSwipeRefreshLayout.setRefreshing(true);
@@ -131,9 +150,16 @@ public class LFGPostsFragment extends Fragment {
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.lfg_feed));
 
+        MainActivity activity = (MainActivity)getActivity();
+        if(activity != null){
+
+            activity.setActionBarTitle(getString(R.string.lfg_feed));
+            activity.hideUpButton();
+        }
         TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
 
         mTabLayout.setVisibility(View.GONE);
+//        showHideFab();
     }
 
     @Override
@@ -143,7 +169,7 @@ public class LFGPostsFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDetailsFragmentInteraction");
         }
     }
 
@@ -294,18 +320,57 @@ public class LFGPostsFragment extends Fragment {
 
     }
 
-//    @Override
-//    public void onBackStackChanged() {
-//        if(getActivity().getSupportFragmentManager().getBackStackEntryCount() < 1) {
-//            ((MainActivity)getActivity()).hideUpButton();
-//        }
-//    }
+    public void isFabVisible(boolean b) {
+        if(b) {
+            mFab.setVisibility(View.VISIBLE);
+        }
+        else {
+            mFab.setVisibility(View.INVISIBLE);
+        }
+    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(SelectedPlayerModel playerModel);
     }
 
+    public void showHideFab(){
+
+        savedPrefs = this.getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String membershipType = savedPrefs.getString("selectedPlatform", "");
+        displayName = savedPrefs.getString("displayName"+membershipType, "");
+
+
+        if((displayName != "") && (membershipType != "")) {
+            mFab.setVisibility(View.VISIBLE);
+        }
+        else {
+            mFab.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        try{
+            savedPrefs = this.getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
+            String membershipType = savedPrefs.getString("selectedPlatform", "");
+            String displayName = savedPrefs.getString("displayName"+membershipType, "");
+
+            Intent intent = new Intent(getActivity().getApplicationContext(), NewLFGPostActivity.class);
+            intent.putExtra("displayName", displayName);
+
+            startActivityForResult(intent, 1);
+        }
+        catch(Exception e){
+            Log.d("FAB_CLICK", e.getLocalizedMessage());
+            Snackbar.make(getView(), "Couldn't read account data", Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    public void toggleFAButton() {
+        mFab.setVisibility(View.INVISIBLE);
+    }
 
 
 }

@@ -20,11 +20,11 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.LFG.adapters.LFGFactionsRecyclerAdapter;
-import com.jastley.warmindfordestiny2.LFG.holders.LFGFactionsViewHolder;
 import com.jastley.warmindfordestiny2.LFG.models.FactionProgressModel;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
@@ -46,7 +46,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LFGDetailsFragment.OnFragmentInteractionListener} interface
+ * {@link OnDetailsFragmentInteraction} interface
  * to handle interaction events.
  * Use the {@link LFGDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -86,7 +86,7 @@ public class LFGDetailsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnDetailsFragmentInteraction mListener;
     private BungieAPI mBungieAPI;
     List<FactionProgressModel> factionProgressionsList = new ArrayList<>();
 
@@ -130,24 +130,6 @@ public class LFGDetailsFragment extends Fragment {
         }
         setHasOptionsMenu(true);
 
-//        if(savedInstanceState != null){
-//            LFGPost savedInstanceModel = savedInstanceState.getParcelable("savedPlayerClick");
-//            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
-
-////            actionBar.setTitle(savedInstanceModel.getDisplayName());
-//            actionBar.setHomeButtonEnabled(true);
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-//
-//        else{
-//            ActionBar actionBar = ((MainActivity)getActivity()).getSupportActionBar();
-//            actionBar.setTitle(receivedPlayerClick.getDisplayName());
-//            actionBar.setHomeButtonEnabled(true);
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-
-//        ((MainActivity)getActivity()).showUpButton();
-//        setHasOptionsMenu(true);
     }
 
 
@@ -159,43 +141,19 @@ public class LFGDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_lfgdetails, container, false);
 
-        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
-        mFab.setVisibility(View.INVISIBLE);
+//        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
+//        mFab.setVisibility(View.INVISIBLE);
 
         toolbar = getActivity().findViewById(R.id.toolbar);
 
         appCompatActivity = (AppCompatActivity)getActivity();
         appCompatActivity.setSupportActionBar(toolbar);
 
-//        DrawerLayout drawer = getActivity().findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//
-//        toggle.setDrawerIndicatorEnabled(false);
-
-//        ((MainActivity) getActivity()).setDrawerHomeIcon();
-
-        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        appCompatActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_padded);
-//
-//        appCompatActivity.getSupportActionBar().setHomeButtonEnabled(true);
-
-
 
 //        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-//        toolbar.setTitle("Test");
+//        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        appCompatActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_padded);
 
-//        SelectedPlayerModel clicked = mListener.onFragmentInteraction();
-
-//        Toast.makeText(getActivity(), , Toast.LENGTH_SHORT).show();
-//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getActivity().onBackPressed();
-//            }
-//        });
 
         ButterKnife.bind(this, view);
 
@@ -333,10 +291,13 @@ public class LFGDetailsFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ((MainActivity) getActivity())
-                .setActionBarTitle(getString(R.string.postDetails));
-        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        MainActivity activity = (MainActivity)getActivity();
+        if(activity != null) {
+            activity.setActionBarTitle(getString(R.string.postDetails));
 
+    //        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+            activity.showUpButton();
+        }
         TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
 
         mTabLayout.setVisibility(View.GONE);
@@ -345,11 +306,11 @@ public class LFGDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnDetailsFragmentInteraction) {
+            mListener = (OnDetailsFragmentInteraction) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDetailsFragmentInteraction");
         }
     }
 
@@ -384,9 +345,9 @@ public class LFGDetailsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnDetailsFragmentInteraction {
         // TODO: Update argument type and name
-
+        void LFGDetailsListener();
 
     }
 
@@ -398,10 +359,9 @@ public class LFGDetailsFragment extends Fragment {
                 .subscribe(response -> {
 
                     //Something went wrong
-                    String errorCode = response.getErrorCode();
-                    if(!errorCode.equals("1")) {
+                    if(!response.getErrorCode().equals("1")) {
                         String errorMessage = response.getMessage();
-                        Snackbar.make(getView(),  "Error "+ errorCode +": "+ errorMessage, Snackbar.LENGTH_LONG)
+                        Snackbar.make(getView(),  errorMessage, Snackbar.LENGTH_LONG)
                                 .setAction("Action", null)
                                 .show();
                     }
@@ -411,7 +371,15 @@ public class LFGDetailsFragment extends Fragment {
                     }
                     groupNameProgress.setVisibility(View.GONE);
                 },
-                error -> groupName.setText(""));
+                error -> {
+                    groupName.setText("");
+                    groupNameProgress.setVisibility(View.GONE);
+
+                    Snackbar.make(getView(), "Couldn't get clan data.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .show();
+                });
+
     }
 
     public void getHistoricalStatsAccount(String membershipType, String membershipId) {
@@ -457,7 +425,9 @@ public class LFGDetailsFragment extends Fragment {
                     playTime.setText("-");
                     lifeSpan.setText("-");
                     kdRatio.setText("-");
-                    Snackbar.make(getView(), "Couldn't get clan data.", Snackbar.LENGTH_LONG)
+                    statsValuesProgress.setVisibility(View.GONE);
+
+                    Snackbar.make(getView(), "Couldn't get account stats.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null)
                             .show();
                 });
@@ -503,10 +473,20 @@ public class LFGDetailsFragment extends Fragment {
                         getFactionData(factionHashList, unsignedFactionHashList);
                     }
                 },throwable -> {
-                    Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
-                        .show();
-//                    factionLoadingBar.setVisibility(View.GONE);
-//                    factionCardView.setVisibility(View.GONE);
+
+                    factionLoadingBar.setVisibility(View.GONE);
+                    factionCardView.setVisibility(View.GONE);
+
+                    if(throwable instanceof NoNetworkException) {
+                        Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> retryLoadData())
+                                .show();
+                    }
+                    else {
+                        Snackbar.make(getView(), "Couldn't get faction stats.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+                    }
         });
     }
 
@@ -553,6 +533,19 @@ public class LFGDetailsFragment extends Fragment {
                     factionLoadingBar.setVisibility(View.GONE);
                     factionCardView.setVisibility(View.GONE);
                 });
+    }
+
+    private void retryLoadData() {
+
+//        show loading spinners again
+        groupNameProgress.setVisibility(View.VISIBLE);
+        statsValuesProgress.setVisibility(View.VISIBLE);
+        factionLoadingBar.setVisibility(View.VISIBLE);
+        factionCardView.setVisibility(View.VISIBLE);
+
+        getHistoricalStatsAccount(receivedPlayerClick.getMembershipType(), receivedPlayerClick.getMembershipId());
+        getGroupDetails(receivedPlayerClick.getMembershipType(), receivedPlayerClick.getMembershipId());
+        getFactionStats(receivedPlayerClick.getMembershipType(), receivedPlayerClick.getMembershipId(), receivedPlayerClick.getCharacterId());
     }
 }
 

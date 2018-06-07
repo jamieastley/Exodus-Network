@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
@@ -130,7 +131,7 @@ public class InventoryFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDetailsFragmentInteraction");
         }
     }
 
@@ -138,6 +139,15 @@ public class InventoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity)getActivity();
+        if(activity != null) {
+            activity.setActionBarTitle(getString(R.string.manageInventory));
+        }
     }
 
     /**

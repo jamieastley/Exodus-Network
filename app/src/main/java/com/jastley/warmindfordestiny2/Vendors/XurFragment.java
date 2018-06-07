@@ -76,7 +76,7 @@ public class XurFragment extends Fragment {
     @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
 
     XurItemsRecyclerAdapter mXurRecyclerAdapter;
-    FloatingActionButton mFab;
+//    FloatingActionButton mFab;
 
 
 //    final InventoryItemDAO mCollectibleDAO = AppDatabase.getAppDatabase(context).getInventoryItemDAO();
@@ -121,8 +121,8 @@ public class XurFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
-        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
-        mFab.setVisibility(View.INVISIBLE);
+//        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
+//        mFab.setVisibility(View.INVISIBLE);
 
         // Inflate the layout for this fragment
         return rootView;
@@ -172,7 +172,7 @@ public class XurFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnDetailsFragmentInteraction");
         }
     }
 
