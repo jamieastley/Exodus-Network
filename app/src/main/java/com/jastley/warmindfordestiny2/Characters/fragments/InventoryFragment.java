@@ -31,6 +31,8 @@ import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.models.Account;
 import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class InventoryFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @BindView(R.id.parent_inventory_viewpager) ViewPager mViewPager;
 //    @BindView((getActivity())R.id.inventory_sliding_tabs)
@@ -98,6 +102,12 @@ public class InventoryFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.dispose();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -139,6 +149,8 @@ public class InventoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
+        compositeDisposable.dispose();
     }
 
     @Override
@@ -217,7 +229,7 @@ public class InventoryFragment extends Fragment {
     public void getAccountCharacters() {
 
         AccountDAO mAccountDAO = AppDatabase.getAppDatabase(getContext()).getAccountDAO();
-        mAccountDAO.getAll()
+        Disposable disposable = mAccountDAO.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accounts -> {
@@ -284,6 +296,8 @@ public class InventoryFragment extends Fragment {
                             .setAction("Retry", v -> getAccountCharacters())
                             .show();
                 });
+
+        compositeDisposable.add(disposable);
     }
 
 }

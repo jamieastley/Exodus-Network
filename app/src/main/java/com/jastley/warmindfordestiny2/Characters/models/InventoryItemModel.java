@@ -29,6 +29,7 @@ public class InventoryItemModel implements Parcelable {
     private String itemIcon;
     private String itemTypeDisplayName;
     private Long itemUnsignedHash;
+    private String primaryKey;
 
     //Transferring/equipping
     private int tabIndex;
@@ -257,5 +258,19 @@ public class InventoryItemModel implements Parcelable {
         dest.writeInt(tabIndex);
     }
 
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String key) {
+
+        Long converted = Long.valueOf(key);
+        if(converted > 2147483647L){
+            this.primaryKey = UnsignedHashConverter.convert(converted);
+        }
+        else {
+            this.primaryKey = key;
+        }
+    }
 
 }

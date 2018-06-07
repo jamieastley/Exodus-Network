@@ -167,7 +167,7 @@ public class Response_FactionProgression {
 
         @Expose
         @SerializedName("factionHash")
-        private Long factionHash;
+        private String factionHash;
 
         @Expose
         @SerializedName("factionVendorIndex")
@@ -217,7 +217,7 @@ public class Response_FactionProgression {
         @SerializedName("nextLevelAt")
         private String nextLevelAt;
 
-        public Long getFactionHash() {
+        public String getFactionHash() {
             return factionHash;
         }
 

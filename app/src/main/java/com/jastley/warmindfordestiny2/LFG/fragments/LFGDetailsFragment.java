@@ -2,6 +2,8 @@ package com.jastley.warmindfordestiny2.LFG.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,9 +38,13 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -81,6 +88,8 @@ public class LFGDetailsFragment extends Fragment {
     LFGFactionsRecyclerAdapter mFactionProgressRecyclerAdapter;
 
 //    @BindView(R.id.lfg_details_emblem_icon) ImageView emblemIcon;
+
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -353,7 +362,7 @@ public class LFGDetailsFragment extends Fragment {
 
     public void getGroupDetails(String membershipType, String membershipId) {
 
-        mBungieAPI.getClanData(membershipType, membershipId)
+        Disposable disposable = mBungieAPI.getClanData(membershipType, membershipId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -380,11 +389,13 @@ public class LFGDetailsFragment extends Fragment {
                             .show();
                 });
 
+        compositeDisposable.add(disposable);
+
     }
 
     public void getHistoricalStatsAccount(String membershipType, String membershipId) {
 
-        mBungieAPI.getHistoricalStatsAccount(membershipType, membershipId)
+        Disposable disposable = mBungieAPI.getHistoricalStatsAccount(membershipType, membershipId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -431,14 +442,15 @@ public class LFGDetailsFragment extends Fragment {
                             .setAction("Action", null)
                             .show();
                 });
+        compositeDisposable.add(disposable);
     }
 
 
     public void getFactionStats(String membershipType, String membershipId, String characterId){
 
-        mBungieAPI.getFactionProgress(membershipType, membershipId, characterId)
+        Disposable disposable = mBungieAPI.getFactionProgress(membershipType, membershipId, characterId)
                 .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(response_factionProgression -> {
 
                     if(!response_factionProgression.getErrorCode().equals("1")){
@@ -446,22 +458,21 @@ public class LFGDetailsFragment extends Fragment {
                                 .show();
                     }
                     else{
-                        List<String> factionHashList = new ArrayList<>();
-                        List<String> unsignedFactionHashList = new ArrayList<>();
+                        ArrayList<String> factionHashList = new ArrayList<>();
 
                         //get stats from API response, keySet required for iteration instead of forLoop .get(i)
                         for(Iterator iterator = response_factionProgression.getResponse().getProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext();){
+
                             FactionProgressModel factionProgressModel = new FactionProgressModel();
+
                             String currentKey = (String)iterator.next();
+                            String primaryKey = UnsignedHashConverter.getPrimaryKey(currentKey);
 
-                            Long factionHashTest = response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash();
-
-                            String unsignedTotal = UnsignedHashConverter.convert(factionHashTest);
-                            factionHashList.add(factionHashTest.toString());
-                            unsignedFactionHashList.add(unsignedTotal);
+                            factionHashList.add(primaryKey);
 
 
-                            System.out.println("forLoop: " + factionHashTest);
+                            Log.d("FACTION_API_RESPONSE", primaryKey);
+                            factionProgressModel.setPrimaryKey(primaryKey);
                             factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
                             factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
                             factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
@@ -470,7 +481,12 @@ public class LFGDetailsFragment extends Fragment {
 
                             factionProgressionsList.add(factionProgressModel);
                         }
-                        getFactionData(factionHashList, unsignedFactionHashList);
+
+                        Collections.sort(factionHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
+
+                        Collections.sort(factionProgressionsList, (f1, f2) -> Long.valueOf(f1.getPrimaryKey()).compareTo(Long.valueOf((f2.getPrimaryKey()))));
+
+                        getFactionData(factionHashList);
                     }
                 },throwable -> {
 
@@ -488,17 +504,18 @@ public class LFGDetailsFragment extends Fragment {
                                 .show();
                     }
         });
+        compositeDisposable.add(disposable);
     }
 
 
 
-    public void getFactionData(List<String> hashes, List<String> unsigned) {
+    public void getFactionData(List<String> hashes) {
 
         FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
 
-        mFactionDAO.getFactionsListByKey(hashes, unsigned)
+        Disposable disposable = mFactionDAO.getFactionsListByKey(hashes)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(factions -> {
 
                     for (int i = 0; i < factions.size(); i++) {
@@ -506,33 +523,40 @@ public class LFGDetailsFragment extends Fragment {
                         JsonParser parser = new JsonParser();
                         JsonObject factionObj = (JsonObject) parser.parse(factions.get(i).getValue());
 
-                        for (int j = 0; j < factionProgressionsList.size(); j++) {
+                        if(factions.get(i).getId().equals(factionProgressionsList.get(i).getPrimaryKey())) {
 
-                            if(factionProgressionsList.get(j).getFactionHash().toString().equals(factionObj.get("hash").getAsString())){
+//                            factionProgressionsList.get(i).getFactionHash().toString().equals(factionObj.get("hash").getAsString());
 
-                                System.out.println("inside forLoop: " + factionProgressionsList.get(i).getFactionHash());
-                                System.out.println("Room: " + factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                            System.out.println("inside forLoop: " + factionProgressionsList.get(i).getFactionHash());
+                            System.out.println("Room: " + factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
 
-                                //Append manifest data to faction progressions for character
-                                factionProgressionsList.get(j).setFactionName(factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
-                                factionProgressionsList.get(j).setFactionIconUrl(factionObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
-                            }
+                            //Append manifest data to faction progressions for character
+                            factionProgressionsList.get(i).setFactionName(factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                            factionProgressionsList.get(i).setFactionIconUrl(factionObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
                         }
                     }
 
-                    mFactionProgressRecyclerAdapter = new LFGFactionsRecyclerAdapter(getContext(), factionProgressionsList);
-                    int spanCount = 2;
-                    GridLayoutManager gridManager = new GridLayoutManager(getContext(), spanCount);
-                    mFactionProgressRecyclerView.setLayoutManager(gridManager);
-                    mFactionProgressRecyclerView.setNestedScrollingEnabled(false);
-                    mFactionProgressRecyclerView.setAdapter(mFactionProgressRecyclerAdapter);
-                    factionLoadingBar.setVisibility(View.GONE);
+                    //get back onto UI thread
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    Runnable mRunnable = () -> {
+                        mFactionProgressRecyclerAdapter = new LFGFactionsRecyclerAdapter(getContext(), factionProgressionsList);
+                        int spanCount = 2;
+                        GridLayoutManager gridManager = new GridLayoutManager(getContext(), spanCount);
+                        mFactionProgressRecyclerView.setLayoutManager(gridManager);
+                        mFactionProgressRecyclerView.setNestedScrollingEnabled(false);
+                        mFactionProgressRecyclerView.setAdapter(mFactionProgressRecyclerAdapter);
+                        factionLoadingBar.setVisibility(View.GONE);
+                    };
+                    mainHandler.post(mRunnable);
+
                 }, throwable -> {
                     Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
                         .show();
                     factionLoadingBar.setVisibility(View.GONE);
                     factionCardView.setVisibility(View.GONE);
                 });
+
+        compositeDisposable.add(disposable);
     }
 
     private void retryLoadData() {

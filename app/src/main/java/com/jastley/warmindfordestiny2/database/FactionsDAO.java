@@ -32,6 +32,6 @@ public interface FactionsDAO {
 //    Maybe<List<DestinyFactionDefinition>> getFactionsListByKey(List<String> itemKey);
 
 
-    @Query("SELECT * FROM DestinyFactionDefinition WHERE id IN (:itemKey) OR id IN (:unsigned)")
-    Maybe<List<DestinyFactionDefinition>> getFactionsListByKey(List<String> itemKey, List<String> unsigned);
+    @Query("SELECT * FROM DestinyFactionDefinition WHERE id IN (:itemKey)")
+    Maybe<List<DestinyFactionDefinition>> getFactionsListByKey(List<String> itemKey);
 }

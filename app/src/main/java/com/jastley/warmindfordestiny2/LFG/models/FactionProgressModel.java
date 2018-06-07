@@ -1,15 +1,18 @@
 package com.jastley.warmindfordestiny2.LFG.models;
 
+import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
+
 public class FactionProgressModel {
 
     private String factionName;
-    private Long factionHash;
+    private String factionHash;
     private String progressionHash;
     private String currentProgress;
     private String level;
     private String progressToNextLevel;
     private String nextLevelAt;
     private String factionIconUrl;
+    private String primaryKey;
 
     public FactionProgressModel() {
     }
@@ -22,11 +25,11 @@ public class FactionProgressModel {
         this.factionName = factionName;
     }
 
-    public Long getFactionHash() {
+    public String getFactionHash() {
         return factionHash;
     }
 
-    public void setFactionHash(Long factionHash) {
+    public void setFactionHash(String factionHash) {
         this.factionHash = factionHash;
     }
 
@@ -76,5 +79,20 @@ public class FactionProgressModel {
 
     public void setFactionIconUrl(String factionIconUrl) {
         this.factionIconUrl = factionIconUrl;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String key) {
+
+        Long converted = Long.valueOf(key);
+        if(converted > 2147483647L){
+            this.primaryKey = UnsignedHashConverter.convert(converted);
+        }
+        else {
+            this.primaryKey = key;
+        }
     }
 }

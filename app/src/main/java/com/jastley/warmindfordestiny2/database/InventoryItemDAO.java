@@ -31,8 +31,8 @@ public interface InventoryItemDAO {
     @Query("SELECT * FROM DestinyInventoryItemDefinition WHERE id = :itemKey")
     Maybe<DestinyInventoryItemDefinition> getItemByKey(String itemKey);
 
-    @Query("SELECT * FROM DestinyInventoryItemDefinition WHERE id IN (:itemKey) OR id IN (:unsignedVal)")
-    Maybe<List<DestinyInventoryItemDefinition>> getItemsListByKey(List<String> itemKey, List<String> unsignedVal);
+    @Query("SELECT * FROM DestinyInventoryItemDefinition WHERE id IN (:itemKey)")
+    Maybe<List<DestinyInventoryItemDefinition>> getItemsListByKey(List<String> itemKey);
 
     @Update
     void update(DestinyInventoryItemDefinition destinyInventoryItemDefinitionRow);

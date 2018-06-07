@@ -25,6 +25,8 @@ import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.io.*;
@@ -39,6 +41,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
+    CompositeDisposable compositeDisposables = new CompositeDisposable();
 
     @BindView(R.id.splash_icon) ImageView splashIcon;
     @BindView(R.id.splash_text) TextView splashText;
@@ -84,7 +87,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         savedPrefs = this.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
 
         BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, this);
-        mBungieAPI.getBungieManifests()
+        Disposable manifestDisposable =  mBungieAPI.getBungieManifests()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response_getBungieManifest -> {
@@ -116,6 +119,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                             //set flags so pressing back won't trigger launching splash screen again
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                            //dispose of observables
+                            compositeDisposables.dispose();
                             startActivity(intent);
                             finish();
                         }
@@ -126,13 +132,14 @@ public class SplashScreenActivity extends AppCompatActivity {
                         showErrorDialog("No network detected", "An active internet connection is required!");
                     }
                 });
+        compositeDisposables.add(manifestDisposable);
     }
 
     private void getUpdateManifests(String url){
 
         BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, this);
 
-        mBungieAPI.downloadUrlContent(url)
+        Disposable disposable = mBungieAPI.downloadUrlContent(url)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(responseBody -> {
@@ -191,6 +198,8 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                     });
 
+        compositeDisposables.add(disposable);
+
     }
 
     private void unzipManifest(String path){
@@ -238,6 +247,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
         finally {
             intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+
+            //dispose of observables
+            compositeDisposables.dispose();
 
             //set flags so pressing back won't trigger launching splash screen again
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
