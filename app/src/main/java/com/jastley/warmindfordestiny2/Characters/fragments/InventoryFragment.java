@@ -292,7 +292,7 @@ public class InventoryFragment extends Fragment {
                     });
                 }, throwable -> {
                     Log.d("GET_ACCOUNT_CHARACTERS", throwable.getLocalizedMessage());
-                    Snackbar.make(getView(), "Couldn't get account data!", Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.make(getView(), "Unable to read account data!", Snackbar.LENGTH_INDEFINITE)
                             .setAction("Retry", v -> getAccountCharacters())
                             .show();
                 });

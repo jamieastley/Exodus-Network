@@ -32,6 +32,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
 import com.jastley.warmindfordestiny2.Characters.fragments.InventoryFragment;
@@ -85,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout mDrawer;
 //    @BindView(R.id.fab) FloatingActionButton faButton;
 
+    List<Target> targets = new ArrayList<>();
     private String redirectUri = "warmindfordestiny://callback";
 
 
@@ -636,94 +640,121 @@ public class MainActivity extends AppCompatActivity
 
     private void downloadEmblems(List<String> emblems) {
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
         View hView =  navigationView.getHeaderView(0);
+
+
 
         for (int i = 0; i < emblems.size(); i++) {
 
-            int finalI = i;
+            final int finalI = i;
+
+//            final int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+
+//            final ImageView emblemIcon = hView.findViewById(resID);
+
+
+
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                    try{
+                        File dir = getDir("emblems", MODE_PRIVATE);
+                        if(!dir.exists()){
+                            dir.mkdir();
+                        }
+
+                        File path = new File(dir, finalI +".jpeg");
+                        //delete file if already exists, player may have updated their emblem so we need the new one
+                        if(path.exists()){
+                            if(path.delete()){
+                                Log.d("EMBLEM_DOWNLOAD_DELETE", path.toString() + " deleted.");
+                            }
+                        }
+                        FileOutputStream fos = new FileOutputStream(path);
+                        int quality = 100;
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+                        fos.flush();
+                        fos.close();
+
+//                        Log.d("EMBLEM_DOWNLOADED", String.valueOf(finalI));
+//
+//                        final int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+//
+//                        final ImageView emblemIcon = hView.findViewById(resID);
+//
+//                        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+//                        roundedDrawable.setCircular(true);
+//                        emblemIcon.setImageDrawable(roundedDrawable);
+                        if(finalI == emblems.size() -1){
+                            targets = null;
+//                            updateNavUI(hView);
+                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//
+                            //set flags so pressing back won't trigger previous state of MainActivity
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                    catch(Exception e){
+                        Log.d("EMBLEM_DOWNLOAD", e.getLocalizedMessage());
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    Log.d("PICASSO_EMBLEM_DOWNLOAD", e.getLocalizedMessage());
+                    int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+
+                    ImageView emblemIcon = hView.findViewById(resID);
+                    Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
+
+                    RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
+                    roundedDrawable.setCircular(true);
+                    emblemIcon.setImageDrawable(roundedDrawable);
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+
+                    ImageView emblemIcon = hView.findViewById(resID);
+                    Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
+
+                    RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
+                    roundedDrawable.setCircular(true);
+                    emblemIcon.setImageDrawable(roundedDrawable);
+                }
+            };
+//
+            targets.add(target);
+////            final int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
+////            final ImageView emblemIcon = hView.findViewById(resID);
+//
             Picasso.get()
-                    .load(baseURL + emblems.get(i))
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                            try{
-                                File dir = getDir("emblems", MODE_PRIVATE);
-                                if(!dir.exists()){
-                                    dir.mkdir();
-                                }
-
-                                File path = new File(dir, finalI +".jpeg");
-                                //delete file if already exists, player may have updated their emblem so we need the new one
-                                if(path.exists()){
-                                    if(path.delete()){
-                                        Log.d("EMBLEM_DOWNLOAD_DELETE", path.toString() + " deleted.");
-                                    }
-                                }
-                                FileOutputStream fos = new FileOutputStream(path);
-                                int quality = 100;
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
-                                fos.flush();
-                                fos.close();
-
-                                int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
-
-                                ImageView emblemIcon = hView.findViewById(resID);
-
-                                RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
-                                roundedDrawable.setCircular(true);
-                                emblemIcon.setImageDrawable(roundedDrawable);
-                            }
-                            catch(Exception e){
-                                Log.d("EMBLEM_DOWNLOAD", e.getLocalizedMessage());
-                            }
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                            Log.d("PICASSO_EMBLEM_DOWNLOAD", e.getLocalizedMessage());
-                            int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
-
-                            ImageView emblemIcon = hView.findViewById(resID);
-                            Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
-
-                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
-                            roundedDrawable.setCircular(true);
-                            emblemIcon.setImageDrawable(roundedDrawable);
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
-
-                            ImageView emblemIcon = hView.findViewById(resID);
-                            Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
-
-                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
-                            roundedDrawable.setCircular(true);
-                            emblemIcon.setImageDrawable(roundedDrawable);
-                        }
-                    });
+                    .load(baseURL + emblems.get(finalI))
+                    .into(target);
         }
 
         toggleFab();
-        updateNavUI(hView);
+//        updateNavUI(hView);
         dismissLoadingFragment();
 
     }
+
 
     private void dismissLoadingFragment() {
         DialogFragment loadingFragment = (DialogFragment)getFragmentManager().findFragmentByTag("loadingDialog");
         if (loadingFragment != null){
             loadingFragment.dismiss();
         }
-        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-
-        //set flags so pressing back won't trigger previous state of MainActivity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+//        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//
+//        //set flags so pressing back won't trigger previous state of MainActivity
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        startActivity(intent);
+//        finish();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
