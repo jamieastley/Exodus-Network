@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity
                         editor.putLong("token_age", System.currentTimeMillis());
                         editor.apply();
 
-                        Log.d("ACCESS_TOKEN", accessToken.toString());
+                        Log.d("ACCESS_TOKEN", accessToken.getAccessToken());
 
 
                         //We're authorised, now get currentUser player profile
@@ -718,6 +718,12 @@ public class MainActivity extends AppCompatActivity
         if (loadingFragment != null){
             loadingFragment.dismiss();
         }
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+
+        //set flags so pressing back won't trigger previous state of MainActivity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

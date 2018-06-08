@@ -37,7 +37,7 @@
 
         <!--top percent spacer for class type-->
         <android.support.v4.widget.Space
-            android:id="@+id/transfer_class_spacer_top"
+            android:id="@+id/top_left_spacer"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_default="percent"
@@ -54,7 +54,7 @@
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.5"
             app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
-            app:layout_constraintTop_toBottomOf="@id/transfer_class_spacer_top"
+            app:layout_constraintTop_toBottomOf="@id/top_left_spacer"
             android:textColor="@color/colorWhite"
             android:text="@string/vault"
             android:textSize="15sp"

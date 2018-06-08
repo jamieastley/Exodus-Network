@@ -119,7 +119,7 @@ public class LFGPostsFragment extends Fragment {
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (mFab.isShown() && newState == RecyclerView.SCROLL_STATE_IDLE) {
                         mFab.show();
                     }
 
