@@ -123,4 +123,9 @@ public interface BungieAPI {
                                                  @Path("membershipId") String membershipId,
                                                  @Path("characterId") String characterId,
                                                  @Path("vendorHash") String vendorHash);
+
+    /**** MILESTONES ***/
+
+    @GET("/Platform/Destiny2/Milestones/")
+    Observable<Response_GetMilestones> getMilestones();
 }

@@ -154,7 +154,7 @@ public class LFGPostsFragment extends Fragment {
         if(activity != null){
 
             activity.setActionBarTitle(getString(R.string.lfg_feed));
-            activity.hideUpButton();
+//            activity.hideUpButton();
         }
         TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
 

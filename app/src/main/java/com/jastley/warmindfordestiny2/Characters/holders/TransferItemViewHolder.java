@@ -17,7 +17,7 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
 //    @BindView(R.id.transfer_class_name) TextView classType;
     @BindView(R.id.transfer_emblem_background) ImageView emblemBackground;
     @BindView(R.id.transfer_light_level) TextView mLightLevel;
-    @BindView(R.id.milestone_description) TextView mBaseLevel;
+    @BindView(R.id.transfer_class_level) TextView mBaseLevel;
     @BindView(R.id.transfer_class_type) TextView mClassType;
 
     private String characterId;

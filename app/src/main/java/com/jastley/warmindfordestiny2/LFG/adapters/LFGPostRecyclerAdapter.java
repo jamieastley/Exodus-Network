@@ -24,7 +24,6 @@ import java.util.List;
 public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHolder> {
 
     private Context context;
-    private ProgressBar lfgProgressBar;
     private int lastPosition = -1;
     List<LFGPost> posts;
 
@@ -41,9 +40,6 @@ public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHold
 
         View mView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.lfg_list_item, parent, false);
-
-        lfgProgressBar = ((Activity) context).findViewById(R.id.lfg_progress_bar);
-        lfgProgressBar.setVisibility(View.INVISIBLE);
 
         final LFGPostViewHolder holder = new LFGPostViewHolder(mView);
 

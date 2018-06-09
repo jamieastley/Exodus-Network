@@ -52,7 +52,7 @@
                 />
 
             <TextView
-                android:id="@+id/transfer_class_type"
+                android:id="@+id/milestone_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintWidth_default="percent"
@@ -76,18 +76,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-
-            <TextView
-                android:id="@+id/transfer_light_level"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                app:layout_constraintTop_toTopOf="@id/top_right_spacer"
-                app:layout_constraintEnd_toEndOf="@id/milestone_image"
-                android:textSize="22sp"
-                android:textColor="@color/lightLevelBlue"
-                />
-
             <!--bottom percent spacer for class type-->
             <android.support.v4.widget.Space
                 android:id="@+id/bottom_left_spacer"
@@ -107,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:layout_marginEnd="5dp"
-                app:layout_constraintTop_toBottomOf="@+id/transfer_class_type"
+                app:layout_constraintTop_toBottomOf="@+id/milestone_name"
 
                 app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +114,7 @@
                 >
 
                 <ImageView
-                    android:id="@+id/reward_image"
+                    android:id="@+id/milestone_reward_image"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="5dp"
@@ -134,11 +122,11 @@
                     />
 
                 <TextView
-                    android:id="@+id/reward_name"
+                    android:id="@+id/milestone_reward_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/reward_image"
+                    android:layout_toEndOf="@id/milestone_reward_image"
                     android:paddingStart="5dp"
                     android:text="Legendary Vanguard Engram"
                     android:textSize="12sp"

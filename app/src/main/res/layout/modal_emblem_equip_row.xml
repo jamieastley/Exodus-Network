@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/equip_emblem_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             />

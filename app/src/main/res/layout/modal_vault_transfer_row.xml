@@ -48,7 +48,7 @@
             />
 
         <TextView
-            android:id="@+id/transfer_class_type"
+            android:id="@+id/milestone_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintWidth_default="percent"

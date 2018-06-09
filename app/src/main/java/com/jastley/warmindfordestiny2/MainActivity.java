@@ -33,8 +33,6 @@ import android.widget.Toast;
 
 import butterknife.ButterKnife;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
 import com.jastley.warmindfordestiny2.Characters.fragments.InventoryFragment;
@@ -46,6 +44,7 @@ import com.jastley.warmindfordestiny2.LFG.fragments.LFGPostsFragment;
 import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
+import com.jastley.warmindfordestiny2.Milestones.fragments.MilestonesFragment;
 import com.jastley.warmindfordestiny2.Vendors.XurFragment;
 import com.jastley.warmindfordestiny2.api.*;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity
                     LFGDetailsFragment.OnDetailsFragmentInteraction,
                     LFGPostsFragment.OnFragmentInteractionListener,
                     XurFragment.OnFragmentInteractionListener,
+                    MilestonesFragment.OnMilestoneFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,
                     ItemTransferDialogFragment.OnFragmentInteractionListener,
                     InventoryFragment.OnFragmentInteractionListener {
@@ -81,12 +81,10 @@ public class MainActivity extends AppCompatActivity
     private LFGPostsFragment postsFragment;
     SharedPreferences savedPrefs;
     DialogFragment platformDialog;
-    DialogFragment loadingDialog;// = new LoadingDialogFragment();
     ActionBarDrawerToggle toggle;
 
     NavigationView navigationView;
     DrawerLayout mDrawer;
-//    @BindView(R.id.fab) FloatingActionButton faButton;
 
     List<Target> targets = new ArrayList<>();
     private String redirectUri = "warmindfordestiny://callback";
@@ -104,10 +102,7 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitle(R.string.lfg_feed);
         setSupportActionBar(toolbar);
 
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         mDrawer = findViewById(R.id.drawer_layout);
@@ -125,6 +120,44 @@ public class MainActivity extends AppCompatActivity
         postsFragment = new LFGPostsFragment();
         setFragment(postsFragment);
 
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
+            if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
+                toggle.setDrawerIndicatorEnabled(false);
+                toggle.syncState();
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+
+
+            } else {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setHomeButtonEnabled(true);
+                toggle.setDrawerIndicatorEnabled(true);
+                toggle.syncState();
+            }
+        });
+
+        /** because toolbar is passed into ActionBarDrawerToggle, onOptionsItemSelected won't register so this is required as workaround **/
+        toggle.setToolbarNavigationClickListener(view -> {
+            int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
+            if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
+                getSupportFragmentManager().popBackStack();
+
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setHomeButtonEnabled(true);
+                toggle.setDrawerIndicatorEnabled(true);
+                toggle.syncState();
+
+            } else {
+                toggle.setDrawerIndicatorEnabled(false);
+                toggle.syncState();
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+            }
+
+        });
 
         updateNavUI(hView);
         hideShowMenuItems();
@@ -268,13 +301,18 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+//        int id = item.getItemId();
+//
+        switch(item.getItemId()){
 
-//        switch(item.getItemId()){
-//            case android.R.id.home:
-//                getSupportFragmentManager().popBackStack();
-//                return true;
+            case android.R.id.home:
+                getSupportFragmentManager().popBackStack();
+                return true;
+        }
+//        if(toggle.onOptionsItemSelected(item)) {
+//            return true;
 //        }
+
 
         //noinspection SimplifiableIfStatement
 //        if (id == R.id.action_logout) {
@@ -297,14 +335,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void showUpButton() {
-//        getSupportActionBar().ge
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
-    public void hideUpButton() {
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -642,17 +672,9 @@ public class MainActivity extends AppCompatActivity
 
         View hView =  navigationView.getHeaderView(0);
 
-
-
         for (int i = 0; i < emblems.size(); i++) {
 
             final int finalI = i;
-
-//            final int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
-
-//            final ImageView emblemIcon = hView.findViewById(resID);
-
-
 
             Target target = new Target() {
                 @Override
@@ -677,18 +699,11 @@ public class MainActivity extends AppCompatActivity
                         fos.flush();
                         fos.close();
 
-//                        Log.d("EMBLEM_DOWNLOADED", String.valueOf(finalI));
-//
-//                        final int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
-//
-//                        final ImageView emblemIcon = hView.findViewById(resID);
-//
-//                        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-//                        roundedDrawable.setCircular(true);
-//                        emblemIcon.setImageDrawable(roundedDrawable);
+                        Log.d("EMBLEM_DOWNLOADED", String.valueOf(finalI));
+
                         if(finalI == emblems.size() -1){
                             targets = null;
-//                            updateNavUI(hView);
+
                             Intent intent = new Intent(MainActivity.this, MainActivity.class);
 //
                             //set flags so pressing back won't trigger previous state of MainActivity
@@ -727,11 +742,9 @@ public class MainActivity extends AppCompatActivity
                     emblemIcon.setImageDrawable(roundedDrawable);
                 }
             };
-//
+
             targets.add(target);
-////            final int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
-////            final ImageView emblemIcon = hView.findViewById(resID);
-//
+
             Picasso.get()
                     .load(baseURL + emblems.get(finalI))
                     .into(target);
@@ -763,6 +776,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
+
+        if(id == android.R.id.home) {
+            Log.d("you idiot", "hurdur");
+        }
 
         if (id == R.id.nav_lfg) {
 
@@ -840,6 +857,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -868,4 +886,9 @@ public class MainActivity extends AppCompatActivity
         }
 
    }
+
+    @Override
+    public void OnMilestoneFragmentInteractionListener(Uri uri) {
+
+    }
 }

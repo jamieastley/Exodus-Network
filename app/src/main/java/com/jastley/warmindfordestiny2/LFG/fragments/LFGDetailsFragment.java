@@ -155,8 +155,12 @@ public class LFGDetailsFragment extends Fragment {
 
         toolbar = getActivity().findViewById(R.id.toolbar);
 
-        appCompatActivity = (AppCompatActivity)getActivity();
-        appCompatActivity.setSupportActionBar(toolbar);
+//        appCompatActivity = (AppCompatActivity)getActivity();
+//        appCompatActivity.setSupportActionBar(toolbar);
+//
+//        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        appCompatActivity.getSupportActionBar().setHomeButtonEnabled(true);
 
 
 //        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -271,7 +275,7 @@ public class LFGDetailsFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         //clear actionBar buttons from previous fragment (filter/refresh)
-//        menu.clear();
+        menu.clear();
 //        // Inflate the menu; this adds items to the action bar if it is present.
 //        inflater.inflate(R.menu.app_bar_new_lfg, menu);
 
@@ -284,8 +288,8 @@ public class LFGDetailsFragment extends Fragment {
         switch(item.getItemId()){
 
             case android.R.id.home:
-                appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(false);
-                appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//                appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(false);
+//                appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 //                appCompatActivity.getSupportActionBar().set
                 getActivity().onBackPressed();
                 break;
@@ -305,7 +309,7 @@ public class LFGDetailsFragment extends Fragment {
             activity.setActionBarTitle(getString(R.string.postDetails));
 
     //        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-            activity.showUpButton();
+
         }
         TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
 
@@ -330,30 +334,6 @@ public class LFGDetailsFragment extends Fragment {
     }
 
 
-
-
-//    @Override
-//    public void onFragmentInteraction(SelectedPlayerModel playerModel) {
-//
-//
-//        receivedPlayerClick = playerModel;
-//    }
-
-//    @Override
-//    public void onFragmentInteraction(SelectedPlayerModel playerModel) {
-//        Toast.makeText(getActivity(), playerModel.getEmblemBackground(), Toast.LENGTH_SHORT).show();
-//    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnDetailsFragmentInteraction {
         // TODO: Update argument type and name
         void LFGDetailsListener();
