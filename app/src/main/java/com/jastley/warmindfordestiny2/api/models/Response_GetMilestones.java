@@ -4,27 +4,52 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Map;
 
 public class Response_GetMilestones {
 
-    /** Milestone top-level **/
-
     @Expose
-    @SerializedName("milestoneHash")
-    private String milestoneHash;
+    @SerializedName("Response")
+    private Map<String, MilestoneHashes> milestoneHashes;
     @Expose
-    @SerializedName("availableQuests")
-    private List<AvailableQuests> availableQuests;
+    @SerializedName("ErrorCode")
+    private String errorCode;
+    @Expose
+    @SerializedName("Message")
+    private String message;
 
-    public String getMilestoneHash() {
-        return milestoneHash;
+    public Map<String, MilestoneHashes> getMilestoneHashes() {
+        return milestoneHashes;
     }
 
-    public List<AvailableQuests> getAvailableQuests() {
-        return availableQuests;
+    public String getErrorCode() {
+        return errorCode;
     }
 
+    public String getMessage() {
+        return message;
+    }
 
+    /** Milestone data **/
+
+    public static class MilestoneHashes {
+
+        @Expose
+        @SerializedName("milestoneHash")
+        private String milestoneHash;
+        @Expose
+        @SerializedName("availableQuests")
+        private List<AvailableQuests> availableQuests;
+
+        public String getMilestoneHash() {
+            return milestoneHash;
+        }
+
+        public List<AvailableQuests> getAvailableQuests() {
+            return availableQuests;
+        }
+
+    }
 
     public static class AvailableQuests {
 

@@ -5,8 +5,13 @@ public class MilestoneModel {
     private String milestoneName;
     private String milestoneDescription;
     private String milestoneImageURL;
+    private String milestoneRewardHash;
     private String milestoneRewardName;
     private String milestoneRewardImageURL;
+    private String milestoneHash;
+
+    //Room/database
+    private String primaryKey;
 
     public MilestoneModel() {
     }
@@ -49,5 +54,29 @@ public class MilestoneModel {
 
     public void setMilestoneRewardImageURL(String milestoneRewardImageURL) {
         this.milestoneRewardImageURL = milestoneRewardImageURL;
+    }
+
+    public void setMilestoneHash(String milestoneHash) {
+        this.milestoneHash = milestoneHash;
+    }
+
+    public String getMilestoneHash() {
+        return milestoneHash;
+    }
+
+    public String getMilestoneRewardHash() {
+        return milestoneRewardHash;
+    }
+
+    public void setMilestoneRewardHash(String milestoneRewardHash) {
+        this.milestoneRewardHash = milestoneRewardHash;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
     }
 }

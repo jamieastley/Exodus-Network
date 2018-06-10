@@ -59,6 +59,7 @@ public class LFGPostsFragment extends Fragment {
     private String displayName = "";
 
     @BindView(R.id.fab) FloatingActionButton mFab;
+    private boolean isFabVisible = false;
 
     public LFGPostsFragment() {
         // Required empty public constructor
@@ -113,13 +114,13 @@ public class LFGPostsFragment extends Fragment {
         showHideFab();
 
         //Hide FAB when scrolling
-//        if(mFab.isShown()){
+//        if(isFabVisible){
             mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
                 @Override
                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
-                    if (mFab.isShown() && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (isFabVisible && newState == RecyclerView.SCROLL_STATE_IDLE) {
                         mFab.show();
                     }
 
@@ -320,14 +321,7 @@ public class LFGPostsFragment extends Fragment {
 
     }
 
-    public void isFabVisible(boolean b) {
-        if(b) {
-            mFab.setVisibility(View.VISIBLE);
-        }
-        else {
-            mFab.setVisibility(View.INVISIBLE);
-        }
-    }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -343,9 +337,12 @@ public class LFGPostsFragment extends Fragment {
 
         if((displayName != "") && (membershipType != "")) {
             mFab.setVisibility(View.VISIBLE);
+            isFabVisible = true;
+
         }
         else {
             mFab.setVisibility(View.INVISIBLE);
+            isFabVisible = false;
         }
     }
 

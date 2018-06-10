@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 
 import com.google.gson.JsonObject;
 import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
-import com.jastley.warmindfordestiny2.Characters.fragments.InventoryFragment;
+import com.jastley.warmindfordestiny2.Characters.fragments.ParentInventoryFragment;
 import com.jastley.warmindfordestiny2.Characters.fragments.ItemTransferDialogFragment;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity
                     MilestonesFragment.OnMilestoneFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,
                     ItemTransferDialogFragment.OnFragmentInteractionListener,
-                    InventoryFragment.OnFragmentInteractionListener {
+                    ParentInventoryFragment.OnFragmentInteractionListener {
 
 
     private LFGPostsFragment postsFragment;
@@ -791,6 +791,16 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
+        else if (id == R.id.nav_milestones) {
+            Fragment fragment = MilestonesFragment.newInstance();
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.lfg_content_frame, fragment)
+                    .commit();
+        }
+
         else if (id == R.id.xur) {
             Fragment fragment = XurFragment.newInstance("something", "else");
 
@@ -802,7 +812,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
         else if (id == R.id.nav_inventory_fragment) {
-            Fragment fragment = InventoryFragment.newInstance("string", "string2");
+            Fragment fragment = ParentInventoryFragment.newInstance("string", "string2");
 
             FragmentManager fragmentManager = getSupportFragmentManager();
 

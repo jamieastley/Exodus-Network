@@ -150,23 +150,8 @@ public class LFGDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_lfgdetails, container, false);
 
-//        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
-//        mFab.setVisibility(View.INVISIBLE);
 
         toolbar = getActivity().findViewById(R.id.toolbar);
-
-//        appCompatActivity = (AppCompatActivity)getActivity();
-//        appCompatActivity.setSupportActionBar(toolbar);
-//
-//        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        appCompatActivity.getSupportActionBar().setHomeButtonEnabled(true);
-
-
-//        appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        appCompatActivity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_padded);
-
 
         ButterKnife.bind(this, view);
 

@@ -13,6 +13,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,8 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
@@ -42,12 +43,12 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link InventoryFragment.OnFragmentInteractionListener} interface
+ * {@link ParentInventoryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link InventoryFragment#newInstance} factory method to
+ * Use the {@link ParentInventoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class InventoryFragment extends Fragment {
+public class ParentInventoryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -70,7 +71,7 @@ public class InventoryFragment extends Fragment {
 
     private int tabIndexCount;
 
-    public InventoryFragment() {
+    public ParentInventoryFragment() {
         // Required empty public constructor
     }
 
@@ -80,11 +81,11 @@ public class InventoryFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment InventoryFragment.
+     * @return A new instance of fragment ParentInventoryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static InventoryFragment newInstance(String param1, String param2) {
-        InventoryFragment fragment = new InventoryFragment();
+    public static ParentInventoryFragment newInstance(String param1, String param2) {
+        ParentInventoryFragment fragment = new ParentInventoryFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -99,6 +100,7 @@ public class InventoryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -160,6 +162,19 @@ public class InventoryFragment extends Fragment {
         if(activity != null) {
             activity.setActionBarTitle(getString(R.string.manageInventory));
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        //hide LFGPosts toolbar buttons
+        menu.clear();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     /**
