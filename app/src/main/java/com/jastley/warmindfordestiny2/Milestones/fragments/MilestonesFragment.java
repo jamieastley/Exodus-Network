@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.Milestones.ViewModels.MilestonesViewModel;
 import com.jastley.warmindfordestiny2.Milestones.adapters.MilestoneRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
@@ -112,6 +113,13 @@ public class MilestonesFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         compositeDisposable.dispose();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity())
+                .setActionBarTitle(getString(R.string.milestones));
     }
 
     @Override

@@ -40,12 +40,9 @@ public class InventoryItemModel implements Parcelable {
     private String costsQuantity;
     private String saleHistoryCount;
 
-    public InventoryItemModel(String itemHash, String itemInstanceId, String bucketHash, String primaryStatValue) {
-        this.itemHash = itemHash;
-        this.itemInstanceId = itemInstanceId;
-        this.bucketHash = bucketHash;
-        this.primaryStatValue = primaryStatValue;
-    }
+    //Sorting for RecyclerView
+    private int slot;
+    private String categoryName;
 
     public InventoryItemModel() {
     }
@@ -271,4 +268,19 @@ public class InventoryItemModel implements Parcelable {
         }
     }
 
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }

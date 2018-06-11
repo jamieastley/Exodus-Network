@@ -26,16 +26,16 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
 
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.xur_inventory_row, parent, false);
 
-        return new XurItemsViewHolder(mView);
+        return new XurItemsViewHolder(mView, mContext);
     }
 
     @Override
     public void onBindViewHolder(XurItemsViewHolder holder, int position) {
         holder.setItemName(xurItems.get(position).getItemName());
-        holder.setItemIcon(xurItems.get(position).getItemIcon(), mContext);
+        holder.setItemIcon(xurItems.get(position).getItemIcon());
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
-        holder.setItemCostImage(xurItems.get(position).getCostItemIcon(), mContext);
+        holder.setItemCostImage(xurItems.get(position).getCostItemIcon());
         holder.setItemCostText(xurItems.get(position).getCostsQuantity());
         holder.setSalesCount(xurItems.get(position).getSaleHistoryCount());
     }

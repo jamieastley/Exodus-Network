@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,8 +20,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import android.widget.Toast;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jastley.warmindfordestiny2.Inventory.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Inventory.holders.TransferItemViewHolder;
 import com.jastley.warmindfordestiny2.Inventory.interfaces.SuccessListener;
@@ -28,8 +30,11 @@ import com.jastley.warmindfordestiny2.Inventory.interfaces.TransferSelectListene
 import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
+import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.InventoryBucketDefinition;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
+import com.jastley.warmindfordestiny2.Vendors.HeaderItemDecoration;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
@@ -38,6 +43,7 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -200,6 +206,11 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         super.onDetach();
         mListener = null;
         compositeDisposable.dispose();
+
+        //Hide character tab bar
+        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+
+        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -270,16 +281,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(String uri);
@@ -339,6 +341,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             }
 //
                             itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
+                            itemModel.setSlot(InventoryBucketDefinition.sortBuckets(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash()));
                             //Required to manipulate UI on transfer/equip modal
                             itemModel.setClassType(mCharacter.getClassType());
                             itemModel.setTabIndex(mTabNumber);
@@ -418,7 +421,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             }
 
                             itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
-
+                            itemModel.setSlot(InventoryBucketDefinition.sortBuckets(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
                             //Required to manipulate UI on transfer/equip modal
                             itemModel.setClassType(mCharacter.getClassType());
                             itemModel.setTabIndex(mTabNumber);
@@ -453,16 +456,16 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
                     for (int i = 0; i < items.size(); i++) {
 
-                        JsonParser parser = new JsonParser();
-                        JsonObject itemObj = (JsonObject) parser.parse(items.get(i).getValue());
+                        Gson gson = new GsonBuilder().create();
+                        InventoryDataModel itemData = gson.fromJson(items.get(i).getValue(), InventoryDataModel.class);
 
-                        if(items.get(i).getId().equals(itemList.get(i).getPrimaryKey())) {
+                        if(itemData.getHash().equals(itemList.get(i).getItemHash())) {
 
-                                itemList.get(i).setItemName(itemObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
+                                itemList.get(i).setItemName(itemData.getDisplayProperties().getName());
                                 try{
                                     Log.d("InventoryAPIListHash: ", itemList.get(i).getItemHash());
-                                    Log.d("ManifestItemHash: ", itemObj.get("hash").getAsString());
-                                    itemList.get(i).setItemIcon(itemObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
+                                    Log.d("ManifestItemHash: ", itemData.getHash());
+                                    itemList.get(i).setItemIcon(itemData.getDisplayProperties().getIcon());
                                 }
                                 catch(Exception e){
                                     Log.d("getManifestData: ", e.getLocalizedMessage());
@@ -470,6 +473,10 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             }
 //                        }
                     }
+
+                    //sort by slot order for RVItemDecoration
+                    Collections.sort(itemList, (inventoryItemModel, t1) -> inventoryItemModel.getSlot() - t1.getSlot());
+
                     Handler mainHandler = new Handler(Looper.getMainLooper());
                     Runnable mRunnable = () -> {
                         setRecyclerView(itemList);
@@ -490,6 +497,18 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+
+        HeaderItemDecoration headerItemDecoration = new HeaderItemDecoration(20, true, new HeaderItemDecoration.SectionCallback() {
+            @Override
+            public boolean isSection(int position) {
+                return false;
+            }
+
+            @Override
+            public CharSequence getSectionHeader(int position) {
+                return InventoryBucketDefinition.getBucketName(itemList.get(position).getSlot());
+            }
+        });
 
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
             Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
@@ -527,6 +546,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+        mItemsRecyclerView.addItemDecoration(headerItemDecoration);
         mItemsRecyclerAdapter.notifyDataSetChanged();
         loadingProgress.setVisibility(View.GONE);
     }

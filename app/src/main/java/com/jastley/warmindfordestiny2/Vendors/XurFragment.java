@@ -31,6 +31,8 @@ import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.squareup.picasso.Picasso;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
@@ -63,6 +65,8 @@ public class XurFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private String locationIndex;
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     //Xur related stuff
     List<InventoryItemModel> xurItemsList = new ArrayList<>();
@@ -119,9 +123,6 @@ public class XurFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
-//        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
-//        mFab.setVisibility(View.INVISIBLE);
-
         // Inflate the layout for this fragment
         return rootView;
 
@@ -143,10 +144,6 @@ public class XurFragment extends Fragment {
 
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.xurInventory));
-
-        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
-
-        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -178,6 +175,7 @@ public class XurFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        compositeDisposable.dispose();
     }
 
     /**
@@ -201,7 +199,7 @@ public class XurFragment extends Fragment {
         BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(xurURL, getContext());
 
 
-        mBungieAPI.getXurWeeklyInventory(braytechApiKey, "history", "xur")
+        Disposable disposable = mBungieAPI.getXurWeeklyInventory(braytechApiKey, "history", "xur")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response_getXurWeekly -> {
@@ -257,10 +255,12 @@ public class XurFragment extends Fragment {
                                     xurItemsList.add(xurItem);
 
                                 }//end for loop
+
                                 mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext(), xurItemsList);
                                 mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                 mXurRecyclerView.setNestedScrollingEnabled(false);
                                 mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
+//                                mXurRecyclerView.addItemDecoration(headerItemDecoration);
                                 progressBar.setVisibility(View.GONE);
                             }
 
@@ -274,11 +274,12 @@ public class XurFragment extends Fragment {
                     },
                     this::getLocationBanner
                 );
+        compositeDisposable.add(disposable);
     }
 
     public void getLocationBanner() {
         FactionsDAO mFactionsDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
-        mFactionsDAO.getFactionByKey(theNine, "shsh")
+        Disposable disposable = mFactionsDAO.getFactionByKey(theNine, "shsh")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(faction -> {
@@ -302,5 +303,6 @@ public class XurFragment extends Fragment {
                             .setAction("Retry", v -> getLocationBanner())
                             .show();
                 });
+        compositeDisposable.add(disposable);
     }
 }

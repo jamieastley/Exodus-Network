@@ -59,6 +59,8 @@ public class NewLFGPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
 
+        ButterKnife.bind(this);
+
         SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
         displayName = savedPrefs.getString("displayName"+selectedPlatform, "");
@@ -75,7 +77,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        ButterKnife.bind(this);
+
 
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, R.layout.spinner_list_item);

@@ -1,9 +1,11 @@
 package com.jastley.warmindfordestiny2.Vendors.holders;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,13 +22,16 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.xur_item_cost) ImageView itemCostImage;
     @BindView(R.id.xur_item_cost_text) TextView itemCostText;
     @BindView(R.id.xur_total_sales_count) TextView salesCount;
+    @BindView(R.id.xur_relative_container) RelativeLayout cardContainer;
 
     private String imageUrl;
     private String costIconUrl;
 
-    public XurItemsViewHolder(View itemView) {
-        super(itemView);
+    private Context mContext;
 
+    public XurItemsViewHolder(View itemView, Context context) {
+        super(itemView);
+        this.mContext = context;
         ButterKnife.bind(this, itemView);
     }
 
@@ -34,7 +39,7 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
         return imageUrl;
     }
 
-    public void setItemIcon(String url, Context context) {
+    public void setItemIcon(String url) {
         this.imageUrl = url;
 
         Picasso.get()
@@ -63,7 +68,7 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
         return costIconUrl;
     }
 
-    public void setItemCostImage(String url, Context context) {
+    public void setItemCostImage(String url) {
         this.costIconUrl = url;
 
         if(url != null){
@@ -93,6 +98,8 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
 
             String countText = "First time!";
             salesCount.setText(countText);
+            salesCount.setTextColor((mContext).getResources().getColor(R.color.warmindAccent));
+            cardContainer.setBackground(ContextCompat.getDrawable(mContext, R.drawable.xur_first_sale_border));
 
         }
         else {

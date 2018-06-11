@@ -11,6 +11,7 @@
     app:cardBackgroundColor="@color/bungieCard">
 
     <RelativeLayout
+        android:id="@+id/xur_relative_container"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         >
