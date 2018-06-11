@@ -13,6 +13,9 @@ public class MilestoneModel {
     //Room/database
     private String primaryKey;
 
+    //Flashpoint
+    private String questItemHash;
+
     public MilestoneModel() {
     }
 
@@ -78,5 +81,13 @@ public class MilestoneModel {
 
     public void setPrimaryKey(String primaryKey) {
         this.primaryKey = primaryKey;
+    }
+
+    public String getQuestItemHash() {
+        return questItemHash;
+    }
+
+    public void setQuestItemHash(String questItemHash) {
+        this.questItemHash = questItemHash;
     }
 }

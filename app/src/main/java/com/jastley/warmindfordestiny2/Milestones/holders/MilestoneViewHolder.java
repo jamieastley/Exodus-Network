@@ -3,6 +3,7 @@ package com.jastley.warmindfordestiny2.Milestones.holders;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.R;
@@ -20,9 +21,13 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.milestone_image) ImageView milestoneImage;
     @BindView(R.id.milestone_reward_name) TextView milestoneRewardName;
     @BindView(R.id.milestone_reward_image) ImageView milestoneRewardImage;
+    @BindView(R.id.milestone_reward_layout) RelativeLayout rewardContainer;
+
+    private View mView;
 
     public MilestoneViewHolder(View itemView) {
         super(itemView);
+        this.mView = itemView;
         ButterKnife.bind(this, itemView);
     }
 
@@ -59,7 +64,11 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setMilestoneRewardName(String rewardName) {
-        this.milestoneRewardName.setText(rewardName);
+
+        if(rewardName != null) {
+            this.milestoneRewardName.setText(rewardName);
+            milestoneRewardName.setVisibility(View.VISIBLE);
+        }
     }
 
     public ImageView getMilestoneRewardImage() {
@@ -68,9 +77,12 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
 
     public void setMilestoneRewardImage(String url) {
 
-        Picasso.get()
-                .load(baseURL + url)
-                .placeholder(R.drawable.missing_icon_d2)
-                .into(milestoneRewardImage);
+        if(url != null) {
+            Picasso.get()
+                    .load(baseURL + url)
+                    .placeholder(R.drawable.missing_icon_d2)
+                    .into(milestoneRewardImage);
+            milestoneRewardImage.setVisibility(View.VISIBLE);
+        }
     }
 }

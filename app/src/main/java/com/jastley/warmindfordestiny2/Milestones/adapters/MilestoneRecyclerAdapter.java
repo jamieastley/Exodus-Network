@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MilestoneRecyclerAdapter extends RecyclerView.Adapter<MilestoneViewHolder> {
 
-    List<MilestoneModel> milestonesList;
+    private List<MilestoneModel> milestonesList;
 
     public MilestoneRecyclerAdapter(List<MilestoneModel> milestonesList) {
         this.milestonesList = milestonesList;
@@ -31,6 +31,7 @@ public class MilestoneRecyclerAdapter extends RecyclerView.Adapter<MilestoneView
 
     @Override
     public void onBindViewHolder(@NonNull MilestoneViewHolder holder, int position) {
+
         holder.setMilestoneName(milestonesList.get(position).getMilestoneName());
         holder.setMilestoneDescription(milestonesList.get(position).getMilestoneDescription());
         holder.setMilestoneImage(milestonesList.get(position).getMilestoneImageURL());
@@ -45,6 +46,6 @@ public class MilestoneRecyclerAdapter extends RecyclerView.Adapter<MilestoneView
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return position;
     }
 }
