@@ -87,8 +87,6 @@ public class LFGDetailsFragment extends Fragment {
     @BindView(R.id.faction_progress_recyclerview) RecyclerView mFactionProgressRecyclerView;
     LFGFactionsRecyclerAdapter mFactionProgressRecyclerAdapter;
 
-//    @BindView(R.id.lfg_details_emblem_icon) ImageView emblemIcon;
-
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     // TODO: Rename and change types of parameters

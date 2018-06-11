@@ -34,9 +34,9 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 
 import com.google.gson.JsonObject;
-import com.jastley.warmindfordestiny2.Characters.fragments.CharacterInventoryFragment;
-import com.jastley.warmindfordestiny2.Characters.fragments.ParentInventoryFragment;
-import com.jastley.warmindfordestiny2.Characters.fragments.ItemTransferDialogFragment;
+import com.jastley.warmindfordestiny2.Inventory.fragments.CharacterInventoryFragment;
+import com.jastley.warmindfordestiny2.Inventory.fragments.ParentInventoryFragment;
+import com.jastley.warmindfordestiny2.Inventory.fragments.ItemTransferDialogFragment;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
 import com.jastley.warmindfordestiny2.LFG.fragments.LFGDetailsFragment;
@@ -45,6 +45,7 @@ import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.Milestones.fragments.MilestonesFragment;
+import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Vendors.XurFragment;
 import com.jastley.warmindfordestiny2.api.*;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
@@ -413,7 +414,14 @@ public class MainActivity extends AppCompatActivity
                     }
                     catch(Exception e){
                         Log.d("ACCESS_TOKEN(CALLBACK?)", e.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "An error occurred while trying to authorize.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.activity_main_content), "An error occurred while trying to authorize.", Snackbar.LENGTH_LONG)
+                                .show();
+                    }
+                }, throwable -> {
+                    if(throwable instanceof NoNetworkException) {
+                        Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.activity_main_content), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> refreshAccessToken())
                                 .show();
                     }
                 });
@@ -441,19 +449,26 @@ public class MainActivity extends AppCompatActivity
                         editor.putString("access_token", accessToken.getAccessToken());
                         editor.putLong("token_age", System.currentTimeMillis());
                         editor.apply();
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Authorization refreshed.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Authorization refreshed.", Snackbar.LENGTH_LONG)
                                 .show();
 
                     } catch (Exception e) {
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null) //TODO: Retry button here
                                 .show();
                     }
                 }, throwable -> {
-                    Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
-                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null) //TODO: Retry button here
-                            .show();
+                    if(throwable instanceof NoNetworkException) {
+                        Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.activity_main_content), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> refreshAccessToken())
+                                .show();
+                    }
+                    else {
+                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null) //TODO: Retry button here
+                                .show();
+                    }
                 });
     }
 
@@ -554,20 +569,26 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 }, throwable -> {
-                    Log.d("GET_CURRENT_USER", throwable.getLocalizedMessage());
+                    if(throwable instanceof NoNetworkException) {
+                        Log.d("GET_CURRENT_USER", throwable.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> refreshAccessToken())
+                                .show();
+                    }
+                    else {
+
+                        Log.d("GET_CURRENT_USER", throwable.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> getMembershipsForCurrentUser())
+                                .show();
+                    }
                     dismissLoadingFragment();
-                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", v -> getMembershipsForCurrentUser())
-                            .show();
                 });
     }
 
     //PlatformSelection dialog clickListener
     @Override
     public void onPlatformSelection(View view, int position, PlatformRVHolder holder) {
-        Toast.makeText(this, holder.getPlatformName().getText().toString()
-                + " ("
-                + holder.getPlatformType().getText().toString() + ") selected", Toast.LENGTH_SHORT).show();
 
         String selectedPlatform = holder.getPlatformType().getText().toString();
 
@@ -660,10 +681,18 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 }, throwable -> {
-                    Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
-                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), throwable.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null)
-                            .show();
+                    if(throwable instanceof NoNetworkException) {
+                        Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> getAllCharacters(platform))
+                                .show();
+                    }
+                    else {
+                        Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
+                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), throwable.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null)
+                                .show();
+                    }
                     dismissLoadingFragment();
                 });
     }

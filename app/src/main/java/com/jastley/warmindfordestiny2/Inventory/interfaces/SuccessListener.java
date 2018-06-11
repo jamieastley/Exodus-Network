@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters.interfaces;
+package com.jastley.warmindfordestiny2.Inventory.interfaces;
 
 public interface SuccessListener {
     void inProgress();

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters.fragments;
+package com.jastley.warmindfordestiny2.Inventory.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,7 +8,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,17 +21,15 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.jastley.warmindfordestiny2.Characters.adapters.CharacterItemsRecyclerAdapter;
-import com.jastley.warmindfordestiny2.Characters.holders.TransferItemViewHolder;
-import com.jastley.warmindfordestiny2.Characters.interfaces.SuccessListener;
-import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
-import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
-import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
+import com.jastley.warmindfordestiny2.Inventory.adapters.CharacterItemsRecyclerAdapter;
+import com.jastley.warmindfordestiny2.Inventory.holders.TransferItemViewHolder;
+import com.jastley.warmindfordestiny2.Inventory.interfaces.SuccessListener;
+import com.jastley.warmindfordestiny2.Inventory.interfaces.TransferSelectListener;
+import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.R;
-import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
-import com.jastley.warmindfordestiny2.Utils.fragments.ErrorDialogFragment;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
@@ -41,12 +38,10 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -243,8 +238,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         if(wasSuccessful) {
 
             if(isTransfer){
-//                itemList.remove(position);
-//                mItemsRecyclerAdapter.notifyItemRemoved(position);
+                itemList.remove(position);
+                mItemsRecyclerAdapter.notifyItemRemoved(position);
                 Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }

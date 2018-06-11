@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters.models;
+package com.jastley.warmindfordestiny2.Inventory.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

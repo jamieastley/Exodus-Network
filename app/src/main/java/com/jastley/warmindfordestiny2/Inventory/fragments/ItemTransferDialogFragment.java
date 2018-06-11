@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters.fragments;
+package com.jastley.warmindfordestiny2.Inventory.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -17,11 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.jastley.warmindfordestiny2.Characters.adapters.EquipItemRecyclerAdapter;
-import com.jastley.warmindfordestiny2.Characters.adapters.TransferItemRecyclerAdapter;
-import com.jastley.warmindfordestiny2.Characters.interfaces.SuccessListener;
-import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
-import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
+import com.jastley.warmindfordestiny2.Inventory.adapters.EquipItemRecyclerAdapter;
+import com.jastley.warmindfordestiny2.Inventory.adapters.TransferItemRecyclerAdapter;
+import com.jastley.warmindfordestiny2.Inventory.interfaces.SuccessListener;
+import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Definitions;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
@@ -30,6 +30,8 @@ import com.jastley.warmindfordestiny2.api.models.EquipItemRequestBody;
 import com.jastley.warmindfordestiny2.api.models.TransferItemRequestBody;
 import com.squareup.picasso.Picasso;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     private int mTabIndex;
     private OnFragmentInteractionListener mListener;
     static SuccessListener mSuccessListener;
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 
     public static ItemTransferDialogFragment newInstance(InventoryItemModel selectedItem,
@@ -181,7 +185,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
             className = holder.getClassType();
             System.out.println("position: " + position);
-            if(holder.getClassType().toLowerCase().equals("vault")){
+            if(holder.getClassType().toLowerCase().equals("vault")){ //transfer TO vault selected
 
                 //Send item straight to vault
                 mTransferVaultBody = new TransferItemRequestBody(
@@ -193,7 +197,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                         mCharacters.get(mTabIndex).getCharacterId() //originating character
                         );
 
-                transferToVault(mTransferVaultBody, null, null, false);
+                transferToVault(mTransferVaultBody, null, null, false, false);
             }
             else { //Transferring from character to different character
 
@@ -219,7 +223,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                         mCharacters.get(position).getCharacterId() //destination character
                 );
 
-                transferToVault(mTransferVaultBody, mTransferCharacterBody, null, false);
+                transferToVault(mTransferVaultBody, mTransferCharacterBody, null, false, true);
             }
         });
 
@@ -230,6 +234,11 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
             dismiss();
             mSuccessListener.inProgress();
+
+            //where the item is coming from
+            String comingFrom = mCharacters.get(mTabIndex).getClassType();
+
+            //destination
             className = holder.getClassType();
 
             //Set equip body for the row clicked before anything else
@@ -259,8 +268,12 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     mCharacters.get(position).getCharacterId() //destination character
             );
 
-            transferToVault(mTransferVaultBody, mTransferCharacterBody, mEquipBody, true);
-
+            if(comingFrom.toLowerCase().equals("vault")){
+                transferToCharacter(mTransferCharacterBody, mEquipBody, true);
+            }
+            else {
+                transferToVault(mTransferVaultBody, mTransferCharacterBody, mEquipBody, true, false);
+            }
         });
 
         mTransferRecyclerView.setAdapter(mTransferAdapter);
@@ -272,9 +285,16 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     private void transferToVault(TransferItemRequestBody transferBody,
                                  TransferItemRequestBody toCharacterBody,
                                  EquipItemRequestBody equipBody,
-                                 boolean isEquipping){
+                                 boolean isEquipping,
+                                 boolean vaultToCharacter){
 
-        mBungieApi.transferItem(transferBody)
+        TransferItemRequestBody target = transferBody;
+
+        if(vaultToCharacter) {
+            target = toCharacterBody;
+        }
+
+        Disposable disposable = mBungieApi.transferItem(target)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -300,15 +320,14 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
                     mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
                 });
-
-
+        compositeDisposable.add(disposable);
     }
 
     private void transferToCharacter(TransferItemRequestBody toCharacterBody,
                                       EquipItemRequestBody equipBody,
                                       boolean isEquipping) {
 
-        mBungieApi.transferItem(toCharacterBody)
+        Disposable disposable = mBungieApi.transferItem(toCharacterBody)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -333,11 +352,12 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
                     mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
                 });
+        compositeDisposable.add(disposable);
     }
 
     private void equipItem(EquipItemRequestBody body) {
 
-        mBungieApi.equipItem(body)
+        Disposable disposable = mBungieApi.equipItem(body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -357,6 +377,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     Log.d("EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
                     mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), false);
                 });
+        compositeDisposable.add(disposable);
     }
 
 

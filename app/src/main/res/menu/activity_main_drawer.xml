@@ -24,12 +24,12 @@
         <item
             android:id="@+id/nav_milestones"
             android:icon="@drawable/milestone_icon"
-            android:title="Milestones"
+            android:title="@string/milestones"
             />
 
         <item
             android:id="@+id/xur"
-            android:icon="@drawable/test_xur"
+            android:icon="@drawable/the_nine_icon"
             android:title="@string/xur" />
 
 
@@ -44,27 +44,8 @@
             android:id="@+id/nav_log_in"
             android:icon="@drawable/ic_account_circle_black_24dp"
             android:title="@string/log_in" />
-        <!--<item-->
-            <!--android:id="@+id/nav_manage"-->
-            <!--android:icon="@drawable/ic_menu_manage"-->
-            <!--android:title="Tools" />-->
+
     </group>
-
-    <!--<item android:title="Communicate">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:id="@+id/nav_share"-->
-                <!--android:icon="@drawable/ic_menu_share"-->
-                <!--android:title="Share" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-        <!--</menu>-->
-    <!--</item>-->
-
-
-
 
 
 </menu>

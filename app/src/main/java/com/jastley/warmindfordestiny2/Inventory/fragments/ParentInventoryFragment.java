@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.Characters.fragments;
+package com.jastley.warmindfordestiny2.Inventory.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;

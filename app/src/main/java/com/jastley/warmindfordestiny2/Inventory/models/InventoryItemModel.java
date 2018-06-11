@@ -1,10 +1,8 @@
-package com.jastley.warmindfordestiny2.Characters.models;
+package com.jastley.warmindfordestiny2.Inventory.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
-
-import java.util.Comparator;
 
 /**
  * Created by jamie1192 on 24/4/18.

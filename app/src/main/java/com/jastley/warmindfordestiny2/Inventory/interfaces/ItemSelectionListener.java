@@ -1,8 +1,8 @@
-package com.jastley.warmindfordestiny2.Characters.interfaces;
+package com.jastley.warmindfordestiny2.Inventory.interfaces;
 
 import android.view.View;
 
-import com.jastley.warmindfordestiny2.Characters.holders.CharacterItemsViewHolder;
+import com.jastley.warmindfordestiny2.Inventory.holders.CharacterItemsViewHolder;
 
 /**
  * Created by jamie1192 on 25/4/18.

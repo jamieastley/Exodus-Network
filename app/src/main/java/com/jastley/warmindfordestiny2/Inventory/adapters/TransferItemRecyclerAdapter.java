@@ -1,13 +1,13 @@
-package com.jastley.warmindfordestiny2.Characters.adapters;
+package com.jastley.warmindfordestiny2.Inventory.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.jastley.warmindfordestiny2.Characters.holders.TransferItemViewHolder;
-import com.jastley.warmindfordestiny2.Characters.interfaces.TransferSelectListener;
-import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.holders.TransferItemViewHolder;
+import com.jastley.warmindfordestiny2.Inventory.interfaces.TransferSelectListener;
+import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
 
 import java.util.List;

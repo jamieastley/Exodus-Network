@@ -1,16 +1,15 @@
-package com.jastley.warmindfordestiny2.Characters.adapters;
+package com.jastley.warmindfordestiny2.Inventory.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.jastley.warmindfordestiny2.Characters.holders.EquipItemViewHolder;
-import com.jastley.warmindfordestiny2.Characters.interfaces.EquipSelectListener;
-import com.jastley.warmindfordestiny2.Characters.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.holders.EquipItemViewHolder;
+import com.jastley.warmindfordestiny2.Inventory.interfaces.EquipSelectListener;
+import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemViewHolder> {

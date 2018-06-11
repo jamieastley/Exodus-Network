@@ -136,6 +136,7 @@
     <string name="error">Error</string>
     <string name="retry">Retry</string>
     <string name="none">None</string>
+    <string name="milestones">Milestones</string>
 
 
 </resources>

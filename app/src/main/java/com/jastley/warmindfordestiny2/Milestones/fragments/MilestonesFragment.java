@@ -14,13 +14,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jastley.warmindfordestiny2.Characters.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Milestones.ViewModels.MilestonesViewModel;
 import com.jastley.warmindfordestiny2.Milestones.adapters.MilestoneRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
@@ -37,7 +38,6 @@ import com.jastley.warmindfordestiny2.database.models.MilestoneData;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -69,6 +69,8 @@ public class MilestonesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -112,6 +114,14 @@ public class MilestonesFragment extends Fragment {
         compositeDisposable.dispose();
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        //Hide LFG toolbar buttons
+        menu.clear();
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     public interface OnMilestoneFragmentInteractionListener {
         // TODO: Update argument type and name
         void OnMilestoneFragmentInteractionListener(Uri uri);
@@ -127,7 +137,7 @@ public class MilestonesFragment extends Fragment {
                     if(!response_getMilestones.getErrorCode().equals("1")) {
                         String errorMessage = response_getMilestones.getMessage();
                         Snackbar.make(getView(),  errorMessage, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null)
+                                .setAction("Retry", v -> getMilestones())
                                 .show();
                     }
                     else {
@@ -157,6 +167,7 @@ public class MilestonesFragment extends Fragment {
                             }
                         }
 
+                        //sort lists so they're in same order as the List Room returns
                         Collections.sort(hashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
                         Collections.sort(milestoneModelList, (m1, m2) -> Long.valueOf(m1.getPrimaryKey()).compareTo(Long.valueOf((m2.getPrimaryKey()))));
 
@@ -187,7 +198,6 @@ public class MilestonesFragment extends Fragment {
                 .observeOn(Schedulers.io())
                 .subscribe(milestones -> {
 
-//                    List<MilestoneData> milestoneDataList = new ArrayList<>();
                     ArrayList<String> rewards = new ArrayList<>();
                     for (int i = 0; i < milestones.size(); i++) {
 
@@ -197,14 +207,10 @@ public class MilestonesFragment extends Fragment {
 
                         //Only get the milestones that have names/are valid
                         if(data.getQuestsData() != null) {
-//                            if(data.getQuestsData().get(milestoneModels.get(i).getQuestItemHash()).getDisplayProperties() != null) {
+
                             try {
                                 milestoneModels.get(i).setMilestoneName(data.getQuestsData().get(milestoneModels.get(i).getQuestItemHash()).getDisplayProperties().getName());
-
-//                            if (data.getDisplayProperties().getDescription() != null) {
                                 milestoneModels.get(i).setMilestoneDescription(data.getQuestsData().get(milestoneModels.get(i).getQuestItemHash()).getDisplayProperties().getDescription());
-//                            }
-
                                 milestoneModels.get(i).setMilestoneImageURL(data.getQuestsData().get(milestoneModels.get(i).getQuestItemHash()).getDisplayProperties().getIcon());
 
                                 //quest rewards
