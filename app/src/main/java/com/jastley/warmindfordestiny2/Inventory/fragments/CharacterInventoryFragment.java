@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jastley.warmindfordestiny2.Definitions;
 import com.jastley.warmindfordestiny2.Inventory.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Inventory.holders.TransferItemViewHolder;
 import com.jastley.warmindfordestiny2.Inventory.interfaces.SuccessListener;
@@ -32,7 +33,6 @@ import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
 import com.jastley.warmindfordestiny2.R;
-import com.jastley.warmindfordestiny2.Utils.InventoryBucketDefinition;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.Vendors.HeaderItemDecoration;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
@@ -43,7 +43,6 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -305,6 +304,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                         ArrayList<String> itemHashList = new ArrayList<>();
 
                         itemList.clear();
+
+                        /* non-equipped items (getInventory()) */
                         for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
 
                             String primaryStatValue;
@@ -341,12 +342,59 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             }
 //
                             itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
-                            itemModel.setSlot(InventoryBucketDefinition.sortBuckets(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash()));
+                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash()));
                             //Required to manipulate UI on transfer/equip modal
                             itemModel.setClassType(mCharacter.getClassType());
                             itemModel.setTabIndex(mTabNumber);
                             itemList.add(itemModel);
                         }
+
+                        /* character-equipped items (getEquipment()) */
+                        for(int i = 0; i < response.getResponse().getEquipment().getData().getItems().size(); i++){
+
+                            String primaryStatValue;
+                            String itemInstanceId = null;
+
+                            //add/calculate hashes
+                            String itemHash = String.valueOf(response.getResponse().getEquipment().getData().getItems().get(i).getItemHash());
+                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
+
+                            itemHashList.add(primaryKey);
+
+                            InventoryItemModel itemModel = new InventoryItemModel();
+                            itemModel.setItemHash(itemHash);
+                            itemModel.setPrimaryKey(primaryKey);
+
+                            //Get instanceId to look up it's instanceData from the response
+                            if(response.getResponse().getEquipment().getData().getItems().get(i).getItemInstanceId() != null) {
+                                itemInstanceId = response.getResponse().getEquipment().getData().getItems().get(i).getItemInstanceId();
+                                itemModel.setItemInstanceId(itemInstanceId);
+
+                                itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
+
+                                //get damageType (if != null)
+                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
+                                }
+
+                            }
+
+                            try{
+                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+                                itemModel.setPrimaryStatValue(primaryStatValue);
+                            }
+                            catch(Exception e){
+                                System.out.println("Not an instance-specific item");
+                            }
+//
+                            itemModel.setBucketHash(response.getResponse().getEquipment().getData().getItems().get(i).getBucketHash());
+                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getEquipment().getData().getItems().get(i).getBucketHash()));
+                            //Required to manipulate UI on transfer/equip modal
+                            itemModel.setClassType(mCharacter.getClassType());
+                            itemModel.setTabIndex(mTabNumber);
+                            itemList.add(itemModel);
+                        }
+
 
                         //Sort lists by primary key value, must cast to Long as some values too large for int
                         Collections.sort(itemHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
@@ -421,7 +469,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             }
 
                             itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
-                            itemModel.setSlot(InventoryBucketDefinition.sortBuckets(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
+                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
                             //Required to manipulate UI on transfer/equip modal
                             itemModel.setClassType(mCharacter.getClassType());
                             itemModel.setTabIndex(mTabNumber);
@@ -506,7 +554,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
             @Override
             public CharSequence getSectionHeader(int position) {
-                return InventoryBucketDefinition.getBucketName(itemList.get(position).getSlot());
+                return Definitions.getBucketName(itemList.get(position).getSlot());
             }
         });
 

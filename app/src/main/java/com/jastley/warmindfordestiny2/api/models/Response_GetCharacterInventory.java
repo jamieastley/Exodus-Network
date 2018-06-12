@@ -67,6 +67,9 @@ public class Response_GetCharacterInventory {
         @SerializedName("inventory")
         private Inventory inventory;
         @Expose
+        @SerializedName("equipment")
+        private Equipment equipment;
+        @Expose
         @SerializedName("profileInventory")
         private ProfileInventory profileInventory;
 
@@ -80,6 +83,26 @@ public class Response_GetCharacterInventory {
 
         public ProfileInventory getProfileInventory() {
             return profileInventory;
+        }
+
+        public Equipment getEquipment() {
+            return equipment;
+        }
+    }
+    public static class Equipment {
+        @Expose
+        @SerializedName("privacy")
+        private int privacy;
+        @Expose
+        @SerializedName("data")
+        private Data data;
+
+        public int getPrivacy() {
+            return privacy;
+        }
+
+        public Data getData() {
+            return data;
         }
     }
 
