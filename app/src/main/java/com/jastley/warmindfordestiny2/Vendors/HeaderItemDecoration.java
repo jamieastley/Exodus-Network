@@ -22,6 +22,7 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     private View headerView;
     private TextView header;
+    private TextView itemCount;
 
     public HeaderItemDecoration(int headerHeight, boolean sticky, @NonNull SectionCallback sectionCallback) {
         headerOffset = headerHeight;
@@ -51,6 +52,7 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         if (headerView == null) {
             headerView = inflateHeaderView(parent);
             header = headerView.findViewById(R.id.list_item_section_text);
+            itemCount = headerView.findViewById(R.id.section_header_item_count);
             fixLayoutSize(headerView,
                     parent);
         }
@@ -61,13 +63,16 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
             final int position = parent.getChildAdapterPosition(child);
 
             CharSequence title = sectionCallback.getSectionHeader(position);
+            CharSequence items = sectionCallback.getItemCount(position);
             header.setText(title);
+            itemCount.setText(items);
             if (!previousHeader.equals(title) || sectionCallback.isSection(position)) {
                 drawHeader(c,
                         child,
                         headerView);
                 previousHeader = title;
             }
+
         }
     }
 
@@ -120,5 +125,6 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         boolean isSection(int position);
 
         CharSequence getSectionHeader(int position);
+        CharSequence getItemCount(int position);
     }
 }

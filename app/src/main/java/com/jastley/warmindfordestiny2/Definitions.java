@@ -76,35 +76,41 @@ public class Definitions {
             case legArmor:
                 value = 7;
                 break;
-            case ghost:
+            case classArmor:
                 value = 8;
                 break;
-            case vault:
+            case ghost:
                 value = 9;
                 break;
-            case engrams:
+            case subclass:
                 value = 10;
                 break;
-            case consumables:
+            case vault:
                 value = 11;
                 break;
-            case mods:
+            case engrams:
                 value = 12;
                 break;
-            case shaders:
+            case consumables:
                 value = 13;
                 break;
-            case shaders2:
+            case mods:
                 value = 14;
                 break;
-            case emblems:
+            case shaders:
                 value = 15;
                 break;
-            case ships:
+            case shaders2:
                 value = 16;
                 break;
-            case vehicles:
+            case emblems:
                 value = 17;
+                break;
+            case ships:
+                value = 18;
+                break;
+            case vehicles:
+                value = 19;
                 break;
 
         }
@@ -138,33 +144,39 @@ public class Definitions {
                 category = "Leg Armor";
                 break;
             case 8:
-                category = "Ghost";
+                category = "Class Armor";
                 break;
             case 9:
-                category = "Vault";
+                category = "Ghost";
                 break;
             case 10:
-                category = "Engrams";
+                category = "Sub-Class";
                 break;
             case 11:
-                category = "Consumables";
+                category = "Vault";
                 break;
             case 12:
-                category = "Modifications";
+                category = "Engrams";
                 break;
             case 13:
-                category = "Shaders";
+                category = "Consumables";
                 break;
             case 14:
-                category = "Shaders";
+                category = "Modifications";
                 break;
             case 15:
-                category = "Emblems";
+                category = "Shaders";
                 break;
             case 16:
-                category = "Ships";
+                category = "Shaders";
                 break;
             case 17:
+                category = "Emblems";
+                break;
+            case 18:
+                category = "Ships";
+                break;
+            case 19:
                 category = "Vehicles";
                 break;
         }

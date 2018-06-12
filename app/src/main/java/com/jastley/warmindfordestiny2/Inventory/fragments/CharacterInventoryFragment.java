@@ -47,6 +47,8 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -377,6 +379,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 itemModel.setItemInstanceId(itemInstanceId);
 
                                 itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
+                                itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
 
                                 //get damageType (if != null)
                                 if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
@@ -563,7 +566,29 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
             @Override
             public CharSequence getSectionHeader(int position) {
+
+//                int count = itemCount == null ? 0 : itemCount.size();
                 return Definitions.getBucketName(itemList.get(position).getSlot());
+            }
+
+            @Override
+            public CharSequence getItemCount(int position) {
+
+                int count = 0;
+                int section = itemList.get(position).getSlot();
+
+                for(InventoryItemModel item : itemList) {
+                    if(item.getSlot() == section) {
+                        count++;
+                    }
+                }
+                String itemCount = String.valueOf(count);
+
+                if(section < 10) {
+                    itemCount = itemCount+"/9";
+                }
+
+                return itemCount;
             }
         });
 
