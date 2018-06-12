@@ -2,17 +2,17 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-
+    android:orientation="horizontal"
+    android:layout_marginTop="5dp"
     >
 
     <RelativeLayout
         android:id="@+id/inventory_item_container"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-
+        android:background="@color/warmindCardBackground"
         >
 
         <ImageView
@@ -20,7 +20,6 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
             />
 
 
@@ -30,10 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/inventory_item_image"
             android:layout_alignEnd="@id/inventory_item_image"
-            android:layout_alignRight="@id/inventory_item_image"
-            android:paddingRight="5dp"
             android:paddingEnd="5dp"
-
+            android:background="#5b000000"
+            android:text="300"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textAlignment="viewEnd"
@@ -47,42 +45,9 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignTop="@id/inventory_item_image"
-            android:layout_alignLeft="@id/inventory_item_image"
             android:layout_alignStart="@id/inventory_item_image"
             android:layout_margin="2dp"
             />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@id/inventory_item_image"
-            android:layout_toRightOf="@id/inventory_item_image"
-            android:layout_margin="10dp"
-            android:orientation="vertical"
-            >
-
-            <TextView
-                android:id="@+id/inventory_item_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/item_name_height"
-                android:textStyle="bold"
-                android:textColor="@color/colorWhite"
-                />
-
-            <TextView
-                android:id="@+id/inventory_item_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="@dimen/item_type_height"
-                android:textStyle="italic"
-                android:textColor="@color/colorWhite"
-                />
-
-        </LinearLayout>
-
 
     </RelativeLayout>
 

@@ -36,7 +36,7 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
 
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.inventory_item_row_layout, parent, false);
 
-        final CharacterItemsViewHolder mCharacterItemViewHolder = new CharacterItemsViewHolder(mView);
+        final CharacterItemsViewHolder mCharacterItemViewHolder = new CharacterItemsViewHolder(mView, context);
 
         mCharacterItemViewHolder.itemView.setOnClickListener(view -> {
             mListener.onItemClick(view, mCharacterItemViewHolder.getAdapterPosition(), mCharacterItemViewHolder);
@@ -48,16 +48,16 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
     @Override
     public void onBindViewHolder(CharacterItemsViewHolder holder, int position) {
 
-        //TODO: determine item group and sort RV's by category (Kinetic/Energy/Heavy)
         holder.setItemName(itemList.get(position).getItemName());
         holder.setItemHash(itemList.get(position).getItemHash());
-        holder.setItemImage(itemList.get(position).getItemIcon(), context);
+        holder.setItemImage(itemList.get(position).getItemIcon());
+        holder.setIsEquipped(itemList.get(position).getIsEquipped());
         holder.setPrimaryStatValue(itemList.get(position).getPrimaryStatValue());
         holder.setItemInstanceId(itemList.get(position).getItemInstanceId());
         holder.setBucketHash(itemList.get(position).getBucketHash());
         holder.setCanEquip(itemList.get(position).getCanEquip());
         holder.setItemTypeDisplayName(itemList.get(position).getItemTypeDisplayName());
-        holder.setModifierIcon(itemList.get(position).getDamageType(), context);
+        holder.setModifierIcon(itemList.get(position).getDamageType());
     }
 
     @Override

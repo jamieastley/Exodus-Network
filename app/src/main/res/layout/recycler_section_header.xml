@@ -3,9 +3,12 @@
     android:id="@+id/list_item_section_text"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/black"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:background="@color/warmindDark"
+    android:padding="10dp"
+
     android:textColor="@android:color/white"
-    android:textSize="14sp"
+    android:textSize="@dimen/item_name_height"
+    android:textStyle="bold"
     />

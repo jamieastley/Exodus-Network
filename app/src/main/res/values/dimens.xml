@@ -12,4 +12,8 @@
     <dimen name="md_simplelist_textsize">18sp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
+
+    <!--Warmind-->
+    <dimen name="item_name_height">16sp</dimen>
+    <dimen name="item_type_height">13sp</dimen>
 </resources>

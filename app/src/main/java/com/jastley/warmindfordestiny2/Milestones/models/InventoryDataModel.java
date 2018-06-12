@@ -18,6 +18,12 @@ public class InventoryDataModel {
     @SerializedName("nonTransferrable")
     private boolean isNonTransferrable;
     @Expose
+    @SerializedName("itemTypeDisplayName")
+    private String itemTypeDisplayName;
+    @Expose
+    @SerializedName("itemTypeAndTierDisplayName")
+    private String itemTypeAndTierDisplayName;
+    @Expose
     @SerializedName("itemType")
     private String itemType;
     @Expose
@@ -35,8 +41,12 @@ public class InventoryDataModel {
         return displayProperties;
     }
 
-    public String getItemDisplayName() {
-        return itemDisplayName;
+    public String getItemTypeDisplayName() {
+        return itemTypeDisplayName;
+    }
+
+    public String getItemTypeAndTierDisplayName() {
+        return itemTypeAndTierDisplayName;
     }
 
     public Inventory getInventory() {

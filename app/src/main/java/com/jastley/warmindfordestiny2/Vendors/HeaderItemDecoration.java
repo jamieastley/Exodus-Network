@@ -35,8 +35,11 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
 
         int pos = parent.getChildAdapterPosition(view);
         if (sectionCallback.isSection(pos)) {
+//            outRect.set(0,300,0, 300);
+//            outRect.bottom = headerOffset;
             outRect.top = headerOffset;
         }
+
     }
 
     @Override

@@ -1,9 +1,13 @@
 package com.jastley.warmindfordestiny2.Inventory.holders;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jastley.warmindfordestiny2.Definitions;
@@ -27,6 +31,8 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.primary_stat_value) TextView statValue;
     @BindView(R.id.item_modifier_icon) ImageView modifierIcon;
 
+    @BindView(R.id.inventory_item_container) RelativeLayout cardContainer;
+
     //Hidden values to retain for retrieval later
     private String itemHash;
     private String imageUrl;
@@ -40,11 +46,13 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     private String damageType;
 
     protected View mRootView;
+    private Context mContext;
 
-    public CharacterItemsViewHolder(View itemView) {
+    public CharacterItemsViewHolder(View itemView, Context context) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         mRootView = itemView;
+        this.mContext = context;
     }
 
     public TextView getItemName() {
@@ -67,7 +75,7 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         return itemImage;
     }
 
-    public void setItemImage(String url, Context context) {
+    public void setItemImage(String url) {
 //        this.itemImage = itemImage;
         this.imageUrl = url;
         Picasso.get()
@@ -82,8 +90,17 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
 
     public void setPrimaryStatValue(String value) {
 
-        this.primaryStatValue = value;
-        statValue.setText(value);
+        try {
+            if (value != null) {
+                this.primaryStatValue = value;
+                statValue.setText(value);
+                statValue.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primaryStatBackground));
+            }
+        }
+        catch(Exception e) {
+            Log.d("SET_PRIMARY_STAT", e.getLocalizedMessage());
+        }
+
     }
 
     public String getItemHash() {
@@ -125,6 +142,13 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
 
     public void setIsEquipped(boolean equipped) {
         isEquipped = equipped;
+        if(isEquipped) {
+            itemImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.item_equipped_border));
+        }
+
+        else {
+            itemImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.image_border));
+        }
     }
 
     public boolean getCanEquip() {
@@ -139,8 +163,9 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         return itemTypeDisplayName;
     }
 
-    public void setItemTypeDisplayName(String itemTypeDisplayName) {
-        this.itemTypeDisplayName = itemTypeDisplayName;
+    public void setItemTypeDisplayName(String typeDisplayName) {
+        this.itemTypeDisplayName = typeDisplayName;
+        this.itemType.setText(typeDisplayName);
     }
 
     public int getTabIndex() {
@@ -155,7 +180,7 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         return modifierIcon;
     }
 
-    public void setModifierIcon(String type, Context context) {
+    public void setModifierIcon(String type) {
 
         //set damageType incase we need it later
         if(type != null){
@@ -170,15 +195,15 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
                     break;
 
                 case(Definitions.dmgTypeArc):
-                    this.modifierIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.modifier_arc));
+                    this.modifierIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.modifier_arc));
                     break;
 
                 case(Definitions.dmgTypeThermal):
-                    this.modifierIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.modifier_solar));
+                    this.modifierIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.modifier_solar));
                     break;
 
                 case(Definitions.dmgTypeVoid):
-                    this.modifierIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.modifier_void));
+                    this.modifierIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.modifier_void));
                     break;
 
                 case(Definitions.dmgTypeRaid):

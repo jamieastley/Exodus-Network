@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -510,6 +511,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                         if(itemData.getHash().equals(itemList.get(i).getItemHash())) {
 
                                 itemList.get(i).setItemName(itemData.getDisplayProperties().getName());
+                                itemList.get(i).setItemTypeDisplayName(itemData.getItemTypeDisplayName());
                                 try{
                                     Log.d("InventoryAPIListHash: ", itemList.get(i).getItemHash());
                                     Log.d("ManifestItemHash: ", itemData.getHash());
@@ -544,12 +546,14 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
 
-        HeaderItemDecoration headerItemDecoration = new HeaderItemDecoration(20, true, new HeaderItemDecoration.SectionCallback() {
+
+        HeaderItemDecoration headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
-                return false;
+//                return false;
+                return position == 0 || itemList.get(position).getSlot() != itemList.get(position -1).getSlot();
+
             }
 
             @Override
@@ -591,6 +595,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
         });
         mSwipeRefreshLayout.setRefreshing(false);
+
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+//        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 3);
 
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
