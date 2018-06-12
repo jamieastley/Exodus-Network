@@ -13,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -259,6 +261,8 @@ public class XurFragment extends Fragment {
                                 mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext(), xurItemsList);
                                 mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                 mXurRecyclerView.setNestedScrollingEnabled(false);
+                                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+                                mXurRecyclerView.setLayoutAnimation(controller);
                                 mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
 //                                mXurRecyclerView.addItemDecoration(headerItemDecoration);
                                 progressBar.setVisibility(View.GONE);

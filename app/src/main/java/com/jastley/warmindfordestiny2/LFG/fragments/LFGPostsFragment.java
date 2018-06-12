@@ -17,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import butterknife.BindView;
@@ -102,10 +104,7 @@ public class LFGPostsFragment extends Fragment {
 //        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
 //        mFab.setVisibility(View.VISIBLE);
 
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this.getContext());
-        mLinearLayoutManager.setReverseLayout(true);
-        mLinearLayoutManager.setStackFromEnd(true);
-        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
+
 
         //Load LFG posts from Firebase
 //        mSwipeRefreshLayout.setRefreshing(true);
@@ -115,24 +114,24 @@ public class LFGPostsFragment extends Fragment {
 
         //Hide FAB when scrolling
 //        if(isFabVisible){
-            mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
-                    if (isFabVisible && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        mFab.show();
-                    }
-
-                    super.onScrollStateChanged(recyclerView, newState);
+                if (isFabVisible && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    mFab.show();
                 }
 
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    if (dy > 0 ||dy<0 && mFab.isShown())
-                        mFab.hide();
-                }
-            });
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 ||dy<0 && mFab.isShown())
+                    mFab.hide();
+            }
+        });
 //        }
 
 
@@ -306,8 +305,15 @@ public class LFGPostsFragment extends Fragment {
 
                     }
                 });
+                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right_reverse);
+                mLFGRecyclerView.setLayoutAnimation(controller);
+                LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+                mLinearLayoutManager.setReverseLayout(true);
+                mLinearLayoutManager.setStackFromEnd(true);
+
+                mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
                 mLFGRecyclerView.setAdapter(mLFGPostAdapter);
-                mLFGPostAdapter.notifyDataSetChanged();
+//                mLFGPostAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
 

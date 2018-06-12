@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
@@ -304,6 +306,8 @@ public class MilestonesFragment extends Fragment {
 
                         mMilestonesAdapter = new MilestoneRecyclerAdapter(milestoneModels);
                         mMilestonesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+                        mMilestonesRecyclerView.setLayoutAnimation(controller);
                         mMilestonesRecyclerView.setAdapter(mMilestonesAdapter);
                         mMilestonesRecyclerView.setNestedScrollingEnabled(false);
                         mProgressBar.setVisibility(View.GONE);

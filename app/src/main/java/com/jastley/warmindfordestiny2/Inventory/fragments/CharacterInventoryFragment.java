@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
 
 import android.widget.Toast;
@@ -85,7 +87,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     private List<CharacterDatabaseModel> mCharacterList = new ArrayList<>();
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
-
+    HeaderItemDecoration headerItemDecoration;
+    private boolean isRefreshing = false;
 //    boolean mIsRestoredFromBackstack;
 
     public CharacterInventoryFragment() {
@@ -164,6 +167,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             mSwipeRefreshLayout.setRefreshing(true);
+//            mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
+
 
             if(classType.equals("vault")){
                 //get Vault items only
@@ -546,9 +551,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
+        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
 
-
-        HeaderItemDecoration headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
+        headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
             @Override
             public boolean isSection(int position) {
 //                return false;
@@ -561,6 +566,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 return Definitions.getBucketName(itemList.get(position).getSlot());
             }
         });
+
 
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
             Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
@@ -598,15 +604,25 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
 //        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 3);
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+
+        mItemsRecyclerView.setLayoutAnimation(controller);
 
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
+//        mItemsRecyclerView.scheduleLayoutAnimation();
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+
         mItemsRecyclerView.addItemDecoration(headerItemDecoration);
-        mItemsRecyclerAdapter.notifyDataSetChanged();
+//        mItemsRecyclerAdapter.notifyDataSetChanged();
         loadingProgress.setVisibility(View.GONE);
     }
 
     public void refreshInventory() {
+
+        //remove existing ItemDecoration
+//        mItemsRecyclerView.invalidateItemDecorations();
+
+
         String classType = mCharacter.getClassType();
 
         if(classType.equals("vault")){

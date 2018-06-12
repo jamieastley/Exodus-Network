@@ -70,4 +70,12 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
     public int getItemViewType(int position) {
         return position;
     }
+
+    public void updateList(List<InventoryItemModel> newList) {
+        itemList.clear();
+
+        itemList.addAll(newList);
+        notifyDataSetChanged();
+
+    }
 }
