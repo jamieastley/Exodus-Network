@@ -32,6 +32,11 @@
             android:icon="@drawable/the_nine_icon"
             android:title="@string/xur" />
 
+        <item
+            android:visible="true"
+            android:id="@+id/nav_refresh_auth"
+            android:icon="@drawable/icon_key"
+            android:title="@string/refresh_auth" />
 
         <item
             android:visible="true"

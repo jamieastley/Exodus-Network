@@ -10,7 +10,7 @@
             <!--android:title="@string/log_in" />-->
 
         <item
-            android:visible="false"
+            android:visible="true"
             android:id="@+id/nav_refresh_account"
             android:icon="@drawable/ic_account_circle_black_24dp"
             android:title="@string/refresh_account" />

@@ -283,4 +283,21 @@ public class InventoryItemModel implements Parcelable {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+//        return super.equals(obj);
+        if(this == obj) return true;
+        if(obj == null || getClass() != obj.getClass()) return false;
+
+        InventoryItemModel model = (InventoryItemModel) obj;
+
+        if(!itemName.equals(model.itemName)) return false;
+        return itemName != null ? itemName.equals(model.getItemName()) : model.getItemName() == null;
+    }
 }

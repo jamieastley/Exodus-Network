@@ -61,6 +61,8 @@ import java.util.List;
 
 import com.squareup.picasso.Target;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
     List<Target> targets = new ArrayList<>();
     private String redirectUri = "warmindfordestiny://callback";
-
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -277,6 +279,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
+        compositeDisposable.dispose();
 //        mLFGPostAdapter.stopListening();
     }
 
@@ -310,28 +313,6 @@ public class MainActivity extends AppCompatActivity
                 getSupportFragmentManager().popBackStack();
                 return true;
         }
-//        if(toggle.onOptionsItemSelected(item)) {
-//            return true;
-//        }
-
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_logout) {
-////            return true;
-//
-////            DialogFragment loadingDialog = new LoadingDialogFragment();
-////            loadingDialog.setCancelable(false);
-////            loadingDialog.show(getFragmentManager(), "loadingDialog");
-//
-//        }
-
-//        if (id == R.id.action_filter){
-//            Toast.makeText(this, "TODO: filter items", Toast.LENGTH_SHORT).show();
-//        }
-
-//        if (id == R.id.pause_live_lfg_feed) {
-//            mLFGPostAdapter.stopListening();
-//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -388,7 +369,7 @@ public class MainActivity extends AppCompatActivity
     private void getAccessToken(String code){
         BungieAPI mBungieAPI = RetrofitHelper.getOAuthRequestBungieAPI(baseURL, this);
 
-        mBungieAPI.getAccessToken(
+        Disposable disposable = mBungieAPI.getAccessToken(
                 clientId,
                 clientSecret,
                 "authorization_code",
@@ -425,6 +406,7 @@ public class MainActivity extends AppCompatActivity
                                 .show();
                     }
                 });
+        compositeDisposable.add(disposable);
     }
 
     private void refreshAccessToken() {
@@ -434,7 +416,7 @@ public class MainActivity extends AppCompatActivity
 
         BungieAPI mBungieAPI = RetrofitHelper.getOAuthRequestBungieAPI( baseURL, this);
 
-        mBungieAPI.renewAccessToken(
+        Disposable disposable = mBungieAPI.renewAccessToken(
                     clientId,
                     clientSecret,
                     "refresh_token",
@@ -470,6 +452,7 @@ public class MainActivity extends AppCompatActivity
                                 .show();
                     }
                 });
+        compositeDisposable.add(disposable);
     }
 
     //AKA getPlayerProfile()
@@ -480,7 +463,7 @@ public class MainActivity extends AppCompatActivity
 
         BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
 
-        mBungieAPI.getMembershipsCurrentUser()
+        Disposable disposable = mBungieAPI.getMembershipsCurrentUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(currentUser -> {
@@ -584,6 +567,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     dismissLoadingFragment();
                 });
+        compositeDisposable.add(disposable);
     }
 
     //PlatformSelection dialog clickListener
@@ -610,7 +594,7 @@ public class MainActivity extends AppCompatActivity
 
         BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
 
-        mBungieAPI.getAllCharacters(platform, membershipId)
+        Disposable disposable = mBungieAPI.getAllCharacters(platform, membershipId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(allCharacters -> {
@@ -695,6 +679,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     dismissLoadingFragment();
                 });
+        compositeDisposable.add(disposable);
     }
 
     private void downloadEmblems(List<String> emblems) {
@@ -791,12 +776,7 @@ public class MainActivity extends AppCompatActivity
         if (loadingFragment != null){
             loadingFragment.dismiss();
         }
-//        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-//
-//        //set flags so pressing back won't trigger previous state of MainActivity
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        startActivity(intent);
-//        finish();
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -849,6 +829,10 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.lfg_content_frame, fragment)
 //                    .addToBackStack("inventoryFragment")
                     .commit();
+        }
+
+        else if (id == R.id.nav_refresh_auth) {
+            refreshAccessToken();
         }
 
         else if (id == R.id.nav_refresh_account) {

@@ -11,16 +11,21 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
+
 
 import android.widget.Toast;
 
@@ -47,8 +52,6 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,7 +69,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
  * Use the {@link CharacterInventoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CharacterInventoryFragment extends Fragment implements TransferSelectListener, SuccessListener {
+public class CharacterInventoryFragment extends Fragment implements TransferSelectListener, SuccessListener, SearchView.OnQueryTextListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //    private static final String ARG_PARAM1 = "param1";
@@ -90,6 +93,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     HeaderItemDecoration headerItemDecoration;
+    HeaderItemDecoration filteredHeaderItemDecoration;
     private boolean isRefreshing = false;
 //    boolean mIsRestoredFromBackstack;
 
@@ -135,6 +139,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         View rootView = inflater.inflate(R.layout.fragment_character_inventory, container, false);
 
         ButterKnife.bind(this, rootView);
+        setHasOptionsMenu(true);
 
         return rootView;
     }
@@ -221,6 +226,15 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.inventory_toolbar, menu);
+
+//        final MenuItem searchItem = menu.findItem(R.id.inventory_search);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.inventory_search).getActionView();
+        searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
     }
@@ -286,6 +300,68 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         if (loadingFragment != null){
             loadingFragment.dismiss();
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+
+        final List<InventoryItemModel> filteredItems = filter(itemList, query);
+        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
+        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
+
+        filteredHeaderItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
+            @Override
+            public boolean isSection(int position) {
+                return position == 0 || filteredItems.get(position).getSlot() != filteredItems.get(position -1).getSlot();
+            }
+
+            @Override
+            public CharSequence getSectionHeader(int position) {
+                return Definitions.getBucketName(filteredItems.get(position).getSlot());
+            }
+
+            @Override
+            public CharSequence getItemCount(int position) {
+
+                int count = 0;
+                int section = filteredItems.get(position).getSlot();
+
+                for(InventoryItemModel item : filteredItems) {
+                    if(item.getSlot() == section) {
+                        count++;
+                    }
+                }
+                String itemCount = String.valueOf(count);
+
+                if(section < 10) {
+                    itemCount = itemCount+"/9";
+                }
+
+                return itemCount;
+            }
+        });
+        mItemsRecyclerView.addItemDecoration(filteredHeaderItemDecoration);
+        mItemsRecyclerAdapter.updateList(filteredItems);
+        mItemsRecyclerView.scrollToPosition(0);
+        return true;
+    }
+
+    private static List<InventoryItemModel> filter(List<InventoryItemModel> itemList, String query) {
+        final String lowerCaseQuery = query.toLowerCase();
+
+        final List<InventoryItemModel> filteredList = new ArrayList<>();
+        for (InventoryItemModel item : itemList) {
+            final String text = item.getItemName().toLowerCase();
+            if(text.contains(lowerCaseQuery)) {
+                filteredList.add(item);
+            }
+        }
+        return filteredList;
     }
 
 
@@ -665,4 +741,41 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         }
     }
 
+
+//    private final SortedList.Callback<InventoryItemModel> modelCallback = new SortedList.Callback<InventoryItemModel>() {
+//        @Override
+//        public int compare(InventoryItemModel o1, InventoryItemModel o2) {
+//            return mComparator.compare(o1, o2);
+//        }
+//
+//        @Override
+//        public void onChanged(int position, int count) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
+//        }
+//
+//        @Override
+//        public boolean areContentsTheSame(InventoryItemModel oldItem, InventoryItemModel newItem) {
+//            return oldItem.equals(newItem);
+//        }
+//
+//        @Override
+//        public boolean areItemsTheSame(InventoryItemModel item1, InventoryItemModel item2) {
+//            return item1.getItemName().equals(item2.getItemName());
+//        }
+//
+//        @Override
+//        public void onInserted(int position, int count) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
+//        }
+//
+//        @Override
+//        public void onRemoved(int position, int count) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
+//        }
+//
+//        @Override
+//        public void onMoved(int fromPosition, int toPosition) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(fromPosition, toPosition);
+//        }
+//    };
 }

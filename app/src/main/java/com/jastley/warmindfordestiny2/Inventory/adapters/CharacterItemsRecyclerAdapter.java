@@ -1,6 +1,7 @@
 package com.jastley.warmindfordestiny2.Inventory.adapters;
 
 import android.content.Context;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,11 +72,45 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
         return position;
     }
 
-    public void updateList(List<InventoryItemModel> newList) {
-        itemList.clear();
-
-        itemList.addAll(newList);
+    public void updateList(List<InventoryItemModel> list) {
+        itemList = list;
         notifyDataSetChanged();
-
     }
+
+//    private final SortedList.Callback<InventoryItemModel> modelCallback = new SortedList.Callback<InventoryItemModel>() {
+//        @Override
+//        public int compare(InventoryItemModel o1, InventoryItemModel o2) {
+//            return mComparator.compare(o1, o2);
+//        }
+//
+//        @Override
+//        public void onChanged(int position, int count) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
+//        }
+//
+//        @Override
+//        public boolean areContentsTheSame(InventoryItemModel oldItem, InventoryItemModel newItem) {
+//            return oldItem.equals(newItem);
+//        }
+//
+//        @Override
+//        public boolean areItemsTheSame(InventoryItemModel item1, InventoryItemModel item2) {
+//            return item1.getItemName().equals(item2.getItemName());
+//        }
+//
+//        @Override
+//        public void onInserted(int position, int count) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
+//        }
+//
+//        @Override
+//        public void onRemoved(int position, int count) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
+//        }
+//
+//        @Override
+//        public void onMoved(int fromPosition, int toPosition) {
+//            mItemsRecyclerAdapter.notifyItemRangeChanged(fromPosition, toPosition);
+//        }
+//    };
 }
