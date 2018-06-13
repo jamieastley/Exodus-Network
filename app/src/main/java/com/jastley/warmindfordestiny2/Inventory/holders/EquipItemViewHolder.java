@@ -19,10 +19,11 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
     private String characterLevel;
     private String imageURL;
     private String classType;
+    private View mView;
 
     public EquipItemViewHolder(View itemView) {
         super(itemView);
-
+        this.mView = itemView;
         ButterKnife.bind(this, itemView);
     }
 
@@ -84,5 +85,9 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
                 break;
         }
 
+    }
+    public void setDisabled() {
+        mView.setEnabled(false);
+        mView.setAlpha(0.3f);
     }
 }

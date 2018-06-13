@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.jastley.warmindfordestiny2.Inventory.holders.EquipItemViewHolder;
 import com.jastley.warmindfordestiny2.Inventory.interfaces.EquipSelectListener;
 import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
 
 import java.util.List;
@@ -17,11 +18,14 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
     private Context mContext;
     private List<CharacterDatabaseModel> mCharacters;
     private EquipSelectListener mListener;
+    private InventoryItemModel mSelectedItem;
 
     public EquipItemRecyclerAdapter(Context context,
+                                    InventoryItemModel item,
                                     List<CharacterDatabaseModel> characters,
                                     EquipSelectListener listener) {
         this.mContext = context;
+        this.mSelectedItem = item;
         this.mCharacters = characters;
         this.mListener = listener;
     }
@@ -47,6 +51,10 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
         holder.setCharacterId(mCharacters.get(position).getCharacterId());
         holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
         holder.setClassType(mCharacters.get(position).getClassType());
+
+        if(!mSelectedItem.getCanEquip()) {
+            holder.setDisabled();
+        }
     }
 
     @Override
@@ -56,6 +64,6 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return position;
     }
 }

@@ -58,6 +58,7 @@ public class LFGPostsFragment extends Fragment {
     private List<LFGPost> lfgPosts = new ArrayList<>();
     private SharedPreferences savedPrefs;
 
+    private Context mContext;
     private String displayName = "";
 
     @BindView(R.id.fab) FloatingActionButton mFab;
@@ -165,6 +166,7 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -177,6 +179,7 @@ public class LFGPostsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mContext = null;
     }
 
     @Override
@@ -262,7 +265,7 @@ public class LFGPostsFragment extends Fragment {
                     lfgPosts.add(post);
 
                 }
-                mLFGPostAdapter = new LFGPostRecyclerAdapter(getContext(), lfgPosts, new RecyclerViewClickListener() {
+                mLFGPostAdapter = new LFGPostRecyclerAdapter(mContext, lfgPosts, new RecyclerViewClickListener() {
                     @Override
                     public void onClick(View view, int position, LFGPostViewHolder holder) {
 
@@ -305,9 +308,9 @@ public class LFGPostsFragment extends Fragment {
 
                     }
                 });
-                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right_reverse);
+                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_slide_right_reverse);
                 mLFGRecyclerView.setLayoutAnimation(controller);
-                LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+                LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(mContext);
                 mLinearLayoutManager.setReverseLayout(true);
                 mLinearLayoutManager.setStackFromEnd(true);
 

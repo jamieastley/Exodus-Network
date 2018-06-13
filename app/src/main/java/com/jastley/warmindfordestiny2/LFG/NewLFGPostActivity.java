@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -49,7 +51,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
     private boolean hasMic = false;
     private boolean onCreateFlag = true;
     List<Response_GetAllCharacters.CharacterData> mCharacterList = new ArrayList<>();
-
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private static final FirebaseDatabase DATABASE = FirebaseDatabase.getInstance();
 
@@ -134,7 +136,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
 
-        mAccountDAO.getAll()
+        Disposable disposable = mAccountDAO.getAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(characters -> {
@@ -212,6 +214,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
                         characterRadioGroup.addView(radioButton);
                     }
                 });
+        compositeDisposable.add(disposable);
     }
 
 

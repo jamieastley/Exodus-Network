@@ -230,7 +230,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
         //Equip item methods
         mEquipRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mEquipAdapter = new EquipItemRecyclerAdapter(getContext(), mCharacters, (view, position, holder) -> {
+        mEquipAdapter = new EquipItemRecyclerAdapter(getContext(), selectedItem, mCharacters, (view, position, holder) -> {
 
             dismiss();
             mSuccessListener.inProgress();
