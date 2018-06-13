@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.jastley.warmindfordestiny2.BuildConfig;
 import com.jastley.warmindfordestiny2.LFG.adapters.LFGFactionsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.LFG.models.FactionProgressModel;
 import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
@@ -246,22 +247,11 @@ public class LFGDetailsFragment extends Fragment {
         outState.putParcelable("savedPlayerClick", receivedPlayerClick);
     }
 
-    //    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//
-//        inflater.inflate(R.menu.app_bar_new_lfg, menu);
-//        super.onCreateOptionsMenu(menu, inflater);
-//    }
-
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         //clear actionBar buttons from previous fragment (filter/refresh)
         menu.clear();
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        inflater.inflate(R.menu.app_bar_new_lfg, menu);
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -271,13 +261,9 @@ public class LFGDetailsFragment extends Fragment {
         switch(item.getItemId()){
 
             case android.R.id.home:
-//                appCompatActivity.getSupportActionBar().setDisplayShowHomeEnabled(false);
-//                appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//                appCompatActivity.getSupportActionBar().set
                 getActivity().onBackPressed();
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -290,9 +276,6 @@ public class LFGDetailsFragment extends Fragment {
         MainActivity activity = (MainActivity)getActivity();
         if(activity != null) {
             activity.setActionBarTitle(getString(R.string.postDetails));
-
-    //        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-
         }
         TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
 
@@ -339,17 +322,21 @@ public class LFGDetailsFragment extends Fragment {
                     }
                      else {
                         groupName.setText(response.getResponse().getResults().get(0).getGroup().getName());
-
                     }
                     groupNameProgress.setVisibility(View.GONE);
-                },
-                error -> {
+                }, throwable -> {
+                    if(throwable instanceof NoNetworkException) {
+                        Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> retryLoadData())
+                                .show();
+                    }
+                    else {
+                        Snackbar.make(getView(), "Couldn't get clan data.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+                    }
                     groupName.setText("");
                     groupNameProgress.setVisibility(View.GONE);
-
-                    Snackbar.make(getView(), "Couldn't get clan data.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .show();
                 });
 
         compositeDisposable.add(disposable);
@@ -395,15 +382,21 @@ public class LFGDetailsFragment extends Fragment {
                         }
                     }
                     statsValuesProgress.setVisibility(View.GONE);
-                }, error -> {
+                }, throwable ->  {
+                    if(throwable instanceof NoNetworkException) {
+                        Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> retryLoadData())
+                                .show();
+                    }
+                    else {
+                        Snackbar.make(getView(), "Couldn't get account stats.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+                    }
                     playTime.setText("-");
                     lifeSpan.setText("-");
                     kdRatio.setText("-");
                     statsValuesProgress.setVisibility(View.GONE);
-
-                    Snackbar.make(getView(), "Couldn't get account stats.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .show();
                 });
         compositeDisposable.add(disposable);
     }
@@ -424,32 +417,51 @@ public class LFGDetailsFragment extends Fragment {
                         ArrayList<String> factionHashList = new ArrayList<>();
 
                         //get stats from API response, keySet required for iteration instead of forLoop .get(i)
-                        for(Iterator iterator = response_factionProgression.getResponse().getProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext();){
+                        if(response_factionProgression.getResponse().getProgressions() != null) {
 
-                            FactionProgressModel factionProgressModel = new FactionProgressModel();
+                            try {
 
-                            String currentKey = (String)iterator.next();
-                            String primaryKey = UnsignedHashConverter.getPrimaryKey(currentKey);
+                                for (Iterator iterator = response_factionProgression.getResponse().getProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext(); ) {
 
-                            factionHashList.add(primaryKey);
+                                    FactionProgressModel factionProgressModel = new FactionProgressModel();
 
+                                    String currentKey = (String) iterator.next();
+                                    String primaryKey = UnsignedHashConverter.getPrimaryKey(currentKey);
 
-                            Log.d("FACTION_API_RESPONSE", primaryKey);
-                            factionProgressModel.setPrimaryKey(primaryKey);
-                            factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
-                            factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
-                            factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
-                            factionProgressModel.setLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getLevel());
-                            factionProgressModel.setNextLevelAt(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getNextLevelAt());
+                                    factionHashList.add(primaryKey);
 
-                            factionProgressionsList.add(factionProgressModel);
+                                    if(BuildConfig.DEBUG){
+                                        Log.d("FACTION_API_RESPONSE", primaryKey);
+                                    }
+                                    factionProgressModel.setPrimaryKey(primaryKey);
+                                    factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
+                                    factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
+                                    factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
+                                    factionProgressModel.setLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getLevel());
+                                    factionProgressModel.setNextLevelAt(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getNextLevelAt());
+
+                                    factionProgressionsList.add(factionProgressModel);
+                                }
+
+                                Collections.sort(factionHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
+                                Collections.sort(factionProgressionsList, (f1, f2) -> Long.valueOf(f1.getPrimaryKey()).compareTo(Long.valueOf((f2.getPrimaryKey()))));
+
+                                getFactionData(factionHashList);
+                            }
+                            catch(Exception e) {
+                                Handler mainHandler = new Handler(Looper.getMainLooper());
+                                Runnable mRunnable = this::displayError;
+                                mainHandler.post(mRunnable);
+                            }
+                        }
+                        else {
+                            Log.d("GET_FACTION_PROGRESS", "getProgressions() is null");
+                            Handler mainHandler = new Handler(Looper.getMainLooper());
+                            Runnable mRunnable = this::displayError;
+                            mainHandler.post(mRunnable);
                         }
 
-                        Collections.sort(factionHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
 
-                        Collections.sort(factionProgressionsList, (f1, f2) -> Long.valueOf(f1.getPrimaryKey()).compareTo(Long.valueOf((f2.getPrimaryKey()))));
-
-                        getFactionData(factionHashList);
                     }
                 },throwable -> {
 
@@ -471,7 +483,6 @@ public class LFGDetailsFragment extends Fragment {
     }
 
 
-
     public void getFactionData(List<String> hashes) {
 
         FactionsDAO mFactionDAO = AppDatabase.getManifestDatabase(getContext()).getFactionsDAO();
@@ -488,11 +499,6 @@ public class LFGDetailsFragment extends Fragment {
 
                         if(factions.get(i).getId().equals(factionProgressionsList.get(i).getPrimaryKey())) {
 
-//                            factionProgressionsList.get(i).getFactionHash().toString().equals(factionObj.get("hash").getAsString());
-
-                            System.out.println("inside forLoop: " + factionProgressionsList.get(i).getFactionHash());
-                            System.out.println("Room: " + factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
-
                             //Append manifest data to faction progressions for character
                             factionProgressionsList.get(i).setFactionName(factionObj.get("displayProperties").getAsJsonObject().get("name").getAsString());
                             factionProgressionsList.get(i).setFactionIconUrl(factionObj.get("displayProperties").getAsJsonObject().get("icon").getAsString());
@@ -505,6 +511,7 @@ public class LFGDetailsFragment extends Fragment {
                         mFactionProgressRecyclerAdapter = new LFGFactionsRecyclerAdapter(getContext(), factionProgressionsList);
                         int spanCount = 2;
                         GridLayoutManager gridManager = new GridLayoutManager(getContext(), spanCount);
+                        factionCardView.setVisibility(View.VISIBLE);
                         mFactionProgressRecyclerView.setLayoutManager(gridManager);
                         mFactionProgressRecyclerView.setNestedScrollingEnabled(false);
                         mFactionProgressRecyclerView.setAdapter(mFactionProgressRecyclerAdapter);
@@ -533,6 +540,13 @@ public class LFGDetailsFragment extends Fragment {
         getHistoricalStatsAccount(receivedPlayerClick.getMembershipType(), receivedPlayerClick.getMembershipId());
         getGroupDetails(receivedPlayerClick.getMembershipType(), receivedPlayerClick.getMembershipId());
         getFactionStats(receivedPlayerClick.getMembershipType(), receivedPlayerClick.getMembershipId(), receivedPlayerClick.getCharacterId());
+    }
+
+    private void displayError() {
+        factionLoadingBar.setVisibility(View.GONE);
+        Snackbar.make(getView(), "Couldn't get faction stats.", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .show();
     }
 }
 

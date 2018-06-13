@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.transition.Explode;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -14,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.support.transition.Fade;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +63,10 @@ public class NewLFGPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setEnterTransition(new android.transition.Fade().setDuration(1000));
+        }
+
 
         ButterKnife.bind(this);
 
@@ -229,7 +236,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.app_bar_new_lfg, menu);
         return true;
     }
-
 
 
     @Override

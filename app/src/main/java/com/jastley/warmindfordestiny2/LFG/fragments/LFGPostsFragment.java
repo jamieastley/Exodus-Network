@@ -138,9 +138,11 @@ public class LFGPostsFragment extends Fragment {
 
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-//            mSwipeRefreshLayout.setRefreshing(true);
+            mSwipeRefreshLayout.setRefreshing(true);
+//            lfgPosts.clear();
+//            mLFGPostAdapter.clearItems();
             loadLFGPosts(null);
-            mLFGPostAdapter.notifyDataSetChanged();
+//            mLFGPostAdapter.notifyDataSetChanged();
         });
     }
 
@@ -316,6 +318,7 @@ public class LFGPostsFragment extends Fragment {
 
                 mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
                 mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+
 //                mLFGPostAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -366,6 +369,7 @@ public class LFGPostsFragment extends Fragment {
             intent.putExtra("displayName", displayName);
 
             startActivityForResult(intent, 1);
+
         }
         catch(Exception e){
             Log.d("FAB_CLICK", e.getLocalizedMessage());

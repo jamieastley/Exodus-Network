@@ -174,8 +174,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             mSwipeRefreshLayout.setRefreshing(true);
-            mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
-            mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
+
 
             if(classType.equals("vault")){
                 //get Vault items only
@@ -631,6 +630,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
         mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
+
+        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
 
         headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
             @Override

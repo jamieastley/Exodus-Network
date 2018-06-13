@@ -98,4 +98,8 @@ public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHold
 //        return super.getItem(position);
 //    }
 
+    public void clearItems() {
+        notifyDataSetChanged();
+    }
+
 }
