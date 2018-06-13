@@ -84,7 +84,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private void checkManifestsVersion() {
 
         SharedPreferences savedPrefs;
-        savedPrefs = this.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
+        savedPrefs = this.getSharedPreferences("saved_manifest", Context.MODE_PRIVATE);
 
         BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, this);
         Disposable manifestDisposable =  mBungieAPI.getBungieManifests()

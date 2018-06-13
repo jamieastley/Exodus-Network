@@ -46,6 +46,7 @@ import com.jastley.warmindfordestiny2.Vendors.HeaderItemDecoration;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
 
@@ -579,7 +580,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void getManifestData(List<String> hashes){
 
-        InventoryItemDAO mInventoryItemDAO = AppDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
+        InventoryItemDAO mInventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
 
         Disposable disposable = mInventoryItemDAO.getItemsListByKey(hashes)
                 .subscribeOn(Schedulers.io())

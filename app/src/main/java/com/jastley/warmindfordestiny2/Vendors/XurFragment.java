@@ -30,6 +30,7 @@ import com.jastley.warmindfordestiny2.Vendors.adapters.XurItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.squareup.picasso.Picasso;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -282,7 +283,7 @@ public class XurFragment extends Fragment {
     }
 
     public void getLocationBanner() {
-        FactionsDAO mFactionsDAO = AppDatabase.getManifestDatabase(getContext()).getFactionsDAO();
+        FactionsDAO mFactionsDAO = AppManifestDatabase.getManifestDatabase(getContext()).getFactionsDAO();
         Disposable disposable = mFactionsDAO.getFactionByKey(theNine, "shsh")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

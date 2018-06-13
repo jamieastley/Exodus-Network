@@ -35,6 +35,7 @@ import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.MilestoneDAO;
 import com.jastley.warmindfordestiny2.database.models.MilestoneData;
@@ -201,7 +202,7 @@ public class MilestonesFragment extends Fragment {
 
     public void getMilestoneData(List<MilestoneModel> milestoneModels, List<String> hashes) {
 
-        MilestoneDAO mMilestonesDAO = AppDatabase.getManifestDatabase(getContext()).getMilestonesDAO();
+        MilestoneDAO mMilestonesDAO = AppManifestDatabase.getManifestDatabase(getContext()).getMilestonesDAO();
 
         Disposable disposable = mMilestonesDAO.getMilestoneListByKey(hashes)
                 .subscribeOn(Schedulers.io())
@@ -268,7 +269,7 @@ public class MilestonesFragment extends Fragment {
 
     public void getMilestoneRewards(List<MilestoneModel> milestoneModels, List<String> rewardHashes) {
 
-        InventoryItemDAO inventoryItemDAO = AppDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
+        InventoryItemDAO inventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
 
         Disposable disposable = inventoryItemDAO.getItemsListByKey(rewardHashes)
                 .subscribeOn(Schedulers.io())

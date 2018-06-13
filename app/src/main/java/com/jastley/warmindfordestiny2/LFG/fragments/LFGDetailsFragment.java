@@ -33,6 +33,7 @@ import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
+import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.squareup.picasso.Picasso;
 
@@ -485,7 +486,7 @@ public class LFGDetailsFragment extends Fragment {
 
     public void getFactionData(List<String> hashes) {
 
-        FactionsDAO mFactionDAO = AppDatabase.getManifestDatabase(getContext()).getFactionsDAO();
+        FactionsDAO mFactionDAO = AppManifestDatabase.getManifestDatabase(getContext()).getFactionsDAO();
 
         Disposable disposable = mFactionDAO.getFactionsListByKey(hashes)
                 .subscribeOn(Schedulers.io())

@@ -63,10 +63,6 @@ public class NewLFGPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_lfgpost);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setEnterTransition(new android.transition.Fade().setDuration(1000));
-        }
-
 
         ButterKnife.bind(this);
 

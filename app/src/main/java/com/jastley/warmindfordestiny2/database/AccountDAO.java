@@ -33,4 +33,7 @@ public interface AccountDAO {
 
     @Query("SELECT * FROM Account WHERE `key` = :accountKey")
     Account getByKey(String accountKey);
+
+    @Query("DELETE FROM Account")
+    void deleteAccount();
 }

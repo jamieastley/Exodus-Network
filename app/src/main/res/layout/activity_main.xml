@@ -40,6 +40,72 @@
 
         <!--</android.support.design.widget.NavigationView>-->
 
+        <RelativeLayout
+            android:id="@+id/nav_log_in_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:clickable="true"
+            android:focusable="true"
+            >
+
+            <ImageView
+                android:id="@+id/nav_log_in_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:tint="@color/colorWhite"
+                android:src="@drawable/ic_account_circle_black_24dp"
+                />
+
+            <TextView
+                android:id="@+id/nav_log_in_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/nav_log_in_icon"
+                android:padding="5dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginStart="10dp"
+                android:text="@string/log_in"
+                android:textColor="@color/colorWhite"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/nav_log_out_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/nav_log_out_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:src="@drawable/icon_log_out"
+                />
+
+            <TextView
+                android:id="@+id/nav_log_out_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/nav_log_out_icon"
+                android:padding="5dp"
+                android:layout_marginTop="13dp"
+                android:layout_marginStart="10dp"
+                android:text="@string/log_out"
+                android:textColor="@color/colorWhite"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                />
+        </RelativeLayout>
         
     </android.support.design.widget.NavigationView>
 

@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentManager;
@@ -29,9 +30,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.google.gson.JsonObject;
@@ -61,6 +64,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.squareup.picasso.Target;
+
+import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -89,6 +98,9 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView;
     DrawerLayout mDrawer;
+
+    @BindView(R.id.nav_log_in_container) RelativeLayout mLogInContainer;
+    @BindView(R.id.nav_log_out_container) RelativeLayout mLogOutContainer;
 
     List<Target> targets = new ArrayList<>();
     private String redirectUri = "warmindfordestiny://callback";
@@ -188,7 +200,8 @@ public class MainActivity extends AppCompatActivity
         if((displayName != "") && (membershipType != "")) {
 
 
-            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
+            mLogInContainer.setVisibility(View.GONE);
+//            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
 
 //            postsFragment.isFabVisible(true);
@@ -196,7 +209,9 @@ public class MainActivity extends AppCompatActivity
 //            faButton.show();
         }
         else { //not logged in
-            navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
+            mLogInContainer.setVisibility(View.VISIBLE);
+            mLogOutContainer.setVisibility(View.GONE);
+//            navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_auth).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
@@ -254,7 +269,9 @@ public class MainActivity extends AppCompatActivity
             navigationView = findViewById(R.id.nav_view);
             Menu navMenu = navigationView.getMenu();
 
-            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
+            mLogInContainer.setVisibility(View.GONE);
+            mLogOutContainer.setVisibility(View.VISIBLE);
+//            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_auth).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
@@ -279,8 +296,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        compositeDisposable.dispose();
+
 //        mLFGPostAdapter.stopListening();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.dispose();
     }
 
     @Override
@@ -647,17 +670,12 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         //Insert into Room
-                        AccountDAO mAccountDAO = AppDatabase.getManifestDatabase(this).getAccountDAO();
+                        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
                         mAccountDAO.insertAll(mAccountList);
 
                         //Get back onto mainThread to do UI stuff
                         Handler mainHandler = new Handler(Looper.getMainLooper());
                         Runnable mRunnable = () -> {
-////                            NavigationView navigationView = findViewById(R.id.nav_view);
-////                            View hView =  navigationView.getHeaderView(0);
-//
-////                            updateNavUI(hView);
-////                            dismissLoadingFragment();
                             downloadEmblems(emblemIconList);
                         };
                         mainHandler.post(mRunnable);
@@ -839,9 +857,15 @@ public class MainActivity extends AppCompatActivity
 //            getPlayerProfile();
             getMembershipsForCurrentUser();
         }
-        else if (id == R.id.nav_log_in) {
-            Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
-            startActivity(oauthIntent);
+//        else if (id == R.id.nav_log_in) {
+//            Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
+//            startActivity(oauthIntent);
+//        }
+        else if (id == R.id.nav_log_out_container) {
+            Log.d("log_out_click", "works");
+        }
+        else if (id == R.id.nav_log_out_text) {
+            Log.d("log_out_click", "TEXT");
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -912,6 +936,36 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnMilestoneFragmentInteractionListener(Uri uri) {
+
+    }
+
+    @OnClick(R.id.nav_log_in_container)
+    public void onClickLogIn() {
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+        Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
+        startActivity(oauthIntent);
+    }
+
+    @OnClick(R.id.nav_log_out_container)
+    public void onClickLogOut() {
+
+        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+
+        AsyncTask.execute(mAccountDAO::deleteAccount);
+
+        SharedPreferences.Editor editor = savedPrefs.edit();
+        editor.clear();
+        editor.apply();
+
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//
+        //set flags so pressing back won't trigger previous state of MainActivity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
 
     }
 }

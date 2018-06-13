@@ -139,6 +139,7 @@
     <string name="milestones">Milestones</string>
     <string name="action_search">Search</string>
     <string name="refresh_auth">Refresh Auth Token</string>
+    <string name="log_out">Log Out</string>
 
 
 </resources>
