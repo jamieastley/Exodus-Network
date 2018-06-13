@@ -41,4 +41,15 @@ public abstract class AppDatabase extends RoomDatabase {
 
         return INSTANCE;
     }
+
+    public static AppDatabase getManifestDatabase(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = Room
+                    .databaseBuilder(context.getApplicationContext(), AppDatabase.class, "bungieManifest.db")
+//                    .inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
+                    .build();
+        }
+
+        return INSTANCE;
+    }
 }

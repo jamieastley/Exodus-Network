@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity
         else { //not logged in
             navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
+            navMenu.findItem(R.id.nav_refresh_auth).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
 //            faButton.hide();
 //            args.putString("fab", "hide");
@@ -257,6 +258,7 @@ public class MainActivity extends AppCompatActivity
 
             navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
+            navMenu.findItem(R.id.nav_refresh_auth).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
 //            faButton.show();
         }
@@ -647,7 +649,7 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         //Insert into Room
-                        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+                        AccountDAO mAccountDAO = AppDatabase.getManifestDatabase(this).getAccountDAO();
                         mAccountDAO.insertAll(mAccountList);
 
                         //Get back onto mainThread to do UI stuff

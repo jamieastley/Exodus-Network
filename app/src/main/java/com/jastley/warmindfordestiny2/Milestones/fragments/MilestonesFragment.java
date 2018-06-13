@@ -201,7 +201,7 @@ public class MilestonesFragment extends Fragment {
 
     public void getMilestoneData(List<MilestoneModel> milestoneModels, List<String> hashes) {
 
-        MilestoneDAO mMilestonesDAO = AppDatabase.getAppDatabase(getContext()).getMilestonesDAO();
+        MilestoneDAO mMilestonesDAO = AppDatabase.getManifestDatabase(getContext()).getMilestonesDAO();
 
         Disposable disposable = mMilestonesDAO.getMilestoneListByKey(hashes)
                 .subscribeOn(Schedulers.io())
@@ -268,7 +268,7 @@ public class MilestonesFragment extends Fragment {
 
     public void getMilestoneRewards(List<MilestoneModel> milestoneModels, List<String> rewardHashes) {
 
-        InventoryItemDAO inventoryItemDAO = AppDatabase.getAppDatabase(getContext()).getInventoryItemDAO();
+        InventoryItemDAO inventoryItemDAO = AppDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
 
         Disposable disposable = inventoryItemDAO.getItemsListByKey(rewardHashes)
                 .subscribeOn(Schedulers.io())

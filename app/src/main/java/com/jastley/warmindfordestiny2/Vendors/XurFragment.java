@@ -282,7 +282,7 @@ public class XurFragment extends Fragment {
     }
 
     public void getLocationBanner() {
-        FactionsDAO mFactionsDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
+        FactionsDAO mFactionsDAO = AppDatabase.getManifestDatabase(getContext()).getFactionsDAO();
         Disposable disposable = mFactionsDAO.getFactionByKey(theNine, "shsh")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

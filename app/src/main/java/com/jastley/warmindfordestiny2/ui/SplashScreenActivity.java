@@ -210,7 +210,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         {
             String zipname = "manifest.zip";
             String filename;
-            File bungieDB = new File(path, "bungieAccount.db");
+            File bungieDB = new File(path, "bungieManifest.db");
             is = new FileInputStream(path +"/"+ zipname);
             zis = new ZipInputStream(new BufferedInputStream(is));
             ZipEntry ze;

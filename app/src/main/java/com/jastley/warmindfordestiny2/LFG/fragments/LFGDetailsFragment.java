@@ -474,7 +474,7 @@ public class LFGDetailsFragment extends Fragment {
 
     public void getFactionData(List<String> hashes) {
 
-        FactionsDAO mFactionDAO = AppDatabase.getAppDatabase(getContext()).getFactionsDAO();
+        FactionsDAO mFactionDAO = AppDatabase.getManifestDatabase(getContext()).getFactionsDAO();
 
         Disposable disposable = mFactionDAO.getFactionsListByKey(hashes)
                 .subscribeOn(Schedulers.io())

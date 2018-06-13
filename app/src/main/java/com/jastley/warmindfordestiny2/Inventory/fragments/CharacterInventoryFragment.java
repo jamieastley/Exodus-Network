@@ -580,7 +580,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void getManifestData(List<String> hashes){
 
-        InventoryItemDAO mInventoryItemDAO = AppDatabase.getAppDatabase(getContext()).getInventoryItemDAO();
+        InventoryItemDAO mInventoryItemDAO = AppDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
 
         Disposable disposable = mInventoryItemDAO.getItemsListByKey(hashes)
                 .subscribeOn(Schedulers.io())
