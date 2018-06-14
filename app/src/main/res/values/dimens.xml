@@ -16,4 +16,6 @@
     <!--Warmind-->
     <dimen name="item_name_height">16sp</dimen>
     <dimen name="item_type_height">13sp</dimen>
+    <dimen name="account_stats_banner_image">60dp</dimen>
+    <dimen name="account_stats_banner_title">20sp</dimen>
 </resources>

@@ -36,6 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.google.gson.JsonObject;
+import com.jastley.warmindfordestiny2.Account.fragments.AccountStatsFragment;
 import com.jastley.warmindfordestiny2.Inventory.fragments.CharacterInventoryFragment;
 import com.jastley.warmindfordestiny2.Inventory.fragments.ParentInventoryFragment;
 import com.jastley.warmindfordestiny2.Inventory.fragments.ItemTransferDialogFragment;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity
                     LFGDetailsFragment.OnDetailsFragmentInteraction,
                     LFGPostsFragment.OnFragmentInteractionListener,
                     XurFragment.OnFragmentInteractionListener,
+                    AccountStatsFragment.OnAccountStatsInteractionListener,
                     MilestonesFragment.OnMilestoneFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,
                     ItemTransferDialogFragment.OnFragmentInteractionListener,
@@ -813,6 +815,16 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
+        else if (id == R.id.nav_account_stats) {
+
+            Fragment fragment = AccountStatsFragment.newInstance();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.lfg_content_frame, fragment)
+                    .commit();
+        }
+
         else if (id == R.id.nav_milestones) {
             Fragment fragment = MilestonesFragment.newInstance();
 
@@ -934,6 +946,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onAccountStatsInteraction(Uri uri) {
+
+    }
+
+
     @OnClick(R.id.nav_log_in_container)
     public void onClickLogIn() {
 
@@ -963,4 +981,6 @@ public class MainActivity extends AppCompatActivity
         finish();
 
     }
+
+
 }

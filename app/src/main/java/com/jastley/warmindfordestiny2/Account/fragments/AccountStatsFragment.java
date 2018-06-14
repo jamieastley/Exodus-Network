@@ -8,13 +8,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.widget.TextView;
 
+import com.jastley.warmindfordestiny2.Account.adapters.AccountStatsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Account.models.AccountStatsModel;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
@@ -23,6 +31,7 @@ import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -37,6 +46,22 @@ public class AccountStatsFragment extends Fragment {
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     BungieAPI mBungieAPI;
     private Context mContext;
+
+    @BindView(R.id.account_stats_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
+
+    //RecyclerViews
+    @BindView(R.id.account_stats_pvp_recycler_view) RecyclerView mPVPRecyclerView;
+    @BindView(R.id.account_stats_raid_recycler_view) RecyclerView mRaidRecyclerView;
+    @BindView(R.id.account_stats_strikes_recycler_view) RecyclerView mStrikesRecyclerView;
+    @BindView(R.id.account_stats_story_recycler_view) RecyclerView mStoryRecyclerView;
+    @BindView(R.id.account_stats_patrol_recycler_view) RecyclerView mPatrolRecyclerView;
+
+    //Error messages
+    @BindView(R.id.account_stats_pvp_error) TextView mPVPErrorMessage;
+    @BindView(R.id.account_stats_raid_error) TextView mRaidErrorMessage;
+    @BindView(R.id.account_stats_strikes_error) TextView mStrikesErrorMessage;
+    @BindView(R.id.account_stats_story_error) TextView mStoryErrorMessage;
+    @BindView(R.id.account_stats_patrol_error) TextView mPatrolErrorMessage;
 
     //Mode-specific stat models
     private List<AccountStatsModel> pvpStatsList = new ArrayList<>();
@@ -76,13 +101,27 @@ public class AccountStatsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mSwipeRefreshLayout.setRefreshing(true);
+
         getAccountStats();
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+            pvpStatsList.clear();
+            raidStatsList.clear();
+            allStrikesStatsList.clear();
+            storyStatsList.clear();
+            patrolStatsList.clear();
+
+            getAccountStats();
+
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onAccountStatsInteraction(uri);
         }
     }
 
@@ -106,6 +145,16 @@ public class AccountStatsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity activity = (MainActivity)getActivity();
+        if(activity != null) {
+            activity.setActionBarTitle(getString(R.string.account_stats));
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
@@ -114,13 +163,13 @@ public class AccountStatsFragment extends Fragment {
 
     public interface OnAccountStatsInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onAccountStatsInteraction(Uri uri);
     }
 
     private void getAccountStats() {
 
         SharedPreferences savedPrefs;
-        savedPrefs = mContext.getSharedPreferences("saved_manifest", Context.MODE_PRIVATE);
+        savedPrefs = mContext.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
 
         String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
 
@@ -141,7 +190,7 @@ public class AccountStatsFragment extends Fragment {
                         else {
 
                             //PVP stats
-                            if(response.getResponse().getAllPvP() != null) {
+                            if(response.getResponse().getAllPvP().getAllTime() != null) {
 
                                 pvpStatsList.add(new AccountStatsModel("Activites Entered",
                                         response.getResponse().getAllPvP().getAllTime().getActivitiesEntered().getBasic().getDisplayValue()));
@@ -193,10 +242,19 @@ public class AccountStatsFragment extends Fragment {
 
                                 pvpStatsList.add(new AccountStatsModel("Longest Kill Distance",
                                         response.getResponse().getAllPvP().getAllTime().getLongestKillDistance().getBasic().getDisplayValue()));
+
+                                AccountStatsRecyclerAdapter pvpStatsAdapter = new AccountStatsRecyclerAdapter(pvpStatsList);
+                                mPVPRecyclerView.setLayoutAnimation(getLayoutAnimation());
+                                mPVPRecyclerView.setLayoutManager(getLayoutManager());
+                                mPVPRecyclerView.setAdapter(pvpStatsAdapter);
+                                mPVPRecyclerView.setNestedScrollingEnabled(false);
+                            }
+                            else {
+                                mPVPErrorMessage.setVisibility(View.VISIBLE);
                             }
 
                             //Raid stats
-                            if(response.getResponse().getRaid() != null) {
+                            if(response.getResponse().getRaid().getAllTime() != null) {
 
                                 raidStatsList.add(new AccountStatsModel("Activites Entered",
                                         response.getResponse().getRaid().getAllTime().getActivitiesEntered().getBasic().getDisplayValue()));
@@ -240,18 +298,27 @@ public class AccountStatsFragment extends Fragment {
                                 raidStatsList.add(new AccountStatsModel("Precision Kills",
                                         response.getResponse().getRaid().getAllTime().getPrecisionKills().getBasic().getDisplayValue()));
 
-                                raidStatsList.add(new AccountStatsModel("W/L Ratio",
-                                        response.getResponse().getRaid().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
+//                                raidStatsList.add(new AccountStatsModel("W/L Ratio",
+//                                        response.getResponse().getRaid().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
 
                                 raidStatsList.add(new AccountStatsModel("Best Killstreak",
                                         response.getResponse().getRaid().getAllTime().getLongestKillSpree().getBasic().getDisplayValue()));
 
                                 raidStatsList.add(new AccountStatsModel("Longest Kill Distance",
                                         response.getResponse().getRaid().getAllTime().getLongestKillDistance().getBasic().getDisplayValue()));
+
+                                AccountStatsRecyclerAdapter raidStatsAdapter = new AccountStatsRecyclerAdapter(raidStatsList);
+                                mRaidRecyclerView.setLayoutAnimation(getLayoutAnimation());
+                                mRaidRecyclerView.setLayoutManager(getLayoutManager());
+                                mRaidRecyclerView.setAdapter(raidStatsAdapter);
+                                mRaidRecyclerView.setNestedScrollingEnabled(false);
+                            }
+                            else {
+                                mRaidErrorMessage.setVisibility(View.VISIBLE);
                             }
 
                             //Strikes stats
-                            if(response.getResponse().getAllStrikes() != null) {
+                            if(response.getResponse().getAllStrikes().getAllTime() != null) {
 
                                 allStrikesStatsList.add(new AccountStatsModel("Activites Entered",
                                         response.getResponse().getAllStrikes().getAllTime().getActivitiesEntered().getBasic().getDisplayValue()));
@@ -295,18 +362,29 @@ public class AccountStatsFragment extends Fragment {
                                 allStrikesStatsList.add(new AccountStatsModel("Precision Kills",
                                         response.getResponse().getAllStrikes().getAllTime().getPrecisionKills().getBasic().getDisplayValue()));
 
-                                allStrikesStatsList.add(new AccountStatsModel("W/L Ratio",
-                                        response.getResponse().getAllStrikes().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
+//                                allStrikesStatsList.add(new AccountStatsModel("W/L Ratio",
+//                                        response.getResponse().getAllStrikes().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
 
                                 allStrikesStatsList.add(new AccountStatsModel("Best Killstreak",
                                         response.getResponse().getAllStrikes().getAllTime().getLongestKillSpree().getBasic().getDisplayValue()));
 
                                 allStrikesStatsList.add(new AccountStatsModel("Longest Kill Distance",
                                         response.getResponse().getAllStrikes().getAllTime().getLongestKillDistance().getBasic().getDisplayValue()));
+
+                                AccountStatsRecyclerAdapter strikesStatsAdapter = new AccountStatsRecyclerAdapter(allStrikesStatsList);
+//                                mPVPRecyclerView.setLayoutManager(getGridLayoutManager());
+//                                mPVPRecyclerView.setAdapter(strikesStatsAdapter);
+                                mStrikesRecyclerView.setLayoutAnimation(getLayoutAnimation());
+                                mStrikesRecyclerView.setLayoutManager(getLayoutManager());
+                                mStrikesRecyclerView.setAdapter(strikesStatsAdapter);
+                                mStrikesRecyclerView.setNestedScrollingEnabled(false);
+                            }
+                            else {
+                                mStrikesErrorMessage.setVisibility(View.VISIBLE);
                             }
 
                             //Story stats
-                            if(response.getResponse().getStory() != null) {
+                            if(response.getResponse().getStory().getAllTime() != null) {
 
                                 storyStatsList.add(new AccountStatsModel("Activites Entered",
                                         response.getResponse().getStory().getAllTime().getActivitiesEntered().getBasic().getDisplayValue()));
@@ -332,8 +410,8 @@ public class AccountStatsFragment extends Fragment {
                                 storyStatsList.add(new AccountStatsModel("Avg. Lifespan",
                                         response.getResponse().getStory().getAllTime().getAverageLifespan().getBasic().getDisplayValue()));
 
-                                storyStatsList.add(new AccountStatsModel("Average Score",
-                                        response.getResponse().getStory().getAllTime().getScore().getPga().getDisplayValue()));
+//                                storyStatsList.add(new AccountStatsModel("Average Score",
+//                                        response.getResponse().getStory().getAllTime().getScore().getPga().getDisplayValue()));
 
                                 storyStatsList.add(new AccountStatsModel("Most Kills (Match)",
                                         response.getResponse().getStory().getAllTime().getBestSingleGameKills().getBasic().getDisplayValue()));
@@ -350,18 +428,27 @@ public class AccountStatsFragment extends Fragment {
                                 storyStatsList.add(new AccountStatsModel("Precision Kills",
                                         response.getResponse().getStory().getAllTime().getPrecisionKills().getBasic().getDisplayValue()));
 
-                                storyStatsList.add(new AccountStatsModel("W/L Ratio",
-                                        response.getResponse().getStory().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
+//                                storyStatsList.add(new AccountStatsModel("W/L Ratio",
+//                                        response.getResponse().getStory().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
 
                                 storyStatsList.add(new AccountStatsModel("Best Killstreak",
                                         response.getResponse().getStory().getAllTime().getLongestKillSpree().getBasic().getDisplayValue()));
 
                                 storyStatsList.add(new AccountStatsModel("Longest Kill Distance",
                                         response.getResponse().getStory().getAllTime().getLongestKillDistance().getBasic().getDisplayValue()));
+
+                                AccountStatsRecyclerAdapter storyStatsAdapter = new AccountStatsRecyclerAdapter(storyStatsList);
+                                mStoryRecyclerView.setLayoutAnimation(getLayoutAnimation());
+                                mStoryRecyclerView.setLayoutManager(getLayoutManager());
+                                mStoryRecyclerView.setAdapter(storyStatsAdapter);
+                                mStoryRecyclerView.setNestedScrollingEnabled(false);
+                            }
+                            else {
+                                mStoryErrorMessage.setVisibility(View.VISIBLE);
                             }
 
                             //Patrol
-                            if(response.getResponse().getPatrol() != null) {
+                            if(response.getResponse().getPatrol().getAllTime() != null) {
 
                                 patrolStatsList.add(new AccountStatsModel("Activites Entered",
                                         response.getResponse().getPatrol().getAllTime().getActivitiesEntered().getBasic().getDisplayValue()));
@@ -405,17 +492,24 @@ public class AccountStatsFragment extends Fragment {
                                 patrolStatsList.add(new AccountStatsModel("Precision Kills",
                                         response.getResponse().getPatrol().getAllTime().getPrecisionKills().getBasic().getDisplayValue()));
 
-                                patrolStatsList.add(new AccountStatsModel("W/L Ratio",
-                                        response.getResponse().getPatrol().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
+//                                patrolStatsList.add(new AccountStatsModel("W/L Ratio",
+//                                        response.getResponse().getPatrol().getAllTime().getWinLossRatio().getBasic().getDisplayValue()));
 
                                 patrolStatsList.add(new AccountStatsModel("Best Killstreak",
                                         response.getResponse().getPatrol().getAllTime().getLongestKillSpree().getBasic().getDisplayValue()));
 
                                 patrolStatsList.add(new AccountStatsModel("Longest Kill Distance",
                                         response.getResponse().getPatrol().getAllTime().getLongestKillDistance().getBasic().getDisplayValue()));
+
+                                AccountStatsRecyclerAdapter patrolStatsAdapter = new AccountStatsRecyclerAdapter(patrolStatsList);
+                                mPatrolRecyclerView.setLayoutAnimation(getLayoutAnimation());
+                                mPatrolRecyclerView.setLayoutManager(getLayoutManager());
+                                mPatrolRecyclerView.setAdapter(patrolStatsAdapter);
+                                mPatrolRecyclerView.setNestedScrollingEnabled(false);
                             }
-
-
+                            else {
+                                mPatrolErrorMessage.setVisibility(View.VISIBLE);
+                            }
                         }
                     }, throwable -> {
                         if(throwable instanceof NoNetworkException) {
@@ -428,14 +522,38 @@ public class AccountStatsFragment extends Fragment {
                                     .setAction("Action", null)
                                     .show();
                         }
-                    });
+
+                        mPVPErrorMessage.setVisibility(View.VISIBLE);
+                        mRaidErrorMessage.setVisibility(View.VISIBLE);
+                        mStrikesErrorMessage.setVisibility(View.VISIBLE);
+                        mStoryErrorMessage.setVisibility(View.VISIBLE);
+                        mPatrolErrorMessage.setVisibility(View.VISIBLE);
+                        mSwipeRefreshLayout.setRefreshing(false);
+
+                    }, () -> mSwipeRefreshLayout.setRefreshing(false));
+
                 compositeDisposable.add(disposable);
         }
         else {
-            //TODO error snackbar
+            mPVPErrorMessage.setVisibility(View.VISIBLE);
+            mRaidErrorMessage.setVisibility(View.VISIBLE);
+            mStrikesErrorMessage.setVisibility(View.VISIBLE);
+            mStoryErrorMessage.setVisibility(View.VISIBLE);
+            mPatrolErrorMessage.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            Snackbar.make(getView(), "Couldn't get account stats.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null)
+                    .show();
         }
 
+    }
 
+    private LinearLayoutManager getLayoutManager() {
+        return new LinearLayoutManager(mContext);
+    }
 
+    private LayoutAnimationController getLayoutAnimation() {
+        return AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
     }
 }

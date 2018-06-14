@@ -145,6 +145,13 @@
     <string name="pvp">PvP</string>
     <string name="story">Story</string>
     <string name="patrol">Patrol</string>
+    <string name="no_pvp_stats_found">No PVP stats found.</string>
+    <string name="no_raid_stats_found">No Raid stats found.</string>
+    <string name="no_strike_stats_found">No Strikes stats found.</string>
+    <string name="no_story_stats_found">No Story stats found</string>
+    <string name="no_patrol_stats_found">No Patrol stats found.</string>
+    <string name="account_stats">Account Stats</string>
+    <string name="empty_stat_value">-</string>
 
 
 </resources>

@@ -11,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -19,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -45,7 +43,6 @@ import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.Vendors.HeaderItemDecoration;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
-import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefinition;
@@ -150,12 +147,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 //        super.onViewCreated(view, savedInstanceState);
 
         mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
-
-//        if (savedInstanceState != null) {
-//            itemList = savedInstanceState.getParcelableArrayList("characterItems");
-//            setRecyclerView(itemList);
-//        }
-//        else {
 
         String classType = mCharacter.getClassType();
 
@@ -270,11 +261,11 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         if(wasSuccessful) {
 
             if(isTransfer){
-                mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
+
                 itemList.remove(position);
                 resetItemDecoration(itemList);
-                mItemsRecyclerAdapter.notifyItemRemoved(position);
-                mItemsRecyclerAdapter.notifyItemRangeChanged(position, mItemsRecyclerAdapter.getItemCount());
+                mItemsRecyclerAdapter.updateList(itemList);
+//                mItemsRecyclerAdapter.notifyItemRangeChanged(position, mItemsRecyclerAdapter.getItemCount());
 
                 Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
                         .show();

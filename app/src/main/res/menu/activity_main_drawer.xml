@@ -22,6 +22,12 @@
             />
 
         <item
+            android:id="@+id/nav_account_stats"
+            android:icon="@drawable/icon_stats"
+            android:title="@string/account_stats"
+            />
+
+        <item
             android:id="@+id/nav_milestones"
             android:icon="@drawable/milestone_icon"
             android:title="@string/milestones"
