@@ -101,6 +101,9 @@ public class Definitions {
                 value = 15;
                 break;
             case shaders2:
+                value = 15;
+                break;
+            case materials:
                 value = 16;
                 break;
             case emblems:
@@ -168,7 +171,7 @@ public class Definitions {
                 category = "Shaders";
                 break;
             case 16:
-                category = "Shaders";
+                category = "Materials";
                 break;
             case 17:
                 category = "Emblems";

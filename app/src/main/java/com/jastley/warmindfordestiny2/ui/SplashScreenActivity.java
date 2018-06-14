@@ -131,6 +131,9 @@ public class SplashScreenActivity extends AppCompatActivity {
                     if(error instanceof NoNetworkException){
                         showErrorDialog("No network detected", "An active internet connection is required!");
                     }
+                    else {
+                        showErrorDialog("Network Timeout", "Request timed out, please try again.");
+                    }
                 });
         compositeDisposables.add(manifestDisposable);
     }

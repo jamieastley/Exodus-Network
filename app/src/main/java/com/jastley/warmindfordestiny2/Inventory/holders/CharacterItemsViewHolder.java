@@ -145,7 +145,6 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         if(isEquipped) {
             itemImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.item_equipped_border));
         }
-
         else {
             itemImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.image_border));
         }

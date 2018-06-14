@@ -152,6 +152,11 @@
     <string name="no_patrol_stats_found">No Patrol stats found.</string>
     <string name="account_stats">Account Stats</string>
     <string name="empty_stat_value">-</string>
+    <string name="debug_item_type">Item Type</string>
+    <string name="debug_item_name">Item Name</string>
+    <string name="transfer_item_to">Transfer item to...</string>
+    <string name="equip_on">Equip on...</string>
+    <string name="debug_primary_stat">300</string>
 
 
 </resources>

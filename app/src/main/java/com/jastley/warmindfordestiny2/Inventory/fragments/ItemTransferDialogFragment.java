@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,6 +69,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     private int mTabIndex;
     private OnFragmentInteractionListener mListener;
     static SuccessListener mSuccessListener;
+    private Context mContext;
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -95,6 +97,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnDetailsFragmentInteraction");
@@ -105,6 +108,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mContext = null;
     }
 
     @Override
@@ -137,6 +141,9 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         //Selected item details
         itemName.setText(selectedItem.getItemName());
         primaryStatValue.setText(selectedItem.getPrimaryStatValue());
+        if(selectedItem.getPrimaryStatValue() != null) {
+            primaryStatValue.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primaryStatBackground));
+        }
         itemType.setText(selectedItem.getItemTypeDisplayName());
         if(selectedItem.getDamageType() != null){
 
@@ -170,6 +177,9 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                 .placeholder(R.drawable.missing_icon_d2)
                 .into(itemImage);
 
+        if(selectedItem.getIsEquipped()) {
+            itemImage.setBackground(ContextCompat.getDrawable(mContext, R.drawable.item_equipped_border));
+        }
 
 //        Transfer item row section
         mTransferRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
@@ -179,12 +189,14 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                                                         mCharacters,
                                                         (view, position, holder) -> {
 
-            //TODO: display loadingFragment, block UI interaction
+            Log.d("TRANSFER_FROM", "character"+mCharacters.get(mTabIndex).getCharacterId());
+            Log.d("TRANSFER_TO", "character"+mCharacters.get(position).getCharacterId());
+
             dismiss();
             mSuccessListener.inProgress();
 
             className = holder.getClassType();
-            System.out.println("position: " + position);
+            System.out.println("Destination position: " + position);
             if(holder.getClassType().toLowerCase().equals("vault")){ //transfer TO vault selected
 
                 //Send item straight to vault
@@ -195,6 +207,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                         selectedItem.getItemInstanceId(),
                         mCharacters.get(position).getMembershipType(),
                         mCharacters.get(mTabIndex).getCharacterId() //originating character
+//                        holder.getCharacterId()
                         );
 
                 transferToVault(mTransferVaultBody, null, null, false, false);
@@ -268,7 +281,11 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     mCharacters.get(position).getCharacterId() //destination character
             );
 
-            if(comingFrom.toLowerCase().equals("vault")){
+            if(comingFrom.equals(mCharacters.get(position).getClassType())){
+                equipItem(mEquipBody, true);
+            }
+
+            else if(comingFrom.toLowerCase().equals("vault")){
                 transferToCharacter(mTransferCharacterBody, mEquipBody, true);
             }
             else {
@@ -288,13 +305,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                                  boolean isEquipping,
                                  boolean vaultToCharacter){
 
-        TransferItemRequestBody target = transferBody;
 
-        if(vaultToCharacter) {
-            target = toCharacterBody;
-        }
-
-        Disposable disposable = mBungieApi.transferItem(target)
+        Disposable disposable = mBungieApi.transferItem(transferBody)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
@@ -311,8 +323,12 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
                             transferToCharacter(toCharacterBody, equipBody, true);
                         }
+                        else if(!isEquipping && vaultToCharacter){
+                            transferToCharacter(toCharacterBody, null, false);
+                        }
                         else { //just transferring an item, we're done
                             mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, true);
+                            compositeDisposable.dispose();
                         }
                     }
 
@@ -341,10 +357,11 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     }
                     else { //item is transferred, now equip to that character
                         if(isEquipping){
-                            equipItem(equipBody);
+                            equipItem(equipBody, false);
                         }
                         else { //just transferring an item, we're done
                             mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, true);
+                            compositeDisposable.dispose();
                         }
                     }
 
@@ -355,7 +372,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
         compositeDisposable.add(disposable);
     }
 
-    private void equipItem(EquipItemRequestBody body) {
+    private void equipItem(EquipItemRequestBody body,
+                           boolean sameCharacter) {
 
         Disposable disposable = mBungieApi.equipItem(body)
                 .subscribeOn(Schedulers.io())
@@ -370,7 +388,14 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                                 false);
                     }
                     else {
-                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, false);
+                        if(sameCharacter){
+                            mSuccessListener.onEquipSameCharacter(selectedItem.getCurrentPosition(), true, className, false);
+                        }
+                        else{
+                            mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), true, className, false);
+                        }
+
+                        compositeDisposable.dispose();
                     }
 
                 }, throwable -> {

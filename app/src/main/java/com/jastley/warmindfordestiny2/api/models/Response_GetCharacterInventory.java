@@ -95,14 +95,97 @@ public class Response_GetCharacterInventory {
         private int privacy;
         @Expose
         @SerializedName("data")
-        private Data data;
+        private EquipmentData equipmentData;
 
         public int getPrivacy() {
             return privacy;
         }
 
-        public Data getData() {
-            return data;
+        public EquipmentData getEquipmentData() {
+            return equipmentData;
+        }
+    }
+
+    public static class EquipmentData {
+        @Expose
+        @SerializedName("items")
+        private List<EquipmentItems> items;
+
+        public List<EquipmentItems> getEquipmentsItems() {
+            return items;
+        }
+    }
+
+    public static class EquipmentItems {
+        @Expose
+        @SerializedName("dismantlePermission")
+        private int dismantlePermission;
+        @Expose
+        @SerializedName("state")
+        private int state;
+        @Expose
+        @SerializedName("lockable")
+        private boolean lockable;
+        @Expose
+        @SerializedName("transferStatus")
+        private int transferStatus;
+        @Expose
+        @SerializedName("bucketHash")
+        private String bucketHash;
+        @Expose
+        @SerializedName("location")
+        private int location;
+        @Expose
+        @SerializedName("bindStatus")
+        private int bindStatus;
+        @Expose
+        @SerializedName("quantity")
+        private int quantity;
+        @Expose
+        @SerializedName("itemInstanceId")
+        private String itemInstanceId;
+        @Expose
+        @SerializedName("itemHash")
+        private String itemHash;
+
+        public int getDismantlePermission() {
+            return dismantlePermission;
+        }
+
+        public int getState() {
+            return state;
+        }
+
+        public boolean getLockable() {
+            return lockable;
+        }
+
+        public int getTransferStatus() {
+            return transferStatus;
+        }
+
+        public String getBucketHash() {
+            return bucketHash;
+        }
+
+        public int getLocation() {
+            return location;
+        }
+
+        public int getBindStatus() {
+            return bindStatus;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public String getItemInstanceId() {
+            return itemInstanceId;
+        }
+
+        public String getItemHash() {
+            return itemHash;
         }
     }
 

@@ -52,7 +52,7 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
         holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
         holder.setClassType(mCharacters.get(position).getClassType());
 
-        if(!mSelectedItem.getCanEquip()) {
+        if(mSelectedItem.getCanEquip()) {
             holder.setDisabled();
         }
     }

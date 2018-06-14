@@ -14,6 +14,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,7 +50,9 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -230,10 +233,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         super.onResume();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -265,15 +264,13 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 itemList.remove(position);
                 resetItemDecoration(itemList);
                 mItemsRecyclerAdapter.updateList(itemList);
-//                mItemsRecyclerAdapter.notifyItemRangeChanged(position, mItemsRecyclerAdapter.getItemCount());
-
                 Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }
             else {
                 itemList.remove(position);
-                mItemsRecyclerAdapter.notifyItemRemoved(position);
                 resetItemDecoration(itemList);
+                mItemsRecyclerAdapter.updateList(itemList);
                 Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -281,6 +278,18 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         else {
             //Error handling
             Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    @Override
+    public void onEquipSameCharacter(int position, boolean wasSuccessful, String message, boolean isTransfer) {
+
+        dismissLoadingFragment();
+
+        if(wasSuccessful){
+            refreshInventory();
+            Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
@@ -336,7 +345,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
 
         Disposable disposable = mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
 
@@ -397,13 +406,13 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                         }
 
                         /* character-equipped items (getEquipment()) */
-                        for(int i = 0; i < response.getResponse().getEquipment().getData().getItems().size(); i++){
+                        for(int i = 0; i < response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().size(); i++){
 
                             String primaryStatValue;
                             String itemInstanceId = null;
 
                             //add/calculate hashes
-                            String itemHash = String.valueOf(response.getResponse().getEquipment().getData().getItems().get(i).getItemHash());
+                            String itemHash = String.valueOf(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getItemHash());
                             String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
 
                             itemHashList.add(primaryKey);
@@ -413,8 +422,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                             itemModel.setPrimaryKey(primaryKey);
 
                             //Get instanceId to look up it's instanceData from the response
-                            if(response.getResponse().getEquipment().getData().getItems().get(i).getItemInstanceId() != null) {
-                                itemInstanceId = response.getResponse().getEquipment().getData().getItems().get(i).getItemInstanceId();
+                            if(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getItemInstanceId() != null) {
+                                itemInstanceId = response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getItemInstanceId();
                                 itemModel.setItemInstanceId(itemInstanceId);
 
                                 itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
@@ -435,8 +444,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                                 System.out.println("Not an instance-specific item");
                             }
 //
-                            itemModel.setBucketHash(response.getResponse().getEquipment().getData().getItems().get(i).getBucketHash());
-                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getEquipment().getData().getItems().get(i).getBucketHash()));
+                            itemModel.setBucketHash(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getBucketHash());
+                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getBucketHash()));
                             //Required to manipulate UI on transfer/equip modal
                             itemModel.setClassType(mCharacter.getClassType());
                             itemModel.setTabIndex(mTabNumber);
@@ -463,7 +472,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void getVaultInventory(String membershipType, String membershipId) {
 
         Disposable disposable = mBungieAPI.getVaultInventory(membershipType, membershipId)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
 
@@ -555,20 +564,23 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                         Gson gson = new GsonBuilder().create();
                         InventoryDataModel itemData = gson.fromJson(items.get(i).getValue(), InventoryDataModel.class);
 
-                        if(itemData.getHash().equals(itemList.get(i).getItemHash())) {
+                        for (int j = 0; j < itemList.size(); j++) {
+                            if(itemData.getHash().equals(itemList.get(j).getItemHash())) {
 
-                                itemList.get(i).setItemName(itemData.getDisplayProperties().getName());
-                                itemList.get(i).setItemTypeDisplayName(itemData.getItemTypeDisplayName());
+                                itemList.get(j).setItemName(itemData.getDisplayProperties().getName());
+                                itemList.get(j).setItemTypeDisplayName(itemData.getItemTypeDisplayName());
                                 try{
-                                    Log.d("InventoryAPIListHash: ", itemList.get(i).getItemHash());
+                                    Log.d("InventoryAPIListHash: ", itemList.get(j).getItemHash());
                                     Log.d("ManifestItemHash: ", itemData.getHash());
-                                    itemList.get(i).setItemIcon(itemData.getDisplayProperties().getIcon());
+                                    itemList.get(j).setItemIcon(itemData.getDisplayProperties().getIcon());
                                 }
                                 catch(Exception e){
                                     Log.d("getManifestData: ", e.getLocalizedMessage());
                                 }
                             }
-//                        }
+
+                        }
+
                     }
 
                     //sort by slot order for RVItemDecoration
@@ -593,63 +605,27 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
-//        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
-//
-//        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
-//
-//        headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
-//            @Override
-//            public boolean isSection(int position) {
-////                return false;
-//                return position == 0 || itemList.get(position).getSlot() != itemList.get(position -1).getSlot();
-//
-//            }
-//
-//            @Override
-//            public CharSequence getSectionHeader(int position) {
-//
-////                int count = itemCount == null ? 0 : itemCount.size();
-//                return Definitions.getBucketName(itemList.get(position).getSlot());
-//            }
-//
-//            @Override
-//            public CharSequence getItemCount(int position) {
-//
-//                int count = 0;
-//                int section = itemList.get(position).getSlot();
-//
-//                for(InventoryItemModel item : itemList) {
-//                    if(item.getSlot() == section) {
-//                        count++;
-//                    }
-//                }
-//                String itemCount = String.valueOf(count);
-//
-//                if(section < 10) {
-//                    itemCount = itemCount+"/9";
-//                }
-//
-//                return itemCount;
-//            }
-//        });
+
         resetItemDecoration(itemList);
 
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
             Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
 
             //get properties of clicked item
-            InventoryItemModel clickedItem = new InventoryItemModel();
-            clickedItem.setBucketHash(holder.getBucketHash());
-            clickedItem.setItemInstanceId(holder.getItemInstanceId());
-            clickedItem.setIsEquipped(holder.getIsEquipped());
-            clickedItem.setCanEquip(holder.getCanEquip());
-            clickedItem.setItemHash(holder.getItemHash());
-            clickedItem.setItemName(holder.getItemName().getText().toString());
-            clickedItem.setItemIcon(holder.getImageUrl());
-            clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
-            clickedItem.setItemTypeDisplayName(holder.getItemTypeDisplayName());
-            clickedItem.setDamageType(holder.getDamageType());
+            InventoryItemModel clickedItem = itemList.get(position);
+//            clickedItem.setBucketHash(holder.getBucketHash());
+//            clickedItem.setItemInstanceId(holder.getItemInstanceId());
+//            clickedItem.setIsEquipped(holder.getIsEquipped());
+//            clickedItem.setCanEquip(holder.getCanEquip());
+//            clickedItem.setItemHash(holder.getItemHash());
+//            clickedItem.setItemName(holder.getItemName().getText().toString());
+//            clickedItem.setItemIcon(holder.getImageUrl());
+//            clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
+//            clickedItem.setItemTypeDisplayName(holder.getItemTypeDisplayName());
+//            clickedItem.setDamageType(holder.getDamageType());
+
             clickedItem.setCurrentPosition(position);
+
 
             //for transferring TO vault
             clickedItem.setTabIndex(holder.getTabIndex());
