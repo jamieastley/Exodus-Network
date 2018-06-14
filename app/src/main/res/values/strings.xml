@@ -34,11 +34,11 @@
     <string name="xbox">Xbox</string>
     <string name="psn">PlayStation</string>
     <string name="battlenet">Battle.Net</string>
-    <string name="loading">Please wait...</string>
+    <string name="loading">Please wait…</string>
     <string name="titan">Titan</string>
     <string name="hunter">Hunter</string>
     <string name="warlock">Warlock</string>
-    <string name="gettingItemDatabase">Updating database, please wait...</string>
+    <string name="gettingItemDatabase">Updating database, please wait…</string>
     <string name="lfgDescription">(Optional) Description..</string>
     <string name="haveMic">Mic?</string>
 
@@ -63,7 +63,7 @@
     </string-array>
 
     <string-array name="pvp">
-        <item>Trials of Osiris</item>
+        <item>Trials of the Nine</item>
         <item>Iron Banner</item>
         <item>Other</item>
     </string-array>
@@ -107,7 +107,7 @@
     </string-array>
 
     <string-array name="empty">
-        <item></item>
+        <item> - </item>
     </string-array>
     <string name="title_activity_lfgplayer">LFGPlayerActivity</string>
 
@@ -140,6 +140,11 @@
     <string name="action_search">Search</string>
     <string name="refresh_auth">Refresh Auth Token</string>
     <string name="log_out">Log Out</string>
+    <string name="strikes">Strikes</string>
+    <string name="raid">Raids</string>
+    <string name="pvp">PvP</string>
+    <string name="story">Story</string>
+    <string name="patrol">Patrol</string>
 
 
 </resources>

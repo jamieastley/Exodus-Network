@@ -1991,9 +1991,27 @@ public class Response_GetHistoricalStatsAccount {
         public AllPvP getAllPvP() {
             return allPvP;
         }
+
+        @Expose
+        @SerializedName("allPvE")
+        private AllPvE allPvE;
+
+        public AllPvE getAllPvE() {
+            return allPvE;
+        }
     }
 
     public static class AllPvP {
+        @Expose
+        @SerializedName("allTime")
+        private AllTime allTime;
+
+        public AllTime getAllTime() {
+            return allTime;
+        }
+    }
+
+    public static class AllPvE {
         @Expose
         @SerializedName("allTime")
         private AllTime allTime;

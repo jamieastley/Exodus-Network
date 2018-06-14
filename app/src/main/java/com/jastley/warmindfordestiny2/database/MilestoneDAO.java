@@ -1,5 +1,6 @@
 package com.jastley.warmindfordestiny2.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -29,6 +30,9 @@ public interface MilestoneDAO {
 
     @Query("SELECT * FROM DestinyMilestoneDefinition WHERE id IN (:itemKey)")
     Maybe<List<DestinyMilestoneDefinition>> getMilestoneListByKey(List<String> itemKey);
+
+    @Query("SELECT * FROM DestinyMilestoneDefinition WHERE id IN (:itemKey)")
+    LiveData<List<DestinyMilestoneDefinition>> getMilestoneLiveDataByKey(List<String> itemKey);
 
     @Update
     void update(DestinyMilestoneDefinition destinyMilestoneDefinition);

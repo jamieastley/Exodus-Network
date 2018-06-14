@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.jastley.warmindfordestiny2.api.models.*;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
 import retrofit2.http.*;
 
 /**
@@ -65,6 +64,12 @@ public interface BungieAPI {
     @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Stats/")
     Observable<Response_GetHistoricalStatsAccount> getHistoricalStatsAccount(@Path("membershipType") String membershipType,
                                                                              @Path("membershipId") String membershipId);
+
+    //Mode-specific account-wide stats for account (0 required for entire account)
+    @GET("/Platform/Destiny2/{membershipType}/Account/{membershipId}/Character/0/Stats/")
+    Observable<Response_GetAllModesAccountStats> getAllModesAccountStats(@Path("membershipType") String membershipType,
+                                                                         @Path("membershipId") String membershipId);
+
     //Get Clan Data
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
     Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);

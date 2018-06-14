@@ -270,14 +270,19 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         if(wasSuccessful) {
 
             if(isTransfer){
+                mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
                 itemList.remove(position);
+                resetItemDecoration(itemList);
                 mItemsRecyclerAdapter.notifyItemRemoved(position);
+                mItemsRecyclerAdapter.notifyItemRangeChanged(position, mItemsRecyclerAdapter.getItemCount());
+
                 Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }
             else {
                 itemList.remove(position);
                 mItemsRecyclerAdapter.notifyItemRemoved(position);
+                resetItemDecoration(itemList);
                 Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -311,41 +316,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public boolean onQueryTextChange(String query) {
 
         final List<InventoryItemModel> filteredItems = filter(itemList, query);
-        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
-        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
 
-        filteredHeaderItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
-            @Override
-            public boolean isSection(int position) {
-                return position == 0 || filteredItems.get(position).getSlot() != filteredItems.get(position -1).getSlot();
-            }
-
-            @Override
-            public CharSequence getSectionHeader(int position) {
-                return Definitions.getBucketName(filteredItems.get(position).getSlot());
-            }
-
-            @Override
-            public CharSequence getItemCount(int position) {
-
-                int count = 0;
-                int section = filteredItems.get(position).getSlot();
-
-                for(InventoryItemModel item : filteredItems) {
-                    if(item.getSlot() == section) {
-                        count++;
-                    }
-                }
-                String itemCount = String.valueOf(count);
-
-                if(section < 10) {
-                    itemCount = itemCount+"/9";
-                }
-
-                return itemCount;
-            }
-        });
-        mItemsRecyclerView.addItemDecoration(filteredHeaderItemDecoration);
+        resetItemDecoration(filteredItems);
         mItemsRecyclerAdapter.updateList(filteredItems);
         mItemsRecyclerView.scrollToPosition(0);
         return true;
@@ -373,7 +345,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
 
         Disposable disposable = mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
 
@@ -500,7 +472,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void getVaultInventory(String membershipType, String membershipId) {
 
         Disposable disposable = mBungieAPI.getVaultInventory(membershipType, membershipId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
 
@@ -583,7 +555,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         InventoryItemDAO mInventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
 
         Disposable disposable = mInventoryItemDAO.getItemsListByKey(hashes)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe(items -> {
 
@@ -630,46 +602,46 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
-        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
-
-        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
-
-        headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
-            @Override
-            public boolean isSection(int position) {
-//                return false;
-                return position == 0 || itemList.get(position).getSlot() != itemList.get(position -1).getSlot();
-
-            }
-
-            @Override
-            public CharSequence getSectionHeader(int position) {
-
-//                int count = itemCount == null ? 0 : itemCount.size();
-                return Definitions.getBucketName(itemList.get(position).getSlot());
-            }
-
-            @Override
-            public CharSequence getItemCount(int position) {
-
-                int count = 0;
-                int section = itemList.get(position).getSlot();
-
-                for(InventoryItemModel item : itemList) {
-                    if(item.getSlot() == section) {
-                        count++;
-                    }
-                }
-                String itemCount = String.valueOf(count);
-
-                if(section < 10) {
-                    itemCount = itemCount+"/9";
-                }
-
-                return itemCount;
-            }
-        });
-
+//        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
+//
+//        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
+//
+//        headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
+//            @Override
+//            public boolean isSection(int position) {
+////                return false;
+//                return position == 0 || itemList.get(position).getSlot() != itemList.get(position -1).getSlot();
+//
+//            }
+//
+//            @Override
+//            public CharSequence getSectionHeader(int position) {
+//
+////                int count = itemCount == null ? 0 : itemCount.size();
+//                return Definitions.getBucketName(itemList.get(position).getSlot());
+//            }
+//
+//            @Override
+//            public CharSequence getItemCount(int position) {
+//
+//                int count = 0;
+//                int section = itemList.get(position).getSlot();
+//
+//                for(InventoryItemModel item : itemList) {
+//                    if(item.getSlot() == section) {
+//                        count++;
+//                    }
+//                }
+//                String itemCount = String.valueOf(count);
+//
+//                if(section < 10) {
+//                    itemCount = itemCount+"/9";
+//                }
+//
+//                return itemCount;
+//            }
+//        });
+        resetItemDecoration(itemList);
 
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
             Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
@@ -715,7 +687,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 //        mItemsRecyclerView.scheduleLayoutAnimation();
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
 
-        mItemsRecyclerView.addItemDecoration(headerItemDecoration);
+//        mItemsRecyclerView.addItemDecoration(headerItemDecoration);
 //        mItemsRecyclerAdapter.notifyDataSetChanged();
         loadingProgress.setVisibility(View.GONE);
     }
@@ -743,41 +715,42 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         }
     }
 
+    public void resetItemDecoration(List<InventoryItemModel> newList) {
 
-//    private final SortedList.Callback<InventoryItemModel> modelCallback = new SortedList.Callback<InventoryItemModel>() {
-//        @Override
-//        public int compare(InventoryItemModel o1, InventoryItemModel o2) {
-//            return mComparator.compare(o1, o2);
-//        }
-//
-//        @Override
-//        public void onChanged(int position, int count) {
-//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
-//        }
-//
-//        @Override
-//        public boolean areContentsTheSame(InventoryItemModel oldItem, InventoryItemModel newItem) {
-//            return oldItem.equals(newItem);
-//        }
-//
-//        @Override
-//        public boolean areItemsTheSame(InventoryItemModel item1, InventoryItemModel item2) {
-//            return item1.getItemName().equals(item2.getItemName());
-//        }
-//
-//        @Override
-//        public void onInserted(int position, int count) {
-//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
-//        }
-//
-//        @Override
-//        public void onRemoved(int position, int count) {
-//            mItemsRecyclerAdapter.notifyItemRangeChanged(position, count);
-//        }
-//
-//        @Override
-//        public void onMoved(int fromPosition, int toPosition) {
-//            mItemsRecyclerAdapter.notifyItemRangeChanged(fromPosition, toPosition);
-//        }
-//    };
+        mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
+//        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
+
+        headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
+            @Override
+            public boolean isSection(int position) {
+                return position == 0 || newList.get(position).getSlot() != newList.get(position -1).getSlot();
+            }
+
+            @Override
+            public CharSequence getSectionHeader(int position) {
+                return Definitions.getBucketName(newList.get(position).getSlot());
+            }
+
+            @Override
+            public CharSequence getItemCount(int position) {
+
+                int count = 0;
+                int section = newList.get(position).getSlot();
+
+                for(InventoryItemModel item : newList) {
+                    if(item.getSlot() == section) {
+                        count++;
+                    }
+                }
+                String itemCount = String.valueOf(count);
+
+                if(section < 10) {
+                    itemCount = itemCount+"/9";
+                }
+
+                return itemCount;
+            }
+        });
+        mItemsRecyclerView.addItemDecoration(headerItemDecoration);
+    }
 }

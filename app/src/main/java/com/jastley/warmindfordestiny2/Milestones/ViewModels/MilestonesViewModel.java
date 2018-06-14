@@ -17,7 +17,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 public class MilestonesViewModel extends ViewModel {
     // TODO: Implement the ViewModel
 
-//    private Repository repository;
+//    private MilestoneRepository repository;
     private Context mContext;
 
 
