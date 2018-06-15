@@ -189,6 +189,7 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                                                         mCharacters,
                                                         (view, position, holder) -> {
 
+            Log.d("VAULT_TEST", mCharacters.get(mTabIndex).getClassType());
             Log.d("TRANSFER_FROM", "character"+mCharacters.get(mTabIndex).getCharacterId());
             Log.d("TRANSFER_TO", "character"+mCharacters.get(position).getCharacterId());
 
@@ -197,7 +198,19 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
             className = holder.getClassType();
             System.out.println("Destination position: " + position);
-            if(holder.getClassType().toLowerCase().equals("vault")){ //transfer TO vault selected
+            if(mCharacters.get(mTabIndex).getClassType().toLowerCase().equals("vault")) {
+                mTransferCharacterBody = new TransferItemRequestBody(
+                        selectedItem.getItemHash(),
+                        "1", //TODO: allow stackSize selection if >1 item
+                        false,
+                        selectedItem.getItemInstanceId(),
+                        mCharacters.get(position).getMembershipType(),
+                        mCharacters.get(position).getCharacterId() //destination character
+                );
+                transferToCharacter(mTransferCharacterBody, null, false);
+            }
+
+            else if(holder.getClassType().toLowerCase().equals("vault")){ //transfer TO vault selected
 
                 //Send item straight to vault
                 mTransferVaultBody = new TransferItemRequestBody(
