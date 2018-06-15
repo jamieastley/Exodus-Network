@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity
         compositeDisposable.add(disposable);
     }
 
-    private void refreshAccessToken() {
+    public void refreshAccessToken() {
 
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String refreshToken = savedPrefs.getString("refresh_token", "");

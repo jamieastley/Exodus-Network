@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.jastley.warmindfordestiny2.Inventory.interfaces.SuccessListener;
 import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Definitions;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
@@ -34,9 +36,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
@@ -350,8 +354,13 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     }
 
                 }, throwable -> {
-                    Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
-                    mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
+                    if(throwable instanceof HttpException){
+                        mSuccessListener.onAuthFail();
+                    }
+                    else {
+                        Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
+                    }
                 });
         compositeDisposable.add(disposable);
     }
@@ -383,8 +392,13 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     }
 
                 }, throwable -> {
+                    if(throwable instanceof HttpException){
+                        mSuccessListener.onAuthFail();
+                    }
+                    else {
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
+                    }
                     Log.d("TRANSFER_EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
-                    mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), true);
                 });
         compositeDisposable.add(disposable);
     }
@@ -416,8 +430,13 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                     }
 
                 }, throwable -> {
+                    if(throwable instanceof HttpException){
+                        mSuccessListener.onAuthFail();
+                    }
+                    else {
+                        mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), false);
+                    }
                     Log.d("EQUIP_ERROR", throwable.getLocalizedMessage() +", message: "+ throwable.getMessage());
-                    mSuccessListener.onSuccess(selectedItem.getCurrentPosition(), false, throwable.getMessage(), false);
                 });
         compositeDisposable.add(disposable);
     }

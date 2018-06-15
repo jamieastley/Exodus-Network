@@ -39,6 +39,7 @@ import com.jastley.warmindfordestiny2.Inventory.interfaces.TransferSelectListene
 import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
 import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
@@ -54,12 +55,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
@@ -95,8 +98,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     HeaderItemDecoration headerItemDecoration;
-    HeaderItemDecoration filteredHeaderItemDecoration;
-    private boolean isRefreshing = false;
+
 //    boolean mIsRestoredFromBackstack;
 
     public CharacterInventoryFragment() {
@@ -126,11 +128,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
             mCharacterList = getArguments().getParcelableArrayList("ARG_CHARACTER_LIST");
-            System.out.println("onCreate tab "+mTabNumber+", "+mCharacter.getClassType());
-//            mCollectablesList = getArguments().getParcelableArrayList("ARG_COLLECTABLES_MANIFEST");
-        }
 
-//        mIsRestoredFromBackstack = false;
+        }
 
     }
 
@@ -261,6 +260,13 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     @Override
     public void inProgress(String title) {
         showLoadingDialog(title, "Please wait");
+    }
+
+    @Override
+    public void onAuthFail() {
+        Snackbar.make(getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+                .show();
     }
 
     @Override
@@ -472,11 +478,19 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                     }
 
                 }, throwable -> {
-                    Log.d("GET_CHARACTER_INVENTORY", throwable.getMessage());
-                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", v -> refreshInventory())
-                            .show();
-                    });
+                    if(throwable instanceof HttpException){
+                        Snackbar.make(getParentFragment().getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+                                .show();
+                    }
+                    else {
+                        Log.d("GET_CHARACTER_INVENTORY", throwable.getMessage());
+                        Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Retry", v -> refreshInventory())
+                                .show();
+                    }
+
+                });
         compositeDisposable.add(disposable);
     }
 

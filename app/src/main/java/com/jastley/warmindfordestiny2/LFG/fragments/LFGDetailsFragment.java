@@ -189,6 +189,7 @@ public class LFGDetailsFragment extends Fragment {
 
             Picasso.get()
                     .load(baseURL+savedInstanceModel.getEmblemBackground())
+                    .error(R.drawable.missing_banner_placeholder)
                     .into(emblemBackground);
 
             getHistoricalStatsAccount(membershipType, membershipId);

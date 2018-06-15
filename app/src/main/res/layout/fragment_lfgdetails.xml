@@ -22,11 +22,9 @@
             >
 
             <!--Emblem container-->
-            <RelativeLayout
-
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 >
 
                 <ImageView
@@ -35,21 +33,43 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
-                    android:layout_alignParentRight="true"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:layout_alignParentEnd="true"
+                    android:src="@drawable/missing_banner_placeholder"
+                    />
+                <!--Left spacer for class type-->
+                <android.support.v4.widget.Space
+                    android:id="@+id/transfer_class_spacer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.2"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    />
 
+                <!--top percent spacer for class type-->
+                <android.support.v4.widget.Space
+                    android:id="@+id/top_left_spacer"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="@id/transfer_class_spacer"
                     />
 
                 <TextView
                     android:id="@+id/lfg_details_display_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginStart="80dp"
-                    android:layout_marginLeft="90dp"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/hello_blank_fragment"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
+                    app:layout_constraintTop_toBottomOf="@id/top_left_spacer"
+                    android:gravity="center|start"
                     android:textStyle="bold"
                     android:textColor="@color/colorWhite"
                     android:textSize="19sp"
@@ -59,55 +79,72 @@
                     android:id="@+id/lfg_details_group_progress"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_toStartOf="@id/lfg_details_group_name"
-                    android:layout_toLeftOf="@id/lfg_details_group_name"
-                    android:layout_alignLeft="@id/lfg_details_display_name"
-                    android:layout_alignStart="@id/lfg_details_display_name"
-                    android:layout_below="@id/lfg_details_display_name"
-                     />
+                    app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
+                    app:layout_constraintBottom_toTopOf="@id/bottom_left_spacer"
+
+                    />
 
                 <TextView
                     android:id="@+id/lfg_details_group_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/lfg_details_display_name"
-                    android:layout_alignLeft="@id/lfg_details_display_name"
-                    android:layout_alignStart="@id/lfg_details_display_name"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/colorWhite"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
+                    app:layout_constraintBottom_toBottomOf="@id/bottom_left_spacer"
+                    android:gravity="center|start"
+                    android:textColor="@color/placeholderHint"
                     />
+
 
                 <TextView
                     android:id="@+id/lfg_details_light"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:gravity="center|start"
                     android:textColor="@color/lightLevelBlue"
                     android:textStyle="bold"
-                    android:textSize="23sp"
+                    android:textSize="30sp"
                      />
+
+                <!--bottom percent spacer for class type-->
+                <android.support.v4.widget.Space
+                    android:id="@+id/bottom_left_spacer"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:layout_constraintHeight_percent="0.1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
 
                 <TextView
                     android:id="@+id/lfg_details_class_type"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/lfg_details_light"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintBottom_toBottomOf="@id/bottom_left_spacer"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:gravity="center|start"
                     android:textColor="@color/colorWhite"
                     android:textStyle="bold"
                     android:textSize="20sp"
+
                     />
 
 
-            </RelativeLayout>
+            </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.CardView>
 
