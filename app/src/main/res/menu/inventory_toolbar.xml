@@ -11,7 +11,7 @@
         />
 
     <item
-        android:id="@+id/action_refresh"
+        android:id="@+id/inventory_refresh"
         android:icon="@drawable/icon_refresh"
         app:showAsAction="always"
         android:title="@string/refresh"

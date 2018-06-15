@@ -19,13 +19,16 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
     private List<CharacterDatabaseModel> mCharacters;
     private EquipSelectListener mListener;
     private InventoryItemModel mSelectedItem;
+    private int mTabIndex;
 
     public EquipItemRecyclerAdapter(Context context,
                                     InventoryItemModel item,
+                                    int index,
                                     List<CharacterDatabaseModel> characters,
                                     EquipSelectListener listener) {
         this.mContext = context;
         this.mSelectedItem = item;
+        this.mTabIndex = index;
         this.mCharacters = characters;
         this.mListener = listener;
     }
@@ -54,6 +57,13 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
 
         if(mSelectedItem.getCanEquip()) {
             holder.setDisabled();
+        }
+        //if user selected characters' sub-class
+        else if (mSelectedItem.getSlot() == 10) {
+            //if not equipped, only allow equipping for the character that the sub-class is for
+            if(position != mTabIndex){
+                holder.setDisabled();
+            }
         }
     }
 

@@ -93,10 +93,6 @@ public class TransferItemViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-//    public TextView getLightLevel() {
-//        return lightLevel;
-//    }
-
     public void setLightLevel(String light) {
         String lightLevel = mView.getResources().getString(R.string.lightIcon, light);
         this.mLightLevel.setText(lightLevel);

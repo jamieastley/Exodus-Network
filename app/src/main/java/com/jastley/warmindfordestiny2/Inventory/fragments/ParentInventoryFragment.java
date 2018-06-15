@@ -160,7 +160,7 @@ public class ParentInventoryFragment extends Fragment {
         super.onResume();
         MainActivity activity = (MainActivity)getActivity();
         if(activity != null) {
-            activity.setActionBarTitle(getString(R.string.manageInventory));
+            activity.setActionBarTitle(getString(R.string.item_transfer));
         }
     }
 

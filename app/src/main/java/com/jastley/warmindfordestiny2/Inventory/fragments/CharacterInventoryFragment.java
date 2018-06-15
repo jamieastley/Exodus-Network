@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -223,9 +224,19 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.inventory_toolbar, menu);
 
-//        final MenuItem searchItem = menu.findItem(R.id.inventory_search);
         final SearchView searchView = (SearchView) menu.findItem(R.id.inventory_search).getActionView();
         searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+
+            case R.id.inventory_refresh:
+                refreshInventory();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -248,8 +259,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
     @Override
-    public void inProgress() {
-        showLoadingDialog("Transferring...", "Please wait");
+    public void inProgress(String title) {
+        showLoadingDialog(title, "Please wait");
     }
 
     @Override
@@ -613,16 +624,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
             //get properties of clicked item
             InventoryItemModel clickedItem = itemList.get(position);
-//            clickedItem.setBucketHash(holder.getBucketHash());
-//            clickedItem.setItemInstanceId(holder.getItemInstanceId());
-//            clickedItem.setIsEquipped(holder.getIsEquipped());
-//            clickedItem.setCanEquip(holder.getCanEquip());
-//            clickedItem.setItemHash(holder.getItemHash());
-//            clickedItem.setItemName(holder.getItemName().getText().toString());
-//            clickedItem.setItemIcon(holder.getImageUrl());
-//            clickedItem.setPrimaryStatValue(holder.getPrimaryStatValue());
-//            clickedItem.setItemTypeDisplayName(holder.getItemTypeDisplayName());
-//            clickedItem.setDamageType(holder.getDamageType());
 
             clickedItem.setCurrentPosition(position);
 
@@ -631,11 +632,10 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             clickedItem.setTabIndex(holder.getTabIndex());
             clickedItem.setVaultCharacterId(mCharacter.getCharacterId());
 
-//            transferModalDialog = new ItemTransferDialogFragment();
             ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(clickedItem, mTabNumber, mCharacterList, this);
             Bundle args = new Bundle();
             args.putParcelable("selectedItem", clickedItem);
-            args.putParcelableArrayList("characterList", (ArrayList<? extends Parcelable>) mCharacterList); //TODO HERERERERE
+            args.putParcelableArrayList("characterList", (ArrayList<? extends Parcelable>) mCharacterList);
             args.putInt("tabIndex", mTabNumber);
             transferDialogFragment.setArguments(args);
 
@@ -645,36 +645,31 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         mSwipeRefreshLayout.setRefreshing(false);
 
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
-//        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 3);
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
 
         mItemsRecyclerView.setLayoutAnimation(controller);
 
         mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
-//        mItemsRecyclerView.scheduleLayoutAnimation();
         mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
 
-//        mItemsRecyclerView.addItemDecoration(headerItemDecoration);
-//        mItemsRecyclerAdapter.notifyDataSetChanged();
         loadingProgress.setVisibility(View.GONE);
     }
 
     public void refreshInventory() {
 
-        //remove existing ItemDecoration
-//        mItemsRecyclerView.invalidateItemDecorations();
-
+        mSwipeRefreshLayout.setRefreshing(true);
 
         String classType = mCharacter.getClassType();
 
         if(classType.equals("vault")){
+
             //get Vault items only
             getVaultInventory(
                     mCharacter.getMembershipType(),
                     mCharacter.getMembershipId());
         }
         else {
-//            mItemsRecyclerAdapter.notifyDataSetChanged();
+
             getCharacterInventory(
                     mCharacter.getMembershipType(),
                     mCharacter.getMembershipId(),
@@ -685,7 +680,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void resetItemDecoration(List<InventoryItemModel> newList) {
 
         mItemsRecyclerView.removeItemDecoration(headerItemDecoration);
-//        mItemsRecyclerView.removeItemDecoration(filteredHeaderItemDecoration);
 
         headerItemDecoration = new HeaderItemDecoration(120, true, new HeaderItemDecoration.SectionCallback() {
             @Override
@@ -711,8 +705,8 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 }
                 String itemCount = String.valueOf(count);
 
-                if(section < 10) {
-                    itemCount = itemCount+"/9";
+                if(section < 10) { //item/armor/equippable item (can only hold 10)
+                    itemCount = itemCount+"/10";
                 }
 
                 return itemCount;

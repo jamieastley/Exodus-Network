@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.jastley.warmindfordestiny2.Inventory.holders.TransferItemViewHolder;
 import com.jastley.warmindfordestiny2.Inventory.interfaces.TransferSelectListener;
 import com.jastley.warmindfordestiny2.Inventory.models.CharacterDatabaseModel;
+import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
 
 import java.util.List;
@@ -19,17 +20,19 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
     private TransferSelectListener mListener;
 
     //UI manipulation
-    private int tabIndex;
-    private int mPosition;
+    private int mTabIndex;
     private String vaultCharacterId;
+    private InventoryItemModel mSelectedItem;
 
     public TransferItemRecyclerAdapter(Context context,
+                                       InventoryItemModel selectedItem,
                                        int index,
                                        String vaultCharId,
                                        List<CharacterDatabaseModel> characters,
                                        TransferSelectListener listener) {
         this.mContext = context;
-        this.tabIndex = index;
+        this.mSelectedItem = selectedItem;
+        this.mTabIndex = index;
         this.vaultCharacterId = vaultCharId;
         this.mCharacters = characters;
         this.mListener = listener;
@@ -40,14 +43,6 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
     public TransferItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.modal_emblem_transfer_row, parent, false);
-
-        System.out.println("Class type: " + mCharacters.get(mPosition).getClassType());
-        System.out.println("onCreateVH tabIndex: " + tabIndex);
-        System.out.println("adapter mPosition: " + mPosition);
-//        if(mPosition == tabIndex){
-//            mView.setEnabled(false);
-//            mView.setAlpha(0.3f);
-//        }
 
         final TransferItemViewHolder mTransferItemVH = new TransferItemViewHolder(mView);
 
@@ -74,12 +69,23 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
             holder.setVaultCharacterId(vaultCharacterId);
         }
         else{ //still need a characterId to transfer to vault
-//            holder.setCharacterId(mCharacters.get(position-1).getCharacterId());
             holder.setClassType("vault");
         }
 
         //Disable transferring item to character it already exists on
-        if(position == tabIndex){
+        if(position == mTabIndex){
+            holder.setDisabled();
+        }
+
+        //if user selected characters' sub-class
+        else if (mSelectedItem.getSlot() == 10) {
+            //if not equipped, only allow equipping for the character that the sub-class is for
+            if(position != mTabIndex){
+                holder.setDisabled();
+            }
+        }
+
+        if(mSelectedItem.getCanEquip()) {
             holder.setDisabled();
         }
     }
@@ -91,6 +97,6 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return position;
     }
 }

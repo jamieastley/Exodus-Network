@@ -19,13 +19,17 @@
         android:textStyle="bold"
         />
 
+    <!--ItemDecoration doesn't seem to play nice without set widths so first matches parent, second TextView holds filler
+        content to space it out before being overwritten
+    -->
+
     <TextView
         android:id="@+id/section_header_item_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:padding="10dp"
-        android:text="200"
+        android:text="@string/header_decoration_spacer"
         android:textAlignment="viewEnd"
         android:textColor="@android:color/white"
         android:textSize="@dimen/item_name_height"

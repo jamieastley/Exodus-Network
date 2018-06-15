@@ -184,17 +184,17 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 //        Transfer item row section
         mTransferRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mTransferAdapter = new TransferItemRecyclerAdapter(getContext(),
+                                                        selectedItem,
                                                         mTabIndex, //which tab is active
                                                         selectedItem.getVaultCharacterId(), //the characterId of the selected tab
                                                         mCharacters,
                                                         (view, position, holder) -> {
 
-            Log.d("VAULT_TEST", mCharacters.get(mTabIndex).getClassType());
-            Log.d("TRANSFER_FROM", "character"+mCharacters.get(mTabIndex).getCharacterId());
+            Log.d("TRANSFER_FROM", "character: "+mCharacters.get(mTabIndex).getClassType());
             Log.d("TRANSFER_TO", "character"+mCharacters.get(position).getCharacterId());
 
             dismiss();
-            mSuccessListener.inProgress();
+            mSuccessListener.inProgress("Transferring");
 
             className = holder.getClassType();
             System.out.println("Destination position: " + position);
@@ -256,10 +256,14 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
         //Equip item methods
         mEquipRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mEquipAdapter = new EquipItemRecyclerAdapter(getContext(), selectedItem, mCharacters, (view, position, holder) -> {
+        mEquipAdapter = new EquipItemRecyclerAdapter(getContext(),
+                                                    selectedItem,
+                                                    mTabIndex,
+                                                    mCharacters,
+                                                    (view, position, holder) -> {
 
             dismiss();
-            mSuccessListener.inProgress();
+            mSuccessListener.inProgress("Equipping...");
 
             //where the item is coming from
             String comingFrom = mCharacters.get(mTabIndex).getClassType();

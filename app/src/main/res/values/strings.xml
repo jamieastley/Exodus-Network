@@ -157,6 +157,8 @@
     <string name="transfer_item_to">Transfer item to...</string>
     <string name="equip_on">Equip on...</string>
     <string name="debug_primary_stat">300</string>
+    <string name="header_decoration_spacer">2000</string>
+    <string name="item_transfer">Item Transfer</string>
 
 
 </resources>
