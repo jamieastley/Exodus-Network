@@ -1,6 +1,5 @@
 package com.jastley.warmindfordestiny2.Milestones.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,12 +9,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -25,7 +26,6 @@ import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jastley.warmindfordestiny2.MainActivity;
-import com.jastley.warmindfordestiny2.Milestones.ViewModels.MilestonesViewModel;
 import com.jastley.warmindfordestiny2.Milestones.adapters.MilestoneRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
 import com.jastley.warmindfordestiny2.Milestones.models.MilestoneModel;
@@ -34,7 +34,6 @@ import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
-import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.MilestoneDAO;
@@ -56,9 +55,9 @@ public class MilestonesFragment extends Fragment {
 
     @BindView(R.id.milestones_progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.milestones_recycler_view) RecyclerView mMilestonesRecyclerView;
+    @BindView(R.id.milestone_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
 
     private OnMilestoneFragmentInteractionListener mListener;
-    private MilestonesViewModel mViewModel;
     private MilestoneRecyclerAdapter mMilestonesAdapter;
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -73,8 +72,6 @@ public class MilestonesFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
-
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -84,14 +81,15 @@ public class MilestonesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_milestones, container, false);
         ButterKnife.bind(this, rootView);
 
+        setHasOptionsMenu(true);
+
         return rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(MilestonesViewModel.class);
-        // TODO: Use the ViewModel
+
     }
 
     @Override
@@ -99,6 +97,11 @@ public class MilestonesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getMilestones();
+
+        mSwipeRefresh.setOnRefreshListener(() -> {
+            mSwipeRefresh.setRefreshing(true);
+            getMilestones();
+        });
     }
 
     @Override
@@ -130,7 +133,24 @@ public class MilestonesFragment extends Fragment {
 
         //Hide LFG toolbar buttons
         menu.clear();
-        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.refresh_toolbar, menu);
+
+
+//        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+
+            case R.id.refresh_button:
+                mSwipeRefresh.setRefreshing(true);
+                getMilestones();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public interface OnMilestoneFragmentInteractionListener {
@@ -312,6 +332,7 @@ public class MilestonesFragment extends Fragment {
                         mMilestonesRecyclerView.setAdapter(mMilestonesAdapter);
                         mMilestonesRecyclerView.setNestedScrollingEnabled(false);
                         mProgressBar.setVisibility(View.GONE);
+                        mSwipeRefresh.setRefreshing(false);
                     };
                     mainHandler.post(mRunnable);
 

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.lfg;
 
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -6,9 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
 import android.support.design.widget.Snackbar;
-import android.support.transition.Explode;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -16,7 +14,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.support.transition.Fade;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,11 +21,14 @@ import android.view.View;
 import android.widget.*;
 
 import butterknife.*;
+
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.*;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
-import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
+import com.jastley.warmindfordestiny2.lfg.models.LFGPost;
+import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
+import com.jastley.warmindfordestiny2.Utils.NetworkUtil;
 import com.jastley.warmindfordestiny2.api.models.Response_GetAllCharacters;
 import com.jastley.warmindfordestiny2.database.AccountDAO;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
@@ -185,6 +185,9 @@ public class NewLFGPostActivity extends AppCompatActivity {
                         radioButton.setId(j);
                         radioButton.setGravity(Gravity.CENTER);
 
+                        //disables default radiobutton
+                        radioButton.setBackgroundDrawable(null);
+
                         radioButton.setButtonDrawable(new StateListDrawable());
                         radioButton.setTextColor(getResources().getColor(R.color.colorWhite));
                         radioButton.setLayoutParams(new RadioGroup.LayoutParams(
@@ -241,64 +244,70 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
                 String descriptionText = description.getText().toString().trim();
 
-                if(description.getText().toString().matches("")) {
-                    descriptionText = "No description provided.";
+                if(!NetworkUtil.isOnline(getApplicationContext())){
+                    Snackbar.make(findViewById(R.id.new_LFG_coordinator_layout), "No network detected!", Snackbar.LENGTH_LONG)
+                            .show();
                 }
-                    showLoadingDialog("Submitting...", "Please wait");
-                    item.setEnabled(false);
+                else{
 
-                    int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
-                    View radioButton = characterRadioGroup.findViewById(radioButtonID);
-                    int idx = characterRadioGroup.indexOfChild(radioButton);
-                    RadioButton selectedCharacter = (RadioButton)  characterRadioGroup.getChildAt(idx);
-
-                    //Which object in characterArray to pass along to Firebase
-                    int index = selectedCharacter.getId();
-                    Response_GetAllCharacters.CharacterData selectedCharacterData = new Response_GetAllCharacters.CharacterData();
-
-                    selectedCharacterData = mCharacterList.get(index);
-//                    JsonObject characterObject = characterArray.get(index).getAsJsonObject();
-
-                    if(micCheckBox.isChecked()){
-                        hasMic = true;
+                    if(description.getText().toString().matches("")) {
+                        descriptionText = "No description provided.";
                     }
+                        showLoadingDialog("Submitting...", "Please wait");
+                        item.setEnabled(false);
 
-                    String light = selectedCharacterData.getLight();
-                    String membershipType = selectedCharacterData.getMembershipType();
-                    String membershipId = selectedCharacterData.getMembershipId();
-                    String emblemIcon = selectedCharacterData.getEmblemPath();
-                    String emblemBackground = selectedCharacterData.getEmblemBackgroundPath();
-                    String characterId = selectedCharacterData.getCharacterId();
-                    String classType = selectedCharacterData.getClassType();
+                        int radioButtonID = characterRadioGroup.getCheckedRadioButtonId();
+                        View radioButton = characterRadioGroup.findViewById(radioButtonID);
+                        int idx = characterRadioGroup.indexOfChild(radioButton);
+                        RadioButton selectedCharacter = (RadioButton)  characterRadioGroup.getChildAt(idx);
 
-                    Long dateTime = System.currentTimeMillis();
+                        //Which object in characterArray to pass along to Firebase
+                        int index = selectedCharacter.getId();
+                        Response_GetAllCharacters.CharacterData selectedCharacterData = new Response_GetAllCharacters.CharacterData();
 
-                    LFGPost newPost = new LFGPost(
-                            activityNameSpinner.getSelectedItem().toString(),
-                            activityCheckpointSpinner.getSelectedItem().toString(),
-                            light,
-                            membershipType, displayName, classType, descriptionText, dateTime, hasMic,
-                            membershipId, emblemIcon, emblemBackground, characterId);
+                        selectedCharacterData = mCharacterList.get(index);
+    //                    JsonObject characterObject = characterArray.get(index).getAsJsonObject();
 
+                        if(micCheckBox.isChecked()){
+                            hasMic = true;
+                        }
 
-                DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
+                        String light = selectedCharacterData.getLight();
+                        String membershipType = selectedCharacterData.getMembershipType();
+                        String membershipId = selectedCharacterData.getMembershipId();
+                        String emblemIcon = selectedCharacterData.getEmblemPath();
+                        String emblemBackground = selectedCharacterData.getEmblemBackgroundPath();
+                        String characterId = selectedCharacterData.getCharacterId();
+                        String classType = selectedCharacterData.getClassType();
 
-                        dismissLoadingFragment();
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("result", 1);
-                        setResult(1);
-                        finish();
-                    }
-                    else {
-                        dismissLoadingFragment();
-                        Snackbar.make(findViewById(R.id.new_LFG_coordinator_layout), "Couldn't submit post!", Snackbar.LENGTH_LONG)
-                                .show();
-                    }
+                        Long dateTime = System.currentTimeMillis();
 
-                });
+                        LFGPost newPost = new LFGPost(
+                                activityNameSpinner.getSelectedItem().toString(),
+                                activityCheckpointSpinner.getSelectedItem().toString(),
+                                light,
+                                membershipType, displayName, classType, descriptionText, dateTime, hasMic,
+                                membershipId, emblemIcon, emblemBackground, characterId);
+
+                                DATABASE.getReference().child("lfg").child(displayName).setValue(newPost).addOnCompleteListener(task -> {
+                                    if(task.isSuccessful()){
+
+                                        dismissLoadingFragment();
+
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        intent.putExtra("lfgPost", true);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                    }
+                                    else {
+                                        dismissLoadingFragment();
+                                        Snackbar.make(findViewById(R.id.new_LFG_coordinator_layout), "Couldn't submit post!", Snackbar.LENGTH_LONG)
+                                                .show();
+                                    }
+
+                    });
                 break;
-
+}
         }
         return super.onOptionsItemSelected(item);
     }
@@ -314,6 +323,11 @@ public class NewLFGPostActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG.dummy;
+package com.jastley.warmindfordestiny2.lfg.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG.models;
+package com.jastley.warmindfordestiny2.lfg.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;

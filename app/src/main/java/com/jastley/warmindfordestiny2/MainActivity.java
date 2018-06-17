@@ -42,9 +42,9 @@ import com.jastley.warmindfordestiny2.Inventory.fragments.ParentInventoryFragmen
 import com.jastley.warmindfordestiny2.Inventory.fragments.ItemTransferDialogFragment;
 import com.jastley.warmindfordestiny2.Dialogs.LoadingDialogFragment;
 import com.jastley.warmindfordestiny2.Interfaces.PlatformSelectionListener;
-import com.jastley.warmindfordestiny2.LFG.fragments.LFGDetailsFragment;
-import com.jastley.warmindfordestiny2.LFG.fragments.LFGPostsFragment;
-import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
+import com.jastley.warmindfordestiny2.lfg.fragments.LFGDetailsFragment;
+import com.jastley.warmindfordestiny2.lfg.fragments.LFGPostsFragment;
+import com.jastley.warmindfordestiny2.lfg.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.Dialogs.holders.PlatformRVHolder;
 import com.jastley.warmindfordestiny2.Dialogs.PlatformSelectionFragment;
 import com.jastley.warmindfordestiny2.Milestones.fragments.MilestonesFragment;
@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -130,7 +128,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View hView =  navigationView.getHeaderView(0);
 
-        postsFragment = new LFGPostsFragment();
+
+        //get Intent bundle from NewLFGPost (if exists)
+        Intent intent = getIntent();
+        boolean isLFGPost = intent.getBooleanExtra("lfgPost", false);
+
+        postsFragment = LFGPostsFragment.newInstance(isLFGPost);
         setFragment(postsFragment);
 
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
@@ -192,39 +195,35 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         Menu navMenu = navigationView.getMenu();
 
-//        Bundle args = new Bundle();
 
         if((displayName != "") && (membershipType != "")) {
 
 
             mLogInContainer.setVisibility(View.GONE);
-//            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
-            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
 
-//            postsFragment.isFabVisible(true);
-//            args.putString("fab", "show");
-//            faButton.show();
+            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
+            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
+
         }
         else { //not logged in
             mLogInContainer.setVisibility(View.VISIBLE);
             mLogOutContainer.setVisibility(View.GONE);
-//            navMenu.findItem(R.id.nav_log_in).setVisible(true).setEnabled(true);
+
+            navMenu.findItem(R.id.nav_account_stats).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_auth).setVisible(false).setEnabled(false);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
-//            faButton.hide();
-//            args.putString("fab", "hide");
-//            postsFragment.isFabVisible(false);
-        }
 
-//        postsFragment.putArguments(args);
+        }
 
     }
 
     private void setFragment(LFGPostsFragment postsFragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        fragmentTransaction.replace(R.id.lfg_content_frame, postsFragment, "postsFragment");
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.lfg_content_frame, postsFragment, "postsFragment");
+
         fragmentTransaction.commit();
     }
 
@@ -268,11 +267,11 @@ public class MainActivity extends AppCompatActivity
 
             mLogInContainer.setVisibility(View.GONE);
             mLogOutContainer.setVisibility(View.VISIBLE);
-//            navMenu.findItem(R.id.nav_log_in).setVisible(false).setEnabled(false);
+
+            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_auth).setVisible(true).setEnabled(true);
             navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
-//            faButton.show();
         }
     }
 
@@ -287,14 +286,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-//        mLFGPostAdapter.startListening();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         compositeDisposable.dispose();
-//        mLFGPostAdapter.stopListening();
     }
 
     @Override
@@ -322,11 +319,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
+
         switch(item.getItemId()){
 
             case android.R.id.home:
@@ -481,7 +474,7 @@ public class MainActivity extends AppCompatActivity
         //block UI interaction and show loader while membershipData is being retrieved
         showLoadingDialog("Loading...", "Please wait");
 
-        BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
+        BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(getApplicationContext(), baseURL);
 
         Disposable disposable = mBungieAPI.getMembershipsCurrentUser()
                 .subscribeOn(Schedulers.io())
@@ -807,12 +800,13 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_lfg) {
 
-            Fragment fragment = LFGPostsFragment.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-
-            fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment)
-                    .commit();
+            LFGPostsFragment fragment = LFGPostsFragment.newInstance(false);
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//
+//            fragmentManager.beginTransaction()
+//                    .replace(R.id.lfg_content_frame, fragment)
+//                    .commit();
+            setFragment(fragment);
         }
 
         else if (id == R.id.nav_account_stats) {
@@ -821,7 +815,7 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment)
+                    .replace(R.id.lfg_content_frame, fragment, "accountStats")
                     .commit();
         }
 
@@ -831,7 +825,7 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment)
+                    .replace(R.id.lfg_content_frame, fragment, "milestones")
                     .commit();
         }
 
@@ -851,7 +845,7 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment)
+                    .replace(R.id.lfg_content_frame, fragment, "inventory")
 //                    .addToBackStack("inventoryFragment")
                     .commit();
         }
@@ -861,13 +855,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         else if (id == R.id.nav_refresh_account) {
-//            getPlayerProfile();
             getMembershipsForCurrentUser();
         }
-//        else if (id == R.id.nav_log_in) {
-//            Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
-//            startActivity(oauthIntent);
-//        }
+
         else if (id == R.id.nav_log_out_container) {
             Log.d("log_out_click", "works");
         }
@@ -885,21 +875,6 @@ public class MainActivity extends AppCompatActivity
 //        LFGDetailsFragment.OnDetailsFragmentInteraction.onFra;
     }
 
-//    public class retryListener implements View.OnClickListener{
-//
-//        @Override
-//        public void onClick(View view) {
-//
-//        }
-//    }
-
-    public void setDrawerHomeIcon() {
-//        toggle.setHomeAsUpIndicator(R.drawable.ic_back_button);
-        toggle.setDrawerIndicatorEnabled(true);
-
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toggle.syncState();
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -913,22 +888,6 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(resultCode == 1){
-
-            LFGPostsFragment postsFragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
-
-            postsFragment.loadLFGPosts(null);
-
-            Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Post submitted!", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null)
-                    .show();
-        }
-    }
-
-    @Override
     public void LFGDetailsListener() {
 //        faButton.hide();
     }
@@ -940,6 +899,8 @@ public class MainActivity extends AppCompatActivity
         }
 
    }
+
+
 
     @Override
     public void OnMilestoneFragmentInteractionListener(Uri uri) {
@@ -965,6 +926,9 @@ public class MainActivity extends AppCompatActivity
     @OnClick(R.id.nav_log_out_container)
     public void onClickLogOut() {
 
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
         AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
 
         AsyncTask.execute(mAccountDAO::deleteAccount);
@@ -974,7 +938,7 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
 
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
-//
+
         //set flags so pressing back won't trigger previous state of MainActivity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

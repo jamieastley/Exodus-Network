@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity"
+    tools:context="com.jastley.warmindfordestiny2.lfg.NewLFGPostActivity"
     android:id="@+id/new_LFG_coordinator_layout"
     >
 

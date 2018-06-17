@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -83,7 +84,6 @@ public class AccountStatsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
         mBungieAPI = RetrofitHelper.getAuthBungieAPI(mContext, baseURL);
     }
@@ -94,6 +94,7 @@ public class AccountStatsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_account_stats, container, false);
         ButterKnife.bind(this, rootView);
+        setHasOptionsMenu(true);
         return rootView;
     }
 
@@ -157,9 +158,26 @@ public class AccountStatsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
+        inflater.inflate(R.menu.refresh_toolbar, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()) {
+
+            case R.id.refresh_button:
+                mSwipeRefreshLayout.setRefreshing(true);
+                pvpStatsList.clear();
+                raidStatsList.clear();
+                allStrikesStatsList.clear();
+                storyStatsList.clear();
+                patrolStatsList.clear();
+                getAccountStats();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public interface OnAccountStatsInteractionListener {
         // TODO: Update argument type and name

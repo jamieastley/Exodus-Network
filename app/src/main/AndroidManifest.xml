@@ -22,9 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OldUserCharactersActivity" />
         <activity
-            android:name=".LFG.NewLFGPostActivity"
+            android:name=".lfg.NewLFGPostActivity"
             android:windowSoftInputMode="adjustPan"
             android:parentActivityName=".MainActivity"
             />

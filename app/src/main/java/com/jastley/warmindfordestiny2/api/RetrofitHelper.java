@@ -83,10 +83,6 @@ public class RetrofitHelper {
         httpClient.addInterceptor(chain -> {
             final Request original = chain.request();
 
-            //Get access_token from shared_prefs
-//            SharedPreferences settings = context.getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//            String accessToken = settings.getString("access_token", "");
-
             final Request.Builder requestBuilder = original.newBuilder();
 
             final Request request = requestBuilder.build();

@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG.fragments;
+package com.jastley.warmindfordestiny2.lfg.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,17 +20,17 @@ import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.google.firebase.database.*;
-import com.jastley.warmindfordestiny2.LFG.NewLFGPostActivity;
-import com.jastley.warmindfordestiny2.LFG.RecyclerViewClickListener;
-import com.jastley.warmindfordestiny2.LFG.adapters.LFGPostRecyclerAdapter;
-import com.jastley.warmindfordestiny2.LFG.holders.LFGPostViewHolder;
-import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
-import com.jastley.warmindfordestiny2.LFG.models.SelectedPlayerModel;
+import com.jastley.warmindfordestiny2.lfg.NewLFGPostActivity;
+import com.jastley.warmindfordestiny2.lfg.RecyclerViewClickListener;
+import com.jastley.warmindfordestiny2.lfg.adapters.LFGPostRecyclerAdapter;
+import com.jastley.warmindfordestiny2.lfg.holders.LFGPostViewHolder;
+import com.jastley.warmindfordestiny2.lfg.models.LFGPost;
+import com.jastley.warmindfordestiny2.lfg.models.SelectedPlayerModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 
@@ -61,6 +61,8 @@ public class LFGPostsFragment extends Fragment {
     private Context mContext;
     private String displayName = "";
 
+    private boolean isNewLFGPost = false;
+
     @BindView(R.id.fab) FloatingActionButton mFab;
     private boolean isFabVisible = false;
 
@@ -68,14 +70,21 @@ public class LFGPostsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static LFGPostsFragment newInstance() {
+    public static LFGPostsFragment newInstance(boolean lfgPost) {
 
-        return new LFGPostsFragment();
+        LFGPostsFragment fragment = new LFGPostsFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("lfgPost", lfgPost);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isNewLFGPost = getArguments().getBoolean("lfgPost");
+        }
         setHasOptionsMenu(true);
 //        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
@@ -88,33 +97,26 @@ public class LFGPostsFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
+        if(isNewLFGPost){
+            Snackbar.make(rootView, "Post submitted!", Snackbar.LENGTH_LONG)
+                    .show();
+            isNewLFGPost = false;
+        }
+
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
 
-//        mFab = ((MainActivity) getActivity()).findViewById(R.id.fab);
-//        mFab.setVisibility(View.VISIBLE);
-
-
-
-        //Load LFG posts from Firebase
-//        mSwipeRefreshLayout.setRefreshing(true);
         loadLFGPosts(null);
 
         showHideFab();
 
+
+
         //Hide FAB when scrolling
-//        if(isFabVisible){
         mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -133,16 +135,12 @@ public class LFGPostsFragment extends Fragment {
                     mFab.hide();
             }
         });
-//        }
-
 
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
-//            lfgPosts.clear();
-//            mLFGPostAdapter.clearItems();
+
             loadLFGPosts(null);
-//            mLFGPostAdapter.notifyDataSetChanged();
         });
     }
 
@@ -157,12 +155,10 @@ public class LFGPostsFragment extends Fragment {
         if(activity != null){
 
             activity.setActionBarTitle(getString(R.string.lfg_feed));
-//            activity.hideUpButton();
         }
         TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
 
         mTabLayout.setVisibility(View.GONE);
-//        showHideFab();
     }
 
     @Override
@@ -182,6 +178,7 @@ public class LFGPostsFragment extends Fragment {
         super.onDetach();
         mListener = null;
         mContext = null;
+        isNewLFGPost = false;
     }
 
     @Override
@@ -285,8 +282,6 @@ public class LFGPostsFragment extends Fragment {
                         selectedPost.setHasMic(holder.getHasMic());
                         selectedPost.setDescription(holder.getDescription());
 
-        //                mListener.onFragmentInteraction(selectedPlayer);
-
                         Fragment playerFragment;
                         playerFragment = new LFGDetailsFragment();
 
@@ -297,7 +292,6 @@ public class LFGPostsFragment extends Fragment {
                         FragmentManager fragmentManager = getFragmentManager();
 
                         fragmentManager.beginTransaction()
-        //                        .setTransition(FragmentTransaction.TR)
                                 .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
                                 .replace(R.id.lfg_content_frame, playerFragment)
                                 .addToBackStack("lfgStack")
@@ -319,7 +313,6 @@ public class LFGPostsFragment extends Fragment {
                 mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
                 mLFGRecyclerView.setAdapter(mLFGPostAdapter);
 
-//                mLFGPostAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
 
@@ -382,5 +375,8 @@ public class LFGPostsFragment extends Fragment {
         mFab.setVisibility(View.INVISIBLE);
     }
 
+    public void showSnackbarMessage(String message) {
+
+    }
 
 }

@@ -14,7 +14,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,9 +51,7 @@ import com.jastley.warmindfordestiny2.database.models.DestinyInventoryItemDefini
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -75,14 +72,7 @@ import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
  * create an instance of this fragment.
  */
 public class CharacterInventoryFragment extends Fragment implements TransferSelectListener, SuccessListener, SearchView.OnQueryTextListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    private static final int ARG_TAB_NUMBER;
 
-    // TODO: Rename and change types of parameters
     private int mTabNumber;
     private CharacterDatabaseModel mCharacter;
 
@@ -99,7 +89,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     HeaderItemDecoration headerItemDecoration;
 
-//    boolean mIsRestoredFromBackstack;
 
     public CharacterInventoryFragment() {
         // Required empty public constructor
@@ -147,7 +136,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
 
         mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
 
@@ -248,7 +236,6 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-//        outState.putParcelableArrayList("characterItems", (ArrayList<? extends Parcelable>) itemList);
     }
 
     @Override

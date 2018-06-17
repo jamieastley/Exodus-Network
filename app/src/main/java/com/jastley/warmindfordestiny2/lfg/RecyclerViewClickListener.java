@@ -1,7 +1,7 @@
-package com.jastley.warmindfordestiny2.LFG;
+package com.jastley.warmindfordestiny2.lfg;
 
 import android.view.View;
-import com.jastley.warmindfordestiny2.LFG.holders.LFGPostViewHolder;
+import com.jastley.warmindfordestiny2.lfg.holders.LFGPostViewHolder;
 
 /**
  * Created by jamie on 2/4/18.

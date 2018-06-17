@@ -1,11 +1,11 @@
-package com.jastley.warmindfordestiny2.LFG.adapters;
+package com.jastley.warmindfordestiny2.lfg.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import com.jastley.warmindfordestiny2.LFG.holders.LFGFactionsViewHolder;
-import com.jastley.warmindfordestiny2.LFG.models.FactionProgressModel;
+import com.jastley.warmindfordestiny2.lfg.holders.LFGFactionsViewHolder;
+import com.jastley.warmindfordestiny2.lfg.models.FactionProgressModel;
 import com.jastley.warmindfordestiny2.R;
 
 import java.util.List;

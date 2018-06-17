@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.jastley.warmindfordestiny2.LFG.fragments.LFGDetailsFragment">
+    tools:context="com.jastley.warmindfordestiny2.lfg.fragments.LFGDetailsFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                     app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
                     app:layout_constraintBottom_toBottomOf="@id/bottom_left_spacer"
                     android:gravity="center|start"
-                    android:textColor="@color/placeholderHint"
+                    android:textColor="@color/colorWhite"
                     />
 
 
@@ -213,7 +213,7 @@
                     android:id="@+id/stats_values_progress_bar"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:indeterminateTint="@color/warmindAccent"
                     />
 
@@ -272,7 +272,6 @@
                     android:id="@+id/lfg_details_activity_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Someone doing something"
                     android:textColor="@color/colorWhite"
                     android:textSize="20sp"
                     />
@@ -284,7 +283,6 @@
                     android:layout_marginTop="8dp"
                     android:layout_alignTop="@id/lfg_details_activity_title"
                     android:layout_toStartOf="@id/lfg_details_platform_icon"
-                    android:layout_toLeftOf="@id/lfg_details_platform_icon"
                     />
 
                 <ImageView
@@ -292,11 +290,9 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_alignTop="@id/lfg_details_activity_title"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
 
                      />
 
@@ -307,7 +303,6 @@
                     android:layout_below="@id/lfg_details_activity_title"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:text="Activity checkpoint"
                     android:textSize="15sp"
                     android:textStyle="italic"
                     android:textColor="@color/placeholderHint"
@@ -332,7 +327,6 @@
             android:layout_height="20dp"
             android:layout_below="@id/lfg_details_body_card"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="10dp"
             />
 
         <android.support.v7.widget.CardView

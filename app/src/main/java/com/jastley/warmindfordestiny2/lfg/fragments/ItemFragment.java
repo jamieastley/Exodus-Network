@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG.fragments;
+package com.jastley.warmindfordestiny2.lfg.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,10 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jastley.warmindfordestiny2.LFG.adapters.MyItemRecyclerViewAdapter;
+import com.jastley.warmindfordestiny2.lfg.adapters.MyItemRecyclerViewAdapter;
 import com.jastley.warmindfordestiny2.R;
-import com.jastley.warmindfordestiny2.LFG.dummy.DummyContent;
-import com.jastley.warmindfordestiny2.LFG.dummy.DummyContent.DummyItem;
+import com.jastley.warmindfordestiny2.lfg.dummy.DummyContent;
+import com.jastley.warmindfordestiny2.lfg.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.

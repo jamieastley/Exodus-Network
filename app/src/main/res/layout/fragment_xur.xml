@@ -14,7 +14,12 @@
         style="?android:attr/progressBarStyleHorizontal"
         />
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/xur_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -50,7 +55,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toTopOf="@id/xur_region_text"
                         android:textSize="20sp"
@@ -63,9 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
                         android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
                         android:layout_marginBottom="10dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,26 +95,16 @@
                 android:layout_below="@id/xur_banner_container"
                 >
 
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    >
-
-
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/xur_items_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
                         >
 
                     </android.support.v7.widget.RecyclerView>
 
 
-                </RelativeLayout>
+
 
             </RelativeLayout>
 
@@ -121,5 +113,7 @@
         </RelativeLayout>
 
     </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.constraint.ConstraintLayout>

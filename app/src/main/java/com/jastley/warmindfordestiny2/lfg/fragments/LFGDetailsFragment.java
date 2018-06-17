@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG.fragments;
+package com.jastley.warmindfordestiny2.lfg.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -23,16 +23,15 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.BuildConfig;
-import com.jastley.warmindfordestiny2.LFG.adapters.LFGFactionsRecyclerAdapter;
-import com.jastley.warmindfordestiny2.LFG.models.FactionProgressModel;
-import com.jastley.warmindfordestiny2.LFG.models.LFGPost;
+import com.jastley.warmindfordestiny2.lfg.adapters.LFGFactionsRecyclerAdapter;
+import com.jastley.warmindfordestiny2.lfg.models.FactionProgressModel;
+import com.jastley.warmindfordestiny2.lfg.models.LFGPost;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
-import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.squareup.picasso.Picasso;
@@ -46,7 +45,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 

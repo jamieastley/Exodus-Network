@@ -1,4 +1,4 @@
-package com.jastley.warmindfordestiny2.LFG.models;
+package com.jastley.warmindfordestiny2.lfg.models;
 
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -80,6 +81,8 @@ public class XurFragment extends Fragment {
     @BindView(R.id.xur_progress_bar) ProgressBar progressBar;
     @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
 
+    @BindView(R.id.xur_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
+
     XurItemsRecyclerAdapter mXurRecyclerAdapter;
 //    FloatingActionButton mFab;
 
@@ -126,6 +129,7 @@ public class XurFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return rootView;
 
@@ -134,12 +138,23 @@ public class XurFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         menu.clear();
+        inflater.inflate(R.menu.refresh_toolbar, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch(item.getItemId()) {
+
+            case R.id.refresh_button:
+                mSwipeRefresh.setRefreshing(true);
+                getXurInventory();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onResume() {
@@ -154,6 +169,11 @@ public class XurFragment extends Fragment {
 //        super.onViewCreated(view, savedInstanceState);
 
         getXurInventory();
+
+        mSwipeRefresh.setOnRefreshListener(() -> {
+            mSwipeRefresh.setRefreshing(true);
+            getXurInventory();
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -180,6 +200,8 @@ public class XurFragment extends Fragment {
         mListener = null;
         compositeDisposable.dispose();
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -215,6 +237,7 @@ public class XurFragment extends Fragment {
                             }
                             else {
 
+                                xurItemsList.clear();
                                 System.out.println(response_getXurWeekly.toString());
 
                                 xurWorldText.setText(response_getXurWeekly.getResponse().getData().getLocation().getWorld());
@@ -267,6 +290,7 @@ public class XurFragment extends Fragment {
                                 mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
 //                                mXurRecyclerView.addItemDecoration(headerItemDecoration);
                                 progressBar.setVisibility(View.GONE);
+                                mSwipeRefresh.setRefreshing(false);
                             }
 
                 }, err -> {
