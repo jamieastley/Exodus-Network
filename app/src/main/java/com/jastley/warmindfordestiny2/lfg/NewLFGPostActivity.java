@@ -1,6 +1,7 @@
 package com.jastley.warmindfordestiny2.lfg;
 
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -14,10 +15,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import butterknife.*;
@@ -50,6 +56,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
     @BindView(R.id.activity_checkpoint_spinner) Spinner activityCheckpointSpinner;
     @BindView(R.id.lfg_description_input) EditText description;
     @BindView(R.id.micCheckBox) CheckBox micCheckBox;
+    @BindView(R.id.description_char_count) TextView charCounter;
     private String displayName;
     private boolean hasMic = false;
     private boolean onCreateFlag = true;
@@ -82,8 +89,8 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
-
+        description.setOnEditorActionListener(new DoneOnEditorActionListener());
+        description.addTextChangedListener(new DescriptionCharCounter());
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.activities, R.layout.spinner_list_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -433,6 +440,38 @@ public class NewLFGPostActivity extends AppCompatActivity {
         DialogFragment loadingFragment = (DialogFragment)getFragmentManager().findFragmentByTag("loadingDialog");
         if (loadingFragment != null){
             loadingFragment.dismiss();
+        }
+    }
+
+    private class DoneOnEditorActionListener implements TextView.OnEditorActionListener {
+
+        @Override
+        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+            if(i == EditorInfo.IME_ACTION_DONE) {
+                InputMethodManager imm = (InputMethodManager)textView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    private class DescriptionCharCounter implements TextWatcher {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+            String counterText = String.valueOf(charSequence.length()) + "/50";
+            charCounter.setText(counterText);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
         }
     }
 }

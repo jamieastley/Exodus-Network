@@ -100,12 +100,24 @@
 
     </Spinner>
 
+    <TextView
+        android:id="@+id/description_char_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:padding="10dp"
+        android:text="@string/descriptionCountPlaceholder"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/placeholderHint"
+        app:layout_constraintTop_toBottomOf="@id/activity_checkpoint_spinner"
+        />
+
     <EditText
         android:id="@+id/lfg_description_input"
-        android:inputType="textCapSentences|textMultiLine"
+        android:inputType="textCapSentences"
         android:maxLines="4"
         android:imeOptions="actionDone"
-        android:maxLength="150"
+        android:maxLength="50"
         android:gravity="top|start"
         android:scrollHorizontally="false"
         android:layout_height="wrap_content"
@@ -114,10 +126,9 @@
         android:layout_marginRight="10dp"
         android:shadowColor="@color/colorAccent"
         android:hint="@string/lfgDescription"
-        android:layout_marginTop="30dp"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/placeholderHint"
-        app:layout_constraintTop_toBottomOf="@id/activity_checkpoint_spinner"
+        app:layout_constraintTop_toBottomOf="@id/description_char_count"
         />
 
 

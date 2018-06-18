@@ -159,6 +159,7 @@
     <string name="debug_primary_stat">300</string>
     <string name="header_decoration_spacer">2000</string>
     <string name="item_transfer">Item Transfer</string>
+    <string name="descriptionCountPlaceholder">0/50</string>
 
 
 </resources>
