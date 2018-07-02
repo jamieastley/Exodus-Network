@@ -8,4 +8,12 @@ group for Raids/PVP/Weekly activities.
 
 # OAuth
 
-OAuth2 is integrated to allow the app to access the players private character data such as their inventories and transfer/equip items.
+OAuth2 is integrated to allow the app to access the players private character for any active platforms under their Bungie account and their data such as their inventories and transfer/equip items.
+
+![Auth flow](https://media.giphy.com/media/82wISOgzT54f1d4b8c/giphy.gif)
+
+# Item Transfer
+
+Players can access their characters inventories and equip/transfer items between them quickly and efficiently.
+
+![item transfer](https://media.giphy.com/media/35KnJCFyDlsFyhRNx3/giphy.gif)
