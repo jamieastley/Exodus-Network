@@ -17,3 +17,10 @@ OAuth2 is integrated to allow the app to access the players private character fo
 Players can access their characters inventories and equip/transfer items between them quickly and efficiently.
 
 ![item transfer](https://media.giphy.com/media/35KnJCFyDlsFyhRNx3/giphy.gif)
+
+
+# LFG Submit
+
+Warmind will dynamically create the appropriate buttons for each character found under the players' account, and some of the selected characters' data will be stored in Firebase so other players can see their stats when viewing other LFG posts details.
+
+![LFG Submission]()
