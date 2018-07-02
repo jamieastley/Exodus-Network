@@ -1,7 +1,7 @@
 # Warmind for Destiny 2
 
 An Android companion app for Destiny 2, that utilises the Bungie API to allow players to access and manage their Destiny 2 
-characters' inventories, see their stats for various in-game activities and clan functionality (pending API access).
+characters' inventories, see their account-wide stats for various in-game activities, weekly milestones and what Xur is selling this week along with his current location.
 
 Players can also utilise the LFG functionality to submit a Looking-For-Group post to find other people to play with to fill their
 group for Raids/PVP/Weekly activities.
@@ -23,4 +23,4 @@ Players can access their characters inventories and equip/transfer items between
 
 Warmind will dynamically create the appropriate buttons for each character found under the players' account, and some of the selected characters' data will be stored in Firebase so other players can see their stats when viewing other LFG posts details.
 
-![LFG Submission]()
+![LFG Submission](https://media.giphy.com/media/1xlKJ8SvD5H64Mjcct/giphy.gif)
