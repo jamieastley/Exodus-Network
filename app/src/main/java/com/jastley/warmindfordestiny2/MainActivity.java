@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -295,6 +297,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        compositeDisposable.dispose();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -444,24 +452,37 @@ public class MainActivity extends AppCompatActivity
                         editor.putString("access_token", accessToken.getAccessToken());
                         editor.putLong("token_age", System.currentTimeMillis());
                         editor.apply();
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Authorization refreshed.", Snackbar.LENGTH_LONG)
-                                .show();
+
+                        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
+                        if(fragment != null){
+                            fragment.showSnackbarMessage("Authorization refreshed.");
+                        }
+                        else {
+                            Snackbar.make(findViewById(R.id.activity_main_content), "Authorization refreshed.", Snackbar.LENGTH_LONG)
+                                    .show();
+                        }
 
                     } catch (Exception e) {
                         Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null) //TODO: Retry button here
+                                .setAction("Retry", v -> refreshAccessToken())
                                 .show();
                     }
                 }, throwable -> {
                     if(throwable instanceof NoNetworkException) {
                         Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.activity_main_content), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> refreshAccessToken())
-                                .show();
+                        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
+                        if(fragment != null){
+                            fragment.showSnackbarMessage("Authorization refreshed.");
+                        }
+                        else {
+                            Snackbar.make(findViewById(R.id.activity_main_content), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Retry", v -> refreshAccessToken())
+                                    .show();
+                        }
                     }
                     else {
                         Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null) //TODO: Retry button here
+                                .setAction("Retry", v -> refreshAccessToken())
                                 .show();
                     }
                 });
@@ -483,9 +504,14 @@ public class MainActivity extends AppCompatActivity
 
                     if(!currentUser.getErrorCode().equals("1")){
                         Log.d("GET_CURRENT_USER", currentUser.getMessage());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), currentUser.getMessage(), Snackbar.LENGTH_LONG)
-                                .setAction("Action", null) //TODO: Retry button here
-                                .show();
+                        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
+                        if(fragment != null){
+                            fragment.showSnackbarMessage(currentUser.getMessage());
+                        }
+                        else {
+                            Snackbar.make(findViewById(R.id.activity_main_content), currentUser.getMessage(), Snackbar.LENGTH_LONG)
+                                    .show();
+                        }
                     }
                     else {
 

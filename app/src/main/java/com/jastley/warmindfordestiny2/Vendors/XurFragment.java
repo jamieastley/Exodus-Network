@@ -39,7 +39,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.jastley.warmindfordestiny2.Definitions.theNine;
@@ -169,6 +171,9 @@ public class XurFragment extends Fragment {
 //        super.onViewCreated(view, savedInstanceState);
 
         getXurInventory();
+        String time = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+
+        Log.d("TIMESTAMP", time);
 
         mSwipeRefresh.setOnRefreshListener(() -> {
             mSwipeRefresh.setRefreshing(true);

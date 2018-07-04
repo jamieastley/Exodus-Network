@@ -60,6 +60,7 @@ public class LFGPostsFragment extends Fragment {
 
     private Context mContext;
     private String displayName = "";
+    private View mView;
 
     private boolean isNewLFGPost = false;
 
@@ -93,17 +94,17 @@ public class LFGPostsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_lfgposts, container, false);
+        mView = inflater.inflate(R.layout.fragment_lfgposts, container, false);
 
-        ButterKnife.bind(this, rootView);
+        ButterKnife.bind(this, mView);
 
         if(isNewLFGPost){
-            Snackbar.make(rootView, "Post submitted!", Snackbar.LENGTH_LONG)
+            Snackbar.make(mView, "Post submitted!", Snackbar.LENGTH_LONG)
                     .show();
             isNewLFGPost = false;
         }
 
-        return rootView;
+        return mView;
     }
 
 
@@ -179,6 +180,7 @@ public class LFGPostsFragment extends Fragment {
         mListener = null;
         mContext = null;
         isNewLFGPost = false;
+        mView = null;
     }
 
     @Override
@@ -376,7 +378,8 @@ public class LFGPostsFragment extends Fragment {
     }
 
     public void showSnackbarMessage(String message) {
-
+        Snackbar.make(mView, message, Snackbar.LENGTH_LONG)
+                .show();
     }
 
 }

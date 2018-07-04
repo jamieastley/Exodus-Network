@@ -26,7 +26,7 @@
     <string name="characters">Characters</string>
     <string name="lfg_feed">LFG Feed</string>
 
-    <string name="refresh_account">Switch Platform</string>
+    <string name="refresh_account">Refresh Account</string>
     <string name="log_in">Log In</string>
     <string name="action_lfg_pause">Pause live feed</string>
     <string name="submitPost">Submit Post</string>
