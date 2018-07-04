@@ -6,7 +6,7 @@ characters' inventories, see their account-wide stats for various in-game activi
 Players can also utilise the LFG functionality to submit a Looking-For-Group post to find other people to play with to fill their
 group for Raids/PVP/Weekly activities.
 
-In progress: currently working on refactoring app to utilise Android Arch components and Dagger 2.
+*In progress: currently working on refactoring app to utilise Android Arch components and Dagger 2.*
 
 # OAuth
 
