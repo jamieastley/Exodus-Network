@@ -306,9 +306,10 @@ public class LFGPostsFragment extends Fragment {
 
                     }
                 });
-                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_slide_right_reverse);
+                //TODO fix context here
+                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right_reverse);
                 mLFGRecyclerView.setLayoutAnimation(controller);
-                LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(mContext);
+                LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
                 mLinearLayoutManager.setReverseLayout(true);
                 mLinearLayoutManager.setStackFromEnd(true);
 

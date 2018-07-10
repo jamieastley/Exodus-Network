@@ -10,14 +10,15 @@ import com.jastley.warmindfordestiny2.Milestones.holders.MilestoneViewHolder;
 import com.jastley.warmindfordestiny2.Milestones.models.MilestoneModel;
 import com.jastley.warmindfordestiny2.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MilestoneRecyclerAdapter extends RecyclerView.Adapter<MilestoneViewHolder> {
 
-    private List<MilestoneModel> milestonesList;
+    private List<MilestoneModel> milestonesList = new ArrayList<>();
 
-    public MilestoneRecyclerAdapter(List<MilestoneModel> milestonesList) {
-        this.milestonesList = milestonesList;
+    public MilestoneRecyclerAdapter() {
+//        this.milestonesList = milestonesList;
     }
 
     @NonNull
@@ -47,5 +48,10 @@ public class MilestoneRecyclerAdapter extends RecyclerView.Adapter<MilestoneView
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    public void setMilestones(List<MilestoneModel> milestones) {
+        milestonesList = milestones;
+        notifyDataSetChanged();
     }
 }

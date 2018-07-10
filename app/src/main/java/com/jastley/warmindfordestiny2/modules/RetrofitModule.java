@@ -82,12 +82,13 @@ public class RetrofitModule {
 //    @Provides
 //    @Singleton
 //    @NonNull
-//    public BungieAPI getBungieAPI(Retrofit retrofit) {
+//    BungieAPI getBungieAPI(Retrofit retrofit) {
 //        return retrofit.create(BungieAPI.class);
 //    }
 //
 //    @Provides
 //    @Singleton
+//    @Named("bungieAuthRetrofit")
 //    @NonNull
 //    BungieAPI getAuthBungieAPI(Context context, String baseURL) {
 //        final Retrofit retrofit = createAuthRetrofit(context, baseURL);
@@ -109,7 +110,7 @@ public class RetrofitModule {
     @Singleton
     OkHttpClient createOkHttpClient(Application application) {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new NetworkInterceptor(application));
+        httpClient.addInterceptor(new NetworkInterceptor(application.getApplicationContext()));
         httpClient.addInterceptor(chain -> {
             final Request original = chain.request();
 

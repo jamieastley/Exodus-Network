@@ -10,6 +10,8 @@ public class MilestoneModel {
     private String milestoneRewardImageURL;
     private String milestoneHash;
 
+    private Throwable mError;
+
     //Room/database
     private String primaryKey;
 
@@ -17,6 +19,10 @@ public class MilestoneModel {
     private String questItemHash;
 
     public MilestoneModel() {
+    }
+
+    public MilestoneModel(Throwable error) {
+        this.mError = error;
     }
 
     public String getMilestoneName() {

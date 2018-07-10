@@ -1,10 +1,10 @@
 package com.jastley.warmindfordestiny2.Milestones.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -27,15 +27,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.Milestones.adapters.MilestoneRecyclerAdapter;
-import com.jastley.warmindfordestiny2.Milestones.models.InventoryDataModel;
 import com.jastley.warmindfordestiny2.Milestones.models.MilestoneModel;
+import com.jastley.warmindfordestiny2.Milestones.viewmodels.MilestoneViewModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Utils.UnsignedHashConverter;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
-import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.MilestoneDAO;
 import com.jastley.warmindfordestiny2.database.models.MilestoneData;
 
@@ -58,6 +57,7 @@ public class MilestonesFragment extends Fragment {
     @BindView(R.id.milestone_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
 
     private OnMilestoneFragmentInteractionListener mListener;
+    private MilestoneViewModel mViewModel;
     private MilestoneRecyclerAdapter mMilestonesAdapter;
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -90,17 +90,32 @@ public class MilestonesFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mMilestonesAdapter = new MilestoneRecyclerAdapter();
+        mMilestonesRecyclerView.setAdapter(mMilestonesAdapter);
+
+        mMilestonesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+        mMilestonesRecyclerView.setLayoutAnimation(controller);
+        mMilestonesRecyclerView.setNestedScrollingEnabled(false);
+
+        mViewModel = ViewModelProviders.of(this).get(MilestoneViewModel.class);
+//        mViewModel.getMilestones().observe(this, milestoneModels -> {
+//            mMilestonesAdapter.setMilestones(milestoneModels);
+//            mProgressBar.setVisibility(View.GONE);
+//        });
+        getMilestones();
+
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getMilestones();
+//        getMilestones();
 
         mSwipeRefresh.setOnRefreshListener(() -> {
             mSwipeRefresh.setRefreshing(true);
-            getMilestones();
+//            getMilestones();
         });
     }
 
@@ -147,7 +162,7 @@ public class MilestonesFragment extends Fragment {
 
             case R.id.refresh_button:
                 mSwipeRefresh.setRefreshing(true);
-                getMilestones();
+                refreshMilestones();
         }
 
         return super.onOptionsItemSelected(item);
@@ -159,6 +174,29 @@ public class MilestonesFragment extends Fragment {
     }
 
     public void getMilestones() {
+        mViewModel.getMilestones().observe(this, milestoneModels -> {
+            if(milestoneModels == null) {
+                showSnackbar("An error occurred while retrieving milestone data.");
+            }
+            else if(milestoneModels.getMessage() != null) {
+                showSnackbar(milestoneModels.getMessage());
+            }
+            else if(milestoneModels.getError() != null) {
+                showSnackbar(milestoneModels.getMessage());
+            }
+            else {
+                mMilestonesAdapter.setMilestones(milestoneModels.getMilestoneList());
+            }
+            mProgressBar.setVisibility(View.GONE);
+        });
+    }
+
+    public void refreshMilestones() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mViewModel.refreshMilestones();
+    }
+
+    public void getOldMilestones() {
 
         Disposable disposable = mBungieAPI.getMilestones()
                 .subscribeOn(Schedulers.io())
@@ -277,7 +315,7 @@ public class MilestonesFragment extends Fragment {
 
                     Collections.sort(rewards, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
 
-                    getMilestoneRewards(milestoneModels, rewards);
+//                    getMilestoneRewards(milestoneModels, rewards);
 
                 }, throwable -> {
                     Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
@@ -287,63 +325,67 @@ public class MilestonesFragment extends Fragment {
         compositeDisposable.add(disposable);
     }
 
-    public void getMilestoneRewards(List<MilestoneModel> milestoneModels, List<String> rewardHashes) {
+//    public void getMilestoneRewards(List<MilestoneModel> milestoneModels, List<String> rewardHashes) {
+//
+//        InventoryItemDAO inventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
+//
+//        Disposable disposable = inventoryItemDAO.getItemsListByKey(rewardHashes)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .subscribe(rewards -> {
+//
+//                    for (int i = 0; i < rewards.size(); i++) {
+//
+//                        Gson gson = new GsonBuilder().create();
+//                        InventoryDataModel item = gson.fromJson(rewards.get(i).getValue(), InventoryDataModel.class);
+//
+//                        //check rewards for each milestone, append if match
+//                        for (int j = 0; j < milestoneModels.size(); j++) {
+//
+//                            try {
+//                                if (item.getHash().equals(milestoneModels.get(j).getMilestoneRewardHash())) {
+//
+//                                    milestoneModels.get(j).setMilestoneRewardImageURL(item.getDisplayProperties().getIcon());
+//                                    milestoneModels.get(j).setMilestoneRewardName(item.getDisplayProperties().getName());
+//                                }
+//                                else {
+//                                    if(milestoneModels.get(j).getMilestoneName() == null){
+//                                        milestoneModels.remove(j);
+//                                    }
+//                                }
+//                            }
+//                            catch(Exception e) {
+//                                Log.d("MILESTONE_REWARD_LOOP", e.getLocalizedMessage());
+//                            }
+//                        }
+//
+//                    }
+//                    Handler mainHandler = new Handler(Looper.getMainLooper());
+//                    Runnable mRunnable = () -> {
+//
+//                        mMilestonesAdapter = new MilestoneRecyclerAdapter(milestoneModels);
+//                        mMilestonesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//                        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+//                        mMilestonesRecyclerView.setLayoutAnimation(controller);
+//                        mMilestonesRecyclerView.setAdapter(mMilestonesAdapter);
+//                        mMilestonesRecyclerView.setNestedScrollingEnabled(false);
+//                        mProgressBar.setVisibility(View.GONE);
+//                        mSwipeRefresh.setRefreshing(false);
+//                    };
+//                    mainHandler.post(mRunnable);
+//
+//
+//                }, throwable -> {
+//                    Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
+//                            .show();
+//                    mProgressBar.setVisibility(View.GONE);
+//                });
+//        compositeDisposable.add(disposable);
+//    }
 
-        InventoryItemDAO inventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
-
-        Disposable disposable = inventoryItemDAO.getItemsListByKey(rewardHashes)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(rewards -> {
-
-                    for (int i = 0; i < rewards.size(); i++) {
-
-                        Gson gson = new GsonBuilder().create();
-                        InventoryDataModel item = gson.fromJson(rewards.get(i).getValue(), InventoryDataModel.class);
-
-                        //check rewards for each milestone, append if match
-                        for (int j = 0; j < milestoneModels.size(); j++) {
-
-                            try {
-                                if (item.getHash().equals(milestoneModels.get(j).getMilestoneRewardHash())) {
-
-                                    milestoneModels.get(j).setMilestoneRewardImageURL(item.getDisplayProperties().getIcon());
-                                    milestoneModels.get(j).setMilestoneRewardName(item.getDisplayProperties().getName());
-                                }
-                                else {
-                                    if(milestoneModels.get(j).getMilestoneName() == null){
-                                        milestoneModels.remove(j);
-                                    }
-                                }
-                            }
-                            catch(Exception e) {
-                                Log.d("MILESTONE_REWARD_LOOP", e.getLocalizedMessage());
-                            }
-                        }
-
-                    }
-                    Handler mainHandler = new Handler(Looper.getMainLooper());
-                    Runnable mRunnable = () -> {
-
-                        mMilestonesAdapter = new MilestoneRecyclerAdapter(milestoneModels);
-                        mMilestonesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
-                        mMilestonesRecyclerView.setLayoutAnimation(controller);
-                        mMilestonesRecyclerView.setAdapter(mMilestonesAdapter);
-                        mMilestonesRecyclerView.setNestedScrollingEnabled(false);
-                        mProgressBar.setVisibility(View.GONE);
-                        mSwipeRefresh.setRefreshing(false);
-                    };
-                    mainHandler.post(mRunnable);
-
-
-                }, throwable -> {
-                    Snackbar.make(getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_LONG)
-                            .show();
-                    mProgressBar.setVisibility(View.GONE);
-                });
-        compositeDisposable.add(disposable);
+    public void showSnackbar(String message) {
+        Snackbar.make(getView(),  message, Snackbar.LENGTH_INDEFINITE)
+//                .setAction("Retry", v -> getMilestones())
+                .show();
     }
-
-
 }

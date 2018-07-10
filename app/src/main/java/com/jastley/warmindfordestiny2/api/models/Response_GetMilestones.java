@@ -2,11 +2,47 @@ package com.jastley.warmindfordestiny2.api.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jastley.warmindfordestiny2.Milestones.models.MilestoneModel;
 
 import java.util.List;
 import java.util.Map;
 
 public class Response_GetMilestones {
+
+    private List<MilestoneModel> milestoneList;
+    private Throwable mError;
+//    private String errorMessage;
+
+    public Response_GetMilestones(List<MilestoneModel> milestones) {
+        this.milestoneList = milestones;
+        this.mError = null;
+        this.message = null;
+    }
+
+    //Bungie error
+    public Response_GetMilestones(String error) {
+//        this.mError = error;
+        this.message = error;
+        this.milestoneList = null;
+    }
+
+    public List<MilestoneModel> getMilestoneList() {
+        return milestoneList;
+    }
+
+    public void setMilestones(List<MilestoneModel> milestones) {
+        this.milestoneList = milestones;
+    }
+
+    public Throwable getError() {
+        return mError;
+    }
+
+    public void setError(Throwable t) {
+        this.mError = t;
+    }
+
+    //JSON nodes
 
     @Expose
     @SerializedName("Response")

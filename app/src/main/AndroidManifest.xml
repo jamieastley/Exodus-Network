@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher_web"
         android:supportsRtl="true"
+        android:name=".app.App"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".ui.SplashScreenActivity"
