@@ -1,10 +1,13 @@
 package com.jastley.warmindfordestiny2.Vendors;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -27,9 +30,12 @@ import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
+import com.jastley.warmindfordestiny2.Utils.SnackbarMessage;
 import com.jastley.warmindfordestiny2.Vendors.adapters.XurItemsRecyclerAdapter;
+import com.jastley.warmindfordestiny2.Vendors.viewmodels.XurViewModel;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.RetrofitHelper;
+import com.jastley.warmindfordestiny2.api.models.Response_GetXurWeekly;
 import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
@@ -69,6 +75,8 @@ public class XurFragment extends Fragment {
     private String xurURL = "https://whatsxurgot.com";
 
     private OnFragmentInteractionListener mListener;
+
+    private XurViewModel mViewModel;
 
     private String locationIndex;
 
@@ -136,6 +144,20 @@ public class XurFragment extends Fragment {
         return rootView;
 
 
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext());
+        mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
+        mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+        mXurRecyclerView.setLayoutAnimation(controller);
+        mXurRecyclerView.setNestedScrollingEnabled(false);
+
+        mViewModel = ViewModelProviders.of(this).get(XurViewModel.class);
     }
 
     @Override
@@ -226,89 +248,103 @@ public class XurFragment extends Fragment {
     public void getXurInventory() {
 
         //get Xur inventory from WhatsXurGot API (throw error if Xur not available)
-        BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(xurURL, getContext());
+//        BungieAPI mBungieAPI = RetrofitHelper.getBungieAPI(xurURL, getContext());
+//
+//
+//        Disposable disposable = mBungieAPI.getXurWeeklyInventory(braytechApiKey, "history", "xur")
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(response_getXurWeekly -> {
+//
+//                            if(!response_getXurWeekly.getResponse().getStatus().equals("200")) {
+//                                Snackbar.make(getView(), "Couldn't get Xur's stock from the server.", Snackbar.LENGTH_LONG)
+//                                        .setAction("Action", null)
+//                                        .show();
+//                                progressBar.setVisibility(View.GONE);
+//                            }
+//                            else {
+//
+//                                xurItemsList.clear();
+//                                System.out.println(response_getXurWeekly.toString());
+//
+//                                xurWorldText.setText(response_getXurWeekly.getResponse().getData().getLocation().getWorld());
+//
+//                                String region = response_getXurWeekly.getResponse().getData().getLocation().getRegion();
+//                                if(region.contains("&rsquo;")){
+//                                    region = region.replace("&rsquo;", "'");
+//                                }
+//                                xurRegionText.setText(region);
+//                                locationIndex = response_getXurWeekly.getResponse().getData().getLocation().getId();
+//
+//                                int listSize = response_getXurWeekly.getResponse().getData().getItems().size();
+//
+//
+//                                //add all items to List<>
+//                                for(int i = 0; i < listSize; i++){
+//
+//                                    InventoryItemModel xurItem = new InventoryItemModel();
+//
+//                                    xurItem.setItemName(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getName());
+//                                    xurItem.setItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getIcon());
+//                                    xurItem.setItemHash(response_getXurWeekly.getResponse().getData().getItems().get(i).getHash());
+//                                    xurItem.setItemTypeDisplayName(response_getXurWeekly.getResponse().getData().getItems().get(i).getItemTypeDisplayName());
+//                                    xurItem.setSaleHistoryCount(response_getXurWeekly.getResponse().getData().getItems().get(i).getSalesCount());
+//
+//                                    try{ //if item has a cost
+//                                        xurItem.setCostItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getIcon());
+//                                        xurItem.setCostsQuantity(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getQuantity());
+//                                    }
+//                                    catch(Exception er){
+//                                        System.out.println("No cost: "+er);
+//                                    }
+//
+//                                    try{
+//                                        xurItem.setEquippingBlock(response_getXurWeekly.getResponse().getData().getItems().get(i).getEquippingBlock().getDisplayStrings().get(0));
+//                                    }
+//                                    catch(Exception e){
+//                                        System.out.println("No equippingBlock set for item "+ i);
+//                                    }
+//
+//                                    xurItemsList.add(xurItem);
+//
+//                                }//end for loop
+//
+//                                mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext(), xurItemsList);
+//                                mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//                                mXurRecyclerView.setNestedScrollingEnabled(false);
+//                                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+//                                mXurRecyclerView.setLayoutAnimation(controller);
+//                                mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
+////                                mXurRecyclerView.addItemDecoration(headerItemDecoration);
+//                                progressBar.setVisibility(View.GONE);
+//                                mSwipeRefresh.setRefreshing(false);
+//                            }
+//
+//                }, err -> {
+//                        if(err instanceof NoNetworkException){
+//                            Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+//                                    .setAction("Retry", v -> getXurInventory())
+//                                    .show();
+//
+//                        }
+//                    },
+//                    this::getLocationBanner
+//                );
+//        compositeDisposable.add(disposable);
 
+        mViewModel.getXurData().observe(this, response_getXurWeekly -> {
+            if(response_getXurWeekly.getErrorMessage() != null) {
+                SnackbarMessage.getSnackbar(getView(), response_getXurWeekly.getErrorMessage(), BaseTransientBottomBar.LENGTH_INDEFINITE)
+                        .show();
+            }
+            else {
+                mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
+                mSwipeRefresh.setRefreshing(false);
+            }
+        });
 
-        Disposable disposable = mBungieAPI.getXurWeeklyInventory(braytechApiKey, "history", "xur")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response_getXurWeekly -> {
+        //TODO locationBannerData observer
 
-                            if(!response_getXurWeekly.getResponse().getStatus().equals("200")) {
-                                Snackbar.make(getView(), "Couldn't get Xur's stock from the server.", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null)
-                                        .show();
-                                progressBar.setVisibility(View.GONE);
-                            }
-                            else {
-
-                                xurItemsList.clear();
-                                System.out.println(response_getXurWeekly.toString());
-
-                                xurWorldText.setText(response_getXurWeekly.getResponse().getData().getLocation().getWorld());
-
-                                String region = response_getXurWeekly.getResponse().getData().getLocation().getRegion();
-                                if(region.contains("&rsquo;")){
-                                    region = region.replace("&rsquo;", "'");
-                                }
-                                xurRegionText.setText(region);
-                                locationIndex = response_getXurWeekly.getResponse().getData().getLocation().getId();
-
-                                int listSize = response_getXurWeekly.getResponse().getData().getItems().size();
-
-
-                                //add all items to List<>
-                                for(int i = 0; i < listSize; i++){
-
-                                    InventoryItemModel xurItem = new InventoryItemModel();
-
-                                    xurItem.setItemName(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getName());
-                                    xurItem.setItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getIcon());
-                                    xurItem.setItemHash(response_getXurWeekly.getResponse().getData().getItems().get(i).getHash());
-                                    xurItem.setItemTypeDisplayName(response_getXurWeekly.getResponse().getData().getItems().get(i).getItemTypeDisplayName());
-                                    xurItem.setSaleHistoryCount(response_getXurWeekly.getResponse().getData().getItems().get(i).getSalesCount());
-
-                                    try{ //if item has a cost
-                                        xurItem.setCostItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getIcon());
-                                        xurItem.setCostsQuantity(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getQuantity());
-                                    }
-                                    catch(Exception er){
-                                        System.out.println("No cost: "+er);
-                                    }
-
-                                    try{
-                                        xurItem.setEquippingBlock(response_getXurWeekly.getResponse().getData().getItems().get(i).getEquippingBlock().getDisplayStrings().get(0));
-                                    }
-                                    catch(Exception e){
-                                        System.out.println("No equippingBlock set for item "+ i);
-                                    }
-
-                                    xurItemsList.add(xurItem);
-
-                                }//end for loop
-
-                                mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext(), xurItemsList);
-                                mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                                mXurRecyclerView.setNestedScrollingEnabled(false);
-                                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
-                                mXurRecyclerView.setLayoutAnimation(controller);
-                                mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
-//                                mXurRecyclerView.addItemDecoration(headerItemDecoration);
-                                progressBar.setVisibility(View.GONE);
-                                mSwipeRefresh.setRefreshing(false);
-                            }
-
-                }, err -> {
-                        if(err instanceof NoNetworkException){
-                            Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Retry", v -> getXurInventory())
-                                    .show();
-
-                        }
-                    },
-                    this::getLocationBanner
-                );
-        compositeDisposable.add(disposable);
     }
 
     public void getLocationBanner() {

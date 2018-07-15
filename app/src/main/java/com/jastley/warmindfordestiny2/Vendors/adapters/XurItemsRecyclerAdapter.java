@@ -16,9 +16,9 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
     private Context mContext;
     List<InventoryItemModel> xurItems;
 
-    public XurItemsRecyclerAdapter(Context mContext, List<InventoryItemModel> xurItems) {
+    public XurItemsRecyclerAdapter(Context mContext) {
         this.mContext = mContext;
-        this.xurItems = xurItems;
+
     }
 
     @Override
@@ -48,5 +48,10 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    public void setXurItems(List<InventoryItemModel> items) {
+        xurItems = items;
+        notifyDataSetChanged();
     }
 }

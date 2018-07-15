@@ -23,12 +23,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.jastley.warmindfordestiny2.api.apiKey.apiKey;
+import static com.jastley.warmindfordestiny2.api.apiKey.braytechApiKey;
 
 @Module
 public class RetrofitModule {
 
     String mBaseURL = "https://www.bungie.net";
     String plumbingURL = "https://destiny.plumbing/en/";
+    String braytech = "https://whatsxurgot.com";
 
     public RetrofitModule() {}
 
@@ -67,6 +69,18 @@ public class RetrofitModule {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(createOAuthClient(application))
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    @Named("braytechApi")
+    Retrofit createBraytechRetrofit(Gson gson, Application application) {
+        return new Retrofit.Builder()
+                .baseUrl(braytech)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(createOkHttpClient(application))
                 .build();
     }
 

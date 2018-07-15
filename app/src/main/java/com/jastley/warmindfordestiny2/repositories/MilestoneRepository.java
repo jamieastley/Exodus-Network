@@ -36,7 +36,7 @@ public class MilestoneRepository {
     private List<MilestoneModel> milestoneModelList = new ArrayList<>();
 //    private MutableLiveData<List<MilestoneModel>> milestoneManifestList = new MutableLiveData<>();
 
-    private MutableLiveData<Response_GetMilestones> milestoneManifestList = new MutableLiveData<>();
+    private MutableLiveData<Response_GetMilestones> milestoneManifestList;
     @Inject
     MilestoneDAO mMilestoneDao;
 
@@ -56,6 +56,9 @@ public class MilestoneRepository {
     }
 
     private LiveData<Response_GetMilestones> getMilestoneProgress() {
+
+        milestoneManifestList = new MutableLiveData<>();
+
         Disposable disposable = retrofit.create(BungieAPI.class).getMilestones()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())

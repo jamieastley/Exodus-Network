@@ -3,7 +3,9 @@ package com.jastley.warmindfordestiny2.modules;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
+import com.jastley.warmindfordestiny2.database.AppDatabase;
 import com.jastley.warmindfordestiny2.database.AppManifestDatabase;
+import com.jastley.warmindfordestiny2.database.FactionsDAO;
 import com.jastley.warmindfordestiny2.database.InventoryItemDAO;
 import com.jastley.warmindfordestiny2.database.MilestoneDAO;
 
@@ -16,9 +18,11 @@ import dagger.Provides;
 public class RoomModule {
 
     private AppManifestDatabase mManifestDatabase;
+    private AppDatabase mAppDatabase;
 
     public RoomModule(Application application) {
         mManifestDatabase = Room.databaseBuilder(application, AppManifestDatabase.class, "bungieManifest.db").build();
+        mAppDatabase = Room.databaseBuilder(application, AppDatabase.class, "bungieAccount.db").build();
     }
 
     @Singleton
@@ -35,14 +39,20 @@ public class RoomModule {
 
     @Singleton
     @Provides
-    InventoryItemDAO providesInventoryItemDaio(AppManifestDatabase appManifestDatabase) {
+    AppDatabase providesAppDatabase() {
+        return mAppDatabase;
+    }
+
+    @Singleton
+    @Provides
+    InventoryItemDAO providesInventoryItemDao(AppManifestDatabase appManifestDatabase) {
         return mManifestDatabase.getInventoryItemDAO();
     }
 
-//    @Provides
-//    @Singleton
-//    MilestoneRepository provideMilestoneRepository(MilestoneDAO milestoneDAO) {
-//        return new MilestoneRepository(milestoneDAO);
-//    }
+    @Provides
+    @Singleton
+    FactionsDAO providesFactionDao() {
+        return mManifestDatabase.getFactionsDAO();
+    }
 
 }

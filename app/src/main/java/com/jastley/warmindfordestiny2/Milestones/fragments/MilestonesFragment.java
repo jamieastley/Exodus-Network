@@ -151,7 +151,6 @@ public class MilestonesFragment extends Fragment {
 
         inflater.inflate(R.menu.refresh_toolbar, menu);
 
-
 //        super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -245,7 +244,7 @@ public class MilestonesFragment extends Fragment {
 
                 }, throwable -> {
                     if(throwable instanceof NoNetworkException) {
-                        Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                        Snackbar.make(getActivity().findViewById(R.id.milestone_coordinator), "No network detected!", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("Retry", v -> getMilestones())
                                 .show();
                     }

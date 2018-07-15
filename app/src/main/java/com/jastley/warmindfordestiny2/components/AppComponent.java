@@ -1,6 +1,8 @@
 package com.jastley.warmindfordestiny2.components;
 
 import com.jastley.warmindfordestiny2.Milestones.viewmodels.MilestoneViewModel;
+import com.jastley.warmindfordestiny2.Vendors.XurRepository;
+import com.jastley.warmindfordestiny2.Vendors.viewmodels.XurViewModel;
 import com.jastley.warmindfordestiny2.modules.AppModule;
 import com.jastley.warmindfordestiny2.modules.RetrofitModule;
 import com.jastley.warmindfordestiny2.modules.RoomModule;
@@ -15,4 +17,6 @@ import dagger.Component;
 public interface AppComponent {
     void inject(MilestoneRepository milestoneRepository);
     void inject(MilestoneViewModel milestoneViewModel);
+    void inject(XurViewModel xurViewModel);
+    void inject(XurRepository xurRepository);
 }

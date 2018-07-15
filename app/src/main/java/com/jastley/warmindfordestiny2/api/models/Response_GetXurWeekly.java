@@ -2,10 +2,42 @@ package com.jastley.warmindfordestiny2.api.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 
 import java.util.List;
 
 public class Response_GetXurWeekly {
+
+    private List<InventoryItemModel> itemList;
+    private String errorMessage;
+
+    //Response successful
+    public Response_GetXurWeekly(List<InventoryItemModel> itemList) {
+        this.itemList = itemList;
+        this.response.message = null;
+    }
+
+    //API error
+    public Response_GetXurWeekly(String error) {
+        this.itemList = null;
+        this.errorMessage = error;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public List<InventoryItemModel> getItemList() {
+        return itemList;
+    }
+
+    public void setItemList(List<InventoryItemModel> itemList) {
+        this.itemList = itemList;
+    }
 
     @Expose
     @SerializedName("response")
