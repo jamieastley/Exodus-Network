@@ -220,6 +220,7 @@ public class XurFragment extends Fragment {
                 mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
             }
             mSwipeRefresh.setRefreshing(false);
+            progressBar.setVisibility(View.GONE);
         });
 
         //Get location data
