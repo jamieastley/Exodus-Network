@@ -2,13 +2,16 @@ package com.jastley.warmindfordestiny2.Vendors;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
-import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
 import com.jastley.warmindfordestiny2.Vendors.models.XurVendorModel;
 import com.jastley.warmindfordestiny2.api.BungieAPI;
 import com.jastley.warmindfordestiny2.api.models.Response_GetXurWeekly;
+import com.jastley.warmindfordestiny2.app.App;
 import com.jastley.warmindfordestiny2.database.FactionsDAO;
 
 import java.util.ArrayList;
@@ -19,21 +22,21 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
+import static com.jastley.warmindfordestiny2.Definitions.theNine;
 import static com.jastley.warmindfordestiny2.api.apiKey.braytechApiKey;
 
 @Singleton
 public class XurRepository {
 
     private MutableLiveData<Response_GetXurWeekly> xurLiveDataList;
-    private LiveData<XurVendorModel> xurLocationData;
+    private MutableLiveData<XurVendorModel> xurLocationData = new MutableLiveData<>();
     private List<InventoryItemModel> xurItemsList = new ArrayList<>();
     private XurVendorModel vendorModel;
-    private CompositeDisposable compDisposable = new CompositeDisposable();
+
 
     @Inject
     @Named("braytechApi")
@@ -44,6 +47,11 @@ public class XurRepository {
 
     @Inject
     FactionsDAO mFactionsDao;
+
+    @Inject
+    public XurRepository() {
+        App.getApp().getAppComponent().inject(this);
+    }
 
     public LiveData<Response_GetXurWeekly> getXurInventory() {
 
@@ -56,25 +64,16 @@ public class XurRepository {
                 .subscribe(response_getXurWeekly -> {
 
                             if(!response_getXurWeekly.getResponse().getStatus().equals("200")) {
-//                                Snackbar.make(getView(), "Couldn't get Xur's stock from the server.", Snackbar.LENGTH_LONG)
-//                                        .setAction("Action", null)
-//                                        .show();
-//                                progressBar.setVisibility(View.GONE);
                                 xurLiveDataList.postValue(new Response_GetXurWeekly(response_getXurWeekly.getResponse().getMessage()));
                             }
                             else {
 
                                 xurItemsList.clear();
-                                System.out.println(response_getXurWeekly.toString());
-
-//                                xurWorldText.setText(response_getXurWeekly.getResponse().getData().getLocation().getWorld());
 
                                 String region = response_getXurWeekly.getResponse().getData().getLocation().getRegion();
                                 if(region.contains("&rsquo;")){
                                     region = region.replace("&rsquo;", "'");
                                 }
-//                                xurRegionText.setText(region);
-//                                locationIndex = response_getXurWeekly.getResponse().getData().getLocation().getId();
 
                                 vendorModel = new XurVendorModel(response_getXurWeekly.getResponse().getData().getLocation().getWorld(),
                                                                 region,
@@ -99,14 +98,14 @@ public class XurRepository {
                                         xurItem.setCostsQuantity(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getQuantity());
                                     }
                                     catch(Exception er){
-                                        System.out.println("No cost: "+er);
+                                        Log.e("XUR_COST: ", er.getMessage());
                                     }
 
                                     try{
                                         xurItem.setEquippingBlock(response_getXurWeekly.getResponse().getData().getItems().get(i).getEquippingBlock().getDisplayStrings().get(0));
                                     }
                                     catch(Exception e){
-                                        System.out.println("No equippingBlock set for item "+ i);
+                                        Log.e("XUR_EQUIP_BLOCK", String.valueOf(i));
                                     }
 
                                     xurItemsList.add(xurItem);
@@ -115,30 +114,42 @@ public class XurRepository {
 
                                 xurLiveDataList.postValue(new Response_GetXurWeekly(xurItemsList));
                                 getLocationBanner(vendorModel);
-//                                mXurRecyclerAdapter = new XurItemsRecyclerAdapter(getContext(), xurItemsList);
-//                                mXurRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//                                mXurRecyclerView.setNestedScrollingEnabled(false);
-//                                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
-//                                mXurRecyclerView.setLayoutAnimation(controller);
-//                                mXurRecyclerView.setAdapter(mXurRecyclerAdapter);
-////                                mXurRecyclerView.addItemDecoration(headerItemDecoration);
-//                                progressBar.setVisibility(View.GONE);
-//                                mSwipeRefresh.setRefreshing(false);
+
                             }
 
                         }, err -> {
                                 xurLiveDataList.postValue(new Response_GetXurWeekly(err.getLocalizedMessage()));
                         }
-//                        this::getLocationBanner
                 );
 
         return xurLiveDataList;
     }
 
-    public LiveData getLocationBanner(XurVendorModel vendorModel) {
+    public LiveData<XurVendorModel> getXurLocationData() {
+        return xurLocationData;
+    }
 
+    public LiveData<XurVendorModel> getLocationBanner(XurVendorModel vendorModel) {
 
+        Disposable disposable = mFactionsDao.getFactionByKey(theNine, null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(faction -> {
 
+                    JsonParser parser = new JsonParser();
+                    JsonObject factionObj = (JsonObject) parser.parse(faction.getValue());
+
+                    int vendorIndex = Integer.parseInt(vendorModel.getLocationIndex());
+
+                    //add in missing trailing slash from API url
+                    vendorModel.setLocationBanner("/" + factionObj.get("vendors").getAsJsonArray().get(vendorIndex).getAsJsonObject().get("backgroundImagePath").getAsString());
+
+                    xurLocationData.postValue(vendorModel);
+
+                }, throwable -> {
+                    vendorModel.setErrorMessage(throwable.getMessage());
+                    xurLocationData.postValue(vendorModel);
+                });
 
         return xurLocationData;
     }

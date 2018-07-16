@@ -9,12 +9,13 @@ import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Vendors.holders.XurItemsViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHolder> {
 
     private Context mContext;
-    List<InventoryItemModel> xurItems;
+    private List<InventoryItemModel> xurItems = new ArrayList<>();
 
     public XurItemsRecyclerAdapter(Context mContext) {
         this.mContext = mContext;

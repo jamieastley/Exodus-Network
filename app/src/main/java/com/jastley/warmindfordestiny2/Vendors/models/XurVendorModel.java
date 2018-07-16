@@ -5,6 +5,9 @@ public class XurVendorModel {
     private String worldName;
     private String regionText;
     private String locationIndex;
+    private String locationBanner;
+
+    private String errorMessage;
 
     public XurVendorModel(String worldName, String regionText, String locationIndex) {
         this.worldName = worldName;
@@ -34,5 +37,21 @@ public class XurVendorModel {
 
     public void setLocationIndex(String locationIndex) {
         this.locationIndex = locationIndex;
+    }
+
+    public String getLocationBanner() {
+        return locationBanner;
+    }
+
+    public void setLocationBanner(String locationBanner) {
+        this.locationBanner = locationBanner;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

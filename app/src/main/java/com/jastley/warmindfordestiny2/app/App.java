@@ -2,9 +2,7 @@ package com.jastley.warmindfordestiny2.app;
 
 import android.app.Application;
 
-
 import com.jastley.warmindfordestiny2.components.AppComponent;
-
 
 import com.jastley.warmindfordestiny2.components.DaggerAppComponent;
 import com.jastley.warmindfordestiny2.modules.AppModule;

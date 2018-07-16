@@ -14,7 +14,7 @@ public class Response_GetXurWeekly {
     //Response successful
     public Response_GetXurWeekly(List<InventoryItemModel> itemList) {
         this.itemList = itemList;
-        this.response.message = null;
+        this.errorMessage = null;
     }
 
     //API error
