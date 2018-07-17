@@ -247,6 +247,10 @@ public class AccountStatsFragment extends Fragment {
         mViewModel.getPatrolStatsList().observe(this, patrolStats -> {
 
         });
+
+        mViewModel.getThrowable().observe(this, throwable -> {
+            //TODO single Snackbar for NoNetworkException
+        });
     }
 
 

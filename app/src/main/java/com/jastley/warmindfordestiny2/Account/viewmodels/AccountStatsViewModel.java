@@ -22,6 +22,8 @@ public class AccountStatsViewModel extends AndroidViewModel {
     private LiveData<Response_GetAllModesAccountStats> storyStatsList;
     private LiveData<Response_GetAllModesAccountStats> allStrikesStatsList;
 
+    private LiveData<Response_GetAllModesAccountStats> throwable;
+
     public AccountStatsViewModel(@NonNull Application application) {
         super(application);
 
@@ -52,5 +54,9 @@ public class AccountStatsViewModel extends AndroidViewModel {
 
     public LiveData<Response_GetAllModesAccountStats> getAllStrikesStatsList() {
         return allStrikesStatsList;
+    }
+
+    public LiveData<Response_GetAllModesAccountStats> getThrowable() {
+        return throwable;
     }
 }
