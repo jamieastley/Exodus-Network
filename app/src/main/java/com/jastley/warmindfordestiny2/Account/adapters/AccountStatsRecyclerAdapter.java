@@ -15,8 +15,8 @@ public class AccountStatsRecyclerAdapter extends RecyclerView.Adapter<AccountSta
 
     private List<AccountStatsModel> statsList;
 
-    public AccountStatsRecyclerAdapter(List<AccountStatsModel> stats) {
-        this.statsList = stats;
+    public AccountStatsRecyclerAdapter() {
+
     }
 
     @NonNull
@@ -39,5 +39,10 @@ public class AccountStatsRecyclerAdapter extends RecyclerView.Adapter<AccountSta
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    public void setStats(List<AccountStatsModel> list) {
+        this.statsList = list;
+        notifyDataSetChanged();
     }
 }

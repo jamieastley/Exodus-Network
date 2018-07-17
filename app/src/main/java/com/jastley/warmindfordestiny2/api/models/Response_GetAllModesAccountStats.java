@@ -2,10 +2,47 @@ package com.jastley.warmindfordestiny2.api.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jastley.warmindfordestiny2.Account.models.AccountStatsModel;
+
+import java.util.List;
 
 public class Response_GetAllModesAccountStats {
 
-        @Expose
+    private List<AccountStatsModel> statsList;
+    private String errorMessage;
+    private Throwable throwable;
+
+    public Response_GetAllModesAccountStats(List<AccountStatsModel> statsList) {
+        this.statsList = statsList;
+        this.errorMessage = null;
+        this.throwable = null;
+    }
+
+    public Response_GetAllModesAccountStats(String errorMessage) {
+        this.statsList = null;
+        this.errorMessage = errorMessage;
+        this.throwable = null;
+    }
+
+    public Response_GetAllModesAccountStats(Throwable throwable) {
+        this.statsList = null;
+        this.errorMessage = null;
+        this.throwable = throwable;
+    }
+
+    public List<AccountStatsModel> getStatsList() {
+        return statsList;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    @Expose
         @SerializedName("MessageData")
         private MessageData MessageData;
         @Expose
