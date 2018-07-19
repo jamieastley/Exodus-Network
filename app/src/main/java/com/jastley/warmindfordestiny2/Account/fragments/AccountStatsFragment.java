@@ -31,14 +31,12 @@ import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.CompositeDisposable;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
 public class AccountStatsFragment extends Fragment {
 
     private OnAccountStatsInteractionListener mListener;
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
     BungieAPI mBungieAPI;
     private Context mContext;
     private AccountStatsViewModel mViewModel;
@@ -112,11 +110,6 @@ public class AccountStatsFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
-//            pvpStatsList.clear();
-//            raidStatsList.clear();
-//            allStrikesStatsList.clear();
-//            storyStatsList.clear();
-//            patrolStatsList.clear();
 
             getAccountStats();
 
@@ -173,11 +166,7 @@ public class AccountStatsFragment extends Fragment {
 
             case R.id.refresh_button:
                 mSwipeRefreshLayout.setRefreshing(true);
-//                pvpStatsList.clear();
-//                raidStatsList.clear();
-//                allStrikesStatsList.clear();
-//                storyStatsList.clear();
-//                patrolStatsList.clear();
+
                 getAccountStats();
         }
         return super.onOptionsItemSelected(item);
@@ -229,27 +218,57 @@ public class AccountStatsFragment extends Fragment {
     private void getAccountStats() {
 
         mViewModel.getPvpStatsList().observe(this, pvpStats -> {
-
+            if(pvpStats.getErrorMessage() != null) {
+                mPVPErrorMessage.setText(pvpStats.getErrorMessage());
+            }
+            else {
+                pvpStatsAdapter.setStats(pvpStats.getStatsList());
+            }
         });
 
         mViewModel.getRaidStatsList().observe(this, raidStats -> {
-
+            if(raidStats.getErrorMessage() != null) {
+                mRaidErrorMessage.setText(raidStats.getErrorMessage());
+            }
+            else {
+                raidStatsAdapter.setStats(raidStats.getStatsList());
+            }
         });
 
         mViewModel.getAllStrikesStatsList().observe(this, strikeStats -> {
-
+            if(strikeStats.getErrorMessage() != null) {
+                mStrikesErrorMessage.setText(strikeStats.getErrorMessage());
+            }
+            else {
+                strikesStatsAdapter.setStats(strikeStats.getStatsList());
+            }
         });
 
         mViewModel.getStoryStatsList().observe(this, storyStats -> {
-
+            if(storyStats.getErrorMessage() != null) {
+                mStoryErrorMessage.setText(storyStats.getErrorMessage());
+            }
+            else {
+                storyStatsAdapter.setStats(storyStats.getStatsList());
+            }
         });
 
         mViewModel.getPatrolStatsList().observe(this, patrolStats -> {
-
+            if(patrolStats.getErrorMessage() != null) {
+                mPatrolErrorMessage.setText(patrolStats.getErrorMessage());
+            }
+            else {
+                patrolStatsAdapter.setStats(patrolStats.getStatsList());
+            }
         });
 
+        //Single snackbar NoNetworkException error
         mViewModel.getThrowable().observe(this, throwable -> {
-            //TODO single Snackbar for NoNetworkException
+            if(throwable.getThrowable() instanceof NoNetworkException) {
+                Snackbar.make(getView(), "No network detected!", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> getAccountStats())
+                        .show();
+            }
         });
     }
 
