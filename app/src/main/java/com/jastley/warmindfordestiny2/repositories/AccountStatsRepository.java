@@ -32,6 +32,7 @@ public class AccountStatsRepository {
     private MutableLiveData<Response_GetAllModesAccountStats> allStrikesStatsList = new MutableLiveData<>();
 
     //TODO single mutableLiveData for error handling
+    private MutableLiveData<Response_GetAllModesAccountStats> networkThrowable = new MutableLiveData<>();
 
     @Inject
     @Named("bungieAuthRetrofit")
@@ -69,6 +70,8 @@ public class AccountStatsRepository {
     }
 
     public LiveData<Response_GetAllModesAccountStats> getPvpStatsList() {
+
+
 
         sharedPreferences = context.getSharedPreferences("saved_prefs", Context.MODE_PRIVATE);
 
@@ -405,15 +408,20 @@ public class AccountStatsRepository {
                             }
                         }
                     }, throwable -> {
-                        pvpStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
-                        patrolStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
-                        raidStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
-                        storyStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
-                        allStrikesStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
+//                        pvpStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
+//                        patrolStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
+//                        raidStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
+//                        storyStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
+//                        allStrikesStatsList.postValue(new Response_GetAllModesAccountStats(throwable));
+
+                        networkThrowable.postValue(new Response_GetAllModesAccountStats(throwable));
                     });
         }
 
         return pvpStatsList;
     }
 
+    public LiveData<Response_GetAllModesAccountStats> getThrowable() {
+        return networkThrowable;
+    }
 }

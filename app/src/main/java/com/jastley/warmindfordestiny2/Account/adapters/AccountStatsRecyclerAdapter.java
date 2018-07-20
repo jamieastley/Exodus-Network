@@ -9,11 +9,12 @@ import com.jastley.warmindfordestiny2.Account.holders.AccountStatsViewHolder;
 import com.jastley.warmindfordestiny2.Account.models.AccountStatsModel;
 import com.jastley.warmindfordestiny2.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountStatsRecyclerAdapter extends RecyclerView.Adapter<AccountStatsViewHolder> {
 
-    private List<AccountStatsModel> statsList;
+    private List<AccountStatsModel> statsList = new ArrayList<>();
 
     public AccountStatsRecyclerAdapter() {
 

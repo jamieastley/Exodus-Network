@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.*;
 
 import android.view.animation.AnimationUtils;
@@ -22,19 +21,13 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import com.jastley.warmindfordestiny2.Inventory.models.InventoryItemModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.SnackbarMessage;
 import com.jastley.warmindfordestiny2.Vendors.adapters.XurItemsRecyclerAdapter;
 import com.jastley.warmindfordestiny2.Vendors.viewmodels.XurViewModel;
 import com.squareup.picasso.Picasso;
-import io.reactivex.disposables.CompositeDisposable;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 

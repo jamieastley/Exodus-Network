@@ -34,6 +34,8 @@ public class AccountStatsViewModel extends AndroidViewModel {
         raidStatsList = repository.getRaidStatsList();
         storyStatsList = repository.getStoryStatsList();
         allStrikesStatsList = repository.getAllStrikesStatsList();
+
+        throwable = repository.getThrowable();
     }
 
     public LiveData<Response_GetAllModesAccountStats> getPvpStatsList() {

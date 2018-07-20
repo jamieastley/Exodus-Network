@@ -26,19 +26,14 @@ import com.jastley.warmindfordestiny2.Account.viewmodels.AccountStatsViewModel;
 import com.jastley.warmindfordestiny2.MainActivity;
 import com.jastley.warmindfordestiny2.R;
 import com.jastley.warmindfordestiny2.Utils.NoNetworkException;
-import com.jastley.warmindfordestiny2.api.BungieAPI;
-import com.jastley.warmindfordestiny2.api.RetrofitHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.jastley.warmindfordestiny2.api.BungieAPI.baseURL;
 
 public class AccountStatsFragment extends Fragment {
 
     private OnAccountStatsInteractionListener mListener;
-    BungieAPI mBungieAPI;
-    private Context mContext;
     private AccountStatsViewModel mViewModel;
 
     @BindView(R.id.account_stats_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -78,7 +73,6 @@ public class AccountStatsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mBungieAPI = RetrofitHelper.getAuthBungieAPI(mContext, baseURL);
     }
 
     @Override
@@ -98,6 +92,8 @@ public class AccountStatsFragment extends Fragment {
         initialiseRecyclerViews();
 
         mViewModel = ViewModelProviders.of(this).get(AccountStatsViewModel.class);
+
+        getAccountStats();
     }
 
     @Override
@@ -105,8 +101,6 @@ public class AccountStatsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mSwipeRefreshLayout.setRefreshing(true);
-
-        getAccountStats();
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
@@ -128,7 +122,6 @@ public class AccountStatsFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnAccountStatsInteractionListener) {
             mListener = (OnAccountStatsInteractionListener) context;
-            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnAccountStatsInteractionListener");
@@ -139,7 +132,6 @@ public class AccountStatsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mContext = null;
     }
 
     @Override
@@ -220,10 +212,13 @@ public class AccountStatsFragment extends Fragment {
         mViewModel.getPvpStatsList().observe(this, pvpStats -> {
             if(pvpStats.getErrorMessage() != null) {
                 mPVPErrorMessage.setText(pvpStats.getErrorMessage());
+                mPVPErrorMessage.setVisibility(View.VISIBLE);
             }
             else {
                 pvpStatsAdapter.setStats(pvpStats.getStatsList());
             }
+
+            mSwipeRefreshLayout.setRefreshing(false);
         });
 
         mViewModel.getRaidStatsList().observe(this, raidStats -> {
@@ -269,12 +264,17 @@ public class AccountStatsFragment extends Fragment {
                         .setAction("Retry", v -> getAccountStats())
                         .show();
             }
+            else {
+                Snackbar.make(getView(), throwable.getThrowable().getMessage(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> getAccountStats())
+                        .show();
+            }
         });
     }
 
 
     private LinearLayoutManager getLayoutManager() {
-        return new LinearLayoutManager(mContext);
+        return new LinearLayoutManager(getContext());
     }
 
     private LayoutAnimationController getLayoutAnimation() {
