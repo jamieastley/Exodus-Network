@@ -216,6 +216,7 @@ public class AccountStatsFragment extends Fragment {
             }
             else {
                 pvpStatsAdapter.setStats(pvpStats.getStatsList());
+                mPVPErrorMessage.setVisibility(View.GONE);
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
@@ -224,36 +225,44 @@ public class AccountStatsFragment extends Fragment {
         mViewModel.getRaidStatsList().observe(this, raidStats -> {
             if(raidStats.getErrorMessage() != null) {
                 mRaidErrorMessage.setText(raidStats.getErrorMessage());
+                mRaidErrorMessage.setVisibility(View.VISIBLE);
             }
             else {
                 raidStatsAdapter.setStats(raidStats.getStatsList());
+                mRaidErrorMessage.setVisibility(View.GONE);
             }
         });
 
         mViewModel.getAllStrikesStatsList().observe(this, strikeStats -> {
             if(strikeStats.getErrorMessage() != null) {
                 mStrikesErrorMessage.setText(strikeStats.getErrorMessage());
+                mStrikesErrorMessage.setVisibility(View.VISIBLE);
             }
             else {
                 strikesStatsAdapter.setStats(strikeStats.getStatsList());
+                mStrikesErrorMessage.setVisibility(View.GONE);
             }
         });
 
         mViewModel.getStoryStatsList().observe(this, storyStats -> {
             if(storyStats.getErrorMessage() != null) {
                 mStoryErrorMessage.setText(storyStats.getErrorMessage());
+                mStoryErrorMessage.setVisibility(View.VISIBLE);
             }
             else {
                 storyStatsAdapter.setStats(storyStats.getStatsList());
+                mStoryErrorMessage.setVisibility(View.GONE);
             }
         });
 
         mViewModel.getPatrolStatsList().observe(this, patrolStats -> {
             if(patrolStats.getErrorMessage() != null) {
                 mPatrolErrorMessage.setText(patrolStats.getErrorMessage());
+                mPatrolErrorMessage.setVisibility(View.VISIBLE);
             }
             else {
                 patrolStatsAdapter.setStats(patrolStats.getStatsList());
+                mPatrolErrorMessage.setVisibility(View.GONE);
             }
         });
 
