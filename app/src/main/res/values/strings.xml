@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Warmind for Destiny 2</string>
+    <string name="app_name">Exodus Network for Destiny 2</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="login_button_label">Log In</string>
