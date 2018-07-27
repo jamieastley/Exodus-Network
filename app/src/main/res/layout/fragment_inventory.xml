@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.jastley.warmindfordestiny2.Inventory.fragments.ParentInventoryFragment">
+    tools:context="com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +23,6 @@
         android:id="@+id/parent_inventory_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/sliding_tabs"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
 
