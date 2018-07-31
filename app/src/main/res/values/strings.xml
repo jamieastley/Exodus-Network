@@ -163,6 +163,14 @@
     <string name="rpm">Rounds Per Minute</string>
     <string name="magazine">Magazine Size</string>
     <string name="item_inspect_screenshot">Screenshot of item</string>
+    <string name="settings">Settings</string>
+    <string name="app_name_short">Exodus Network</string>
+    <string name="general">General</string>
+    <string name="general_summary">General App Settings</string>
+    <string name="debug">Debug</string>
+    <string name="settings_update_manifest">Update Bungie Manifest</string>
+    <string name="settings_redownload_subtext">If icons/resources aren\'t loading, try re-downloading the manifest</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
 
 </resources>

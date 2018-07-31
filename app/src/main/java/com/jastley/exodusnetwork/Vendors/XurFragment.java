@@ -142,11 +142,12 @@ public class XurFragment extends Fragment {
                     Fragment inspectFragment = ItemInspectFragment.newInstance();
 
 //                    FragmentManager fragmentManager = getFragmentManager();
-
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.lfg_content_frame, inspectFragment, "ITEM_INSPECT")
-                            .addToBackStack("ITEM_INSPECTION")
-                            .commit();
+                    if(getActivity() != null){
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.lfg_content_frame, inspectFragment, "ITEM_INSPECT")
+                                .addToBackStack("ITEM_INSPECTION")
+                                .commit();
+                    }
                 });
 
         compositeDisposable.add(disposable);

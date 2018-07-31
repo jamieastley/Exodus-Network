@@ -55,6 +55,7 @@ import com.jastley.exodusnetwork.api.*;
 import com.jastley.exodusnetwork.database.dao.AccountDAO;
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.models.Account;
+import com.jastley.exodusnetwork.settings.SettingsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -818,78 +819,76 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
+        Fragment fragment;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         int id = item.getItemId();
 
-        if(id == android.R.id.home) {
-            Log.d("you idiot", "hurdur");
-        }
+        switch(id) {
 
-        if (id == R.id.nav_lfg) {
+            case android.R.id.home:
+                Log.d("you idiot", "hurdur");
+                break;
 
-            LFGPostsFragment fragment = LFGPostsFragment.newInstance(false);
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//            fragmentManager.beginTransaction()
-//                    .replace(R.id.lfg_content_frame, fragment)
-//                    .commit();
-            setFragment(fragment);
-        }
+            case R.id.nav_lfg:
+                LFGPostsFragment lfgFragment = LFGPostsFragment.newInstance(false);
 
-        else if (id == R.id.nav_account_stats) {
+                setFragment(lfgFragment);
+                break;
 
-            Fragment fragment = AccountStatsFragment.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            case R.id.nav_account_stats:
+                fragment = AccountStatsFragment.newInstance();
 
-            fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment, "accountStats")
-                    .commit();
-        }
+                fragmentManager.beginTransaction()
+                        .replace(R.id.lfg_content_frame, fragment, "accountStats")
+                        .commit();
+                break;
 
-        else if (id == R.id.nav_milestones) {
-            Fragment fragment = MilestonesFragment.newInstance();
+            case R.id.nav_milestones:
+                fragment = MilestonesFragment.newInstance();
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.lfg_content_frame, fragment, "milestones")
+                        .commit();
+                break;
 
-            fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment, "milestones")
-                    .commit();
-        }
+            case R.id.xur:
+                fragment = XurFragment.newInstance("something", "else");
 
-        else if (id == R.id.xur) {
-            Fragment fragment = XurFragment.newInstance("something", "else");
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-
-            fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment)
+                fragmentManager.beginTransaction()
+                        .replace(R.id.lfg_content_frame, fragment)
 //                    .addToBackStack("xurStack")
-                    .commit();
-        }
-        else if (id == R.id.nav_inventory_fragment) {
-            Fragment fragment = ParentInventoryFragment.newInstance("string", "string2");
+                        .commit();
+                break;
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
+            case R.id.nav_inventory_fragment:
+                fragment = ParentInventoryFragment.newInstance("string", "string2");
 
-            fragmentManager.beginTransaction()
-                    .replace(R.id.lfg_content_frame, fragment, "inventory")
+                fragmentManager.beginTransaction()
+                        .replace(R.id.lfg_content_frame, fragment, "inventory")
 //                    .addToBackStack("inventoryFragment")
-                    .commit();
+                        .commit();
+
+            case R.id.nav_refresh_auth:
+                refreshAccessToken();
+                break;
+
+            case R.id.nav_refresh_account:
+                getMembershipsForCurrentUser();
+                break;
+
+            case R.id.nav_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
         }
 
-        else if (id == R.id.nav_refresh_auth) {
-            refreshAccessToken();
-        }
-
-        else if (id == R.id.nav_refresh_account) {
-            getMembershipsForCurrentUser();
-        }
-
-        else if (id == R.id.nav_log_out_container) {
-            Log.d("log_out_click", "works");
-        }
-        else if (id == R.id.nav_log_out_text) {
-            Log.d("log_out_click", "TEXT");
-        }
+//        else if (id == R.id.nav_log_out_container) {
+//            Log.d("log_out_click", "works");
+//        }
+//        else if (id == R.id.nav_log_out_text) {
+//            Log.d("log_out_click", "TEXT");
+//        }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

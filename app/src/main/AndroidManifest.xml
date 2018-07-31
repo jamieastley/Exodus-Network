@@ -6,15 +6,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".app.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/app_name_short"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name="com.jastley.exodusnetwork.app.App"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name="com.jastley.exodusnetwork.onboarding.OnBoardingActivity"
+            android:name=".onboarding.OnBoardingActivity"
             android:label="@string/app_name"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -24,14 +24,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.jastley.exodusnetwork.lfg.NewLFGPostActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:parentActivityName="com.jastley.exodusnetwork.MainActivity"
-            />
-        <activity
-            android:name="com.jastley.exodusnetwork.MainActivity">
+            android:name=".lfg.NewLFGPostActivity"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -44,6 +43,16 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8bef33dd3b39acd532da7af4c609440c1f5e7abd" />
+
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jastley.exodusnetwork.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

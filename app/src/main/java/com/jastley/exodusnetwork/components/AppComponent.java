@@ -18,8 +18,15 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {AppModule.class, RetrofitModule.class, RoomModule.class, SharedPrefsModule.class, ContextModule.class})
+@Component(modules = {
+        AppModule.class,
+        RetrofitModule.class,
+        RoomModule.class,
+        SharedPrefsModule.class,
+        ContextModule.class})
 public interface AppComponent {
+
+
     void inject(MilestoneRepository milestoneRepository);
     void inject(MilestoneViewModel milestoneViewModel);
     void inject(XurViewModel xurViewModel);
