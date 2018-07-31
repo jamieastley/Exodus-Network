@@ -129,6 +129,13 @@ public interface BungieAPI {
                                                  @Path("characterId") String characterId,
                                                  @Path("vendorHash") String vendorHash);
 
+    /** ITEM INSTANCE INSPECT **/
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Item/{itemInstanceId}/?components=302,304,305,307")
+    Observable<Response_ItemInstance> getItemInstanceData(@Path("membershipType") String membershipType,
+                                                          @Path("membershipId") String membershipId,
+                                                          @Path("itemInstanceId") String itemId);
+
+
     /**** MILESTONES ***/
 
     @GET("/Platform/Destiny2/Milestones/")

@@ -1,4 +1,4 @@
-package com.jastley.exodusnetwork.database;
+package com.jastley.exodusnetwork.database.dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;

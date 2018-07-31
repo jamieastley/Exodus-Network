@@ -45,6 +45,9 @@ public class Definitions {
     public static final String dmgTypeVoid = "4";
     public static final String dmgTypeRaid = "5";
 
+    //Stat definitions
+    public final String attack = "1480404414";
+
 
     //Faction
     public static final String theNine = "1357903713";

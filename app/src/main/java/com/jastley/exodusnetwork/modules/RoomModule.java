@@ -5,9 +5,9 @@ import android.arch.persistence.room.Room;
 
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
-import com.jastley.exodusnetwork.database.FactionsDAO;
-import com.jastley.exodusnetwork.database.InventoryItemDAO;
-import com.jastley.exodusnetwork.database.MilestoneDAO;
+import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
+import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
+import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
 
 import javax.inject.Singleton;
 
@@ -45,13 +45,13 @@ public class RoomModule {
 
     @Singleton
     @Provides
-    InventoryItemDAO providesInventoryItemDao(AppManifestDatabase appManifestDatabase) {
+    InventoryItemDefinitionDAO providesInventoryItemDao(AppManifestDatabase appManifestDatabase) {
         return mManifestDatabase.getInventoryItemDAO();
     }
 
     @Provides
     @Singleton
-    FactionsDAO providesFactionDao() {
+    FactionDefinitionDAO providesFactionDao() {
         return mManifestDatabase.getFactionsDAO();
     }
 

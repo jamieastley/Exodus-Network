@@ -13,8 +13,8 @@ import com.jastley.exodusnetwork.api.BungieAPI;
 
 import com.jastley.exodusnetwork.api.models.Response_GetMilestones;
 import com.jastley.exodusnetwork.app.App;
-import com.jastley.exodusnetwork.database.InventoryItemDAO;
-import com.jastley.exodusnetwork.database.MilestoneDAO;
+import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
+import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
 import com.jastley.exodusnetwork.database.models.MilestoneData;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class MilestoneRepository {
     MilestoneDAO mMilestoneDao;
 
     @Inject
-    InventoryItemDAO mInventoryItemDao;
+    InventoryItemDefinitionDAO mInventoryItemDao;
 
     @Inject
     @Named("bungieAuthRetrofit")

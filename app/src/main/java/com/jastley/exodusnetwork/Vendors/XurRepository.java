@@ -12,7 +12,7 @@ import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
 import com.jastley.exodusnetwork.app.App;
-import com.jastley.exodusnetwork.database.FactionsDAO;
+import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class XurRepository {
     Gson gson;
 
     @Inject
-    FactionsDAO mFactionsDao;
+    FactionDefinitionDAO mFactionsDao;
 
     @Inject
     public XurRepository() {

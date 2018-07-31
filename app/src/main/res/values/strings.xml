@@ -162,6 +162,7 @@
     <string name="descriptionCountPlaceholder">0/50</string>
     <string name="rpm">Rounds Per Minute</string>
     <string name="magazine">Magazine Size</string>
+    <string name="item_inspect_screenshot">Screenshot of item</string>
 
 
 </resources>

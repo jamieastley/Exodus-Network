@@ -12,10 +12,15 @@ import com.jastley.exodusnetwork.Vendors.holders.XurItemsViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+
 public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHolder> {
 
     private Context mContext;
     private List<InventoryItemModel> xurItems = new ArrayList<>();
+
+    public final PublishSubject<InventoryItemModel> onClickSubject = PublishSubject.create();
 
     public XurItemsRecyclerAdapter(Context mContext) {
         this.mContext = mContext;
@@ -39,6 +44,14 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
         holder.setItemCostImage(xurItems.get(position).getCostItemIcon());
         holder.setItemCostText(xurItems.get(position).getCostsQuantity());
         holder.setSalesCount(xurItems.get(position).getSaleHistoryCount());
+
+        final InventoryItemModel item = xurItems.get(position);
+
+        holder.itemView.setOnClickListener(view -> onClickSubject.onNext(item));
+    }
+
+    public Observable<InventoryItemModel> getClickedItem() {
+        return onClickSubject;
     }
 
     @Override

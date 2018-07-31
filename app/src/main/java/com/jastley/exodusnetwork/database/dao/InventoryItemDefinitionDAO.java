@@ -1,4 +1,4 @@
-package com.jastley.exodusnetwork.database;
+package com.jastley.exodusnetwork.database.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
@@ -17,7 +17,7 @@ import io.reactivex.Maybe;
  */
 
 @Dao
-public interface InventoryItemDAO {
+public interface InventoryItemDefinitionDAO {
 
     @Query("SELECT * FROM DestinyInventoryItemDefinition")
     Maybe<List<DestinyInventoryItemDefinition>> getAllCollectables();

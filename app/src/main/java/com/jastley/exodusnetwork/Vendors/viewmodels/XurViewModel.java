@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
+import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Vendors.XurRepository;
 import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;
 import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
@@ -19,6 +20,8 @@ public class XurViewModel extends AndroidViewModel {
 
     private LiveData<Response_GetXurWeekly> xurItemList;
     private LiveData<XurVendorModel> xurLocationData;
+
+    private InventoryItemModel itemDetailsModel;
 
     public XurViewModel(@NonNull Application application) {
         super(application);
@@ -41,5 +44,13 @@ public class XurViewModel extends AndroidViewModel {
             xurLocationData = mXurRepository.getXurLocationData();
         }
         return xurLocationData;
+    }
+
+    public InventoryItemModel getItemDetailsModel() {
+        return itemDetailsModel;
+    }
+
+    public void setItemDetailsModel(InventoryItemModel itemDetailsModel) {
+        this.itemDetailsModel = itemDetailsModel;
     }
 }

@@ -26,5 +26,5 @@ public interface AppComponent {
     void inject(XurRepository xurRepository);
     void inject(AccountStatsViewModel accountStatsViewModel);
     void inject(AccountStatsRepository accountStatsRepository);
-    void inject(OnBoardingRepository onBoardingRepository);
+//    void inject(OnBoardingRepository onBoardingRepository);
 }

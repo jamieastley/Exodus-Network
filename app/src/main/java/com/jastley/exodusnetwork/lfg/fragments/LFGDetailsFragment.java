@@ -33,7 +33,7 @@ import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.RetrofitHelper;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
-import com.jastley.exodusnetwork.database.FactionsDAO;
+import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -485,7 +485,7 @@ public class LFGDetailsFragment extends Fragment {
 
     public void getFactionData(List<String> hashes) {
 
-        FactionsDAO mFactionDAO = AppManifestDatabase.getManifestDatabase(getContext()).getFactionsDAO();
+        FactionDefinitionDAO mFactionDAO = AppManifestDatabase.getManifestDatabase(getContext()).getFactionsDAO();
 
         Disposable disposable = mFactionDAO.getFactionsListByKey(hashes)
                 .subscribeOn(Schedulers.io())

@@ -46,7 +46,7 @@ import com.jastley.exodusnetwork.Vendors.HeaderItemDecoration;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.RetrofitHelper;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
-import com.jastley.exodusnetwork.database.InventoryItemDAO;
+import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
@@ -564,7 +564,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     public void getManifestData(List<String> hashes){
 
-        InventoryItemDAO mInventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
+        InventoryItemDefinitionDAO mInventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
 
         Disposable disposable = mInventoryItemDAO.getItemsListByKey(hashes)
                 .subscribeOn(Schedulers.computation())

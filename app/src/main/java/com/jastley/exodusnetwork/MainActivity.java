@@ -42,6 +42,7 @@ import com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment;
 import com.jastley.exodusnetwork.Inventory.fragments.ItemTransferDialogFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
+import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGPostsFragment;
 import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
@@ -51,7 +52,7 @@ import com.jastley.exodusnetwork.Milestones.fragments.MilestonesFragment;
 import com.jastley.exodusnetwork.Utils.NoNetworkException;
 import com.jastley.exodusnetwork.Vendors.XurFragment;
 import com.jastley.exodusnetwork.api.*;
-import com.jastley.exodusnetwork.database.AccountDAO;
+import com.jastley.exodusnetwork.database.dao.AccountDAO;
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.models.Account;
 import com.squareup.picasso.Picasso;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity
                     LFGDetailsFragment.OnDetailsFragmentInteraction,
                     LFGPostsFragment.OnFragmentInteractionListener,
                     XurFragment.OnFragmentInteractionListener,
+                    ItemInspectFragment.OnFragmentInteractionListener,
                     AccountStatsFragment.OnAccountStatsInteractionListener,
                     MilestonesFragment.OnMilestoneFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,

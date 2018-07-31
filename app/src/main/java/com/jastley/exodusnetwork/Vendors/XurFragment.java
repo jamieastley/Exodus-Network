@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,13 +19,17 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.SnackbarMessage;
 import com.jastley.exodusnetwork.Vendors.adapters.XurItemsRecyclerAdapter;
+import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
 import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -49,6 +54,7 @@ public class XurFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private OnFragmentInteractionListener mListener;
 
@@ -128,6 +134,22 @@ public class XurFragment extends Fragment {
         mViewModel = ViewModelProviders.of(this).get(XurViewModel.class);
 
         getXurInventory();
+
+        Disposable disposable = mXurRecyclerAdapter.getClickedItem()
+                .subscribe(inventoryItemModel -> {
+                    mViewModel.setItemDetailsModel(inventoryItemModel);
+
+                    Fragment inspectFragment = ItemInspectFragment.newInstance();
+
+//                    FragmentManager fragmentManager = getFragmentManager();
+
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.lfg_content_frame, inspectFragment, "ITEM_INSPECT")
+                            .addToBackStack("ITEM_INSPECTION")
+                            .commit();
+                });
+
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -192,6 +214,11 @@ public class XurFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        compositeDisposable.dispose();
+    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

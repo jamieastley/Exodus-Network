@@ -1,4 +1,4 @@
-package com.jastley.exodusnetwork.database;
+package com.jastley.exodusnetwork.database.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
@@ -11,7 +11,7 @@ import io.reactivex.Single;
 import java.util.List;
 
 @Dao
-public interface FactionsDAO {
+public interface FactionDefinitionDAO {
 
     @Query("SELECT * FROM DestinyFactionDefinition")
     Maybe<List<DestinyFactionDefinition>> getAllFactions();

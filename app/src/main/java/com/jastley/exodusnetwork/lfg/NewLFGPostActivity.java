@@ -36,7 +36,7 @@ import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.NetworkUtil;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
-import com.jastley.exodusnetwork.database.AccountDAO;
+import com.jastley.exodusnetwork.database.dao.AccountDAO;
 import com.jastley.exodusnetwork.database.AppDatabase;
 
 import java.io.File;

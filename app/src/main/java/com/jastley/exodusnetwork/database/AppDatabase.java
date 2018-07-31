@@ -5,14 +5,14 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.jastley.exodusnetwork.database.dao.AccountDAO;
 import com.jastley.exodusnetwork.database.models.Account;
 
 /**
  * Created by jamie on 9/4/18.
  */
 
-@Database(entities = {  Account.class,
-                         }, version = 1)
+@Database(entities = {  Account.class }, version = 1)
 
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -24,12 +24,9 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room
                     .databaseBuilder(context.getApplicationContext(), AppDatabase.class, "bungieAccount.db")
-//                    .inMemoryDatabaseBuilder(context.getApplicationContext(), AppDatabase.class)
                     .build();
         }
-
         return INSTANCE;
     }
-
 
 }
