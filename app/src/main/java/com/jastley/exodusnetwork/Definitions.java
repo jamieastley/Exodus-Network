@@ -48,6 +48,11 @@ public class Definitions {
     //Stat definitions
     public final String attack = "1480404414";
 
+    //Sockets
+    public static final String weaponPerksSockets = "4241085061";
+    public static final String weaponModsSockets = "2685412949";
+
+
 
     //Faction
     public static final String theNine = "1357903713";

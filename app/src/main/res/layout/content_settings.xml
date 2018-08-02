@@ -25,20 +25,38 @@
             android:textSize="15sp"
             />
 
-        <TextView
-            android:id="@+id/first_button"
+        <RelativeLayout
+            android:id="@+id/settings_backbutton_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="Button one"
-            android:textColor="@color/colorWhite"
-            android:textAlignment="viewStart"
-            android:background="@android:color/transparent"
             android:layout_below="@id/settings_general_header"
             android:clickable="true"
             android:focusable="true"
+            >
 
-            />
+            <TextView
+                android:id="@+id/first_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/back_button_drawer"
+                android:textColor="@color/colorWhite"
+                android:textAlignment="viewStart"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true"
+                />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBaseline="@id/first_button"
+                />
+
+        </RelativeLayout>
+
+
 
     </RelativeLayout>
 
@@ -94,7 +112,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/settings_redownload_manifest_subtext"
-            android:padding="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/log_out"
             android:textColor="@color/colorWhite"
             android:textAlignment="viewStart"

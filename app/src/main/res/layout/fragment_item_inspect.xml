@@ -21,6 +21,19 @@
                 android:contentDescription="@string/item_inspect_screenshot"
                 />
 
+            <TextView
+                android:id="@+id/item_inspect_itemname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Whisper of the Worm"
+                android:textSize="20sp"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="@id/item_screenshot"
+                app:layout_constraintStart_toStartOf="@id/item_screenshot"
+                />
+
             <!--Item stats RView-->
            <android.support.v7.widget.RecyclerView
                android:id="@+id/stat_row_recycler_view"

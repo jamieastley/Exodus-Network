@@ -7,9 +7,11 @@ import android.support.annotation.NonNull;
 
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Vendors.XurRepository;
+import com.jastley.exodusnetwork.Vendors.models.SocketModel;
 import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;
 import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
 import com.jastley.exodusnetwork.app.App;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemData;
 
 import javax.inject.Inject;
 
@@ -22,6 +24,9 @@ public class XurViewModel extends AndroidViewModel {
     private LiveData<XurVendorModel> xurLocationData;
 
     private InventoryItemModel itemDetailsModel;
+
+    //Item inspect/stats
+
 
     public XurViewModel(@NonNull Application application) {
         super(application);
@@ -46,11 +51,25 @@ public class XurViewModel extends AndroidViewModel {
         return xurLocationData;
     }
 
+
+    //Item inspect/stats
+    public void setItemDetailsModel(InventoryItemModel itemDetailsModel) {
+        this.itemDetailsModel = itemDetailsModel;
+    }
+
     public InventoryItemModel getItemDetailsModel() {
         return itemDetailsModel;
     }
 
-    public void setItemDetailsModel(InventoryItemModel itemDetailsModel) {
-        this.itemDetailsModel = itemDetailsModel;
+    public LiveData<InventoryItemData> getInventoryItemData() {
+        return mXurRepository.getInventoryItemData(itemDetailsModel.getItemHash());
+    }
+
+    public LiveData<SocketModel> getPerkSockets() {
+        return mXurRepository.getPerkSockets();
+    }
+
+    public LiveData<SocketModel> getModSockets() {
+        return mXurRepository.getModSockets();
     }
 }

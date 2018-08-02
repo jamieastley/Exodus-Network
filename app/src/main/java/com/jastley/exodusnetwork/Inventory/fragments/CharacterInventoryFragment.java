@@ -319,11 +319,13 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     @Override
     public boolean onQueryTextChange(String query) {
 
-        final List<InventoryItemModel> filteredItems = filter(itemList, query);
+        if(itemList != null){
+            final List<InventoryItemModel> filteredItems = filter(itemList, query);
 
-        resetItemDecoration(filteredItems);
-        mItemsRecyclerAdapter.updateList(filteredItems);
-        mItemsRecyclerView.scrollToPosition(0);
+            resetItemDecoration(filteredItems);
+            mItemsRecyclerAdapter.updateList(filteredItems);
+            mItemsRecyclerView.scrollToPosition(0);
+        }
         return true;
     }
 

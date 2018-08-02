@@ -10,7 +10,7 @@ public class InventoryItemData {
 
     @Expose
     @SerializedName("displayProperties")
-    private String displayProperties;
+    private DisplayProperties displayProperties;
     @Expose
     @SerializedName("screenshot")
     private String screenshot;
@@ -118,7 +118,7 @@ public class InventoryItemData {
     private boolean isBlacklisted;
 
     //Getters
-    public String getDisplayProperties() {
+    public DisplayProperties getDisplayProperties() {
         return displayProperties;
     }
 
@@ -260,6 +260,37 @@ public class InventoryItemData {
 
     public boolean isBlacklisted() {
         return isBlacklisted;
+    }
+
+    public static class DisplayProperties {
+        @Expose
+        @SerializedName("description")
+        private String description;
+        @Expose
+        @SerializedName("name")
+        private String name;
+        @Expose
+        @SerializedName("icon")
+        private String icon;
+        @Expose
+        @SerializedName("hasIcon")
+        private boolean hasIcon;
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public boolean isHasIcon() {
+            return hasIcon;
+        }
     }
 
     public static class Action {
@@ -924,13 +955,13 @@ public class InventoryItemData {
             private String socketCategoryHash;
             @Expose
             @SerializedName("socketIndexes")
-            private List<String> socketIndexes;
+            private List<Integer> socketIndexes;
 
             public String getSocketCategoryHash() {
                 return socketCategoryHash;
             }
 
-            public List<String> getSocketIndexes() {
+            public List<Integer> getSocketIndexes() {
                 return socketIndexes;
             }
         }

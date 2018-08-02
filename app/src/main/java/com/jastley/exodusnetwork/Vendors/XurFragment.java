@@ -149,7 +149,6 @@ public class XurFragment extends Fragment {
                                 .commit();
                     }
                 });
-
         compositeDisposable.add(disposable);
     }
 

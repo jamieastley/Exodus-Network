@@ -6,19 +6,30 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
+import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 
 
 public class ItemInspectFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+    @BindView(R.id.item_screenshot) ImageView itemScreenshot;
+    @BindView(R.id.stat_row_recycler_view) RecyclerView itemStatsRecyclerView;
+    @BindView(R.id.item_inspect_mods_recycler) RecyclerView itemModsRecyclerView;
+    @BindView(R.id.item_inspect_perks_recycler) RecyclerView itemPerksRecyclerView;
+    @BindView(R.id.item_inspect_itemname) TextView itemName;
 
     private XurViewModel mViewModel;
 
@@ -42,7 +53,11 @@ public class ItemInspectFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_item_inspect, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_item_inspect, container, false);
+
+        ButterKnife.bind(this, rootView);
+
+        return rootView;
     }
 
     @Override
@@ -55,7 +70,22 @@ public class ItemInspectFragment extends Fragment {
     }
 
     private void getItemDetails() {
-//        mViewModel.getItemDetailsModel().
+
+        itemName.setText(mViewModel.getItemDetailsModel().getItemName());
+
+        mViewModel.getInventoryItemData().observe(this, data -> {
+            Picasso.get()
+                    .load(baseURL + data.getScreenshot())
+                    .into(itemScreenshot);
+        });
+
+        mViewModel.getPerkSockets().observe(this, perks -> {
+
+        });
+
+        mViewModel.getModSockets().observe(this, mods -> {
+
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -86,5 +116,9 @@ public class ItemInspectFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void initialiseRecyclerViews() {
+
     }
 }

@@ -171,6 +171,7 @@
     <string name="settings_update_manifest">Update Bungie Manifest</string>
     <string name="settings_redownload_subtext">If icons/resources aren\'t loading, try re-downloading the manifest</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="back_button_drawer">Open drawer on back button pressed</string>
 
 
 </resources>
