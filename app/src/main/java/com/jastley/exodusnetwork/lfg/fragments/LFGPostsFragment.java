@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.lfg.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,10 +21,13 @@ import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.disposables.Disposable;
+
 import com.google.firebase.database.*;
 import com.jastley.exodusnetwork.lfg.NewLFGPostActivity;
 import com.jastley.exodusnetwork.lfg.RecyclerViewClickListener;
@@ -33,6 +37,7 @@ import com.jastley.exodusnetwork.lfg.models.LFGPost;
 import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.lfg.viewmodels.LFGViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,14 +58,13 @@ public class LFGPostsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private DatabaseReference mDatabase;
     private LFGPostRecyclerAdapter mLFGPostAdapter;
-    private List<LFGPost> lfgPosts = new ArrayList<>();
     private SharedPreferences savedPrefs;
 
-    private Context mContext;
     private String displayName = "";
     private View mView;
+
+    private LFGViewModel mViewModel;
 
     private boolean isNewLFGPost = false;
 
@@ -111,11 +115,7 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        loadLFGPosts(null);
-
         showHideFab();
-
-
 
         //Hide FAB when scrolling
         mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -141,7 +141,34 @@ public class LFGPostsFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
 
-            loadLFGPosts(null);
+            loadLFGPosts();
+        });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(this).get(LFGViewModel.class);
+
+        initialiseRecyclerView();
+        loadLFGPosts();
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    private void initialiseRecyclerView() {
+        mLFGPostAdapter = new LFGPostRecyclerAdapter();
+
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right_reverse);
+        mLFGRecyclerView.setLayoutAnimation(controller);
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+
+        mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+
+        Disposable disposable = mLFGPostAdapter.onClickSubject.subscribe(onClick -> {
+            Toast.makeText(getContext(), onClick.getOwnerMembershipId(), Toast.LENGTH_LONG)
+                    .show();
         });
     }
 
@@ -165,7 +192,6 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -178,7 +204,6 @@ public class LFGPostsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mContext = null;
         isNewLFGPost = false;
         mView = null;
     }
@@ -191,141 +216,69 @@ public class LFGPostsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        Query query;
+//        Query query;
 
         switch(item.getItemId()){
 
-            case R.id.action_refresh:
-                mSwipeRefreshLayout.setRefreshing(true);
-                loadLFGPosts(null);
-                mLFGPostAdapter.notifyDataSetChanged();
-                break;
-            case R.id.action_filter:
-                break;
-
-            case R.id.filter_none:
-                loadLFGPosts(null);
-                break;
-
-            case R.id.filter_psn:
-                query = mDatabase.child("lfg")
-                        .orderByChild("membershipType")
-                        .equalTo("2");
-                loadLFGPosts(query);
-                break;
-
-            case R.id.filter_xbox:
-                query = mDatabase.child("lfg")
-                        .orderByChild("membershipType")
-                        .equalTo("1");
-                loadLFGPosts(query);
-                break;
-
-            case R.id.filter_bnet:
-                query = mDatabase.child("lfg")
-                        .orderByChild("membershipType")
-                        .equalTo("4");
-                loadLFGPosts(query);
-                break;
+//            case R.id.action_refresh:
+//                mSwipeRefreshLayout.setRefreshing(true);
+//                loadFilteredLFGPosts(null);
+//                mLFGPostAdapter.notifyDataSetChanged();
+//                break;
+//            case R.id.action_filter:
+//                break;
+//
+//            case R.id.filter_none:
+//                loadLFGPosts(null);
+//                break;
+//
+//            case R.id.filter_psn:
+//                query = mDatabase.child("lfg")
+//                        .orderByChild("membershipType")
+//                        .equalTo("2");
+//                loadLFGPosts(query);
+//                break;
+//
+//            case R.id.filter_xbox:
+//                query = mDatabase.child("lfg")
+//                        .orderByChild("membershipType")
+//                        .equalTo("1");
+//                loadLFGPosts(query);
+//                break;
+//
+//            case R.id.filter_bnet:
+//                query = mDatabase.child("lfg")
+//                        .orderByChild("membershipType")
+//                        .equalTo("4");
+//                loadLFGPosts(query);
+//                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
 
-    public void loadLFGPosts(Query lfgQuery) {
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mSwipeRefreshLayout.setRefreshing(true);
+    public void loadLFGPosts() {
 
-        //load all posts, don't filter
-        if(lfgQuery == null){
-        lfgQuery = mDatabase.child("lfg")
-                .orderByChild("dateTime");
+        mViewModel.getAllFireteams().observe(this, fireteamsList -> {
+            mSwipeRefreshLayout.setRefreshing(false);
 
-        }
-        lfgQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                lfgPosts.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()){
-
-                    LFGPost post = ds.getValue(LFGPost.class);
-                    lfgPosts.add(post);
-
-                }
-                mLFGPostAdapter = new LFGPostRecyclerAdapter(mContext, lfgPosts, new RecyclerViewClickListener() {
-                    @Override
-                    public void onClick(View view, int position, LFGPostViewHolder holder) {
-
-                        LFGPost selectedPost = new LFGPost();
-
-                        selectedPost.setDisplayName(holder.getDisplayName().getText().toString());
-                        selectedPost.setMembershipId(holder.getMembershipId());
-                        selectedPost.setMembershipType(holder.getMembershipType());
-                        selectedPost.setLightLevel(holder.getLightLevel().getText().toString());
-                        selectedPost.setCharacterId(holder.getCharacterId());
-                        selectedPost.setClassType(holder.getClassType().getText().toString());
-                        selectedPost.setEmblemBackground(holder.getEmblemBackground());
-                        selectedPost.setActivityTitle(holder.getActivityTitle().getText().toString());
-                        selectedPost.setActivityCheckpoint(holder.getActivityCheckpoint().getText().toString());
-                        selectedPost.setHasMic(holder.getHasMic());
-                        selectedPost.setDescription(holder.getDescription());
-
-                        Fragment playerFragment;
-                        playerFragment = new LFGDetailsFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("clickedPlayer", selectedPost);
-
-                        playerFragment.setArguments(bundle);
-                        FragmentManager fragmentManager = getFragmentManager();
-
-                        fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right)
-                                .replace(R.id.lfg_content_frame, playerFragment)
-                                .addToBackStack("lfgStack")
-                                .commit();
-
-                    }
-
-                    @Override
-                    public void onLongClick(View view, int position) {
-
-                    }
-                });
-                //TODO fix context here
-                LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right_reverse);
-                mLFGRecyclerView.setLayoutAnimation(controller);
-                LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
-                mLinearLayoutManager.setReverseLayout(true);
-                mLinearLayoutManager.setStackFromEnd(true);
-
-                mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
-                mLFGRecyclerView.setAdapter(mLFGPostAdapter);
-
-                mSwipeRefreshLayout.setRefreshing(false);
+            if(fireteamsList.getThrowable() != null) {
+                Snackbar.make(getView(), fireteamsList.getThrowable().getMessage(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> loadLFGPosts())
+                        .show();
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            else if(fireteamsList.getErrorMessage() != null) {
+                Snackbar.make(getView(), fireteamsList.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> loadLFGPosts())
+                        .show();
+            }
+            else if(fireteamsList.getFireteamsList() != null) {
+                mLFGPostAdapter.setItems(fireteamsList.getFireteamsList());
             }
         });
-
-
 
     }
 

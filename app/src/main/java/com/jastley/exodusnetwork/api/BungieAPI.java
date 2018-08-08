@@ -87,6 +87,14 @@ public interface BungieAPI {
                                                                @Path("membershipId") String membershipId,
                                                                @Path("characterId") String characterId);
 
+    //Fireteams/LFG
+    @GET("/Platform/Fireteam/Search/Available/{platform}/{activityType}/{dateRange}/{slotFilter}/{page}/")
+    Observable<Response_GetPublicFireteams> getPublicFireteams(@Path("platform") String platform,
+                                                               @Path("activityType") String activityType,
+                                                               @Path("dateRange") String dateRange,
+                                                               @Path("slotFilter") String slotFilter,
+                                                               @Path("page") String page);
+
 
     /** MANIFEST DATA **/
 

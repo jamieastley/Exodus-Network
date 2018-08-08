@@ -5,15 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
+import com.jastley.exodusnetwork.api.models.Response_GetPublicFireteams;
 import com.jastley.exodusnetwork.lfg.holders.LFGPostViewHolder;
-import com.jastley.exodusnetwork.lfg.RecyclerViewClickListener;
-import com.jastley.exodusnetwork.lfg.models.LFGPost;
 import com.jastley.exodusnetwork.R;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by jamie1192 on 18/3/18.
@@ -21,63 +22,46 @@ import java.util.List;
 
 public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHolder> {
 
-    private Context context;
-    private int lastPosition = -1;
-    List<LFGPost> posts;
+    private List<Response_GetPublicFireteams.Response.Results> posts = new ArrayList<>();
+    private Context mContext;
 
-    RecyclerViewClickListener listener;
+    public final PublishSubject<Response_GetPublicFireteams.Response.Results> onClickSubject = PublishSubject.create();
 
-    public LFGPostRecyclerAdapter(Context context, List<LFGPost> lfgList, RecyclerViewClickListener listener) {
-        this.context = context;
-        this.posts = lfgList;
-        this.listener = listener;
+    public LFGPostRecyclerAdapter() {
+
     }
 
     @Override
     public LFGPostViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
+        this.mContext = parent.getContext();
+
         View mView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.lfg_list_item, parent, false);
 
-        final LFGPostViewHolder holder = new LFGPostViewHolder(mView);
-
-        holder.itemView.setOnClickListener(view ->
-                listener.onClick(view, holder.getAdapterPosition(), holder));
-
-        return holder;
+        return new LFGPostViewHolder(mView);
     }
 
     @Override
     public void onBindViewHolder(LFGPostViewHolder holder, int position) {
-        holder.setActivityTitle(posts.get(position).getActivityTitle());
-        holder.setActivityCheckpoint(posts.get(position).getActivityCheckpoint());
-        holder.setPlatformIcon(posts.get(position).getMembershipType(), context);
-        holder.setClassType(posts.get(position).getClassType());
-        holder.setDisplayName(posts.get(position).getDisplayName());
-        holder.setLightLevel(posts.get(position).getLightLevel());
-        holder.setMicIcon(posts.get(position).getHasMic(), context);
-        holder.setDateTime(posts.get(position).getDateTime());
+        holder.setActivityTitle(posts.get(position).getTitle());
+        holder.setActivityType(posts.get(position).getActivityType(), mContext);
 
-        //won't be displayed, for retrieval when clicked
-        holder.setEmblemIcon(posts.get(position).getEmblemIcon());
-        holder.setEmblemBackground(posts.get(position).getEmblemBackground());
-        holder.setCharacterId(posts.get(position).getCharacterId());
-        holder.setMembershipId(posts.get(position).getMembershipId());
-        holder.setDescription(posts.get(position).getDescription());
+        holder.setPlayerSlotCount(posts.get(position).getPlayerSlotCount());
+        holder.setAvailableSlots(posts.get(position).getAvailablePlayerSlotCount());
+        holder.setSlotIcons(posts.get(position).getPlayerSlotCount(),
+                            posts.get(position).getAvailablePlayerSlotCount(),
+                            mContext);
+        holder.setPlatformIcon(String.valueOf(posts.get(position).getPlatform()), mContext);
+        holder.setDateTime(posts.get(position).getDateCreated(), posts.get(position).getDatePlayerModified());
 
-        //set animation
-//        setAnimation(holder.itemView, position);
+        final Response_GetPublicFireteams.Response.Results lfgPost = posts.get(position);
+
+        holder.itemView.setOnClickListener(view -> onClickSubject.onNext(lfgPost));
     }
 
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-//        if (position > lastPosition)
-//        {
-            Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-//        }
+    public Observable<Response_GetPublicFireteams.Response.Results> getClickedItem() {
+        return onClickSubject;
     }
 
     @Override
@@ -90,13 +74,8 @@ public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHold
         return position;
     }
 
-//    @NonNull
-//    @Override
-//    public LFGPost getItem(int position) {
-//        return super.getItem(position);
-//    }
-
-    public void clearItems() {
+    public void setItems(List<Response_GetPublicFireteams.Response.Results> fireteamPosts) {
+        this.posts = fireteamPosts;
         notifyDataSetChanged();
     }
 

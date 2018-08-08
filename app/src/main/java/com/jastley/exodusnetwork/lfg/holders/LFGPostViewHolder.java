@@ -4,10 +4,14 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jastley.exodusnetwork.R;
+
+import org.threeten.bp.Instant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,32 +23,22 @@ import butterknife.ButterKnife;
 public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
     @BindView(R.id.platform_Icon) ImageView platformIcon;
+    @BindView(R.id.lfg_activity_type) ImageView activityType;
     @BindView(R.id.lfg_activity_title) TextView activityTitle;
-    @BindView(R.id.lfg_activity_checkpoint) TextView activityCheckpoint;
     @BindView(R.id.lfg_time) TextView dateTime;
-    @BindView(R.id.light_Level) TextView lightLevel;
-    @BindView(R.id.class_Type) TextView classType;
-    @BindView(R.id.micIcon) ImageView micIcon;
-    @BindView(R.id.player_Username) TextView displayName;
+    @BindView(R.id.lfg_edit_time) TextView editTime;
+    @BindView(R.id.lfg_player_count_container) LinearLayout playerCountContainer;
 
+    private int playerSlotCount;
+    private int availableSlots;
 
-    public String emblemIcon;
-    public String emblemBackground;
-    public String membershipId;
-    public String characterId;
     public String membershipType;
-    public String description;
-    public boolean hasMic;
 
-
-    View mView;
 
     public LFGPostViewHolder(View itemView) {
         super(itemView);
-        this.mView = itemView;
 
         ButterKnife.bind(this, itemView);
-
     }
 
 
@@ -52,141 +46,38 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         activityTitle.setText(title);
     }
 
-    public void setActivityCheckpoint(String checkpoint) {
-        activityCheckpoint.setText(checkpoint);
-    }
+    public void setPlatformIcon(String platform, Context context) {
 
-    public void setPlatformIcon(String icon, Context context) {
+        this.membershipType = platform;
 
-        this.membershipType = icon;
+        //Fireteam platforms use different platformId's than rest of API because what is consistency ¯\_(ツ)_/¯
 
-//        TODO: alpha-out white backgrounds from platform icons
-        if (icon.equals("2")) {
-            //Use setImageResource runs on UI thread and can cause hiccups, use setImageDrawable
-            platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
-        }
-        else if (icon.equals("1")) {
-            platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_xbl));
-        }
-        else if (icon.equals("4")) {
-            platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_blizzard));
-        }
-    }
-
-    public void setLightLevel(String light) {
-        String lightlevel = mView.getResources().getString(R.string.lightIcon, light);
-        lightLevel.setText(lightlevel);
-    }
-
-    public void setDisplayName(String name) {
-
-        //Battle.Net tags
-        if(name.contains("%23")){
-            name = name.replace("%23", "#");
-        }
-        displayName.setText(name);
-    }
-
-    public void setClassType(String type) {
-
-        if (type.equals("0")) {
-            classType.setText("Titan");
-        }
-        else if (type.equals("1")) {
-            classType.setText("Hunter");
-        }
-        else if (type.equals("2")) {
-            classType.setText("Warlock");
-        }
-        else {
-            classType.setText("Unknown");
+        switch (platform) {
+            case "1":
+                //Use setImageResource runs on UI thread and can cause hiccups, use setImageDrawable
+                platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
+                break;
+            case "2":
+                platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_xbl));
+                break;
+            case "3":
+                platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_blizzard));
+                break;
         }
     }
 
-    public void setMicIcon(boolean hasMic, Context context) {
+    public void setDateTime(String time, String edited) {
 
-        if (hasMic) {
-            this.hasMic = true;
-            micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_on_white));
-        }
-        else {
-            this.hasMic = false;
-            micIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_mic_off_white));
-        }
-    }
+        //Using ThreeTen Backport to utilise Java 8+ time features
+        Long post = Instant.parse(time).toEpochMilli();
+        Long edit = Instant.parse(edited).toEpochMilli();
+        Long now = Instant.now().toEpochMilli();
 
-    public void setDateTime(Long time) {
+        CharSequence timeDiff = DateUtils.getRelativeTimeSpanString(post, now, 0);
+        String editDiff = "(edited " + DateUtils.getRelativeTimeSpanString(edit, now, 0) + ")";
 
-        Long currentTime = System.currentTimeMillis();
-
-        //output as n seconds/mins/hours/days ago
-        String postAge = (String) DateUtils.getRelativeTimeSpanString(time, currentTime, 0);
-
-        dateTime.setText(postAge);
-    }
-
-    public ImageView getPlatformIcon() {
-        return platformIcon;
-    }
-
-    public TextView getActivityTitle() {
-        return activityTitle;
-    }
-
-    public TextView getActivityCheckpoint() {
-        return activityCheckpoint;
-    }
-
-    public TextView getDateTime() {
-        return dateTime;
-    }
-
-    public TextView getLightLevel() {
-        return lightLevel;
-    }
-
-    public TextView getClassType() {
-        return classType;
-    }
-
-    public ImageView getMicIcon() {
-        return micIcon;
-    }
-
-    public TextView getDisplayName() {
-        return displayName;
-    }
-
-    public String getEmblemIcon() {
-        return emblemIcon;
-    }
-
-    public void setEmblemIcon(String emblemIcon) {
-        this.emblemIcon = emblemIcon;
-    }
-
-    public String getEmblemBackground() {
-        return emblemBackground;
-    }
-
-    public void setEmblemBackground(String emblemBackground) {
-        this.emblemBackground = emblemBackground;
-    }
-
-    public String getMembershipId() {
-        return membershipId;
-    }
-
-    public void setMembershipId(String membershipId) {
-        this.membershipId = membershipId;
-    }
-
-    public String getCharacterId() {
-        return characterId;
-    }
-
-    public void setCharacterId(String characterId) {
-        this.characterId = characterId;
+        this.dateTime.setText(timeDiff);
+        this.editTime.setText(editDiff);
     }
 
     public String getMembershipType() {
@@ -197,23 +88,60 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         this.membershipType = membershipType;
     }
 
-    public boolean getHasMic() {
-        return hasMic;
+    public void setActivityType(int activityType, Context context) {
+
+        switch(activityType) {
+            case 0 :
+               this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_anything));
+               break;
+            case 1:
+                this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_raid));
+                break;
+            case 2:
+                this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_crucible));
+                break;
+            case 3:
+                this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_trials));
+                break;
+            case 4:
+                this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_strike));
+                break;
+            case 5:
+                this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_anything));
+                break;
+        }
     }
 
-    public void setHasMic(boolean hasMic) {
-        this.hasMic = hasMic;
+    public void setPlayerSlotCount(int playerSlotCount) {
+        this.playerSlotCount = playerSlotCount;
     }
 
-    public String getDescription() {
-        return description;
+    public void setAvailableSlots(int availableSlots) {
+        this.availableSlots = availableSlots;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setSlotIcons(int players, int groupSize, Context context) {
 
-    public View getmView() {
-        return mView;
+        this.playerCountContainer.removeAllViews();
+
+        int totalSlots = players + groupSize;
+
+        for (int i = 1; i <= totalSlots; i++) {
+
+            ImageView iv = new ImageView(context);
+
+            //filled spots
+            if(i <= players) {
+                iv.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_person_filled));
+            }
+            //empty spots
+            else {
+                iv.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_person_empty));
+            }
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            iv.setLayoutParams(lp);
+
+            this.playerCountContainer.addView(iv);
+        }
     }
 }

@@ -38,7 +38,9 @@
                     android:host="callback"
                     android:scheme="warmindfordestiny" />
             </intent-filter>
+
         </activity>
+
         <!-- <activity android:name=".LFG.LFGPlayerDetails"></activity> -->
         <meta-data
             android:name="io.fabric.ApiKey"

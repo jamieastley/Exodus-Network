@@ -8,6 +8,7 @@ import com.jastley.exodusnetwork.database.AppManifestDatabase;
 import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
+import com.jastley.exodusnetwork.database.dao.StatDefinitionDAO;
 
 import javax.inject.Singleton;
 
@@ -35,6 +36,12 @@ public class RoomModule {
     @Provides
     MilestoneDAO providesMilestoneDao(AppManifestDatabase appManifestDatabase) {
         return mManifestDatabase.getMilestonesDAO();
+    }
+
+    @Singleton
+    @Provides
+    StatDefinitionDAO providesStatDefinitionDAO() {
+        return mManifestDatabase.getStatDefinitionDAO();
     }
 
     @Singleton
