@@ -131,7 +131,7 @@ public class XurFragment extends Fragment {
         mXurRecyclerView.setLayoutAnimation(controller);
         mXurRecyclerView.setNestedScrollingEnabled(false);
 
-        mViewModel = ViewModelProviders.of(this).get(XurViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(XurViewModel.class);
 
         getXurInventory();
 

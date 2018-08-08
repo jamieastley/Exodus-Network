@@ -42,6 +42,7 @@ public class AccountStatsRepository {
     Gson gson;
 
     @Inject
+    @Named("savedPrefs")
     SharedPreferences sharedPreferences;
 
     @Inject

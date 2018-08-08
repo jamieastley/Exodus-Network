@@ -95,12 +95,8 @@ dependencies {
         transitive = true;
     }
 
-    //Lombok
-//    compileOnly 'org.projectlombok:lombok:1.16.22'
-//    annotationProcessor 'org.projectlombok:lombok:1.16.22'
+    implementation 'com.airbnb.android:lottie:2.5.5'
 
-//    compileOnly 'javax.annotation:javax.annotation-api:1.3.1'
-//    implementation 'com.android.support:multidex:1.0.3'
 }
 
 

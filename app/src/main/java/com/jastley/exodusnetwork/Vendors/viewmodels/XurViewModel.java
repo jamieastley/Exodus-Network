@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
+import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.Vendors.XurRepository;
 import com.jastley.exodusnetwork.Vendors.models.SocketModel;
 import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;

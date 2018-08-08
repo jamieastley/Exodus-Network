@@ -8,7 +8,7 @@ import com.jastley.exodusnetwork.R;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
-public class SettingsActivity extends DaggerAppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

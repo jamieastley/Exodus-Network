@@ -666,7 +666,7 @@ public class InventoryItemData {
             private Map<String, ComputedStats> computedStats;
             @Expose
             @SerializedName("sourceHashes")
-            private String sourceHashes;
+            private List<String> sourceHashes;
 
             //Getters
             public String getLevel() {
@@ -697,7 +697,7 @@ public class InventoryItemData {
                 return computedStats;
             }
 
-            public String getSourceHashes() {
+            public List<String> getSourceHashes() {
                 return sourceHashes;
             }
 

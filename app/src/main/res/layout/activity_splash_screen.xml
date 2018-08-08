@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bungieBackground" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bungieBackground">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    
-        <ImageView
-            android:id="@+id/splash_icon"
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_animation_view"
             android:layout_width="250dp"
             android:layout_height="300dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/exodus_icon_alpha"/>
+            app:lottie_rawRes="@raw/exodus_bodymovin_nofill"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            />
 
             <TextView
                 android:id="@+id/splash_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/splash_icon"
+                android:layout_below="@id/lottie_animation_view"
                 android:textColor="@color/colorWhite"
                 android:textAlignment="center"
                 android:textSize="15sp"
                 />
 
+        <ProgressBar
+            android:id="@+id/manifest_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/splash_text"
+            android:layout_margin="10dp"
+            android:indeterminate="false"
+            android:progressTint="@color/colorWhite"
+            android:indeterminateTint="@color/colorWhite"
+            android:visibility="gone"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            />
+
     </RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>

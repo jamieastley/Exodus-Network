@@ -11,6 +11,7 @@ import com.jastley.exodusnetwork.modules.RetrofitModule;
 import com.jastley.exodusnetwork.modules.RoomModule;
 import com.jastley.exodusnetwork.modules.SharedPrefsModule;
 
+import com.jastley.exodusnetwork.onboarding.OnBoardingViewModel;
 import com.jastley.exodusnetwork.repositories.AccountStatsRepository;
 import com.jastley.exodusnetwork.repositories.LFGRepository;
 import com.jastley.exodusnetwork.repositories.MilestoneRepository;
@@ -37,6 +38,6 @@ public interface AppComponent {
     void inject(AccountStatsRepository accountStatsRepository);
     void inject(LFGRepository lfgRepository);
     void inject(LFGViewModel lfgViewModel);
-//    void inject(OnBoardingRepository onBoardingRepository);
-//    void inject(OnboardingViewModel onboardingViewModel);
+    void inject(OnBoardingRepository onBoardingRepository);
+    void inject(OnBoardingViewModel onboardingViewModel);
 }

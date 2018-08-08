@@ -28,19 +28,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
 
-import com.google.firebase.database.*;
 import com.jastley.exodusnetwork.lfg.NewLFGPostActivity;
-import com.jastley.exodusnetwork.lfg.RecyclerViewClickListener;
 import com.jastley.exodusnetwork.lfg.adapters.LFGPostRecyclerAdapter;
-import com.jastley.exodusnetwork.lfg.holders.LFGPostViewHolder;
-import com.jastley.exodusnetwork.lfg.models.LFGPost;
 import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.lfg.viewmodels.LFGViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -159,7 +152,7 @@ public class LFGPostsFragment extends Fragment {
     private void initialiseRecyclerView() {
         mLFGPostAdapter = new LFGPostRecyclerAdapter();
 
-        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right_reverse);
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
         mLFGRecyclerView.setLayoutAnimation(controller);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
 
@@ -207,6 +200,8 @@ public class LFGPostsFragment extends Fragment {
         isNewLFGPost = false;
         mView = null;
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

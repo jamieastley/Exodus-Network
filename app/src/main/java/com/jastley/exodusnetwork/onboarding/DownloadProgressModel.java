@@ -2,12 +2,14 @@ package com.jastley.exodusnetwork.onboarding;
 
 public class DownloadProgressModel {
 
-    private Long progress;
-    private Long fileSize;
+    private int progress;
+    private int fileSize;
     private String message;
     private boolean isComplete;
+    private Throwable throwable;
+    private String errorMessage;
 
-    public DownloadProgressModel(Long progress, Long fileSize, String message) {
+    public DownloadProgressModel(int progress, int fileSize, String message) {
         this.progress = progress;
         this.fileSize = fileSize;
         this.message = message;
@@ -15,21 +17,40 @@ public class DownloadProgressModel {
 
     public DownloadProgressModel(boolean isComplete) {
         this.isComplete = isComplete;
+        this.throwable = null;
+        this.errorMessage = null;
     }
 
-    public Long getProgress() {
+    public DownloadProgressModel(Throwable error) {
+        this.throwable = error;
+    }
+
+    public DownloadProgressModel(String errorMessage) {
+        this.errorMessage = errorMessage;
+        this.throwable = null;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public int getProgress() {
         return progress;
     }
 
-    public void setProgress(Long progress) {
+    public void setProgress(int progress) {
         this.progress = progress;
     }
 
-    public Long getFileSize() {
+    public int getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(Long fileSize) {
+    public void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
 

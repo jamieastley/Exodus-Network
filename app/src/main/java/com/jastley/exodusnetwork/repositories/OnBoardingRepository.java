@@ -11,35 +11,52 @@ import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.onboarding.DownloadProgressModel;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
-//@Singleton
+@Singleton
 public class OnBoardingRepository {
 
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     private MutableLiveData<DownloadProgressModel> downloadProgressModel = new MutableLiveData<>();
 
     @Inject
+    @Named("bungieRetrofit")
     Retrofit retrofit;
 
     @Inject
     Gson gson;
 
     @Inject
+    @Named("savedManifest")
     SharedPreferences sharedPreferences;
 
     @Inject
     Context context;
 
-//    @Inject
-//    public OnBoardingRepository() {
-//        App.getApp().getAppComponent().inject(this);
-//    }
+    @Inject
+    public OnBoardingRepository() {
+        App.getApp().getAppComponent().inject(this);
+    }
 
     public LiveData<DownloadProgressModel> getDownloadProgressModel() {
         return downloadProgressModel;
@@ -47,16 +64,13 @@ public class OnBoardingRepository {
 
     public void checkManifestVersion(){
 
-        sharedPreferences = context.getSharedPreferences("saved_manifest", Context.MODE_PRIVATE);
-
         Disposable disposable = retrofit.create(BungieAPI.class).getBungieManifests()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response_getBungieManifest -> {
 
                     if(!response_getBungieManifest.getErrorCode().equals("1")){
-//                        showErrorDialog("An error occurred", response_getBungieManifest.getMessage());
-                        downloadProgressModel.postValue(new DownloadProgressModel(null, null, response_getBungieManifest.getMessage()));
+                        downloadProgressModel.postValue(new DownloadProgressModel(response_getBungieManifest.getMessage()));
                     }
                     else {
                         String manifestVersion = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
@@ -74,21 +88,138 @@ public class OnBoardingRepository {
                                 Log.e("MANIFEST_PREFS_ERR", e.getLocalizedMessage());
                             }
 //                            splashText.setText(R.string.gettingItemDatabase);
-//                            String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
-//                            getUpdateManifests(contentUrl);
+                            String contentUrl = response_getBungieManifest.getResponse().getMobileWorldContentPaths().getEnglishPath();
+                            getUpdateManifests(contentUrl);
                         } else { //already have the latest manifest
-
-//                            intent = new Intent(OnBoardingActivity.this, MainActivity.class);
-//
-//                            //set flags so pressing back won't trigger launching splash screen again
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//
-//                            //dispose of observables
-//                            compositeDisposables.dispose();
-//                            startActivity(intent);
-//                            finish();
+                            downloadProgressModel.postValue(new DownloadProgressModel(true));
                         }
                     }
+                }, throwable -> downloadProgressModel.postValue(new DownloadProgressModel(throwable)));
+        compositeDisposable.add(disposable);
+    }
+
+    private void getUpdateManifests(String url){
+
+        Disposable disposable = retrofit.create(BungieAPI.class).downloadUrlContent(url)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(responseBody -> {
+
+                    try {
+
+                        //dynamically retrieve the /data/databases path for the device, database filename here is irrelevant
+                        String databasePath = context.getDatabasePath("bungieAccount.db").getParent();
+                        File manifestFile = new File(databasePath, "manifest.zip");
+
+                        InputStream inputStream = null;
+                        OutputStream outputStream = null;
+
+                        try {
+                            byte[] fileReader = new byte[4096];
+
+                            long fileSize = responseBody.contentLength();
+                            long fileSizeDownloaded = 0;
+
+                            inputStream = responseBody.byteStream();
+                            outputStream = new FileOutputStream(manifestFile);
+
+                            boolean downloading = true;
+                            while (downloading) {
+                                int read = inputStream.read(fileReader);
+
+                                if (read == -1) {
+                                    break;
+                                }
+
+                                outputStream.write(fileReader, 0, read);
+                                fileSizeDownloaded += read;
+
+                                DecimalFormat df = new DecimalFormat("###");
+                                df.setRoundingMode(RoundingMode.CEILING);
+                                int downloaded = Integer.parseInt(df.format(fileSizeDownloaded));
+                                int size = Integer.parseInt(df.format(fileSize));
+                                downloadProgressModel.postValue(new DownloadProgressModel(downloaded, size, "Downloading manifest..."));
+                                Log.d("Manifest Download", fileSizeDownloaded + " of " + fileSize);
+                                outputStream.flush();
+                            }
+
+                        } catch (IOException e) {
+                            Log.d("Content download: ", e.getLocalizedMessage());
+                            downloadProgressModel.postValue(new DownloadProgressModel(e.getCause()));
+                        } finally {
+                            if (inputStream != null) {
+                                inputStream.close();
+                            }
+
+                            if (outputStream != null) {
+                                outputStream.close();
+                            }
+                            unzipManifest(databasePath);
+                        }
+                    }
+                    catch(IOException e){
+                        Log.d("OUTER_CATCH", e.getLocalizedMessage());
+                    }
+
+                }, throwable -> {
+                    Log.e("GET_UPDATE_MANIFESTS_ER", throwable.getLocalizedMessage());
+
                 });
+        compositeDisposable.add(disposable);
+    }
+
+    private void unzipManifest(String path){
+
+        downloadProgressModel.postValue(new DownloadProgressModel(100,100, "Extracting manifest data..."));
+
+        InputStream is;
+        ZipInputStream zis;
+        try
+        {
+            String zipname = "manifest.zip";
+            String filename;
+            File bungieDB = new File(path, "bungieManifest.db");
+            is = new FileInputStream(path +"/"+ zipname);
+            zis = new ZipInputStream(new BufferedInputStream(is));
+            ZipEntry ze;
+            byte[] buffer = new byte[1024];
+            int count;
+
+            while ((ze = zis.getNextEntry()) != null)
+            {
+                filename = ze.getName();
+
+                // Create directory if it doesn't exist
+                if (ze.isDirectory()) {
+                    File fmd = new File(path + filename);
+                    fmd.mkdirs();
+                    continue;
+                }
+
+                FileOutputStream fout = new FileOutputStream(bungieDB);
+
+                while ((count = zis.read(buffer)) != -1)
+                {
+                    fout.write(buffer, 0, count);
+                }
+
+                fout.close();
+                zis.closeEntry();
+            }
+
+            zis.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            downloadProgressModel.postValue(new DownloadProgressModel(e.getCause()));
+        }
+        finally {
+            downloadProgressModel.postValue(new DownloadProgressModel(true));
+        }
+    }
+
+    public void dispose() {
+        compositeDisposable.dispose();
     }
 }

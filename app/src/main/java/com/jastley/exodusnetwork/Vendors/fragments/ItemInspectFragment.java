@@ -64,7 +64,7 @@ public class ItemInspectFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(XurViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(XurViewModel.class);
 
         getItemDetails();
     }
