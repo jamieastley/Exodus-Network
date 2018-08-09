@@ -1,4 +1,4 @@
-package com.jastley.exodusnetwork.database.models;
+package com.jastley.exodusnetwork.database.jsonModels;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -15,7 +15,7 @@ import com.jastley.exodusnetwork.api.models.Response_GetMilestones;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
-import com.jastley.exodusnetwork.database.models.MilestoneData;
+import com.jastley.exodusnetwork.database.jsonModels.MilestoneData;
 
 import java.util.ArrayList;
 import java.util.Collections;
