@@ -1,4 +1,4 @@
-# Warmind for Destiny 2 (WIP)
+# Exodus Network for Destiny 2 (WIP)
 
 An Android companion app for Destiny 2, that utilises the Bungie API to allow players to access and manage their Destiny 2 
 characters' inventories, see their account-wide stats for various in-game activities, weekly milestones and what Xur is selling this week along with his current location.
@@ -23,7 +23,7 @@ Players can access their characters inventories and equip/transfer items between
 
 # LFG Submit
 
-Warmind will dynamically create the appropriate buttons for each character found under the players' account, and some of the selected characters' data will be stored in Firebase so other players can see their stats when viewing other LFG posts details.
+Exodus Network will dynamically create the appropriate buttons for each character found under the players' account, and some of the selected characters' data will be stored in Firebase so other players can see their stats when viewing other LFG posts details.
 
 ![lfg Submission](https://media.giphy.com/media/1xlKJ8SvD5H64Mjcct/giphy.gif)
 
@@ -41,6 +41,6 @@ Quickly see what milestones are active this week and what rewards they're offeri
 
 # Xur
 
-Tired of looking for where Xur is this week? Wander no more as Warmind will grab his current location and stock list, along with sale history count courtesy of www.braytech.org/api.
+Tired of looking for where Xur is this week? Wander no more as Exodus Network will grab his current location and stock list, along with sale history count courtesy of www.braytech.org
 
 ![Xur](https://media.giphy.com/media/WNc9QbEO1GEHzIWT0j/giphy.gif)
