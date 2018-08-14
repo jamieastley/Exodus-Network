@@ -8,15 +8,17 @@ import com.jastley.exodusnetwork.database.models.DestinyChecklistDefinition;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 @Dao
 public interface ChecklistDefinitionDAO {
 
     @Query("SELECT * FROM DestinyChecklistDefinition")
-    LiveData<List<DestinyChecklistDefinition>> getAllChecklistDefinitions();
+    Maybe<List<DestinyChecklistDefinition>> getAllChecklistDefinitions();
 
     @Query("SELECT * FROM DestinyChecklistDefinition WHERE id = :key")
-    LiveData<DestinyChecklistDefinition> getChecklistDefinition(String key);
+    Maybe<DestinyChecklistDefinition> getChecklistDefinition(String key);
 
     @Query("SELECT * FROM DestinyChecklistDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyChecklistDefinition>> getChecklistDefinitionList(List<String> key);
+    Maybe<List<DestinyChecklistDefinition>> getChecklistDefinitionList(List<String> key);
 }

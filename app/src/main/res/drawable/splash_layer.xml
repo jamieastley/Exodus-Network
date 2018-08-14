@@ -6,7 +6,8 @@
 
     <item>
         <bitmap
+
             android:gravity="center"
-            android:src="@drawable/small_rasputin_white_alpha"/>
+            android:src="@drawable/exodusnetwork_alpha_icon_small"/>
     </item>
 </layer-list>

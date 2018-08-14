@@ -25,7 +25,7 @@ public class LFGPostRecyclerAdapter extends RecyclerView.Adapter<LFGPostViewHold
     private List<Response_GetPublicFireteams.Response.Results> posts = new ArrayList<>();
     private Context mContext;
 
-    public final PublishSubject<Response_GetPublicFireteams.Response.Results> onClickSubject = PublishSubject.create();
+    public PublishSubject<Response_GetPublicFireteams.Response.Results> onClickSubject = PublishSubject.create();
 
     public LFGPostRecyclerAdapter() {
 

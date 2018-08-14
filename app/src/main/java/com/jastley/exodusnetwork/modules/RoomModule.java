@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
+import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
@@ -62,4 +63,9 @@ public class RoomModule {
         return mManifestDatabase.getFactionsDAO();
     }
 
+    @Provides
+    @Singleton
+    ChecklistDefinitionDAO providesChecklistDao() {
+        return mManifestDatabase.getChecklistDAO();
+    }
 }

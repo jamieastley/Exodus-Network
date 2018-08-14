@@ -49,6 +49,7 @@
                         app:layout_constraintHeight_percent="0.25"
                         app:layout_constraintBottom_toTopOf="@id/xur_world_text"
                         android:src="@drawable/xur_icon"
+                        android:visibility="invisible"
                         />
 
                     <TextView

@@ -23,4 +23,5 @@
     <color name="placeholderHint">#a9a9a9</color>
 
     <color name="primaryStatBackground">#5b000000</color>
+    <color name="completed">#00bf2c</color>
 </resources>

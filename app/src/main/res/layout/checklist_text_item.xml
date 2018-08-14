@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:foreground="@drawable/checklist_completion"
+    >
+
+    <TextView
+        android:id="@+id/checklist_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:text="Latent Memory #1"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
+        />
+
+</RelativeLayout>

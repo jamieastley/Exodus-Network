@@ -52,7 +52,13 @@ public class Definitions {
     public static final String weaponPerksSockets = "4241085061";
     public static final String weaponModsSockets = "2685412949";
 
-
+    //Checklists
+    public static final String latentMemories = "2955980198";
+    public static final String ghostLore = "2360931290";
+    public static final String caydeJournals = "2448912219";
+    public static final String sleeperNodes = "365218222";
+    public static final String raidLairs = "110198094";
+    public static final String forsakenCollection = "3393554306";
 
     //Faction
     public static final String theNine = "1357903713";

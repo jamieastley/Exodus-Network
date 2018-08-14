@@ -18,7 +18,7 @@ public class ChecklistData {
     private String scope;
     @Expose
     @SerializedName("entries")
-    private List<ChecklistEntries> loreEntriesList;
+    private List<ChecklistEntries> entriesList;
     @Expose
     @SerializedName("hash")
     private String hash;
@@ -44,8 +44,8 @@ public class ChecklistData {
         return scope;
     }
 
-    public List<ChecklistEntries> getLoreEntriesList() {
-        return loreEntriesList;
+    public List<ChecklistEntries> getEntriesList() {
+        return entriesList;
     }
 
     public String getHash() {

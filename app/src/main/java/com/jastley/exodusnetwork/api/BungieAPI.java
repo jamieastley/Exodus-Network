@@ -96,6 +96,11 @@ public interface BungieAPI {
                                                                @Path("page") String page);
 
 
+    //Checklists
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}?components=104")
+    Observable<Response_GetChecklists> getProfileChecklists(@Path("membershipType") String membershipType,
+                                                            @Path("membershipId") String membershipId);
+
     /** MANIFEST DATA **/
 
     //Get destiny.plumbing homepage to check manifest version/date (full URL overrides baseURL)
@@ -106,10 +111,10 @@ public interface BungieAPI {
     @GET("https://destiny.plumbing/en/raw/DestinyFactionDefinition.json")
     Observable<JsonElement> getFactionDefinitions();
 
-    //Collectable Items/Weapons/Armor
-    //@GET("reducedCollectableInventoryItems.json")
+    //Collectible Items/Weapons/Armor
+    //@GET("reducedCollectibleInventoryItems.json")
     @GET("raw/DestinyInventoryItemDefinition.json")
-    Observable<JsonElement> getCollectablesDatabase();
+    Observable<JsonElement> getCollectiblesDatabase();
 
     //Official Bungie Manifests
     @GET("/Platform/Destiny2/Manifest/")

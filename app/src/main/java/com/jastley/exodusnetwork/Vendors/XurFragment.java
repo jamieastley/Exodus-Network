@@ -256,6 +256,7 @@ public class XurFragment extends Fragment {
 
                 xurRegionText.setText(xurVendorModel.getRegionText());
                 xurWorldText.setText(xurVendorModel.getWorldName());
+                xurIcon.setVisibility(View.VISIBLE);
             }
         });
 
