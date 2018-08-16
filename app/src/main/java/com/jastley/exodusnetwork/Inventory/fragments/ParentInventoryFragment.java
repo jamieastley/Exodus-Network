@@ -118,7 +118,7 @@ public class ParentInventoryFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
-        mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+        mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
 
         mTabLayout.setVisibility(View.VISIBLE);
 

@@ -7,6 +7,7 @@ public class ChecklistModel {
     private boolean isCompleted;
     private int position;
     private String checklistItemName;
+    private String itemImage;
 
     public ChecklistModel(String hash, boolean isCompleted, int count, String categoryHash) {
         this.hash = hash;
@@ -53,5 +54,13 @@ public class ChecklistModel {
 
     public String getChecklistItemName() {
         return checklistItemName;
+    }
+
+    public String getItemImage() {
+        return itemImage;
+    }
+
+    public void setItemImage(String itemImage) {
+        this.itemImage = itemImage;
     }
 }

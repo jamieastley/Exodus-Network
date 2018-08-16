@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
@@ -52,6 +53,8 @@ public class ChecklistsRepository {
     private List<ChecklistModel> sleeperNodesList = new ArrayList<>();
     private List<ChecklistModel> raidLairsList = new ArrayList<>();
     private List<ChecklistModel> forsakenList = new ArrayList<>();
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Inject
     @Named("bungieRetrofit")
@@ -139,10 +142,10 @@ public class ChecklistsRepository {
                             }
 
                         }
+                        getChecklistData(checklistCategories);
                     }
-
-
-                });
+                }, throwable -> checklistsData.postValue(new Response_GetChecklists(throwable)));
+        compositeDisposable.add(disposable);
     }
 
     public void getChecklistData(List<String> keys) {
@@ -193,13 +196,26 @@ public class ChecklistsRepository {
                                     int listPosition = iterator.nextIndex();
                                     forsakenList.get(listPosition)
                                                 .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
+                                    forsakenList.get(listPosition)
+                                            .setItemImage(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getIcon());
                                 }
                                 break;
                         }
 
                     }
 
+                    latentMemoriesChecklist.postValue(new Response_GetChecklists(latentMemoriesList));
+                    ghostLoreChecklist.postValue(new Response_GetChecklists(ghostLoreList));
+                    journalsChecklist.postValue(new Response_GetChecklists(journalsList));
+                    raidLairsChecklist.postValue(new Response_GetChecklists(raidLairsList));
+                    sleeperNodesChecklist.postValue(new Response_GetChecklists(sleeperNodesList));
+                    forsakenChecklist.postValue(new Response_GetChecklists(forsakenList));
+
                 });
+        compositeDisposable.add(disposable);
     }
 
+    public void dispose() {
+        compositeDisposable.dispose();
+    }
 }

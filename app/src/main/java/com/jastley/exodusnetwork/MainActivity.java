@@ -43,6 +43,7 @@ import com.jastley.exodusnetwork.Inventory.fragments.ItemTransferDialogFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
+import com.jastley.exodusnetwork.checklists.fragments.ChecklistsParentFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGPostsFragment;
 import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
@@ -840,15 +841,22 @@ public class MainActivity extends AppCompatActivity
                 fragment = AccountStatsFragment.newInstance();
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "accountStats")
+                        .replace(R.id.lfg_content_frame, fragment, "accountStatsFrag")
                         .commit();
                 break;
+
+            case R.id.nav_checklists:
+                fragment = ChecklistsParentFragment.newInstance();
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.lfg_content_frame, fragment, "checklistsFrag")
+                        .commit();
 
             case R.id.nav_milestones:
                 fragment = MilestonesFragment.newInstance();
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "milestones")
+                        .replace(R.id.lfg_content_frame, fragment, "milestonesFrag")
                         .commit();
                 break;
 
@@ -865,7 +873,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = ParentInventoryFragment.newInstance("string", "string2");
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "inventory")
+                        .replace(R.id.lfg_content_frame, fragment, "inventoryFrag")
 //                    .addToBackStack("inventoryFragment")
                         .commit();
 

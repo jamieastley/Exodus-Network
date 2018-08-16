@@ -11,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -177,7 +176,7 @@ public class LFGPostsFragment extends Fragment {
 
             activity.setActionBarTitle(getString(R.string.lfg_feed));
         }
-        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+        TabLayout mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
 
         mTabLayout.setVisibility(View.GONE);
     }

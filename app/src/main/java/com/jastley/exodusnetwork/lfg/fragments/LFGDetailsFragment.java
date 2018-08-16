@@ -277,7 +277,7 @@ public class LFGDetailsFragment extends Fragment {
         if(activity != null) {
             activity.setActionBarTitle(getString(R.string.postDetails));
         }
-        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+        TabLayout mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
 
         mTabLayout.setVisibility(View.GONE);
     }

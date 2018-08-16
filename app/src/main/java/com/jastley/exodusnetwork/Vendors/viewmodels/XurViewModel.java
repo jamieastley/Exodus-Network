@@ -38,10 +38,6 @@ public class XurViewModel extends AndroidViewModel {
 //        xurLocationData = mXurRepository.getXurData();
     }
 
-    public void testJson() {
-        mXurRepository.getChecklists();
-    }
-
     public LiveData<Response_GetXurWeekly> getXurData() {
         if(xurItemList == null) {
             xurItemList = mXurRepository.getXurInventory();

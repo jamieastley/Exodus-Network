@@ -202,7 +202,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         compositeDisposable.dispose();
 
         //Hide character tab bar
-        TabLayout mTabLayout = getActivity().findViewById(R.id.inventory_sliding_tabs);
+        TabLayout mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
 
         mTabLayout.setVisibility(View.GONE);
     }

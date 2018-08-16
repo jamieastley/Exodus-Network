@@ -28,6 +28,12 @@
             />
 
         <item
+            android:id="@+id/nav_checklists"
+            android:icon="@drawable/icon_ticks"
+            android:title="@string/checklists"
+            />
+
+        <item
             android:id="@+id/nav_milestones"
             android:icon="@drawable/milestone_icon"
             android:title="@string/milestones"
