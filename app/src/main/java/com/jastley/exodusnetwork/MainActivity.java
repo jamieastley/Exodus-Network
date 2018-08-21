@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.lfg_content_frame, postsFragment, "postsFragment");
+                .replace(R.id.parent_fragment_frame, postsFragment, "postsFragment");
 
         fragmentTransaction.commit();
     }
@@ -841,7 +841,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = AccountStatsFragment.newInstance();
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "accountStatsFrag")
+                        .replace(R.id.parent_fragment_frame, fragment, "accountStatsFrag")
                         .commit();
                 break;
 
@@ -849,14 +849,17 @@ public class MainActivity extends AppCompatActivity
                 fragment = ChecklistsParentFragment.newInstance();
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "checklistsFrag")
+                        .replace(R.id.parent_fragment_frame, fragment, "checklistsFrag")
                         .commit();
+//                Intent checklistIntent = new Intent(this, ChecklistActivity.class);
+//                startActivity(checklistIntent);
+                break;
 
             case R.id.nav_milestones:
                 fragment = MilestonesFragment.newInstance();
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "milestonesFrag")
+                        .replace(R.id.parent_fragment_frame, fragment, "milestonesFrag")
                         .commit();
                 break;
 
@@ -864,7 +867,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = XurFragment.newInstance("something", "else");
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment)
+                        .replace(R.id.parent_fragment_frame, fragment)
 //                    .addToBackStack("xurStack")
                         .commit();
                 break;
@@ -873,7 +876,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = ParentInventoryFragment.newInstance("string", "string2");
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.lfg_content_frame, fragment, "inventoryFrag")
+                        .replace(R.id.parent_fragment_frame, fragment, "inventoryFrag")
 //                    .addToBackStack("inventoryFragment")
                         .commit();
 

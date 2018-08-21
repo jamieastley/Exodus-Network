@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.Utils.ColumnCalculator;
 import com.jastley.exodusnetwork.checklists.ChecklistsViewModel;
 import com.jastley.exodusnetwork.checklists.adapters.ChecklistImageRecyclerAdapter;
 import com.jastley.exodusnetwork.checklists.adapters.ChecklistTextRecyclerAdapter;
@@ -26,6 +28,7 @@ import static com.jastley.exodusnetwork.Definitions.caydeJournals;
 import static com.jastley.exodusnetwork.Definitions.forsakenCollection;
 import static com.jastley.exodusnetwork.Definitions.ghostLore;
 import static com.jastley.exodusnetwork.Definitions.latentMemories;
+import static com.jastley.exodusnetwork.Definitions.raidLairs;
 import static com.jastley.exodusnetwork.Definitions.sleeperNodes;
 
 
@@ -68,6 +71,7 @@ public class ChecklistsContentFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_checklists_content, container, false);
 
         ButterKnife.bind(this, rootView);
+        initialiseViews();
 
         return rootView;
     }
@@ -78,7 +82,14 @@ public class ChecklistsContentFragment extends Fragment {
 
         this.mViewModel = ViewModelProviders.of(getActivity()).get(ChecklistsViewModel.class);
 
-        initialiseViews();
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         getChecklistData();
     }
 
@@ -98,12 +109,15 @@ public class ChecklistsContentFragment extends Fragment {
             case forsakenCollection:
                 mImageAdapter = new ChecklistImageRecyclerAdapter();
                 mRecyclerView.setAdapter(mImageAdapter);
-                mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
+                int columnCount = ColumnCalculator.calculateNoOfColumns(getActivity().getApplicationContext());
+                mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), columnCount));
+
                 break;
             default:
                 mTextAdapter = new ChecklistTextRecyclerAdapter();
                 mRecyclerView.setAdapter(mTextAdapter);
                 LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setLayoutAnimation(controller);
                 break;
         }
@@ -153,13 +167,23 @@ public class ChecklistsContentFragment extends Fragment {
                     }
                 });
                 break;
+            case raidLairs:
+                mViewModel.getRaidLairs().observe(this, lairs -> {
+                    if(lairs.getErrorMessage() != null) {
+                        //TODO
+                    }
+                    else if(!lairs.getChecklistModelList().isEmpty()) {
+                        mTextAdapter.setChecklistData(lairs.getChecklistModelList());
+                    }
+                });
+                break;
             case forsakenCollection:
                 mViewModel.getForsakenItems().observe(this, items -> {
                     if(items.getErrorMessage() != null) {
                         //TODO
                     }
                     else if(!items.getChecklistModelList().isEmpty()) {
-                        mTextAdapter.setChecklistData(items.getChecklistModelList());
+                        mImageAdapter.setChecklistData(items.getChecklistModelList());
                     }
                 });
                 break;

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/activity_main_content"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.jastley.exodusnetwork.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <FrameLayout
-        android:id="@+id/lfg_content_frame"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="5dp"

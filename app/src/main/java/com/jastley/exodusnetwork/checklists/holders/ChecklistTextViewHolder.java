@@ -1,6 +1,7 @@
 package com.jastley.exodusnetwork.checklists.holders;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.jastley.exodusnetwork.R;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ChecklistTextViewHolder extends RecyclerView.ViewHolder {
 
@@ -21,6 +23,7 @@ public class ChecklistTextViewHolder extends RecyclerView.ViewHolder {
     public ChecklistTextViewHolder(View itemView, Context context) {
         super(itemView);
         this.mContext = context;
+        ButterKnife.bind(this, itemView);
     }
 
     public String getChecklistName() {
@@ -35,6 +38,7 @@ public class ChecklistTextViewHolder extends RecyclerView.ViewHolder {
         isCompleted = completed;
         if(isCompleted) {
             layoutContainer.setForeground(ContextCompat.getDrawable(mContext, R.drawable.checklist_completion));
+            checklistName.setPaintFlags(checklistName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
     }
 }

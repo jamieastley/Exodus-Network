@@ -17,6 +17,9 @@ public class ChecklistTextRecyclerAdapter extends RecyclerView.Adapter<Checklist
 
     private List<ChecklistModel> checklistData = new ArrayList<>();
 
+    public ChecklistTextRecyclerAdapter() {
+    }
+
     @NonNull
     @Override
     public ChecklistTextViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

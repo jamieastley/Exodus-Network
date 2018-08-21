@@ -1,6 +1,7 @@
 package com.jastley.exodusnetwork.checklists;
 
 import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
@@ -11,7 +12,7 @@ import com.jastley.exodusnetwork.repositories.ChecklistsRepository;
 
 import javax.inject.Inject;
 
-public class ChecklistsViewModel extends ViewModel {
+public class ChecklistsViewModel extends AndroidViewModel {
 
     private LiveData<Response_GetChecklists> latentMemories;
     private LiveData<Response_GetChecklists> ghostLore;
@@ -24,6 +25,7 @@ public class ChecklistsViewModel extends ViewModel {
     ChecklistsRepository repository;
 
     public ChecklistsViewModel(@NonNull Application application) {
+        super(application);
         App.getApp().getAppComponent().inject(this);
     }
 
@@ -32,26 +34,32 @@ public class ChecklistsViewModel extends ViewModel {
     }
 
     public LiveData<Response_GetChecklists> getLatentMemories() {
+        this.latentMemories = repository.getLatentMemoriesChecklist();
         return latentMemories;
     }
 
     public LiveData<Response_GetChecklists> getGhostLore() {
+        this.ghostLore = repository.getGhostLoreChecklist();
         return ghostLore;
     }
 
     public LiveData<Response_GetChecklists> getJournals() {
+        this.journals = repository.getJournalsChecklist();
         return journals;
     }
 
     public LiveData<Response_GetChecklists> getSleeperNodes() {
+        this.sleeperNodes = repository.getSleeperNodesChecklist();
         return sleeperNodes;
     }
 
     public LiveData<Response_GetChecklists> getRaidLairs() {
+        this.raidLairs = repository.getRaidLairsChecklist();
         return raidLairs;
     }
 
     public LiveData<Response_GetChecklists> getForsakenItems() {
+        this.forsakenItems = repository.getForsakenChecklist();
         return forsakenItems;
     }
 

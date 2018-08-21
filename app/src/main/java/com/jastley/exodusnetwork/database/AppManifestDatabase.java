@@ -187,7 +187,7 @@ public abstract class AppManifestDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room
                     .databaseBuilder(context.getApplicationContext(), AppManifestDatabase.class, "bungieManifest.db")
-//                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return INSTANCE;

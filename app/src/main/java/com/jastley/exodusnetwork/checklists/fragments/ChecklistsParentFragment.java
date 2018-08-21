@@ -12,10 +12,18 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
+import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.checklists.ChecklistsViewModel;
 import com.jastley.exodusnetwork.checklists.models.ChecklistTabModel;
@@ -37,8 +45,8 @@ public class ChecklistsParentFragment extends Fragment {
 
     private ChecklistsViewModel mViewModel;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    @BindView(R.id.parent_checklist_viewpager) ViewPager mViewPager;
-    @BindView(R.id.checklist_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
+//    @BindView(R.id.parent_checklist_viewpager) ViewPager mViewPager;
+//    @BindView(R.id.checklist_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     TabLayout mTabLayout;
 
     private List<ChecklistTabModel> tabFragmentList = new ArrayList<>();
@@ -56,10 +64,14 @@ public class ChecklistsParentFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.parent_checklists_fragment, container, false);
 
         ButterKnife.bind(this, rootView);
-        mSwipeRefreshLayout.setRefreshing(true);
 
+//        mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
+//        mTabLayout.setVisibility(View.VISIBLE);
+//        mSwipeRefreshLayout.setRefreshing(true);
+
+        setHasOptionsMenu(true);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-        populateFragmentList();
+//        populateFragmentList();
 
         return rootView;
     }
@@ -68,13 +80,20 @@ public class ChecklistsParentFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
-
         mViewModel = ViewModelProviders.of(getActivity()).get(ChecklistsViewModel.class);
 
-        setupViewpager();
+//        setupViewpager();
         getChecklistData();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainActivity activity = (MainActivity)getActivity();
+        if(activity != null) {
+            activity.setActionBarTitle(getString(R.string.checklists));
+        }
     }
 
     private void populateFragmentList() {
@@ -96,7 +115,60 @@ public class ChecklistsParentFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mViewModel.dispose();
+//        mViewModel.dispose();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        menu.clear();
+        inflater.inflate(R.menu.checklist_toolbar, menu);
+
+        MenuItem item = menu.findItem(R.id.checklist_spinner);
+        Spinner spinner = (Spinner) item.getActionView();
+
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.checklist_options, R.layout.spinner_list_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+        spinner.setPopupBackgroundResource(R.color.bungieBackground);
+        spinner.setOnItemSelectedListener(itemSelectedListener);
+    }
+
+    private AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
+
+            Fragment fragment;
+            FragmentManager fragmentManager = getChildFragmentManager();
+
+            switch(adapterView.getItemAtPosition(i).toString()) {
+
+                case "Latent Memories":
+                    fragment = LatentMemoriesFragment.newInstance(null, null);
+
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
+                            .commit();
+                    break;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Toast.makeText(getContext(), item.getItemId(), Toast.LENGTH_SHORT).show();
+
+        return super.onOptionsItemSelected(item);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -107,7 +179,9 @@ public class ChecklistsParentFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return null;
+            //returns null by default, this will throw "Attempt to invoke virtual method 'java.lang.Class java.lang.Object.getClass()'"
+            return ChecklistsContentFragment.newInstance(tabFragmentList.get(position).getTabTitle(),
+                                                        tabFragmentList.get(position).getChecklistHash());
         }
 
         @Nullable
@@ -122,38 +196,38 @@ public class ChecklistsParentFragment extends Fragment {
         }
     }
 
-    private void setupViewpager() {
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-    }
-
+//    private void setupViewpager() {
+//        mViewPager.setAdapter(mSectionsPagerAdapter);
+//        mTabLayout.setupWithViewPager(mViewPager);
+//        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//            @Override
+//            public void onTabSelected(TabLayout.Tab tab) {
+//                Toast.makeText(getContext(), tab.getText(), Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onTabUnselected(TabLayout.Tab tab) {
+//
+//            }
+//
+//            @Override
+//            public void onTabReselected(TabLayout.Tab tab) {
+//
+//            }
+//        });
+//    }
+//
     private void getChecklistData() {
         mViewModel.loadChecklistData();
-        mViewModel.getLatentMemories().observe(this, response -> {
-            mSwipeRefreshLayout.setRefreshing(false);
-            if(response.getErrorMessage() != null) {
-                showSnackbar(response.getErrorMessage());
-            }
-            else if(response.getThrowable() != null) {
-                showSnackbar(response.getThrowable().getLocalizedMessage());
-            }
-        });
+//        mViewModel.getLatentMemories().observe(getActivity(), response -> {
+//            mSwipeRefreshLayout.setRefreshing(false);
+//            if(response.getErrorMessage() != null) {
+//                showSnackbar(response.getErrorMessage());
+//            }
+//            else if(response.getThrowable() != null) {
+//                showSnackbar(response.getThrowable().getLocalizedMessage());
+//            }
+//        });
     }
 
     private void showSnackbar(String message) {

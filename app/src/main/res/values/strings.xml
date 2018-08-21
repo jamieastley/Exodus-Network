@@ -173,6 +173,14 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="back_button_drawer">Open drawer on back button pressed</string>
     <string name="checklists">Checklists</string>
+    <string name="checklist_spinner">Checklist Spinner</string>
+    <string name="title_activity_checklist">ChecklistActivity</string>
+    <string name="latent_memories">Latent Memories</string>
+    <string name="ghost_lore">Ghost Lore</string>
+    <string name="journals">Cayde-6 Journals</string>
+    <string name="sleeper_nodes">Sleeper Nodes</string>
+    <string name="raid_lairs">Raid Lairs</string>
+    <string name="item_collection">Item Collection</string>
 
 
 </resources>

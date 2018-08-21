@@ -109,10 +109,12 @@ public class ChecklistsRepository {
                             //All objectives for each checklist category
                             for (Iterator innerIterator = currentChecklist.keySet().iterator(); innerIterator.hasNext(); ) {
 
-                                String checklistObjective = (String) iterator.next();
+                                String checklistObjective = (String) innerIterator.next();
+
+                                boolean bool = Boolean.parseBoolean(currentChecklist.get(checklistObjective).getAsString());
 
                                 ChecklistModel objective = new ChecklistModel(checklistObjective,
-                                        currentChecklist.get(checklistObjective).getAsBoolean(),
+                                        bool,
                                         counter,
                                         checklistDefinition
                                         );
@@ -155,7 +157,7 @@ public class ChecklistsRepository {
                 .observeOn(Schedulers.io())
                 .subscribe(definitions -> {
 
-                    for(ListIterator iterator = definitions.listIterator(); iterator.hasNext(); ) {
+                    for(ListIterator iterator = definitions.listIterator(); iterator.hasNext(); iterator.next()) {
 
                         int position = iterator.nextIndex();
 
@@ -165,35 +167,35 @@ public class ChecklistsRepository {
                         switch(data.getHash()) {
 
                             case latentMemories:
-                                for(ListIterator memoryIterator = latentMemoriesList.listIterator(); memoryIterator.hasNext(); ) {
-                                    int listPosition = iterator.nextIndex();
+                                for(ListIterator listIterator = latentMemoriesList.listIterator(); listIterator.hasNext(); listIterator.next()) {
+                                    int listPosition = listIterator.nextIndex();
                                     latentMemoriesList.get(listPosition).setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                 }
                                 break;
                             case ghostLore:
-                                for(ListIterator memoryIterator = ghostLoreList.listIterator(); memoryIterator.hasNext(); ) {
-                                    int listPosition = iterator.nextIndex();
+                                for(ListIterator listIterator = ghostLoreList.listIterator(); listIterator.hasNext(); listIterator.next()) {
+                                    int listPosition = listIterator.nextIndex();
                                     ghostLoreList.get(listPosition)
                                                  .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                 }
                                 break;
                             case caydeJournals:
-                                for(ListIterator memoryIterator = journalsList.listIterator(); memoryIterator.hasNext(); ) {
-                                    int listPosition = iterator.nextIndex();
+                                for(ListIterator listIterator = journalsList.listIterator(); listIterator.hasNext(); listIterator.next()) {
+                                    int listPosition = listIterator.nextIndex();
                                     journalsList.get(listPosition)
                                                 .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                 }
                                 break;
                             case sleeperNodes:
-                                for(ListIterator memoryIterator = sleeperNodesList.listIterator(); memoryIterator.hasNext(); ) {
-                                    int listPosition = iterator.nextIndex();
+                                for(ListIterator listIterator = sleeperNodesList.listIterator(); listIterator.hasNext(); listIterator.next()) {
+                                    int listPosition = listIterator.nextIndex();
                                     sleeperNodesList.get(listPosition)
                                                     .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                 }
                                 break;
                             case forsakenCollection:
-                                for(ListIterator memoryIterator = forsakenList.listIterator(); memoryIterator.hasNext(); ) {
-                                    int listPosition = iterator.nextIndex();
+                                for(ListIterator listIterator = forsakenList.listIterator(); listIterator.hasNext(); listIterator.next()) {
+                                    int listPosition = listIterator.nextIndex();
                                     forsakenList.get(listPosition)
                                                 .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                     forsakenList.get(listPosition)
@@ -217,5 +219,29 @@ public class ChecklistsRepository {
 
     public void dispose() {
         compositeDisposable.dispose();
+    }
+
+    public MutableLiveData<Response_GetChecklists> getLatentMemoriesChecklist() {
+        return latentMemoriesChecklist;
+    }
+
+    public MutableLiveData<Response_GetChecklists> getGhostLoreChecklist() {
+        return ghostLoreChecklist;
+    }
+
+    public MutableLiveData<Response_GetChecklists> getJournalsChecklist() {
+        return journalsChecklist;
+    }
+
+    public MutableLiveData<Response_GetChecklists> getSleeperNodesChecklist() {
+        return sleeperNodesChecklist;
+    }
+
+    public MutableLiveData<Response_GetChecklists> getRaidLairsChecklist() {
+        return raidLairsChecklist;
+    }
+
+    public MutableLiveData<Response_GetChecklists> getForsakenChecklist() {
+        return forsakenChecklist;
     }
 }

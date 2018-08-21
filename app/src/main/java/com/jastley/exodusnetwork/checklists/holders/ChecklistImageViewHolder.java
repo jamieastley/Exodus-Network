@@ -11,6 +11,7 @@ import com.jastley.exodusnetwork.R;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 
@@ -24,6 +25,7 @@ public class ChecklistImageViewHolder extends RecyclerView.ViewHolder {
     public ChecklistImageViewHolder(View itemView, Context context) {
         super(itemView);
         this.mContext = context;
+        ButterKnife.bind(this, itemView);
     }
 
     public void setItemImage(String link) {

@@ -43,7 +43,7 @@ public class ChecklistImageRecyclerAdapter extends RecyclerView.Adapter<Checklis
         return position;
     }
 
-    public void setChecklist(List<ChecklistModel> list) {
+    public void setChecklistData(List<ChecklistModel> list) {
         this.checklistData = list;
         notifyDataSetChanged();
     }

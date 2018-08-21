@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -144,7 +143,7 @@ public class XurFragment extends Fragment {
 //                    FragmentManager fragmentManager = getFragmentManager();
                     if(getActivity() != null){
                         getActivity().getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.lfg_content_frame, inspectFragment, "ITEM_INSPECT")
+                                .replace(R.id.parent_fragment_frame, inspectFragment, "ITEM_INSPECT")
                                 .addToBackStack("ITEM_INSPECTION")
                                 .commit();
                     }
@@ -217,7 +216,7 @@ public class XurFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        compositeDisposable.dispose();
+//        compositeDisposable.dispose();
     }
 
     public interface OnFragmentInteractionListener {

@@ -6,4 +6,13 @@
         <item>TODO 2</item>
     </string-array>
 
+    <string-array name="checklist_options">
+        <item>Latent Memories</item>
+        <item>Ghost Lore</item>
+        <item>Journals</item>
+        <item>Sleeper Nodes</item>
+        <item>Raid Lairs</item>
+        <item>Item Collection</item>
+    </string-array>
+
 </resources>
