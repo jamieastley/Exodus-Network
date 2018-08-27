@@ -10,13 +10,18 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_margin="10dp"
+            android:layout_centerVertical="true"
             />
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/socket_icon"
             android:layout_margin="10dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="0dp"
+            android:paddingBottom="10dp"
             android:orientation="vertical"
             >
 
@@ -25,7 +30,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+
                 android:textColor="@color/colorWhite"
+
+
                 android:textSize="@dimen/item_name_height"
                 android:textStyle="bold"
                 />

@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -32,7 +32,7 @@ public interface MilestoneDAO {
     Maybe<List<DestinyMilestoneDefinition>> getMilestoneListByKey(List<String> itemKey);
 
     @Query("SELECT * FROM DestinyMilestoneDefinition WHERE id IN (:itemKey)")
-    LiveData<List<DestinyMilestoneDefinition>> getMilestoneLiveDataByKey(List<String> itemKey);
+    Maybe<List<DestinyMilestoneDefinition>> getMilestoneLiveDataByKey(List<String> itemKey);
 
     @Update
     void update(DestinyMilestoneDefinition destinyMilestoneDefinition);

@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.Vendors.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SocketModel {
@@ -82,5 +83,82 @@ public class SocketModel {
 
     public void setSocketDescription(String socketDescription) {
         this.socketDescription = socketDescription;
+    }
+
+    public static class InvestmentStats {
+
+        private String statTypeHash;
+        private int value;
+        private int position;
+        private String statName;
+
+        private String error;
+        private Throwable throwable;
+        private List<SocketModel.InvestmentStats> statList;
+
+        //Initial constructor
+        public InvestmentStats(String statTypeHash, int value, int position) {
+            this.statTypeHash = statTypeHash;
+            this.value = value;
+            this.position = position;
+        }
+
+        //After extra data append
+        public InvestmentStats(List<InvestmentStats> statList) {
+            this.statList = statList;
+        }
+
+        //Error retrieving extra data
+        public InvestmentStats(Throwable throwable) {
+            this.throwable = throwable;
+        }
+        //Error message
+        public InvestmentStats(String error) {
+            this.error = error;
+        }
+
+        public String getStatTypeHash() {
+            return statTypeHash;
+        }
+
+        public void setStatTypeHash(String statTypeHash) {
+            this.statTypeHash = statTypeHash;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public String getStatName() {
+            return statName;
+        }
+
+        public void setStatName(String statName) {
+            this.statName = statName;
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
+        }
+
+        public List<InvestmentStats> getStatList() {
+            return statList;
+        }
+
+        public String getError() {
+            return error;
+        }
     }
 }

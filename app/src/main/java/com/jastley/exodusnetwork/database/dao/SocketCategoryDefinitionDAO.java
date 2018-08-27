@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface SocketCategoryDefinitionDAO {
 
     @Query("SELECT * FROM DestinySocketCategoryDefinition")
-    LiveData<DestinySocketCategoryDefinition> getAllSocketCategoryDefinitions();
+    Maybe<DestinySocketCategoryDefinition> getAllSocketCategoryDefinitions();
 
     @Query("SELECT * FROM DestinySocketCategoryDefinition WHERE id = :key")
-    LiveData<DestinySocketCategoryDefinition> getSocketCategoryDefinition(String key);
+    Maybe<DestinySocketCategoryDefinition> getSocketCategoryDefinition(String key);
 
     @Query("SELECT * FROM DestinySocketCategoryDefinition WHERE id IN (:key)")
-    LiveData<List<DestinySocketCategoryDefinition>> getSocketCategoryDefinitionList(List<String> key);
+    Maybe<List<DestinySocketCategoryDefinition>> getSocketCategoryDefinitionList(List<String> key);
 }

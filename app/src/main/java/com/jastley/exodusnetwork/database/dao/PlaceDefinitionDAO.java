@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface PlaceDefinitionDAO {
 
     @Query("SELECT * FROM DestinyPlaceDefinition")
-    LiveData<DestinyPlaceDefinition> getAllPlaceDefinitions();
+    Maybe<DestinyPlaceDefinition> getAllPlaceDefinitions();
 
     @Query("SELECT * FROM DestinyPlaceDefinition WHERE id = :key")
-    LiveData<DestinyPlaceDefinition> getPlaceDefinition(String key);
+    Maybe<DestinyPlaceDefinition> getPlaceDefinition(String key);
 
     @Query("SELECT * FROM DestinyPlaceDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyPlaceDefinition>> getPlaceDefinitionList(List<String> key);
+    Maybe<List<DestinyPlaceDefinition>> getPlaceDefinitionList(List<String> key);
 }

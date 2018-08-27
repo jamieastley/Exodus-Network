@@ -10,13 +10,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Vendors.adapters.PerksModsRecyclerAdapter;
+import com.jastley.exodusnetwork.Vendors.adapters.StatValuesRecyclerAdapter;
 import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -29,10 +33,14 @@ import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 public class ItemInspectFragment extends Fragment {
 
     @BindView(R.id.item_screenshot) ImageView itemScreenshot;
+    @BindView(R.id.item_icon) ImageView itemIcon;
     @BindView(R.id.stat_row_recycler_view) RecyclerView itemStatsRecyclerView;
     @BindView(R.id.item_inspect_mods_recycler) RecyclerView itemModsRecyclerView;
     @BindView(R.id.item_inspect_perks_recycler) RecyclerView itemPerksRecyclerView;
-    @BindView(R.id.item_inspect_itemname) TextView itemName;
+    @BindView(R.id.item_inspect_description) TextView itemDescription;
+    @BindView(R.id.item_type) TextView itemType;
+//    @BindView(R.id.item_inspect_itemname) TextView itemName;
+    private StatValuesRecyclerAdapter statAdapter;
     private PerksModsRecyclerAdapter modsAdapter;
     private PerksModsRecyclerAdapter perksAdapter;
     private XurViewModel mViewModel;
@@ -49,6 +57,8 @@ public class ItemInspectFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -78,14 +88,46 @@ public class ItemInspectFragment extends Fragment {
         getItemDetails();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
+
     private void getItemDetails() {
 
-        itemName.setText(mViewModel.getItemDetailsModel().getItemName());
+        ((MainActivity) getActivity())
+                .setActionBarTitle(mViewModel.getItemDetailsModel().getItemName());
+
+        itemDescription.setText(mViewModel.getItemDetailsModel().getDescription());
+        itemType.setText(mViewModel.getItemDetailsModel().getItemTypeDisplayName());
+
+        Picasso.get()
+                .load(baseURL + mViewModel.getItemDetailsModel().getItemIcon())
+                .placeholder(R.drawable.missing_icon_d2)
+                .into(itemIcon);
 
         mViewModel.getInventoryItemData().observe(this, data -> {
             Picasso.get()
                     .load(baseURL + data.getScreenshot())
                     .into(itemScreenshot);
+        });
+
+        mViewModel.getStatData().observe(this, stats -> {
+            if(stats.getThrowable() != null) {
+                //TODO
+            }
+            else if(stats.getError() != null) {
+                //TODO
+            }
+            else if(stats.getStatList() != null) {
+                statAdapter.setStatData(stats.getStatList());
+            }
         });
 
         mViewModel.getPerkSockets().observe(this, perks -> {
@@ -129,6 +171,11 @@ public class ItemInspectFragment extends Fragment {
         itemModsRecyclerView.setAdapter(modsAdapter);
         itemModsRecyclerView.setNestedScrollingEnabled(false);
         itemModsRecyclerView.setLayoutManager(getLayoutManager());
+
+        statAdapter = new StatValuesRecyclerAdapter();
+        itemStatsRecyclerView.setAdapter(statAdapter);
+        itemStatsRecyclerView.setNestedScrollingEnabled(false);
+        itemStatsRecyclerView.setLayoutManager(getLayoutManager());
     }
 
     private LinearLayoutManager getLayoutManager() {

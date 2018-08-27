@@ -9,6 +9,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
 import com.squareup.picasso.Picasso;
 
@@ -26,6 +28,9 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
 
     private String imageUrl;
     private String costIconUrl;
+    private String itemHash;
+
+    private InventoryItemModel testModel;
 
     private Context mContext;
 
@@ -33,6 +38,14 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         this.mContext = context;
         ButterKnife.bind(this, itemView);
+    }
+
+    public InventoryItemModel getTestModel() {
+        return testModel;
+    }
+
+    public void setTestModel(InventoryItemModel testModel) {
+        this.testModel = testModel;
     }
 
     public String getItemIcon() {
@@ -106,5 +119,13 @@ public class XurItemsViewHolder extends RecyclerView.ViewHolder {
             String countText = "Sold " + count + " times";
             salesCount.setText(countText);
         }
+    }
+
+    public String getItemHash() {
+        return itemHash;
+    }
+
+    public void setItemHash(String hash) {
+        this.itemHash = hash;
     }
 }

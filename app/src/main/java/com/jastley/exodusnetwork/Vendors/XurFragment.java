@@ -143,6 +143,7 @@ public class XurFragment extends Fragment {
 //                    FragmentManager fragmentManager = getFragmentManager();
                     if(getActivity() != null){
                         getActivity().getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                                 .replace(R.id.parent_fragment_frame, inspectFragment, "ITEM_INSPECT")
                                 .addToBackStack("ITEM_INSPECTION")
                                 .commit();

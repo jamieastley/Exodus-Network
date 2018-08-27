@@ -997,7 +997,7 @@ public class InventoryItemData {
         private String statTypeHash;
         @Expose
         @SerializedName("value")
-        private String value;
+        private int value;
         @Expose
         @SerializedName("isConditionallyActive")
         private boolean isConditionallyActive;
@@ -1006,7 +1006,7 @@ public class InventoryItemData {
             return statTypeHash;
         }
 
-        public String getValue() {
+        public int getValue() {
             return value;
         }
 

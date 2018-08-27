@@ -18,24 +18,52 @@
             <!--TODO change image height-->
             <ImageView
                 android:id="@+id/item_screenshot"
-                android:layout_width="match_parent"
-                android:layout_height="230dp"
-                android:src="@drawable/item_background_placeholder"
-                android:scaleType="fitXY"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/item_screenshot_example"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_alignParentTop="true"
                 android:contentDescription="@string/item_inspect_screenshot"
                 />
 
+            <ImageView
+                android:id="@+id/item_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignBottom="@id/item_screenshot"
+                android:layout_margin="15dp"
+                android:padding="2dp"
+                android:src="@drawable/item_icon_example"
+                android:background="@color/colorWhite"
+                />
+
             <TextView
-                android:id="@+id/item_inspect_itemname"
+                android:id="@+id/item_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/item_icon"
+                android:layout_marginBottom="15dp"
+                android:layout_alignBottom="@id/item_screenshot"
+                android:textColor="@color/colorWhite"
+                android:textSize="15sp"
+                />
+
+            <TextView
+                android:id="@+id/item_inspect_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:padding="10dp"
-                android:text="Whisper of the Worm"
-                android:textSize="20sp"
+                android:text="Charge your soul and let the electrons sing."
+                android:textSize="18sp"
                 android:textColor="@color/colorWhite"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/item_screenshot"
-                app:layout_constraintStart_toStartOf="@id/item_screenshot"
+                android:textStyle="italic"
+
+
+                android:layout_below="@id/item_screenshot"
+
                 />
 
             <!--Item stats RView-->
@@ -43,7 +71,8 @@
                android:id="@+id/stat_row_recycler_view"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
-               android:layout_below="@id/item_screenshot"
+               android:layout_below="@id/item_inspect_description"
+
 
                >
 

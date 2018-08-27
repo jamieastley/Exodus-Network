@@ -25,6 +25,7 @@ public class InventoryItemModel implements Parcelable {
     private String classType;
     private String itemName;
     private String itemIcon;
+    private String description;
     private String itemTypeDisplayName;
     private Long itemUnsignedHash;
     private String primaryKey;
@@ -292,5 +293,13 @@ public class InventoryItemModel implements Parcelable {
 
         if(!itemName.equals(model.itemName)) return false;
         return itemName != null ? itemName.equals(model.getItemName()) : model.getItemName() == null;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

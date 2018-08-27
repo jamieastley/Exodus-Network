@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,12 +12,12 @@ import java.util.List;
 public interface ProgressionLevelRequirementDefinitionDAO {
 
     @Query("SELECT * FROM DestinyProgressionLevelRequirementDefinition")
-    LiveData<DestinyProgressionLevelRequirementDefinition> getAllProgressionRequirementDefinitions();
+    Maybe<DestinyProgressionLevelRequirementDefinition> getAllProgressionRequirementDefinitions();
 
     @Query("SELECT * FROM DestinyProgressionLevelRequirementDefinition WHERE id = :key")
-    LiveData<DestinyProgressionLevelRequirementDefinition> getProgressionLevelRequirementDefinition(String key);
+    Maybe<DestinyProgressionLevelRequirementDefinition> getProgressionLevelRequirementDefinition(String key);
 
     @Query("SELECT * FROM DestinyProgressionLevelRequirementDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyProgressionLevelRequirementDefinition>> getProgressionLevelRequirementDefinitionList(List<String> key);
+    Maybe<List<DestinyProgressionLevelRequirementDefinition>> getProgressionLevelRequirementDefinitionList(List<String> key);
 
 }

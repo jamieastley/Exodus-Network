@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,12 +12,12 @@ import java.util.List;
 public interface ReportReasonCategoryDefinitionDAO {
 
     @Query("SELECT * FROM DestinyReportReasonCategoryDefinition")
-    LiveData<DestinyReportReasonCategoryDefinition> getAllReportReasonCategoryDefinitions();
+    Maybe<DestinyReportReasonCategoryDefinition> getAllReportReasonCategoryDefinitions();
 
     @Query("SELECT * FROM DestinyReportReasonCategoryDefinition WHERE id = :key")
-    LiveData<DestinyReportReasonCategoryDefinition> getReportReasonCategoryDefinition(String key);
+    Maybe<DestinyReportReasonCategoryDefinition> getReportReasonCategoryDefinition(String key);
 
     @Query("SELECT * FROM DestinyReportReasonCategoryDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyReportReasonCategoryDefinition>> getReportReasonCategoryDefinitionList(List<String> key);
+    Maybe<List<DestinyReportReasonCategoryDefinition>> getReportReasonCategoryDefinitionList(List<String> key);
 
 }

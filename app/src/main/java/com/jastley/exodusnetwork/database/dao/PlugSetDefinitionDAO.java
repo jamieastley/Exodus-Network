@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface PlugSetDefinitionDAO {
 
     @Query("SELECT * FROM DestinyPlugSetDefinition")
-    LiveData<DestinyPlugSetDefinition> getAllPlugSetDefinitions();
+    Maybe<DestinyPlugSetDefinition> getAllPlugSetDefinitions();
 
     @Query("SELECT * FROM DestinyPlugSetDefinition WHERE id = :key")
-    LiveData<DestinyPlugSetDefinition> getPlugSetDefinition(String key);
+    Maybe<DestinyPlugSetDefinition> getPlugSetDefinition(String key);
 
     @Query("SELECT * FROM DestinyPlugSetDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyPlugSetDefinition>> getPlugSetDefinitionList(List<String> key);
+    Maybe<List<DestinyPlugSetDefinition>> getPlugSetDefinitionList(List<String> key);
 }

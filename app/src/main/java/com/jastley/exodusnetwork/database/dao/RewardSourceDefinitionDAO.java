@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface RewardSourceDefinitionDAO {
 
     @Query("SELECT * FROM DestinyRewardSourceDefinition")
-    LiveData<DestinyRewardSourceDefinition> getAllRewardsSourceDefinitions();
+    Maybe<DestinyRewardSourceDefinition> getAllRewardsSourceDefinitions();
 
     @Query("SELECT * FROM DestinyRewardSourceDefinition WHERE id = :key")
-    LiveData<DestinyRewardSourceDefinition> getRewardSourceDefinition(String key);
+    Maybe<DestinyRewardSourceDefinition> getRewardSourceDefinition(String key);
 
     @Query("SELECT * FROM DestinyRewardSourceDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyRewardSourceDefinition>> getRewardSourceDefinitionList(List<String> key);
+    Maybe<List<DestinyRewardSourceDefinition>> getRewardSourceDefinitionList(List<String> key);
 }

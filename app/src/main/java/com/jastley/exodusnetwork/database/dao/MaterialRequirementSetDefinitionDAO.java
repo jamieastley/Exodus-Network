@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface MaterialRequirementSetDefinitionDAO {
 
     @Query("SELECT * FROM DestinyMaterialRequirementSetDefinition")
-    LiveData<DestinyMaterialRequirementSetDefinition> getAllMaterialRequirementSetDefinitions();
+    Maybe<DestinyMaterialRequirementSetDefinition> getAllMaterialRequirementSetDefinitions();
 
     @Query("SELECT * FROM DestinyMaterialRequirementSetDefinition WHERE id = :key")
-    LiveData<DestinyMaterialRequirementSetDefinition> getMaterialRequirementSetDefinition(String key);
+    Maybe<DestinyMaterialRequirementSetDefinition> getMaterialRequirementSetDefinition(String key);
 
     @Query("SELECT * FROM DestinyMaterialRequirementSetDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyMaterialRequirementSetDefinition>> getMaterialRequirementSetDefinitionList(List<String> key);
+    Maybe<List<DestinyMaterialRequirementSetDefinition>> getMaterialRequirementSetDefinitionList(List<String> key);
 }

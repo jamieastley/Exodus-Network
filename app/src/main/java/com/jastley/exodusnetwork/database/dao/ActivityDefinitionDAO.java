@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -10,11 +10,12 @@ import com.jastley.exodusnetwork.database.models.DestinyActivityDefinition;
 
 import java.util.List;
 
+
 @Dao
 public interface ActivityDefinitionDAO {
 
     @Query("SELECT * FROM DestinyActivityDefinition")
-    LiveData<List<DestinyActivityDefinition>> getAllActivityDefinitions();
+    Maybe<List<DestinyActivityDefinition>> getAllActivityDefinitions();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(DestinyActivityDefinition destinyActivityDefinition);
@@ -23,8 +24,8 @@ public interface ActivityDefinitionDAO {
     void insertAll(List<DestinyActivityDefinition> destinyActivityDefinitions);
 
     @Query("SELECT * FROM DestinyActivityDefinition WHERE id = :statKey")
-    LiveData<DestinyActivityDefinition> getActivityDefinitions(String statKey);
+    Maybe<DestinyActivityDefinition> getActivityDefinitions(String statKey);
 
     @Query("SELECT * FROM DestinyActivityDefinition WHERE id IN (:statKey)")
-    LiveData<List<DestinyActivityDefinition>> getActivityDefinitionList(List<String> statKey);
+    Maybe<List<DestinyActivityDefinition>> getActivityDefinitionList(List<String> statKey);
 }

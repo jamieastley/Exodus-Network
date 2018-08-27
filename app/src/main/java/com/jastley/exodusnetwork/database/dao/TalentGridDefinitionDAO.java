@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,12 +12,12 @@ import java.util.List;
 public interface TalentGridDefinitionDAO {
 
     @Query("SELECT * FROM DestinyTalentGridDefinition")
-    LiveData<DestinyTalentGridDefinition> getAllTalentGridDefinitions();
+    Maybe<DestinyTalentGridDefinition> getAllTalentGridDefinitions();
 
     @Query("SELECT * FROM DestinyTalentGridDefinition WHERE id = :key")
-    LiveData<DestinyTalentGridDefinition> getTalentGridDefinition(String key);
+    Maybe<DestinyTalentGridDefinition> getTalentGridDefinition(String key);
 
     @Query("SELECT * FROM DestinyTalentGridDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyTalentGridDefinition>> getTalentGridDefinitionList(List<String> key);
+    Maybe<List<DestinyTalentGridDefinition>> getTalentGridDefinitionList(List<String> key);
 
 }

@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,11 +12,11 @@ import java.util.List;
 public interface SackRewardItemListDefinitionDAO {
 
     @Query("SELECT * FROM DestinySackRewardItemListDefinition")
-    LiveData<DestinySackRewardItemListDefinition> getAllSackRewardDefinitions();
+    Maybe<DestinySackRewardItemListDefinition> getAllSackRewardDefinitions();
 
     @Query("SELECT * FROM DestinySackRewardItemListDefinition WHERE id = :key")
-    LiveData<DestinySackRewardItemListDefinition> getSackRewardDefinition(String key);
+    Maybe<DestinySackRewardItemListDefinition> getSackRewardDefinition(String key);
 
     @Query("SELECT * FROM DestinySackRewardItemListDefinition WHERE id IN (:key)")
-    LiveData<List<DestinySackRewardItemListDefinition>> getSackRewardDefinitionList(List<String> key);
+    Maybe<List<DestinySackRewardItemListDefinition>> getSackRewardDefinitionList(List<String> key);
 }

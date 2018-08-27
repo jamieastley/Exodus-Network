@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,12 +12,12 @@ import java.util.List;
 public interface SandboxPerkDefinitionDAO {
 
     @Query("SELECT * FROM DestinySandboxPerkDefinition")
-    LiveData<DestinySandboxPerkDefinition> getAllSandboxPerkDefinitions();
+    Maybe<DestinySandboxPerkDefinition> getAllSandboxPerkDefinitions();
 
     @Query("SELECT * FROM DestinySandboxPerkDefinition WHERE id = :key")
-    LiveData<DestinySandboxPerkDefinition> getSandboxPerkDefinition(String key);
+    Maybe<DestinySandboxPerkDefinition> getSandboxPerkDefinition(String key);
 
     @Query("SELECT * FROM DestinySandboxPerkDefinition WHERE id IN (:key)")
-    LiveData<List<DestinySandboxPerkDefinition>> getSandboxPerkDefinitionList(List<String> key);
+    Maybe<List<DestinySandboxPerkDefinition>> getSandboxPerkDefinitionList(List<String> key);
 }
 

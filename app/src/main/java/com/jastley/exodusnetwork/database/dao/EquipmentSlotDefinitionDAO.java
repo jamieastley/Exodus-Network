@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
-import android.arch.lifecycle.LiveData;
+import io.reactivex.Maybe;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
 
@@ -12,12 +12,12 @@ import java.util.List;
 public interface EquipmentSlotDefinitionDAO {
 
     @Query("SELECT * FROM DestinyEquipmentSlotDefinition")
-    LiveData<DestinyEquipmentSlotDefinition> getEquipmentSlotDefinitions();
+    Maybe<DestinyEquipmentSlotDefinition> getEquipmentSlotDefinitions();
 
     @Query("SELECT * FROM DestinyEquipmentSlotDefinition WHERE id = :key")
-    LiveData<DestinyEquipmentSlotDefinition> getEquipmentSlotDefinition(String key);
+    Maybe<DestinyEquipmentSlotDefinition> getEquipmentSlotDefinition(String key);
 
     @Query("SELECT * FROM DestinyEquipmentSlotDefinition WHERE id IN (:key)")
-    LiveData<List<DestinyEquipmentSlotDefinition>> getEquipmentSlotDefinitionList(List<String> key);
+    Maybe<List<DestinyEquipmentSlotDefinition>> getEquipmentSlotDefinitionList(List<String> key);
 
 }

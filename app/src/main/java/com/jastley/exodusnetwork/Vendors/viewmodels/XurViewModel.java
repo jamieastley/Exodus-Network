@@ -73,4 +73,8 @@ public class XurViewModel extends AndroidViewModel {
     public LiveData<SocketModel> getModSockets() {
         return mXurRepository.getModSockets();
     }
+
+    public LiveData<SocketModel.InvestmentStats> getStatData() {
+        return mXurRepository.getStatData();
+    }
 }

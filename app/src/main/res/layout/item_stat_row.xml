@@ -37,6 +37,7 @@
             android:indeterminate="false"
             android:progressBackgroundTint="@color/colorWhite"
             android:layout_below="@id/stat_value"
+            android:visibility="gone"
             style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
             />
 
