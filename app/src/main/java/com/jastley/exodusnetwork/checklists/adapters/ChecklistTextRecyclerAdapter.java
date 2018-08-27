@@ -33,6 +33,11 @@ public class ChecklistTextRecyclerAdapter extends RecyclerView.Adapter<Checklist
     public void onBindViewHolder(@NonNull ChecklistTextViewHolder holder, int position) {
         holder.setChecklistName(checklistData.get(position).getChecklistItemName());
         holder.setCompleted(checklistData.get(position).isCompleted());
+
+        //Sleeper Nodes
+        if(checklistData.get(position).getDescription() != null) {
+            holder.setDescription(checklistData.get(position).getDescription());
+        }
     }
 
     @Override

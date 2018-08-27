@@ -35,6 +35,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
+import static com.jastley.exodusnetwork.Definitions.armorModsSockets;
+import static com.jastley.exodusnetwork.Definitions.armorPerksSockets;
 import static com.jastley.exodusnetwork.Definitions.theNine;
 import static com.jastley.exodusnetwork.Definitions.weaponModsSockets;
 import static com.jastley.exodusnetwork.Definitions.weaponPerksSockets;
@@ -53,8 +55,8 @@ public class XurRepository {
     private MutableLiveData<SocketModel> perksLiveData = new MutableLiveData<>();
     private MutableLiveData<SocketModel> modsLiveData = new MutableLiveData<>();
     //TODO stats
-    private List<SocketModel> perksModelList = new ArrayList<>();
-    private List<SocketModel> modsModelList = new ArrayList<>();
+    private List<SocketModel> perksModelList;// = new ArrayList<>();
+    private List<SocketModel> modsModelList;// = new ArrayList<>();
 
 
     @Inject
@@ -218,23 +220,34 @@ public class XurRepository {
                     List<String> perkHashes = new ArrayList<>();
                     List<String> modHashes = new ArrayList<>();
 
+                    //Initialise Lists here to prevent remembering last selected item
+                    perksModelList = new ArrayList<>();
+                    modsModelList = new ArrayList<>();
+
                     //Perk socket indexes
                     List<Integer> perksSocketsIndexes = new ArrayList<>();
                     List<Integer> modsSocketsIndexes = new ArrayList<>();
                     for(int i = 0; i < jsonData.getSockets().getSocketCategoriesList().size(); i++) {
 
-                        if(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(weaponPerksSockets)){
+                        //weapons/armor have DIFFERENT socketCategory hashes!
+                        if(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(weaponPerksSockets) ||
+                            jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(armorPerksSockets)) {
+
                             perksSocketsIndexes.addAll(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketIndexes());
+
                         }
-                        else if(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(weaponModsSockets)) {
+                        else if(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(weaponModsSockets) ||
+                                jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(armorModsSockets)) {
+
                             modsSocketsIndexes.addAll(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketIndexes());
+
                         }
                     }
 
                     //Get perks
                     for (int index: perksSocketsIndexes) {
                         SocketModel plugItem = new SocketModel();
-                        plugItem.setPlugItemHash(UnsignedHashConverter.getPrimaryKey(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
+                        plugItem.setPlugItemHash(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash());
                         plugItem.setSocketIndex(index);
                         perkHashes.add(UnsignedHashConverter.getPrimaryKey(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
 
@@ -245,7 +258,7 @@ public class XurRepository {
                     //Get mods
                     for (int index: modsSocketsIndexes) {
                         SocketModel plugItem = new SocketModel();
-                        plugItem.setPlugItemHash(UnsignedHashConverter.getPrimaryKey(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
+                        plugItem.setPlugItemHash(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash());
                         plugItem.setSocketIndex(index);
                         modHashes.add(UnsignedHashConverter.getPrimaryKey(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
 

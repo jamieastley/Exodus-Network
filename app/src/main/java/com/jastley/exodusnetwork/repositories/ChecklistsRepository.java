@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -13,7 +14,9 @@ import com.jastley.exodusnetwork.api.models.Response_GetChecklists;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.checklists.models.ChecklistModel;
 import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
+import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.jsonModels.ChecklistData;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemData;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,13 +49,13 @@ public class ChecklistsRepository {
     private MutableLiveData<Response_GetChecklists> raidLairsChecklist = new MutableLiveData<>();
     private MutableLiveData<Response_GetChecklists> forsakenChecklist = new MutableLiveData<>();
 
-    private List<String> checklistCategories = new ArrayList<>();
-    private List<ChecklistModel> latentMemoriesList = new ArrayList<>();
-    private List<ChecklistModel> ghostLoreList = new ArrayList<>();
-    private List<ChecklistModel> journalsList = new ArrayList<>();
-    private List<ChecklistModel> sleeperNodesList = new ArrayList<>();
-    private List<ChecklistModel> raidLairsList = new ArrayList<>();
-    private List<ChecklistModel> forsakenList = new ArrayList<>();
+    private List<String> checklistCategories;
+    private List<ChecklistModel> latentMemoriesList;
+    private List<ChecklistModel> ghostLoreList;
+    private List<ChecklistModel> journalsList;
+    private List<ChecklistModel> sleeperNodesList;
+    private List<ChecklistModel> raidLairsList;
+    private List<ChecklistModel> forsakenList;
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -74,11 +77,22 @@ public class ChecklistsRepository {
     ChecklistDefinitionDAO checklistDefinitionDAO;
 
     @Inject
+    InventoryItemDefinitionDAO inventoryItemDefinitionDAO;
+
+    @Inject
     public ChecklistsRepository() {
         App.getApp().getAppComponent().inject(this);
     }
 
     public void getChecklistProgression() {
+
+        checklistCategories = new ArrayList<>();
+        latentMemoriesList = new ArrayList<>();
+        ghostLoreList = new ArrayList<>();
+        journalsList = new ArrayList<>();
+        sleeperNodesList = new ArrayList<>();
+        raidLairsList = new ArrayList<>();
+        forsakenList = new ArrayList<>();
 
         String mType = sharedPreferences.getString("selectedPlatform" , "");
         String mId = sharedPreferences.getString("membershipId" + mType, "");
@@ -160,6 +174,7 @@ public class ChecklistsRepository {
                     for(ListIterator iterator = definitions.listIterator(); iterator.hasNext(); iterator.next()) {
 
                         int position = iterator.nextIndex();
+                        Log.e(definitions.get(position).getId(), "pos: " + position);
 
                         ChecklistData data = gson.fromJson(definitions.get(position).getValue(), ChecklistData.class);
 
@@ -169,15 +184,17 @@ public class ChecklistsRepository {
                             case latentMemories:
                                 for(ListIterator listIterator = latentMemoriesList.listIterator(); listIterator.hasNext(); listIterator.next()) {
                                     int listPosition = listIterator.nextIndex();
-                                    latentMemoriesList.get(listPosition).setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
+                                    latentMemoriesList.get(listPosition)
+                                            .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                 }
                                 break;
                             case ghostLore:
-                                for(ListIterator listIterator = ghostLoreList.listIterator(); listIterator.hasNext(); listIterator.next()) {
-                                    int listPosition = listIterator.nextIndex();
+                                for(ListIterator ghostIterator = ghostLoreList.listIterator(); ghostIterator.hasNext(); ghostIterator.next()) {
+                                    int listPosition = ghostIterator.nextIndex();
                                     ghostLoreList.get(listPosition)
                                                  .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
                                 }
+
                                 break;
                             case caydeJournals:
                                 for(ListIterator listIterator = journalsList.listIterator(); listIterator.hasNext(); listIterator.next()) {
@@ -187,11 +204,21 @@ public class ChecklistsRepository {
                                 }
                                 break;
                             case sleeperNodes:
+
+                                List<String> nodeHashes = new ArrayList<>();
+
                                 for(ListIterator listIterator = sleeperNodesList.listIterator(); listIterator.hasNext(); listIterator.next()) {
                                     int listPosition = listIterator.nextIndex();
                                     sleeperNodesList.get(listPosition)
                                                     .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
+
+                                    String frequencyHash = data.getEntriesList().get(listPosition).getItemHash();
+                                    nodeHashes.add(UnsignedHashConverter.getPrimaryKey(frequencyHash));
+
+                                    sleeperNodesList.get(listPosition)
+                                            .setItemHash(frequencyHash);
                                 }
+                                getSleeperNodesInfo(nodeHashes);
                                 break;
                             case forsakenCollection:
                                 for(ListIterator listIterator = forsakenList.listIterator(); listIterator.hasNext(); listIterator.next()) {
@@ -210,11 +237,46 @@ public class ChecklistsRepository {
                     ghostLoreChecklist.postValue(new Response_GetChecklists(ghostLoreList));
                     journalsChecklist.postValue(new Response_GetChecklists(journalsList));
                     raidLairsChecklist.postValue(new Response_GetChecklists(raidLairsList));
-                    sleeperNodesChecklist.postValue(new Response_GetChecklists(sleeperNodesList));
+//                    sleeperNodesChecklist.postValue(new Response_GetChecklists(sleeperNodesList));
                     forsakenChecklist.postValue(new Response_GetChecklists(forsakenList));
 
                 });
         compositeDisposable.add(disposable);
+    }
+
+    private void getSleeperNodesInfo(List<String> nodeHashes) {
+
+        Disposable disposable = inventoryItemDefinitionDAO.getItemsListByKey(nodeHashes)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(nodeInfoList -> {
+
+                    for(ListIterator iterator = nodeInfoList.listIterator(); iterator.hasNext(); iterator.next()) {
+
+                        int position = iterator.nextIndex();
+                        Log.e(nodeInfoList.get(position).getId(), "pos: " + position);
+
+                        InventoryItemData data = gson.fromJson(nodeInfoList.get(position).getValue(), InventoryItemData.class);
+
+                        //iterate over all sleeperNode data from checklist API result and append description
+                        for(int i = 0; i < sleeperNodesList.size(); i++) {
+
+                            if(sleeperNodesList.get(i).getItemHash().equals(data.getHash())) {
+                                sleeperNodesList.get(i)
+                                        .setDescription(data.getDisplayProperties().getDescription());
+                            }
+                        }
+                    }
+                    sleeperNodesChecklist.postValue(new Response_GetChecklists(sleeperNodesList));
+                }, throwable -> sleeperNodesChecklist.postValue(new Response_GetChecklists(throwable.getLocalizedMessage())));
+
+    }
+
+    public void setupBottomNav() {
+
+        String mType = sharedPreferences.getString("selectedPlatform", "");
+        String mId = sharedPreferences.getString("membershipId"+mType, "");
+
     }
 
     public void dispose() {

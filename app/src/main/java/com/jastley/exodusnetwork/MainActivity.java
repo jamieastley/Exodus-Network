@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity
                     LFGDetailsFragment.OnDetailsFragmentInteraction,
                     LFGPostsFragment.OnFragmentInteractionListener,
                     XurFragment.OnFragmentInteractionListener,
-                    ItemInspectFragment.OnFragmentInteractionListener,
                     AccountStatsFragment.OnAccountStatsInteractionListener,
                     MilestonesFragment.OnMilestoneFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,

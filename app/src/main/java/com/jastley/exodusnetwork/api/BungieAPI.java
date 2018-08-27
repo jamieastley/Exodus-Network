@@ -96,10 +96,16 @@ public interface BungieAPI {
                                                                @Path("page") String page);
 
 
-    //Checklists
+    //Checklists - Account
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}?components=104")
     Observable<Response_GetChecklists> getProfileChecklists(@Path("membershipType") String membershipType,
                                                             @Path("membershipId") String membershipId);
+
+    //Checklists - Character
+    @GET("Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}?components=202")
+    Observable<Response_GetCharacterChecklist> getCharacterChecklists(@Path("membershipType") String membershipType,
+                                                                      @Path("membershipId") String membershipId,
+                                                                      @Path("characterId") String characterId);
 
     /** MANIFEST DATA **/
 

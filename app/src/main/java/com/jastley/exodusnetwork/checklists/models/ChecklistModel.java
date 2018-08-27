@@ -9,6 +9,10 @@ public class ChecklistModel {
     private String checklistItemName;
     private String itemImage;
 
+    //Sleeper Nodes only
+    private String itemHash;
+    private String description;
+
     public ChecklistModel(String hash, boolean isCompleted, int count, String categoryHash) {
         this.hash = hash;
         this.isCompleted = isCompleted;
@@ -62,5 +66,21 @@ public class ChecklistModel {
 
     public void setItemImage(String itemImage) {
         this.itemImage = itemImage;
+    }
+
+    public String getItemHash() {
+        return itemHash;
+    }
+
+    public void setItemHash(String itemHash) {
+        this.itemHash = itemHash;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

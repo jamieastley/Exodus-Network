@@ -4,8 +4,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.Vendors.adapters.PerksModsRecyclerAdapter;
 import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -30,10 +33,9 @@ public class ItemInspectFragment extends Fragment {
     @BindView(R.id.item_inspect_mods_recycler) RecyclerView itemModsRecyclerView;
     @BindView(R.id.item_inspect_perks_recycler) RecyclerView itemPerksRecyclerView;
     @BindView(R.id.item_inspect_itemname) TextView itemName;
-
+    private PerksModsRecyclerAdapter modsAdapter;
+    private PerksModsRecyclerAdapter perksAdapter;
     private XurViewModel mViewModel;
-
-    private OnFragmentInteractionListener mListener;
 
     public ItemInspectFragment() {
         // Required empty public constructor
@@ -61,6 +63,13 @@ public class ItemInspectFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initialiseRecyclerViews();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -80,45 +89,49 @@ public class ItemInspectFragment extends Fragment {
         });
 
         mViewModel.getPerkSockets().observe(this, perks -> {
-
+            if(perks.getThrowable() != null) {
+                //TODO
+            }
+            else if(perks.getSocketModelList() != null) {
+                perksAdapter.setListData(perks.getSocketModelList());
+            }
         });
 
         mViewModel.getModSockets().observe(this, mods -> {
-
+            if(mods.getThrowable() != null) {
+                //TODO
+            }
+            else if(mods.getSocketModelList() != null) {
+                modsAdapter.setListData(mods.getSocketModelList());
+            }
         });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 
     private void initialiseRecyclerViews() {
+        perksAdapter = new PerksModsRecyclerAdapter();
+        itemPerksRecyclerView.setAdapter(perksAdapter);
+        itemPerksRecyclerView.setNestedScrollingEnabled(false);
+        itemPerksRecyclerView.setLayoutManager(getLayoutManager());
 
+        modsAdapter = new PerksModsRecyclerAdapter();
+        itemModsRecyclerView.setAdapter(modsAdapter);
+        itemModsRecyclerView.setNestedScrollingEnabled(false);
+        itemModsRecyclerView.setLayoutManager(getLayoutManager());
+    }
+
+    private LinearLayoutManager getLayoutManager() {
+        return new LinearLayoutManager(getContext());
     }
 }

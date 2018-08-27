@@ -6,7 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Vendors.fragments.ItemInspectFragment">
 
-        <android.support.constraint.ConstraintLayout
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
@@ -39,7 +43,8 @@
                android:id="@+id/stat_row_recycler_view"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
-               app:layout_constraintTop_toBottomOf="@id/item_screenshot"
+               android:layout_below="@id/item_screenshot"
+
                >
 
            </android.support.v7.widget.RecyclerView>
@@ -50,7 +55,8 @@
                 android:id="@+id/item_inspect_perks_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/stat_row_recycler_view"
+                android:layout_below="@id/stat_row_recycler_view"
+
                 >
             </android.support.v7.widget.RecyclerView>
 
@@ -60,11 +66,13 @@
                 android:id="@+id/item_inspect_mods_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/item_inspect_perks_recycler">
+                android:layout_below="@id/item_inspect_perks_recycler"
+                >
 
             </android.support.v7.widget.RecyclerView>
 
+        </RelativeLayout>
 
-        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

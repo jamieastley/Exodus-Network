@@ -102,6 +102,9 @@ public class ChecklistData {
         @SerializedName("bubbleHash")
         private String bubbleHash;
         @Expose
+        @SerializedName("itemHash")
+        private String itemHash;
+        @Expose
         @SerializedName("scope")
         private String scope;
 
@@ -115,6 +118,11 @@ public class ChecklistData {
 
         public String getDestinationHash() {
             return destinationHash;
+        }
+
+        //for Sleeper Nodes only
+        public String getItemHash() {
+            return itemHash;
         }
 
         public String getBubbleHash() {

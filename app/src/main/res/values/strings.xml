@@ -181,6 +181,7 @@
     <string name="sleeper_nodes">Sleeper Nodes</string>
     <string name="raid_lairs">Raid Lairs</string>
     <string name="item_collection">Item Collection</string>
+    <string name="checklist_icon">Checklist Icon</string>
 
 
 </resources>

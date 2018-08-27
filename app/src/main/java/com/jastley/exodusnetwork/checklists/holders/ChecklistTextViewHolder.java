@@ -17,6 +17,7 @@ public class ChecklistTextViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.checklist_text_layout) FrameLayout layoutContainer;
     @BindView(R.id.checklist_item_name) TextView checklistName;
+    @BindView(R.id.checklist_item_description) TextView itemDescription;
     private boolean isCompleted;
     private Context mContext;
 
@@ -40,5 +41,10 @@ public class ChecklistTextViewHolder extends RecyclerView.ViewHolder {
             layoutContainer.setForeground(ContextCompat.getDrawable(mContext, R.drawable.checklist_completion));
             checklistName.setPaintFlags(checklistName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
+    }
+
+    public void setDescription(String description) {
+        this.itemDescription.setVisibility(View.VISIBLE);
+        this.itemDescription.setText(description);
     }
 }

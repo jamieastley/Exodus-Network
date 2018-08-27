@@ -154,6 +154,13 @@ public class ChecklistsParentFragment extends Fragment {
                             .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
                             .commit();
                     break;
+                case "Sleeper Nodes":
+                    fragment = SleeperNodesFragment.newInstance(null, null);
+
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.checklist_fragment_container, fragment, "sleeperNodesFrag")
+                            .commit();
+                    break;
             }
         }
 

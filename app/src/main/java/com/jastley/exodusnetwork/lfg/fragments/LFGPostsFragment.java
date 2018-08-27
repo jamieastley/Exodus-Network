@@ -110,24 +110,24 @@ public class LFGPostsFragment extends Fragment {
         showHideFab();
 
         //Hide FAB when scrolling
-        mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-
-                if (isFabVisible && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    mFab.show();
-                }
-
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0 ||dy<0 && mFab.isShown())
-                    mFab.hide();
-            }
-        });
+//        mLFGRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//
+//                if (isFabVisible && newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    mFab.show();
+//                }
+//
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                if (dy > 0 ||dy<0 && mFab.isShown())
+//                    mFab.hide();
+//            }
+//        });
 
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
@@ -157,6 +157,7 @@ public class LFGPostsFragment extends Fragment {
 
         mLFGRecyclerView.setLayoutManager(mLinearLayoutManager);
         mLFGRecyclerView.setAdapter(mLFGPostAdapter);
+        mLFGRecyclerView.setNestedScrollingEnabled(false);
 
         Disposable disposable = mLFGPostAdapter.onClickSubject.subscribe(onClick -> {
             Toast.makeText(getContext(), onClick.getOwnerMembershipId(), Toast.LENGTH_LONG)

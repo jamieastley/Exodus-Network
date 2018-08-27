@@ -51,6 +51,8 @@ public class Definitions {
     //Sockets
     public static final String weaponPerksSockets = "4241085061";
     public static final String weaponModsSockets = "2685412949";
+    public static final String armorPerksSockets = "2518356196";
+    public static final String armorModsSockets = "590099826";
 
     //Checklists
     public static final String latentMemories = "2955980198";
