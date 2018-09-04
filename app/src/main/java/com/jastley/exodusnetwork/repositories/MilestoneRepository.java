@@ -193,16 +193,16 @@ public class MilestoneRepository {
 
                     for (int i = 0; i < rewards.size(); i++) {
 
-                        InventoryDataModel item = gson.fromJson(rewards.get(i).getValue(), InventoryDataModel.class);
+//                        InventoryDataModel item = gson.fromJson(rewards.get(i).getValue(), InventoryDataModel.class);
 
                         //check rewards for each milestone, append if match
                         for (int j = 0; j < milestoneModels.size(); j++) {
 
                             try {
-                                if (item.getHash().equals(milestoneModels.get(j).getMilestoneRewardHash())) {
+                                if (rewards.get(i).getValue().getHash().equals(milestoneModels.get(j).getMilestoneRewardHash())) {
 
-                                    milestoneModels.get(j).setMilestoneRewardImageURL(item.getDisplayProperties().getIcon());
-                                    milestoneModels.get(j).setMilestoneRewardName(item.getDisplayProperties().getName());
+                                    milestoneModels.get(j).setMilestoneRewardImageURL(rewards.get(i).getValue().getDisplayProperties().getIcon());
+                                    milestoneModels.get(j).setMilestoneRewardName(rewards.get(i).getValue().getDisplayProperties().getName());
                                 }
                                 else {
                                     if(milestoneModels.get(j).getMilestoneName() == null){

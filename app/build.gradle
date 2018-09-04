@@ -46,7 +46,7 @@ android {
 
         buildConfigField("String", "apiKey", keyProperties['apiKey'])
         buildConfigField("String", "braytechApiKey", keyProperties['braytechApiKey'])
-        buildConfigField("String", "clientId", keyProperties['clientId'] )
+        buildConfigField("String", "clientId", keyProperties['clientId'])
         buildConfigField("String", "clientSecret", keyProperties['clientSecret'])
     }
     buildTypes {
@@ -96,6 +96,7 @@ dependencies {
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
+    implementation 'android.arch.paging:runtime:1.0.1'
 
     //Firebase
     implementation 'com.google.firebase:firebase-core:16.0.1'

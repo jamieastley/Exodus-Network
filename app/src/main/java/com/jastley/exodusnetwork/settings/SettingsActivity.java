@@ -1,6 +1,7 @@
 package com.jastley.exodusnetwork.settings;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.jastley.exodusnetwork.MainActivityViewModel;
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.manifest.ManifestSearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +65,10 @@ public class SettingsActivity extends AppCompatActivity {
                             //TODO
                             Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
                             break;
+                        case "View Manifest Items":
+                            Intent intent = new Intent(this, ManifestSearchActivity.class);
+                            startActivity(intent);
+                            break;
                         case "View stored account data":
                             Toast.makeText(this, settingsModel.getTitle(), Toast.LENGTH_SHORT).show();
                             break;
@@ -88,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
     private List<SettingsModel> populateSettingsList() {
         List<SettingsModel> settingsList = new ArrayList<>();
         settingsList.add(new SettingsModel("Update Bungie Manifest", getString(R.string.settings_redownload_subtext)));
+        settingsList.add(new SettingsModel("View Manifest Items", null));
         settingsList.add(new SettingsModel("View stored account data", null));
         settingsList.add(new SettingsModel("Refresh account data", null));
         settingsList.add(new SettingsModel("Log out", null));

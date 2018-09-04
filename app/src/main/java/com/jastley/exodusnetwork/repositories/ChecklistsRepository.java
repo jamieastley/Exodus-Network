@@ -255,14 +255,14 @@ public class ChecklistsRepository {
                         int position = iterator.nextIndex();
                         Log.e(nodeInfoList.get(position).getId(), "pos: " + position);
 
-                        InventoryItemData data = gson.fromJson(nodeInfoList.get(position).getValue(), InventoryItemData.class);
+//                        InventoryItemData data = gson.fromJson(nodeInfoList.get(position).getValue(), InventoryItemData.class);
 
                         //iterate over all sleeperNode data from checklist API result and append description
                         for(int i = 0; i < sleeperNodesList.size(); i++) {
 
-                            if(sleeperNodesList.get(i).getItemHash().equals(data.getHash())) {
+                            if(sleeperNodesList.get(i).getItemHash().equals(nodeInfoList.get(position).getValue().getHash())) {
                                 sleeperNodesList.get(i)
-                                        .setDescription(data.getDisplayProperties().getDescription());
+                                        .setDescription(nodeInfoList.get(position).getValue().getDisplayProperties().getDescription());
                             }
                         }
                     }

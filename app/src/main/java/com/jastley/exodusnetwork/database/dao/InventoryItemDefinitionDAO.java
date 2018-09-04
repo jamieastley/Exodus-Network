@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
+import android.arch.paging.DataSource;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -36,4 +37,9 @@ public interface InventoryItemDefinitionDAO {
 
     @Update
     void update(DestinyInventoryItemDefinition destinyInventoryItemDefinitionRow);
+
+    //Paging
+    @Query("SELECT * FROM DestinyInventoryItemDefinition")
+    DataSource.Factory<Integer, DestinyInventoryItemDefinition> getPagedInventoryItems();
+
 }

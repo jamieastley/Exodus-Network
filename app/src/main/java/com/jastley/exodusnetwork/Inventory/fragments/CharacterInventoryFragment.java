@@ -575,18 +575,18 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
                     for (int i = 0; i < items.size(); i++) {
 
-                        Gson gson = new GsonBuilder().create();
-                        InventoryDataModel itemData = gson.fromJson(items.get(i).getValue(), InventoryDataModel.class);
+//                        Gson gson = new GsonBuilder().create();
+//                        InventoryDataModel itemData = gson.fromJson(items.get(i).getValue(), InventoryDataModel.class);
 
                         for (int j = 0; j < itemList.size(); j++) {
-                            if(itemData.getHash().equals(itemList.get(j).getItemHash())) {
+                            if(items.get(i).getValue().getHash().equals(itemList.get(j).getItemHash())) {
 
-                                itemList.get(j).setItemName(itemData.getDisplayProperties().getName());
-                                itemList.get(j).setItemTypeDisplayName(itemData.getItemTypeDisplayName());
+                                itemList.get(j).setItemName(items.get(i).getValue().getDisplayProperties().getName());
+                                itemList.get(j).setItemTypeDisplayName(items.get(i).getValue().getItemTypeDisplayName());
                                 try{
                                     Log.d("InventoryAPIListHash: ", itemList.get(j).getItemHash());
-                                    Log.d("ManifestItemHash: ", itemData.getHash());
-                                    itemList.get(j).setItemIcon(itemData.getDisplayProperties().getIcon());
+                                    Log.d("ManifestItemHash: ", items.get(i).getValue().getHash());
+                                    itemList.get(j).setItemIcon(items.get(i).getValue().getDisplayProperties().getIcon());
                                 }
                                 catch(Exception e){
                                     Log.d("getManifestData: ", e.getLocalizedMessage());

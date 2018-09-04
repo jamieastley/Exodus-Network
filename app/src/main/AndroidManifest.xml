@@ -36,7 +36,6 @@
                 <data
                     android:host="callback"
                     android:scheme="warmindfordestiny" />
-
             </intent-filter>
         </activity>
 
@@ -48,6 +47,15 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jastley.exodusnetwork.MainActivity" />
+        </activity>
+        <activity
+            android:name=".manifest.ManifestSearchActivity"
+            android:label="@string/title_activity_manifest_search"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

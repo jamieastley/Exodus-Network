@@ -184,6 +184,7 @@
     <string name="checklist_icon">Checklist Icon</string>
     <string name="item_details">Item Details</string>
     <string name="viewAccounts">View account data in database</string>
+    <string name="title_activity_manifest_search">Manifest Items</string>
 
 
 </resources>
