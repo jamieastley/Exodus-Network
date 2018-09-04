@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.api.models;
 
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -44,9 +45,17 @@ public class Response_GetAllCharacters {
         @SerializedName("data")
         private Map<String, CharacterData> data;
 
+//        @Expose
+//        @SerializedName("data")
+//        private Map<String, JsonObject> characterDataJson = (Map<String, JsonObject>) data;
+
         public Map<String, CharacterData> getData() {
             return data;
         }
+
+//        public Map<String, JsonObject> getCharacterDataJson() {
+//            return characterDataJson;
+//        }
     }
 
     public static class CharacterData {

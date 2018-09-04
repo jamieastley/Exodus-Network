@@ -144,90 +144,90 @@ public class NewLFGPostActivity extends AppCompatActivity {
 
     private void getAccountCharacters(){
 
-        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
-
-        Disposable disposable = mAccountDAO.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(characters -> {
-
-                    Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
-                    coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-
-                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
-
-                    for (int i = 0; i < characters.size(); i++) {
-
-                        //Deserialize and bind data to model class
-                        Gson gson = new GsonBuilder().create();
-                        Response_GetAllCharacters.CharacterData character = gson.fromJson(characters.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
-
-                        //only get characters for the selectedPlatform
-                        if (character.getMembershipType().equals(selectedPlatform)) {
-                            //required for post submit OnClick
-                            mCharacterList.add(character);
-                        }
-                    }
-
-                    for (int j = 0; j < mCharacterList.size(); j++) {
-
-                        String classType = mCharacterList.get(j).getClassType();
-
-                        RadioButton radioButton = new RadioButton(this);
-
-                        switch(classType){
-
-                            case "0": //Titan
-                                radioButton.setText(R.string.titan);
-                                break;
-                            case "1": //Hunter
-                                radioButton.setText(R.string.hunter);
-                                break;
-                            case "2": // Warlock
-                                radioButton.setText(R.string.warlock);
-                                break;
-                        }
-
-                        radioButton.setId(j);
-                        radioButton.setGravity(Gravity.CENTER);
-
-                        //disables default radiobutton
-                        radioButton.setBackgroundDrawable(null);
-
-                        radioButton.setButtonDrawable(new StateListDrawable());
-                        radioButton.setTextColor(getResources().getColor(R.color.colorWhite));
-                        radioButton.setLayoutParams(new RadioGroup.LayoutParams(
-                                RadioGroup.LayoutParams.WRAP_CONTENT, //width
-                                RadioGroup.LayoutParams.WRAP_CONTENT, //height
-                                1.0f
-                        ));
-
-                        if(j == 0){ //always ensure an option is preselected onCreate
-                            radioButton.setChecked(true);
-                        }
-                        else{
-                            radioButton.setChecked(false);
-                            radioButton.setAlpha(0.3f);
-                        }
-
-                        //set emblem icons
-                        File dir = getDir("emblems", MODE_PRIVATE);
-                        File path = new File(dir, j+".jpeg");
-                        if(path.exists()){
-
-                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
-                            roundedDrawable.setCircular(true);
-
-                            //bounds necessary for compoundDrawables
-                            roundedDrawable.setBounds(0,0, 150, 150);
-                            radioButton.setCompoundDrawables(null, roundedDrawable, null, null);
-                        }
-
-                        characterRadioGroup.addView(radioButton);
-                    }
-                });
-        compositeDisposable.add(disposable);
+//        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
+//
+//        Disposable disposable = mAccountDAO.getAll()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(characters -> {
+//
+//                    Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
+//                    coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+//
+//                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+//                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+//
+//                    for (int i = 0; i < characters.size(); i++) {
+//
+//                        //Deserialize and bind data to model class
+//                        Gson gson = new GsonBuilder().create();
+//                        Response_GetAllCharacters.CharacterData character = gson.fromJson(characters.get(i).getValue(), Response_GetAllCharacters.CharacterData.class);
+//
+//                        //only get characters for the selectedPlatform
+//                        if (character.getMembershipType().equals(selectedPlatform)) {
+//                            //required for post submit OnClick
+//                            mCharacterList.add(character);
+//                        }
+//                    }
+//
+//                    for (int j = 0; j < mCharacterList.size(); j++) {
+//
+//                        String classType = mCharacterList.get(j).getClassType();
+//
+//                        RadioButton radioButton = new RadioButton(this);
+//
+//                        switch(classType){
+//
+//                            case "0": //Titan
+//                                radioButton.setText(R.string.titan);
+//                                break;
+//                            case "1": //Hunter
+//                                radioButton.setText(R.string.hunter);
+//                                break;
+//                            case "2": // Warlock
+//                                radioButton.setText(R.string.warlock);
+//                                break;
+//                        }
+//
+//                        radioButton.setId(j);
+//                        radioButton.setGravity(Gravity.CENTER);
+//
+//                        //disables default radiobutton
+//                        radioButton.setBackgroundDrawable(null);
+//
+//                        radioButton.setButtonDrawable(new StateListDrawable());
+//                        radioButton.setTextColor(getResources().getColor(R.color.colorWhite));
+//                        radioButton.setLayoutParams(new RadioGroup.LayoutParams(
+//                                RadioGroup.LayoutParams.WRAP_CONTENT, //width
+//                                RadioGroup.LayoutParams.WRAP_CONTENT, //height
+//                                1.0f
+//                        ));
+//
+//                        if(j == 0){ //always ensure an option is preselected onCreate
+//                            radioButton.setChecked(true);
+//                        }
+//                        else{
+//                            radioButton.setChecked(false);
+//                            radioButton.setAlpha(0.3f);
+//                        }
+//
+//                        //set emblem icons
+//                        File dir = getDir("emblems", MODE_PRIVATE);
+//                        File path = new File(dir, j+".jpeg");
+//                        if(path.exists()){
+//
+//                            RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
+//                            roundedDrawable.setCircular(true);
+//
+//                            //bounds necessary for compoundDrawables
+//                            roundedDrawable.setBounds(0,0, 150, 150);
+//                            radioButton.setCompoundDrawables(null, roundedDrawable, null, null);
+//                        }
+//
+//                        characterRadioGroup.addView(radioButton);
+//                    }
+//                });
+//        compositeDisposable.add(disposable);
     }
 
 

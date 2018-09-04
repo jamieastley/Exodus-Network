@@ -15,6 +15,12 @@ repositories {
 
 apply plugin: 'io.fabric'
 
+//Load keys/secrets
+def keysSecretFile = rootProject.file("keys.secret")
+def keyProperties = new Properties()
+keyProperties.load(new FileInputStream(keysSecretFile))
+
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -37,6 +43,11 @@ android {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
+
+        buildConfigField("String", "apiKey", keyProperties['apiKey'])
+        buildConfigField("String", "braytechApiKey", keyProperties['braytechApiKey'])
+        buildConfigField("String", "clientId", keyProperties['clientId'] )
+        buildConfigField("String", "clientSecret", keyProperties['clientSecret'])
     }
     buildTypes {
         release {

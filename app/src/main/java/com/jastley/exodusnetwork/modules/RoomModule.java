@@ -11,6 +11,7 @@ import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
 import com.jastley.exodusnetwork.database.dao.StatDefinitionDAO;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -23,13 +24,15 @@ public class RoomModule {
     private AppDatabase mAppDatabase;
 
     public RoomModule(Application application) {
-        mManifestDatabase = Room.databaseBuilder(application, AppManifestDatabase.class, "bungieManifest.db").build();
-        mAppDatabase = Room.databaseBuilder(application, AppDatabase.class, "bungieAccount.db").build();
+//        mManifestDatabase = Room.databaseBuilder(application, AppManifestDatabase.class, "bungieManifest.db").build();
+        mManifestDatabase = AppManifestDatabase.getManifestDatabase(application);
+//        mAppDatabase = Room.databaseBuilder(application, AppDatabase.class, "bungieAccount.db").build();
+        mAppDatabase = AppDatabase.getAppDatabase(application);
     }
 
     @Singleton
     @Provides
-    AppManifestDatabase providesRoomDatabase() {
+    AppManifestDatabase providesManifestDatabase() {
         return mManifestDatabase;
     }
 
@@ -47,7 +50,8 @@ public class RoomModule {
 
     @Singleton
     @Provides
-    AppDatabase providesAppDatabase() {
+    @Named("Account")
+    AppDatabase providesAccountDatabase() {
         return mAppDatabase;
     }
 

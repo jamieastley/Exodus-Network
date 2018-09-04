@@ -1,6 +1,5 @@
 package com.jastley.exodusnetwork.repositories;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,11 +1,28 @@
 package com.jastley.exodusnetwork.Utils;
 
-import android.support.design.widget.Snackbar;
-import android.view.View;
-
 public class SnackbarMessage {
 
-    public static Snackbar getSnackbar(View view, String message, int duration) {
-        return Snackbar.make(view, message, duration);
+    private String message;
+    private Throwable throwable;
+
+    public SnackbarMessage(String message) {
+        this.message = message;
+    }
+
+    public SnackbarMessage(Throwable throwable) {
+        this.message = null;
+        this.throwable = throwable;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
     }
 }

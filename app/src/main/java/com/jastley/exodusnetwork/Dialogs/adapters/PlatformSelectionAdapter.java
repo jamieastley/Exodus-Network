@@ -12,6 +12,8 @@ import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Dialogs.holders.PlatformRVHolder;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by jamie1192 on 23/03/2018.
@@ -20,12 +22,11 @@ import com.jastley.exodusnetwork.Dialogs.holders.PlatformRVHolder;
 public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHolder> implements DialogInterface{
 
     Context context;
-    String[] platforms;
+    ArrayList<String> platforms;
 
     PlatformSelectionListener listener;
 
-    public PlatformSelectionAdapter(Context context, String[] platforms, PlatformSelectionListener listener) {
-        this.context = context;
+    public PlatformSelectionAdapter(ArrayList<String> platforms, PlatformSelectionListener listener) {
         this.platforms = platforms;
         this.listener = listener;
     }
@@ -35,6 +36,8 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.platform_row_layout, parent, false);
 
         final PlatformRVHolder mPlatformRVHolder = new PlatformRVHolder(mView);
+
+        this.context = parent.getContext();
 
         mPlatformRVHolder.itemView.setOnClickListener(view ->
                 listener.onPlatformSelection(view, mPlatformRVHolder.getAdapterPosition(), mPlatformRVHolder));
@@ -46,20 +49,20 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
     public void onBindViewHolder(final PlatformRVHolder holder, int position) {
 
         //Xbox
-        if(platforms[position].equals("1")){
-            holder.setPlatformIcon(platforms[position], context);
+        if(platforms.get(position).equals("1")){
+            holder.setPlatformIcon(platforms.get(position), context);
             holder.setPlatformName("Xbox");
             holder.setPlatformType("1");
         }
         //PlayStation
-        else if(platforms[position].equals("2")){
-            holder.setPlatformIcon(platforms[position], context);
+        else if(platforms.get(position).equals("2")){
+            holder.setPlatformIcon(platforms.get(position), context);
             holder.setPlatformName("PlayStation");
             holder.setPlatformType("2");
         }
         //PC/Battle.Net
-        else {
-            holder.setPlatformIcon(platforms[position], context);
+        else if(platforms.get(position).equals("4")){
+            holder.setPlatformIcon(platforms.get(position), context);
             holder.setPlatformName("Battle.Net");
             holder.setPlatformType("4");
         }
@@ -68,7 +71,7 @@ public class PlatformSelectionAdapter extends RecyclerView.Adapter<PlatformRVHol
 
     @Override
     public int getItemCount() {
-        return platforms.length;
+        return platforms.size();
     }
 
     @Override

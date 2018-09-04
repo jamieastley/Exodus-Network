@@ -27,27 +27,51 @@
                 android:contentDescription="@string/item_inspect_screenshot"
                 />
 
+
+
             <ImageView
                 android:id="@+id/item_icon"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_alignBottom="@id/item_screenshot"
+                android:layout_alignTop="@id/item_screenshot"
                 android:layout_margin="15dp"
                 android:padding="2dp"
                 android:src="@drawable/item_icon_example"
                 android:background="@color/colorWhite"
                 />
 
-            <TextView
-                android:id="@+id/item_type"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
+                android:orientation="vertical"
+                android:layout_alignTop="@id/item_icon"
                 android:layout_toEndOf="@id/item_icon"
-                android:layout_marginBottom="15dp"
-                android:layout_alignBottom="@id/item_screenshot"
-                android:textColor="@color/colorWhite"
-                android:textSize="15sp"
-                />
+                >
+
+                <TextView
+                    android:id="@+id/item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="RISKRUNNER"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:textColor="@color/colorWhite"
+
+
+                    />
+
+                <TextView
+                    android:id="@+id/item_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submachine Gun"
+                    android:textColor="@color/item_type_color"
+                    android:textSize="15sp"
+                    />
+
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/item_inspect_description"

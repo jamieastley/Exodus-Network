@@ -16,6 +16,8 @@ import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Dialogs.adapters.PlatformSelectionAdapter;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -40,7 +42,7 @@ public class PlatformSelectionFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         Bundle args = getArguments();
-        final String[] list = args.getStringArray("platforms");
+        final ArrayList<String> list = args.getStringArrayList("platforms");
 
         View titleView = getActivity().getLayoutInflater().inflate(R.layout.alert_dialog_layout, null);
 
@@ -59,7 +61,7 @@ public class PlatformSelectionFragment extends DialogFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
         //Adapter
-        adapter = new PlatformSelectionAdapter(this.getActivity(), list, mListener);
+        adapter = new PlatformSelectionAdapter(list, mListener);
 
         recyclerView.setAdapter(adapter);
 

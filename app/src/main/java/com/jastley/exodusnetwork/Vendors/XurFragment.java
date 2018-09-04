@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +26,6 @@ import io.reactivex.disposables.Disposable;
 
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
-import com.jastley.exodusnetwork.Utils.SnackbarMessage;
 import com.jastley.exodusnetwork.Vendors.adapters.XurItemsRecyclerAdapter;
 import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
 import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
@@ -232,9 +231,10 @@ public class XurFragment extends Fragment {
         //Get current inventory
         mViewModel.getXurData().observe(this, response_getXurWeekly -> {
             if(response_getXurWeekly.getErrorMessage() != null) {
-                SnackbarMessage.getSnackbar(getView(), response_getXurWeekly.getErrorMessage(), BaseTransientBottomBar.LENGTH_INDEFINITE)
+                Snackbar.make(getView(), response_getXurWeekly.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
                         .setAction("Retry", v -> getXurInventory())
                         .show();
+
             }
             else {
                 mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
@@ -246,7 +246,7 @@ public class XurFragment extends Fragment {
         //Get location data
         mViewModel.getXurLocationData().observe(this, xurVendorModel -> {
             if(xurVendorModel.getErrorMessage() != null) {
-                SnackbarMessage.getSnackbar(getView(), xurVendorModel.getErrorMessage(), BaseTransientBottomBar.LENGTH_INDEFINITE)
+                Snackbar.make(getView(), xurVendorModel.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
                         .show();
             }
             else {

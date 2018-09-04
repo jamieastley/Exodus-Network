@@ -49,6 +49,11 @@ public interface BungieAPI {
     Observable<JsonElement> getAllCharacters(@Path("membershipType") String membershipType,
                                  @Path("membershipId") String membershipId);
 
+    //Get all characters (test)
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200")
+    Observable<Response_GetAllCharacters> getAllCharactersGson(@Path("membershipType") String membershipType,
+                                             @Path("membershipId") String membershipId);
+
     //Get character inventory(?components=201), with item instance data(?components=300), and equipped items(?components=205)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=201&components=300&components=205")
     Observable<Response_GetCharacterInventory> getCharacterInventory(@Path("membershipType") String membershipType,

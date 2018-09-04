@@ -243,76 +243,76 @@ public class ParentInventoryFragment extends Fragment {
 
     public void getAccountCharacters() {
 
-        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(getContext()).getAccountDAO();
-        Disposable disposable = mAccountDAO.getAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(accounts -> {
-
-                    String tempMembershipId = "0";
-                    String tempMembershipType = "0";
-                    SharedPreferences savedPrefs = getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
-                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
-
-                    for (Account account : accounts) {
-
-                        Gson gson = new GsonBuilder().create();
-                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(account.getValue(), Response_GetAllCharacters.CharacterData.class);
-
-                        //only get characters for selectedPlatform
-                        if (accountCharacter.getMembershipType().equals(selectedPlatform)) {
-                            System.out.println("forLoop " + account.getKey());
-                            CharacterDatabaseModel character = new CharacterDatabaseModel(
-                                    accountCharacter.getMembershipId(),
-                                    accountCharacter.getCharacterId(),
-                                    accountCharacter.getMembershipType(),
-                                    accountCharacter.getClassType(),
-                                    accountCharacter.getEmblemPath(),
-                                    accountCharacter.getEmblemBackgroundPath(),
-                                    accountCharacter.getBaseCharacterLevel(),
-                                    accountCharacter.getLight()
-                            );
-                            tempMembershipId = accountCharacter.getMembershipId();
-                            tempMembershipType = accountCharacter.getMembershipType();
-                            charactersList.add(character);
-                        }
-
-                    }
-
-                    //Add vault fragment on the end
-                    CharacterDatabaseModel vault = new CharacterDatabaseModel();
-                    vault.setMembershipId(tempMembershipId);
-                    vault.setMembershipType(tempMembershipType);
-                    vault.setClassType("vault");
-
-                    charactersList.add(vault);
-
-                    mViewPager.setAdapter(mSectionsPagerAdapter);
-                    mTabLayout.setupWithViewPager(mViewPager);
-                    mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                        @Override
-                        public void onTabSelected(TabLayout.Tab tab) {
-                            System.out.println("tabSelectedListener: tab " + tab.getPosition());
-                        }
-
-                        @Override
-                        public void onTabUnselected(TabLayout.Tab tab) {
-
-                        }
-
-                        @Override
-                        public void onTabReselected(TabLayout.Tab tab) {
-
-                        }
-                    });
-                }, throwable -> {
-                    Log.d("GET_ACCOUNT_CHARACTERS", throwable.getLocalizedMessage());
-                    Snackbar.make(getView(), "Unable to read account data!", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", v -> getAccountCharacters())
-                            .show();
-                });
-
-        compositeDisposable.add(disposable);
+//        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(getContext()).getAccountDAO();
+//        Disposable disposable = mAccountDAO.getAll()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(accounts -> {
+//
+//                    String tempMembershipId = "0";
+//                    String tempMembershipType = "0";
+//                    SharedPreferences savedPrefs = getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
+//                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+//
+//                    for (Account account : accounts) {
+//
+//                        Gson gson = new GsonBuilder().create();
+//                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(account.getValue(), Response_GetAllCharacters.CharacterData.class);
+//
+//                        //only get characters for selectedPlatform
+//                        if (accountCharacter.getMembershipType().equals(selectedPlatform)) {
+//                            System.out.println("forLoop " + account.getKey());
+//                            CharacterDatabaseModel character = new CharacterDatabaseModel(
+//                                    accountCharacter.getMembershipId(),
+//                                    accountCharacter.getCharacterId(),
+//                                    accountCharacter.getMembershipType(),
+//                                    accountCharacter.getClassType(),
+//                                    accountCharacter.getEmblemPath(),
+//                                    accountCharacter.getEmblemBackgroundPath(),
+//                                    accountCharacter.getBaseCharacterLevel(),
+//                                    accountCharacter.getLight()
+//                            );
+//                            tempMembershipId = accountCharacter.getMembershipId();
+//                            tempMembershipType = accountCharacter.getMembershipType();
+//                            charactersList.add(character);
+//                        }
+//
+//                    }
+//
+//                    //Add vault fragment on the end
+//                    CharacterDatabaseModel vault = new CharacterDatabaseModel();
+//                    vault.setMembershipId(tempMembershipId);
+//                    vault.setMembershipType(tempMembershipType);
+//                    vault.setClassType("vault");
+//
+//                    charactersList.add(vault);
+//
+//                    mViewPager.setAdapter(mSectionsPagerAdapter);
+//                    mTabLayout.setupWithViewPager(mViewPager);
+//                    mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+//                        @Override
+//                        public void onTabSelected(TabLayout.Tab tab) {
+//                            System.out.println("tabSelectedListener: tab " + tab.getPosition());
+//                        }
+//
+//                        @Override
+//                        public void onTabUnselected(TabLayout.Tab tab) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onTabReselected(TabLayout.Tab tab) {
+//
+//                        }
+//                    });
+//                }, throwable -> {
+//                    Log.d("GET_ACCOUNT_CHARACTERS", throwable.getLocalizedMessage());
+//                    Snackbar.make(getView(), "Unable to read account data!", Snackbar.LENGTH_INDEFINITE)
+//                            .setAction("Retry", v -> getAccountCharacters())
+//                            .show();
+//                });
+//
+//        compositeDisposable.add(disposable);
     }
 
 }

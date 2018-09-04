@@ -2,6 +2,7 @@ package com.jastley.exodusnetwork;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -42,7 +43,6 @@ import com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment;
 import com.jastley.exodusnetwork.Inventory.fragments.ItemTransferDialogFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
-import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
 import com.jastley.exodusnetwork.checklists.fragments.ChecklistsParentFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGPostsFragment;
@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView;
     DrawerLayout mDrawer;
 
+    MainActivityViewModel mViewModel;
+
     @BindView(R.id.nav_log_in_container) RelativeLayout mLogInContainer;
     @BindView(R.id.nav_log_out_container) RelativeLayout mLogOutContainer;
 
@@ -118,6 +120,9 @@ public class MainActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+
+        getSnackbarMessage();
 
         mDrawer = findViewById(R.id.drawer_layout);
 
@@ -340,13 +345,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-//        TODO: modify pause icon state here
-
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     //catch OAuth token callback
     @Override
@@ -359,258 +357,62 @@ public class MainActivity extends AppCompatActivity
         if (uri != null && uri.toString().startsWith(redirectUri)) {
             final String code = uri.getQueryParameter("code");
 
-            getAccessToken(code);
+//            getAccessToken(code);
 
+            startAuthFlow(code);
         } //callback from browser
 
         else { //not an OAuth callback, check token_age and refresh
 
-            savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-            Long timestamp = savedPrefs.getLong("token_age", 0);
+            checkTokenTime();
 
-            try {
-                timestamp = savedPrefs.getLong("token_age", 0);
-            }
-            catch (Exception e) {
-                System.out.println("No timestamp: " + e);
-            }
-            if (timestamp != 0) {
-                Long hour = 60L * 60L * 1000L;
-                Long now = System.currentTimeMillis();
-                Long timespan = now - timestamp;
-
-                if (timespan > hour) {
-
-                    refreshAccessToken();
-
-                }
-            }
         }
     }
 
-    private void getAccessToken(String code){
-        BungieAPI mBungieAPI = RetrofitHelper.getOAuthRequestBungieAPI(baseURL, this);
+    //1. OAuth starting point after intent callback from browser
+    private void startAuthFlow(String code) {
 
-        Disposable disposable = mBungieAPI.getAccessToken(
-                clientId,
-                clientSecret,
-                "authorization_code",
-                code)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(accessToken -> {
-
-                    try{
-                        SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = savedPrefs.edit();
-
-                        editor.putString("access_token", accessToken.getAccessToken());
-                        editor.putString("refresh_token", accessToken.getRefreshToken());
-                        editor.putLong("token_age", System.currentTimeMillis());
-                        editor.apply();
-
-                        Log.d("ACCESS_TOKEN", accessToken.getAccessToken());
-
-
-                        //We're authorised, now get currentUser player profile
-                        getMembershipsForCurrentUser();
-                    }
-                    catch(Exception e){
-                        Log.d("ACCESS_TOKEN(CALLBACK?)", e.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.activity_main_content), "An error occurred while trying to authorize.", Snackbar.LENGTH_LONG)
-                                .show();
-                    }
-                }, throwable -> {
-                    if(throwable instanceof NoNetworkException) {
-                        Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.activity_main_content), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> refreshAccessToken())
-                                .show();
-                    }
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    public void refreshAccessToken() {
-
-        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-        String refreshToken = savedPrefs.getString("refresh_token", "");
-
-        BungieAPI mBungieAPI = RetrofitHelper.getOAuthRequestBungieAPI( baseURL, this);
-
-        Disposable disposable = mBungieAPI.renewAccessToken(
-                    clientId,
-                    clientSecret,
-                    "refresh_token",
-                    refreshToken)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(accessToken -> {
-
-                    SharedPreferences.Editor editor = savedPrefs.edit();
-
-                    try {
-                        editor.putString("access_token", accessToken.getAccessToken());
-                        editor.putLong("token_age", System.currentTimeMillis());
-                        editor.apply();
-
-                        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
-                        if(fragment != null){
-                            fragment.showSnackbarMessage("Authorization refreshed.");
-                        }
-                        else {
-                            Snackbar.make(findViewById(R.id.activity_main_content), "Authorization refreshed.", Snackbar.LENGTH_LONG)
-                                    .show();
-                        }
-
-                    } catch (Exception e) {
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
-                                .setAction("Retry", v -> refreshAccessToken())
-                                .show();
-                    }
-                }, throwable -> {
-                    if(throwable instanceof NoNetworkException) {
-                        Log.d("OAUTH_REFRESH", throwable.getLocalizedMessage());
-                        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
-                        if(fragment != null){
-                            fragment.showSnackbarMessage("Authorization refreshed.");
-                        }
-                        else {
-                            Snackbar.make(findViewById(R.id.activity_main_content), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Retry", v -> refreshAccessToken())
-                                    .show();
-                        }
-                    }
-                    else {
-                        Snackbar.make(findViewById(R.id.activity_main_content), "Couldn't re-authorise.", Snackbar.LENGTH_LONG)
-                                .setAction("Retry", v -> refreshAccessToken())
-                                .show();
-                    }
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    //AKA getPlayerProfile()
-    private void getMembershipsForCurrentUser() {
-
-        //block UI interaction and show loader while membershipData is being retrieved
         showLoadingDialog("Loading...", "Please wait");
 
-        BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(getApplicationContext(), baseURL);
+        mViewModel.getAccessToken(code);
 
-        Disposable disposable = mBungieAPI.getMembershipsCurrentUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(currentUser -> {
+        //2. if Bungie account has >1 platform linked (PSN/Xbox/Battle.Net), select which one
+        mViewModel.getPlatformSelector().observe(this, platforms -> {
 
-                    if(!currentUser.getErrorCode().equals("1")){
-                        Log.d("GET_CURRENT_USER", currentUser.getMessage());
-                        LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("postsFragment");
-                        if(fragment != null){
-                            fragment.showSnackbarMessage(currentUser.getMessage());
-                        }
-                        else {
-                            Snackbar.make(findViewById(R.id.activity_main_content), currentUser.getMessage(), Snackbar.LENGTH_LONG)
-                                    .show();
-                        }
-                    }
-                    else {
+            if(!platforms.isEmpty()){
+                dismissLoadingFragment();
 
-                        try {
-                            SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = savedPrefs.edit();
+                platformDialog = new PlatformSelectionFragment();
+                Bundle args = new Bundle();
 
-                            int membershipsCount = currentUser.getResponse().getDestinyMemberships().size();
+                args.putStringArrayList("platforms", platforms);
 
-                            String[] memberships = new String[membershipsCount];
-
-                            //store all found membership details
-                            for (int i = 0; i < membershipsCount; i++) {
-
-                                try {
-                                    memberships[i] = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
-                                    editor.putString("membershipType" + memberships[i], memberships[i]);
-                                    editor.putString("membershipId" + memberships[i], currentUser.getResponse().getDestinyMemberships().get(i).getMembershipId());
-
-                                    //sanitise BattleNet displayName for Firebase
-                                    if(currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType().equals("4")){
-
-                                        String displayName = currentUser.getResponse().getBungieNetUser().getBlizzardDisplayName();
-                                        if(displayName.contains("#")){
-                                            displayName = displayName.replace("#", "%23");
-                                            editor.putString("displayName" + memberships[i], displayName);
-                                        }
-                                    }
-                                    //PlayStation/Xbox players
-                                    else {
-                                        editor.putString("displayName" + memberships[i], currentUser.getResponse().getDestinyMemberships().get(i).getDisplayName());
-                                    }
-                                    editor.apply();
-                                }
-                                catch(Exception e){
-                                    Log.d("GET_CURRENT_USER_PARSE", e.getLocalizedMessage());
-                                    Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't update account database.", Snackbar.LENGTH_SHORT)
-                                            .setAction("Action", null)
-                                            .show();
-                                    dismissLoadingFragment();
-                                }
-                            }
-
-                            //ask user to select which platform they want to use
-                            if(membershipsCount > 1) {
-
-                                for (int i = 0; i < membershipsCount; i++) {
-                                    memberships[i] = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
-                                }
-
-                                platformDialog = new PlatformSelectionFragment();
-                                Bundle args = new Bundle();
-                                args.putStringArray("platforms", memberships);
-
-                                platformDialog.setArguments(args);
-                                platformDialog.setCancelable(false);
-                                platformDialog.show(getFragmentManager(), "platformSelectDialog");
-                            }
-
-                            //only one active platform
-                            else {
-                                String membershipType = memberships[0];
-                                editor = savedPrefs.edit();
-                                editor.putString("selectedPlatform", membershipType);
-                                editor.apply();
-
-                                getAllCharacters(membershipType);
-                            }
-
-                        }
-                        catch(Exception e){
-                            Log.d("GET_CURRENT_USER", e.getLocalizedMessage());
-                            Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "Couldn't retrieve membership data.", Snackbar.LENGTH_SHORT)
-                                    .setAction("Action", null)
-                                    .show();
-                            dismissLoadingFragment();
-                        }
-                    }
-                }, throwable -> {
-                    if(throwable instanceof NoNetworkException) {
-                        Log.d("GET_CURRENT_USER", throwable.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> refreshAccessToken())
-                                .show();
-                    }
-                    else {
-
-                        Log.d("GET_CURRENT_USER", throwable.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> getMembershipsForCurrentUser())
-                                .show();
-                    }
-                    dismissLoadingFragment();
-                });
-        compositeDisposable.add(disposable);
+                platformDialog.setArguments(args);
+                platformDialog.setCancelable(false);
+                platformDialog.show(getFragmentManager(), "platformSelectDialog");
+            }
+        });
     }
 
-    //PlatformSelection dialog clickListener
+    private void getSnackbarMessage() {
+        //Snackbar for any errors during OAuth flow
+        mViewModel.getSnackbarMessage().observe(this, snackbarMessage -> {
+
+            dismissLoadingFragment();
+
+            if(snackbarMessage.getMessage() != null) {
+                Snackbar.make(findViewById(R.id.activity_main_content), snackbarMessage.getMessage(), Snackbar.LENGTH_LONG)
+                        .show();
+            }
+            else if(snackbarMessage.getThrowable() != null) {
+                Snackbar.make(findViewById(R.id.activity_main_content), snackbarMessage.getThrowable().getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> onClickLogIn())
+                        .show();
+            }
+        });
+    }
+
+    //3. PlatformSelection dialog clickListener
     @Override
     public void onPlatformSelection(View view, int position, PlatformRVHolder holder) {
 
@@ -618,192 +420,48 @@ public class MainActivity extends AppCompatActivity
 
         platformDialog.dismiss();
 
-        getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = savedPrefs.edit();
-
-        editor.putString("selectedPlatform", selectedPlatform);
-        editor.apply();
-
-        getAllCharacters(selectedPlatform);
-    }
-
-    private void getAllCharacters(String platform) {
-
-        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-        String membershipId = savedPrefs.getString("membershipId"+platform, "");
-
-        BungieAPI mBungieAPI = RetrofitHelper.getAuthBungieAPI(this, baseURL);
-
-        Disposable disposable = mBungieAPI.getAllCharacters(platform, membershipId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(allCharacters -> {
-
-                    //can't use gson because we need the whole characterData obj as a string
-                    JsonObject charactersObj = (JsonObject) allCharacters;
-
-                    if(!charactersObj.get("ErrorCode").getAsString().equals("1")) {
-                        Log.d("GET_ALL_CHARACTERS", charactersObj.get("Message").getAsString());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), charactersObj.get("Message").getAsString(), Snackbar.LENGTH_SHORT)
-                                .setAction("Action", null) //TODO: retry button
-                                .show();
-                    }
-                    else {
-
-                        List<Account> mAccountList = new ArrayList<>();
-                        int count = 0;
-
-                        List<String> emblemIconList = new ArrayList<>();
-
-                        for(Iterator iterator = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().keySet().iterator(); iterator.hasNext(); ) {
-
-                            String key = (String) iterator.next();
-
-                            //create list of characters to store in Room
-                            Account mAccount = new Account();
-                            mAccount.setKey(platform+"character"+count);
-                            mAccount.setValue(charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().toString());
-                            mAccountList.add(mAccount);
-
-                            try{
-                                SharedPreferences.Editor editor = savedPrefs.edit();
-                                String emblemIcon = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemPath").getAsString();
-                                String currentMembershipType = charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("membershipType").getAsString();
-
-                                if(platform.equals(currentMembershipType)){
-                                    emblemIconList.add(emblemIcon);
-                                }
-                                editor.putString(platform+"emblemIcon"+count, emblemIcon);
-                                editor.putString(platform+"emblemBackgroundPath"+count, charactersObj.get("Response").getAsJsonObject().get("characters").getAsJsonObject().get("data").getAsJsonObject().get(key).getAsJsonObject().get("emblemBackgroundPath").getAsString());
-                                editor.apply();
-                            }
-                            catch(Exception e){
-                                Log.d("EMBLEM_PREFS_INSERT", e.getLocalizedMessage());
-                            }
-
-                            //update character count
-                            /** used counter instead of classType in keys because players can have more than one of the same classType **/
-                            count++;
-                        }
-
-                        //Insert into Room
-                        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
-                        mAccountDAO.insertAll(mAccountList);
-
-                        //Get back onto mainThread to do UI stuff
-                        Handler mainHandler = new Handler(Looper.getMainLooper());
-                        Runnable mRunnable = () -> {
-                            downloadEmblems(emblemIconList);
-                        };
-                        mainHandler.post(mRunnable);
-
-                    }
-
-                }, throwable -> {
-                    if(throwable instanceof NoNetworkException) {
-                        Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), "No network detected!", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> getAllCharacters(platform))
-                                .show();
-                    }
-                    else {
-                        Log.d("GET_ALL_CHARACTERS_ERR", throwable.getLocalizedMessage());
-                        Snackbar.make(findViewById(R.id.coordinator_lfg_posts), throwable.getLocalizedMessage(), Snackbar.LENGTH_SHORT)
-                                .setAction("Action", null)
-                                .show();
-                    }
-                    dismissLoadingFragment();
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    private void downloadEmblems(List<String> emblems) {
-
-        View hView =  navigationView.getHeaderView(0);
-
-        for (int i = 0; i < emblems.size(); i++) {
-
-            final int finalI = i;
-
-            Target target = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                    try{
-                        File dir = getDir("emblems", MODE_PRIVATE);
-                        if(!dir.exists()){
-                            dir.mkdir();
-                        }
-
-                        File path = new File(dir, finalI +".jpeg");
-                        //delete file if already exists, player may have updated their emblem so we need the new one
-                        if(path.exists()){
-                            if(path.delete()){
-                                Log.d("EMBLEM_DOWNLOAD_DELETE", path.toString() + " deleted.");
-                            }
-                        }
-                        FileOutputStream fos = new FileOutputStream(path);
-                        int quality = 100;
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
-                        fos.flush();
-                        fos.close();
-
-                        Log.d("EMBLEM_DOWNLOADED", String.valueOf(finalI));
-
-                        if(finalI == emblems.size() -1){
-                            targets = null;
-
-                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//        getSharedPreferences("saved_prefs", Activity.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = savedPrefs.edit();
 //
-                            //set flags so pressing back won't trigger previous state of MainActivity
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                    catch(Exception e){
-                        Log.d("EMBLEM_DOWNLOAD", e.getLocalizedMessage());
-                    }
-                }
+//        editor.putString("selectedPlatform", selectedPlatform);
+//        editor.apply();
+        mViewModel.writeToSharedPrefs("selectedPlatform", selectedPlatform);
 
-                @Override
-                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                    Log.d("PICASSO_EMBLEM_DOWNLOAD", e.getLocalizedMessage());
-                    int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
+        //4.
+        getAllCharacterData(selectedPlatform);
+    }
 
-                    ImageView emblemIcon = hView.findViewById(resID);
-                    Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
-
-                    RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
-                    roundedDrawable.setCircular(true);
-                    emblemIcon.setImageDrawable(roundedDrawable);
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    int resID = getResources().getIdentifier("character_header_icon_"+finalI, "id", getPackageName());
-
-                    ImageView emblemIcon = hView.findViewById(resID);
-                    Bitmap missingPlaceholder = BitmapFactory.decodeResource(getResources(), R.drawable.missing_icon_d2);
-
-                    RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), missingPlaceholder);
-                    roundedDrawable.setCircular(true);
-                    emblemIcon.setImageDrawable(roundedDrawable);
-                }
-            };
-
-            targets.add(target);
-
-            Picasso.get()
-                    .load(baseURL + emblems.get(finalI))
-                    .into(target);
+    private void checkTokenTime() {
+        if(mViewModel.checkIsTokenExpired()) {
+            mViewModel.refreshAccessToken();
         }
+    }
 
-        toggleFab();
-//        updateNavUI(hView);
-        dismissLoadingFragment();
+    //4. Get all character data for selected platform
+    private void getAllCharacterData(String mType) {
+
+        showLoadingDialog("Loading...", "Getting character data");
+
+        mViewModel.getAllCharacters(mType);
+
+        //5. Download emblem icons and finalise OAuth/account retrieval flow
+        mViewModel.getEmblemDownload().observe(this, emblems -> {
+            if(emblems.isComplete()) {
+
+                dismissLoadingFragment();
+
+                //Restart activity to update UI state
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+
+                //set flags so pressing back won't trigger previous state of MainActivity
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
 
     }
+
 
 
     private void dismissLoadingFragment() {
@@ -879,13 +537,13 @@ public class MainActivity extends AppCompatActivity
 //                    .addToBackStack("inventoryFragment")
                         .commit();
 
-            case R.id.nav_refresh_auth:
-                refreshAccessToken();
-                break;
-
-            case R.id.nav_refresh_account:
-                getMembershipsForCurrentUser();
-                break;
+//            case R.id.nav_refresh_auth:
+//                refreshAccessToken();
+//                break;
+//
+//            case R.id.nav_refresh_account:
+//                getMembershipsForCurrentUser();
+//                break;
 
             case R.id.nav_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
@@ -956,6 +614,9 @@ public class MainActivity extends AppCompatActivity
 
         Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
         startActivity(oauthIntent);
+
+
+
     }
 
     @OnClick(R.id.nav_log_out_container)
@@ -964,13 +625,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
-        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(this).getAccountDAO();
-
-        AsyncTask.execute(mAccountDAO::deleteAccount);
-
-        SharedPreferences.Editor editor = savedPrefs.edit();
-        editor.clear();
-        editor.apply();
+        mViewModel.logOut();
 
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
 

@@ -39,7 +39,7 @@ public class ItemInspectFragment extends Fragment {
     @BindView(R.id.item_inspect_perks_recycler) RecyclerView itemPerksRecyclerView;
     @BindView(R.id.item_inspect_description) TextView itemDescription;
     @BindView(R.id.item_type) TextView itemType;
-//    @BindView(R.id.item_inspect_itemname) TextView itemName;
+    @BindView(R.id.item_name) TextView itemName;
     private StatValuesRecyclerAdapter statAdapter;
     private PerksModsRecyclerAdapter modsAdapter;
     private PerksModsRecyclerAdapter perksAdapter;
@@ -85,6 +85,7 @@ public class ItemInspectFragment extends Fragment {
 
         mViewModel = ViewModelProviders.of(getActivity()).get(XurViewModel.class);
 
+        displayModelDetails();
         getItemDetails();
     }
 
@@ -102,15 +103,7 @@ public class ItemInspectFragment extends Fragment {
     private void getItemDetails() {
 
         ((MainActivity) getActivity())
-                .setActionBarTitle(mViewModel.getItemDetailsModel().getItemName());
-
-        itemDescription.setText(mViewModel.getItemDetailsModel().getDescription());
-        itemType.setText(mViewModel.getItemDetailsModel().getItemTypeDisplayName());
-
-        Picasso.get()
-                .load(baseURL + mViewModel.getItemDetailsModel().getItemIcon())
-                .placeholder(R.drawable.missing_icon_d2)
-                .into(itemIcon);
+                .setActionBarTitle(getString(R.string.item_details));
 
         mViewModel.getInventoryItemData().observe(this, data -> {
             Picasso.get()
@@ -147,6 +140,17 @@ public class ItemInspectFragment extends Fragment {
                 modsAdapter.setListData(mods.getSocketModelList());
             }
         });
+    }
+
+    private void displayModelDetails() {
+        itemDescription.setText(mViewModel.getItemDetailsModel().getDescription());
+        itemName.setText(mViewModel.getItemDetailsModel().getItemName());
+        itemType.setText(mViewModel.getItemDetailsModel().getItemTypeDisplayName());
+
+        Picasso.get()
+                .load(baseURL + mViewModel.getItemDetailsModel().getItemIcon())
+                .placeholder(R.drawable.missing_icon_d2)
+                .into(itemIcon);
     }
 
 

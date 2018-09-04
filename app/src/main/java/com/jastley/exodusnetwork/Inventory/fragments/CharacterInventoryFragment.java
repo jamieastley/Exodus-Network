@@ -251,9 +251,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     @Override
     public void onAuthFail() {
-        Snackbar.make(getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
-                .show();
+//        Snackbar.make(getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
+//                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+//                .show();
     }
 
     @Override
@@ -468,9 +468,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
                 }, throwable -> {
                     if(throwable instanceof HttpException){
-                        Snackbar.make(getParentFragment().getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
-                                .show();
+//                        Snackbar.make(getParentFragment().getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+//                                .show();
                     }
                     else {
                         Log.d("GET_CHARACTER_INVENTORY", throwable.getMessage());

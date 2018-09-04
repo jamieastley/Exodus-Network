@@ -182,6 +182,8 @@
     <string name="raid_lairs">Raid Lairs</string>
     <string name="item_collection">Item Collection</string>
     <string name="checklist_icon">Checklist Icon</string>
+    <string name="item_details">Item Details</string>
+    <string name="viewAccounts">View account data in database</string>
 
 
 </resources>
