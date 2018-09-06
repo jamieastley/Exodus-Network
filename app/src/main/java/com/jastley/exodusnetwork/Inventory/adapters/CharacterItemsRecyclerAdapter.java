@@ -47,27 +47,38 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
     @Override
     public void onBindViewHolder(CharacterItemsViewHolder holder, int position) {
 
-        holder.setItemName(itemList.get(position).getDisplayProperties().getName());
-        holder.setItemHash(itemList.get(position).getItemData().getItemHash());
-        holder.setItemImage(itemList.get(position).getDisplayProperties().getIcon());
+        holder.setIsEquipped(itemList.get(position).getIsEquipped());
+        holder.setCanEquip(itemList.get(position).getCanEquip());
+        holder.setItemName(itemList.get(position).getItemName());
+        holder.setItemHash(itemList.get(position).getItemHash());
+        holder.setItemImage(itemList.get(position).getItemIcon());
+        holder.setPrimaryStatValue(itemList.get(position).getPrimaryStatValue());
+        holder.setItemInstanceId(itemList.get(position).getItemInstanceId());
+        holder.setBucketHash(itemList.get(position).getBucketHash());
+        holder.setItemTypeDisplayName(itemList.get(position).getItemTypeDisplayName());
+        holder.setModifierIcon(itemList.get(position).getDamageType());
 
-        try {
-            holder.setPrimaryStatValue(itemList.get(position).getInstanceData().getPrimaryStat().getValue());
-            holder.setModifierIcon(itemList.get(position).getInstanceData().getDamageType());
-        }
-        catch(Exception e) {
-            Log.e("INVENTORY_VIEWHOLDER", e.getLocalizedMessage());
-        }
-
-        try {
-            holder.setItemInstanceId(itemList.get(position).getItemData().getItemInstanceId());
-            holder.setIsEquipped(itemList.get(position).getInstanceData().getIsEquipped());
-            holder.setCanEquip(itemList.get(position).getInstanceData().getCanEquip());
-        }
-        catch(Exception e){
-            Log.e("INVENTORY_VIEWHOLDER", e.getLocalizedMessage());
-        }
-        holder.setBucketHash(itemList.get(position).getItemData().getBucketHash());
+//        holder.setItemName(itemList.get(position).getDisplayProperties().getName());
+//        holder.setItemHash(itemList.get(position).getItemData().getItemHash());
+//        holder.setItemImage(itemList.get(position).getDisplayProperties().getIcon());
+//
+//        try {
+//            holder.setPrimaryStatValue(itemList.get(position).getInstanceData().getPrimaryStat().getValue());
+//            holder.setModifierIcon(itemList.get(position).getInstanceData().getDamageType());
+//        }
+//        catch(Exception e) {
+//            Log.e("INVENTORY_VIEWHOLDER", e.getLocalizedMessage());
+//        }
+//
+//        try {
+//            holder.setItemInstanceId(itemList.get(position).getItemData().getItemInstanceId());
+//            holder.setIsEquipped(itemList.get(position).getInstanceData().getIsEquipped());
+//            holder.setCanEquip(itemList.get(position).getInstanceData().getCanEquip());
+//        }
+//        catch(Exception e){
+//            Log.e("INVENTORY_VIEWHOLDER", e.getLocalizedMessage());
+//        }
+//        holder.setBucketHash(itemList.get(position).getItemData().getBucketHash());
 //        holder.setItemTypeDisplayName(itemList.get(position).getInventoryItem().getItemTypeDisplayName());
 
     }

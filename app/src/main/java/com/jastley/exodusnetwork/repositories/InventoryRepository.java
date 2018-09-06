@@ -3,6 +3,7 @@ package com.jastley.exodusnetwork.repositories;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.jastley.exodusnetwork.Definitions;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
@@ -136,11 +137,29 @@ public class InventoryRepository {
 
                             InventoryItemModel itemModel = new InventoryItemModel();
 
-                            itemModel.setItemData(item);
+                            String id = null;
+
+                            itemModel.setItemHash(item.getItemHash());
+                            itemModel.setPrimaryKey(UnsignedHashConverter.getPrimaryKey(item.getItemHash()));
+                            itemModel.setBucketHash(item.getBucketHash());
+                            itemModel.setSlot(Definitions.sortBuckets(item.getBucketHash()));
 
                             if(item.getItemInstanceId()!= null) {
-                                String id = item.getItemInstanceId();
-                                itemModel.setInstanceData(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id));
+                                id = item.getItemInstanceId();
+                                itemModel.setItemInstanceId(item.getItemInstanceId());
+
+                                if(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getDamageType() != null) {
+                                    itemModel.setDamageType(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getDamageType());
+                                }
+                                itemModel.setIsEquipped(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
+                                itemModel.setCanEquip(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
+                            }
+
+                            try {
+                                itemModel.setPrimaryStatValue(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat().getValue());
+                            }
+                            catch(Exception e) {
+                                Log.e("INVENTORY_ITEMS", e.getLocalizedMessage());
                             }
 
                             itemModel.setSlot(Definitions.sortBuckets(item.getBucketHash()));
@@ -155,22 +174,49 @@ public class InventoryRepository {
                             itemHashList.add(UnsignedHashConverter.getPrimaryKey(equippedItem.getItemHash()));
 
                             InventoryItemModel itemModel = new InventoryItemModel();
-                            itemModel.setItemData(equippedItem);
 
-                            if(equippedItem.getItemInstanceId() != null) {
+
+                            itemModel.setItemHash(equippedItem.getItemHash());
+                            itemModel.setPrimaryKey(UnsignedHashConverter.getPrimaryKey(equippedItem.getItemHash()));
+                            itemModel.setBucketHash(equippedItem.getBucketHash());
+                            itemModel.setSlot(Definitions.sortBuckets(equippedItem.getBucketHash()));
+
+                            if(equippedItem.getItemInstanceId()!= null) {
                                 String id = equippedItem.getItemInstanceId();
-                                itemModel.setInstanceData(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id));
+                                itemModel.setItemInstanceId(equippedItem.getItemInstanceId());
+
+                                if(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getDamageType() != null) {
+                                    itemModel.setDamageType(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getDamageType());
+                                }
+                                if(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat() != null) {
+                                    itemModel.setPrimaryStatValue(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat().getValue());
+                                }
+                                itemModel.setIsEquipped(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
+                                itemModel.setCanEquip(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
+
+
                             }
 
                             itemModel.setSlot(Definitions.sortBuckets(equippedItem.getBucketHash()));
                             itemList.add(itemModel);
+
+//                            itemHashList.add(UnsignedHashConverter.getPrimaryKey(equippedItem.getItemHash()));
+//
+//                            InventoryItemModel itemModel = new InventoryItemModel();
+//                            itemModel.setItemData(equippedItem);
+//
+//                            if(equippedItem.getItemInstanceId() != null) {
+//                                String id = equippedItem.getItemInstanceId();
+//                                itemModel.setInstanceData(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id));
+//                            }
+//
+//                            itemModel.setSlot(Definitions.sortBuckets(equippedItem.getBucketHash()));
+//                            itemList.add(itemModel);
                         }
 
                         //Sort lists by primary key value
                         Collections.sort(itemHashList, ((s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1))));
-                        Collections.sort(itemList, (inventoryItemModel, t1) ->
-                                Long.valueOf(UnsignedHashConverter.getPrimaryKey(inventoryItemModel.getItemData().getItemHash()))
-                                        .compareTo(Long.valueOf(UnsignedHashConverter.getPrimaryKey(t1.getItemData().getItemHash()))));
+                        Collections.sort(itemList, (inventoryItemModel, t1) -> Long.valueOf(inventoryItemModel.getPrimaryKey()).compareTo(Long.valueOf(t1.getPrimaryKey())));
 
                         getManifestData(characterSlot, itemHashList, itemList);
 
@@ -198,26 +244,37 @@ public class InventoryRepository {
 
         Disposable disposable = manifestDatabase.getInventoryItemDAO()
                 .getItemsListByKey(hashes)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe(definitions -> {
 
                     //iterate through all database results
-                    for(DestinyInventoryItemDefinition definitionData : definitions) {
+//                    for(DestinyInventoryItemDefinition definitionData : definitions) {
+                    for(int k = 0; k < definitions.size(); k++) {
 
-                        int pos = definitions.indexOf(definitionData);
+//                        int pos = definitions.indexOf(definitionData);
 
                         //iterate through each item acquired from API
                         for(int i = 0; i < itemList.size(); i++) {
 
-                            if(itemList.get(i).getItemData().getItemHash().equals(definitionData.getValue().getHash())) {
-                                itemList.get(i).setDisplayProperties(definitionData.getValue().getDisplayProperties());
+                            if(itemList.get(i).getItemHash().equals(definitions.get(k).getValue().getHash())) {
+//                                itemList.get(i).setDisplayProperties(definitionData.getValue().getDisplayProperties());
+                                itemList.get(i).setItemName(definitions.get(k).getValue().getDisplayProperties().getName());
+                                itemList.get(i).setItemTypeDisplayName(definitions.get(k).getValue().getItemTypeDisplayName());
+                                try{
+                                    Log.d("InventoryAPIListHash: ", itemList.get(i).getItemHash());
+                                    Log.d("ManifestItemHash: ", definitions.get(k).getValue().getHash());
+                                    itemList.get(i).setItemIcon(definitions.get(k).getValue().getDisplayProperties().getIcon());
+                                }
+                                catch(Exception e){
+                                    Log.d("getManifestData: ", e.getLocalizedMessage());
+                                }
                             }
                         }
                     }
 
                     //Sort by item type so it's ready to display
-                    Collections.sort(itemList, (inventoryItemModel, t1) -> inventoryItemModel.getSlot() - t1.getSlot());
+//                    Collections.sort(itemList, (inventoryItemModel, t1) -> inventoryItemModel.getSlot() - t1.getSlot());
                     switch (characterSlot){
                         case 0:
                             firstSlotInventory.postValue(new InventoryItemModel(itemList));
@@ -281,20 +338,38 @@ public class InventoryRepository {
                         List<InventoryItemModel> itemList = new ArrayList<>();
 
                         /**no equipment in vault, just get all items from getProfileInventory(), NOT getInventory() */
-                        for(Response_GetCharacterInventory.Items vaultItem : vaultItems.getResponse().getProfileInventory().getData().getItems()) {
-
-                            itemHashList.add(UnsignedHashConverter.getPrimaryKey(vaultItem.getItemHash()));
+//                        for(Response_GetCharacterInventory.Items vaultItem : vaultItems.getResponse().getProfileInventory().getData().getItems()) {
+                            for(int i = 0; i < vaultItems.getResponse().getProfileInventory().getData().getItems().size(); i++) {
+                            itemHashList.add(UnsignedHashConverter.getPrimaryKey(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash()));
 
                             InventoryItemModel itemModel = new InventoryItemModel();
 
-                            itemModel.setItemData(vaultItem);
+//                            itemModel.setItemData(vaultItem);
 
-                            if(vaultItem.getItemInstanceId() != null) {
-                                String id = vaultItem.getItemInstanceId();
-                                itemModel.setInstanceData(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id));
+                            itemModel.setItemHash(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash());
+                            itemModel.setPrimaryKey(UnsignedHashConverter.getPrimaryKey(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash()));
+                            itemModel.setBucketHash(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
+                            itemModel.setSlot(Definitions.sortBuckets(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
+
+                            if(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+                                String id = vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
+                                itemModel.setItemInstanceId(id);
+
+                                if(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getDamageType() != null) {
+                                    itemModel.setDamageType(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getDamageType());
+                                }
+                                if(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat() != null) {
+                                    itemModel.setPrimaryStatValue(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat().getValue());
+                                }
+
+                                itemModel.setIsEquipped(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
+                                itemModel.setCanEquip(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
+
                             }
 
-                            itemModel.setSlot(Definitions.sortBuckets(vaultItem.getBucketHash()));
+
+
+                            itemModel.setSlot(Definitions.sortBuckets(vaultItems.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
                             itemList.add(itemModel);
 
                             //Sort list by primary key value
@@ -302,8 +377,7 @@ public class InventoryRepository {
 
                             //Sort itemlist based on alphanumeric value of converted primary keys
                             Collections.sort(itemList, (inventoryItemModel, t1) ->
-                                Long.valueOf(UnsignedHashConverter.getPrimaryKey(inventoryItemModel.getItemData().getItemHash()))
-                                    .compareTo(Long.valueOf(UnsignedHashConverter.getPrimaryKey(t1.getItemData().getItemHash()))));
+                                    Long.valueOf(inventoryItemModel.getPrimaryKey()).compareTo(Long.valueOf(t1.getPrimaryKey())));
 
                             getManifestData(characterSlot, itemHashList, itemList);
                         }

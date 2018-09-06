@@ -85,7 +85,7 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
             }
         }
 
-        if(mSelectedItem.getInstanceData().getCanEquip()) {
+        if(mSelectedItem.getCanEquip()) {
             holder.setDisabled();
         }
     }
