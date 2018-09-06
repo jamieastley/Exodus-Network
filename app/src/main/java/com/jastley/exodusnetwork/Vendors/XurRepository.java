@@ -7,7 +7,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.jastley.exodusnetwork.Definitions;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.Vendors.models.SocketModel;
@@ -18,14 +17,11 @@ import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.StatDefinitionDAO;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemData;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 import com.jastley.exodusnetwork.database.jsonModels.StatDefinitionData;
-import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyStatDefinition;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,11 +33,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
-import static com.jastley.exodusnetwork.Definitions.armorModsSockets;
-import static com.jastley.exodusnetwork.Definitions.armorPerksSockets;
 import static com.jastley.exodusnetwork.Definitions.theNine;
-import static com.jastley.exodusnetwork.Definitions.weaponModsSockets;
-import static com.jastley.exodusnetwork.Definitions.weaponPerksSockets;
 import static com.jastley.exodusnetwork.api.apiKey.braytechApiKey;
 
 @Singleton
@@ -53,7 +45,7 @@ public class XurRepository {
     private XurVendorModel vendorModel;
 
     //Item inspection data
-    private MutableLiveData<InventoryItemData> inventoryItemJsonData = new MutableLiveData<>();
+    private MutableLiveData<InventoryItemJsonData> inventoryItemJsonData = new MutableLiveData<>();
     private MutableLiveData<SocketModel> perksLiveData = new MutableLiveData<>();
     private MutableLiveData<SocketModel> modsLiveData = new MutableLiveData<>();
     private MutableLiveData<SocketModel.InvestmentStats> statsLiveData = new MutableLiveData<>();
@@ -93,60 +85,65 @@ public class XurRepository {
         Disposable disposable = retrofit.create(BungieAPI.class).getXurWeeklyInventory(braytechApiKey, "history", "xur")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response_getXurWeekly -> {
+                .subscribe(xurData -> {
 
-                            if(!response_getXurWeekly.getResponse().getStatus().equals("200")) {
-                                xurLiveDataList.postValue(new Response_GetXurWeekly(response_getXurWeekly.getResponse().getMessage()));
+                            if(!xurData.getResponse().getStatus().equals("200")) {
+                                xurLiveDataList.postValue(new Response_GetXurWeekly(xurData.getResponse().getMessage()));
                             }
                             else {
 
                                 xurItemsList.clear();
 
                                 try {
-                                    String region = response_getXurWeekly.getResponse().getData().getLocation().getRegion();
+                                    String region = xurData.getResponse().getData().getLocation().getRegion();
                                     if(region.contains("&rsquo;")){
                                         region = region.replace("&rsquo;", "'");
                                     }
 
-                                    vendorModel = new XurVendorModel(response_getXurWeekly.getResponse().getData().getLocation().getWorld(),
+                                    vendorModel = new XurVendorModel(xurData.getResponse().getData().getLocation().getWorld(),
                                             region,
-                                            response_getXurWeekly.getResponse().getData().getLocation().getId());
+                                            xurData.getResponse().getData().getLocation().getId());
 
-                                    int listSize = response_getXurWeekly.getResponse().getData().getItems().size();
+//                                    int listSize = response_getXurWeekly.getResponse().getData().getItems().size();
+//
+//                                    Response_GetXurWeekly.Items itemList = new Response_GetXurWeekly.Items();
+//                                    itemList.
+//
+//                                    //add all items to List<>
+//                                    for(int i = 0; i < listSize; i++){
+//
+//                                        InventoryItemJsonData xurItem = new InventoryItemJsonData();
+//
+//                                        xurItem.setDisplayProperties(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties());
+//                                        xurItem.setItemName(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getName());
+//                                        xurItem.setItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getIcon());
+//                                        xurItem.setItemHash(response_getXurWeekly.getResponse().getData().getItems().get(i).getHash());
+//                                        xurItem.setItemTypeDisplayName(response_getXurWeekly.getResponse().getData().getItems().get(i).getItemTypeDisplayName());
+//                                        xurItem.setSaleHistoryCount(response_getXurWeekly.getResponse().getData().getItems().get(i).getSalesCount());
+//                                        xurItem.setDescription(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getDescription());
+//
+//                                        try{ //if item has a cost
+//                                            xurItem.setCostItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getIcon());
+//                                            xurItem.setCostsQuantity(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getQuantity());
+//                                        }
+//                                        catch(Exception er){
+//                                            Log.e("XUR_COST: ", er.getMessage());
+//                                        }
+//
+//                                        try{
+//                                            xurItem.setEquippingBlock(response_getXurWeekly.getResponse().getData().getItems().get(i).getEquippingBlock().getDisplayStrings().get(0));
+//                                        }
+//                                        catch(Exception e){
+//                                            Log.e("XUR_EQUIP_BLOCK", String.valueOf(i));
+//                                        }
+//
+//                                        xurItemsList.add(xurItem);
+//
+//                                    }//end for loop
 
-
-                                    //add all items to List<>
-                                    for(int i = 0; i < listSize; i++){
-
-                                        InventoryItemModel xurItem = new InventoryItemModel();
-
-                                        xurItem.setItemName(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getName());
-                                        xurItem.setItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getIcon());
-                                        xurItem.setItemHash(response_getXurWeekly.getResponse().getData().getItems().get(i).getHash());
-                                        xurItem.setItemTypeDisplayName(response_getXurWeekly.getResponse().getData().getItems().get(i).getItemTypeDisplayName());
-                                        xurItem.setSaleHistoryCount(response_getXurWeekly.getResponse().getData().getItems().get(i).getSalesCount());
-                                        xurItem.setDescription(response_getXurWeekly.getResponse().getData().getItems().get(i).getDisplayProperties().getDescription());
-
-                                        try{ //if item has a cost
-                                            xurItem.setCostItemIcon(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getIcon());
-                                            xurItem.setCostsQuantity(response_getXurWeekly.getResponse().getData().getItems().get(i).getCost().getQuantity());
-                                        }
-                                        catch(Exception er){
-                                            Log.e("XUR_COST: ", er.getMessage());
-                                        }
-
-                                        try{
-                                            xurItem.setEquippingBlock(response_getXurWeekly.getResponse().getData().getItems().get(i).getEquippingBlock().getDisplayStrings().get(0));
-                                        }
-                                        catch(Exception e){
-                                            Log.e("XUR_EQUIP_BLOCK", String.valueOf(i));
-                                        }
-
-                                        xurItemsList.add(xurItem);
-
-                                    }//end for loop
-
-                                    xurLiveDataList.postValue(new Response_GetXurWeekly(xurItemsList));
+                                    if(!xurData.getResponse().getData().getItems().isEmpty()) {
+                                        xurLiveDataList.postValue(new Response_GetXurWeekly(xurData.getResponse().getData().getItems()));
+                                    }
                                     getLocationBanner(vendorModel);
                                 }
                                 catch(Exception e) {
@@ -214,7 +211,7 @@ public class XurRepository {
         return statsLiveData;
     }
 
-    public LiveData<InventoryItemData> getInventoryItemData(String key) {
+    public LiveData<InventoryItemJsonData> getInventoryItemData(String key) {
 
         String itemHash = UnsignedHashConverter.getPrimaryKey(key);
 
@@ -225,7 +222,7 @@ public class XurRepository {
 
                     //Map item retrieved from DB to model class
                     try{
-//                        InventoryItemData jsonData = gson.fromJson(destinyInventoryItemDefinition.getValue(), InventoryItemData.class);
+//                        InventoryItemJsonData jsonData = gson.fromJson(destinyInventoryItemDefinition.getValue(), InventoryItemJsonData.class);
 //
 //                        //trigger observer to get basic info (name/screenshot)
 //                        inventoryItemJsonData.postValue(jsonData);
@@ -286,7 +283,7 @@ public class XurRepository {
 //
 //                        //Get stat values
 //                        int positionCount = 1;
-//                        for (InventoryItemData.InvestmentStats statValue : jsonData.getInvestmentStatsList()) {
+//                        for (InventoryItemJsonData.InvestmentStats statValue : jsonData.getInvestmentStatsList()) {
 //
 //                            if(statValue.getValue() != 0){
 //                                statHashes.add(UnsignedHashConverter.getPrimaryKey(statValue.getStatTypeHash()));
@@ -326,7 +323,7 @@ public class XurRepository {
 
                     try {
 //                        for(DestinyInventoryItemDefinition item: plugList) {
-//                            InventoryItemData itemData = gson.fromJson(item.getValue(), InventoryItemData.class);
+//                            InventoryItemJsonData itemData = gson.fromJson(item.getValue(), InventoryItemJsonData.class);
 //
 //                            for (int i = 0; i < perksModelList.size(); i++) {
 //                                if(itemData.getHash().equals(perksModelList.get(i).getPlugItemHash())) {
@@ -359,7 +356,7 @@ public class XurRepository {
 
                     try {
 //                        for(DestinyInventoryItemDefinition item: plugList) {
-////                            InventoryItemData itemData = gson.fromJson(item.getValue(), InventoryItemData.class);
+////                            InventoryItemJsonData itemData = gson.fromJson(item.getValue(), InventoryItemJsonData.class);
 ////
 ////                            for (int i = 0; i < modsModelList.size(); i++) {
 ////                                if(itemData.getHash().equals(modsModelList.get(i).getPlugItemHash())) {

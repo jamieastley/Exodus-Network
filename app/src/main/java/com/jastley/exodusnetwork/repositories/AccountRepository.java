@@ -281,16 +281,17 @@ public class AccountRepository {
                             //iterate through each character found
                             for (String key : allCharacters.getResponse().getCharacters().getData().keySet()) {
 
-                                String characterData = gson.toJson(allCharacters.getResponse().getCharacters().getData().get(key));
+//                                String characterData = gson.toJson(allCharacters.getResponse().getCharacters().getData().get(key));
 
                                 //CharacterId
                                 //Create Room object for each character under selected platform
                                 Account account = new Account();
                                 account.setKey(mType + "character" + counter);
-                                account.setValue(characterData);
+                                account.setValue(allCharacters.getResponse().getCharacters().getData().get(key));
                                 accountList.add(account);
 
                                 try {
+                                    String characterId = allCharacters.getResponse().getCharacters().getData().get(key).getCharacterId();
                                     String emblemIcon = allCharacters.getResponse().getCharacters().getData().get(key).getEmblemPath();
                                     String emblemBackground = allCharacters.getResponse().getCharacters().getData().get(key).getEmblemBackgroundPath();
                                     emblemIconList.add(emblemIcon);
@@ -298,6 +299,7 @@ public class AccountRepository {
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString(mType + "emblemIcon" + counter, emblemIcon);
                                     editor.putString(mType + "emblemBackgroundPath" + counter, emblemBackground);
+                                    editor.putString(mType+"characterId"+counter, characterId);
                                     editor.apply();
 
                                 } catch (Exception e) {

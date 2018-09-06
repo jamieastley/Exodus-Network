@@ -10,10 +10,11 @@ public class Response_GetXurWeekly {
 
     private List<InventoryItemModel> itemList;
     private String errorMessage;
+    private List<Items> xurItems;
 
     //Response successful
-    public Response_GetXurWeekly(List<InventoryItemModel> itemList) {
-        this.itemList = itemList;
+    public Response_GetXurWeekly(List<Items> itemList) {
+        this.xurItems = itemList;
         this.errorMessage = null;
     }
 
@@ -31,8 +32,8 @@ public class Response_GetXurWeekly {
         this.errorMessage = errorMessage;
     }
 
-    public List<InventoryItemModel> getItemList() {
-        return itemList;
+    public List<Items> getItemList() {
+        return xurItems;
     }
 
     public void setItemList(List<InventoryItemModel> itemList) {
@@ -351,4 +352,7 @@ public class Response_GetXurWeekly {
         }
     }
 
+    public void setXurItems(List<Items> xurItems) {
+        this.xurItems = xurItems;
+    }
 }

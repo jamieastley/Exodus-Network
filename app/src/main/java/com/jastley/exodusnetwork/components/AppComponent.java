@@ -1,6 +1,7 @@
 package com.jastley.exodusnetwork.components;
 
 import com.jastley.exodusnetwork.Account.viewmodels.AccountStatsViewModel;
+import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.MainActivityViewModel;
 import com.jastley.exodusnetwork.Milestones.viewmodels.MilestoneViewModel;
 import com.jastley.exodusnetwork.Vendors.XurRepository;
@@ -18,6 +19,7 @@ import com.jastley.exodusnetwork.onboarding.OnBoardingViewModel;
 import com.jastley.exodusnetwork.repositories.AccountRepository;
 import com.jastley.exodusnetwork.repositories.AccountStatsRepository;
 import com.jastley.exodusnetwork.repositories.ChecklistsRepository;
+import com.jastley.exodusnetwork.repositories.InventoryRepository;
 import com.jastley.exodusnetwork.repositories.LFGRepository;
 import com.jastley.exodusnetwork.repositories.ManifestRepository;
 import com.jastley.exodusnetwork.repositories.MilestoneRepository;
@@ -54,4 +56,7 @@ public interface AppComponent {
 
     void inject(ManifestRepository manifestRepository);
     void inject(ManifestViewModel manifestViewModel);
+
+    void inject(InventoryViewModel inventoryViewModel);
+    void inject(InventoryRepository inventoryRepository);
 }

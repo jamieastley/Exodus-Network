@@ -9,7 +9,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.jastley.exodusnetwork.database.converters.InventoryItemDefinitionConverter;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemData;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
 /**
  * Created by jamie on 9/4/18.
@@ -25,7 +25,7 @@ public class DestinyInventoryItemDefinition implements Parcelable {
     private String id;
 
     @ColumnInfo(name = "json")
-    private InventoryItemData value;
+    private InventoryItemJsonData value;
 
     public String getId() {
         return id;
@@ -35,11 +35,11 @@ public class DestinyInventoryItemDefinition implements Parcelable {
         this.id = id;
     }
 
-    public InventoryItemData getValue() {
+    public InventoryItemJsonData getValue() {
         return value;
     }
 
-    public void setValue(InventoryItemData value) {
+    public void setValue(InventoryItemJsonData value) {
         this.value = value;
     }
 

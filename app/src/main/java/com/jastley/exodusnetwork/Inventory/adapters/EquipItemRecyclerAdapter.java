@@ -10,6 +10,7 @@ import com.jastley.exodusnetwork.Inventory.interfaces.EquipSelectListener;
 import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
         holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
         holder.setClassType(mCharacters.get(position).getClassType());
 
-        if(mSelectedItem.getCanEquip()) {
+        if(mSelectedItem.getInstanceData().getCanEquip()) {
             holder.setDisabled();
         }
         //if user selected characters' sub-class

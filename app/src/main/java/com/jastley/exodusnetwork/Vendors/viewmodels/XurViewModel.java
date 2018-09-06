@@ -6,13 +6,12 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
-import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.Vendors.XurRepository;
 import com.jastley.exodusnetwork.Vendors.models.SocketModel;
 import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;
 import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
 import com.jastley.exodusnetwork.app.App;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemData;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
 import javax.inject.Inject;
 
@@ -24,7 +23,7 @@ public class XurViewModel extends AndroidViewModel {
     private LiveData<Response_GetXurWeekly> xurItemList;
     private LiveData<XurVendorModel> xurLocationData;
 
-    private InventoryItemModel itemDetailsModel;
+    private Response_GetXurWeekly.Items itemDetailsModel;
 
     //Item inspect/stats
 
@@ -54,16 +53,16 @@ public class XurViewModel extends AndroidViewModel {
 
 
     //Item inspect/stats
-    public void setItemDetailsModel(InventoryItemModel itemDetailsModel) {
+    public void setItemDetailsModel(Response_GetXurWeekly.Items itemDetailsModel) {
         this.itemDetailsModel = itemDetailsModel;
     }
 
-    public InventoryItemModel getItemDetailsModel() {
+    public Response_GetXurWeekly.Items getItemDetailsModel() {
         return itemDetailsModel;
     }
 
-    public LiveData<InventoryItemData> getInventoryItemData() {
-        return mXurRepository.getInventoryItemData(itemDetailsModel.getItemHash());
+    public LiveData<InventoryItemJsonData> getInventoryItemData() {
+        return mXurRepository.getInventoryItemData(itemDetailsModel.getHash());
     }
 
     public LiveData<SocketModel> getPerkSockets() {

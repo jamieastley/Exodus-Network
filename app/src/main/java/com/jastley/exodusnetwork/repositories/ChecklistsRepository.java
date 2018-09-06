@@ -15,7 +15,6 @@ import com.jastley.exodusnetwork.checklists.models.ChecklistModel;
 import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.jsonModels.ChecklistData;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemData;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -255,7 +254,7 @@ public class ChecklistsRepository {
                         int position = iterator.nextIndex();
                         Log.e(nodeInfoList.get(position).getId(), "pos: " + position);
 
-//                        InventoryItemData data = gson.fromJson(nodeInfoList.get(position).getValue(), InventoryItemData.class);
+//                        InventoryItemJsonData data = gson.fromJson(nodeInfoList.get(position).getValue(), InventoryItemJsonData.class);
 
                         //iterate over all sleeperNode data from checklist API result and append description
                         for(int i = 0; i < sleeperNodesList.size(); i++) {

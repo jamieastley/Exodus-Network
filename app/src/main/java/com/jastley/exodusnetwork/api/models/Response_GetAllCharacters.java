@@ -1,12 +1,40 @@
 package com.jastley.exodusnetwork.api.models;
 
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import java.util.Map;
 
 public class Response_GetAllCharacters {
+
+    private List<Response_GetAllCharacters.CharacterData> characterDataList;
+    private String errorMessage;
+    private Throwable throwable;
+
+    public Response_GetAllCharacters(List<Response_GetAllCharacters.CharacterData> list) {
+        this.characterDataList = list;
+    }
+
+    public Response_GetAllCharacters(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
+    public Response_GetAllCharacters(String msg) {
+        this.errorMessage = msg;
+    }
+
+    public List<CharacterData> getCharacterDataList() {
+        return characterDataList;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
 
     @Expose
     @SerializedName("Response")
@@ -194,6 +222,84 @@ public class Response_GetAllCharacters {
 
         public String getPercentToNextLevel() {
             return percentToNextLevel;
+        }
+
+
+        //Setters for inventory management
+        public void setMembershipId(String membershipId) {
+            this.membershipId = membershipId;
+        }
+
+        public void setMembershipType(String membershipType) {
+            this.membershipType = membershipType;
+        }
+
+        public void setCharacterId(String characterId) {
+            this.characterId = characterId;
+        }
+
+        public void setDateLastPlayed(String dateLastPlayed) {
+            this.dateLastPlayed = dateLastPlayed;
+        }
+
+        public void setMinutesPlayedThisSession(String minutesPlayedThisSession) {
+            this.minutesPlayedThisSession = minutesPlayedThisSession;
+        }
+
+        public void setMinutesPlayedTotal(String minutesPlayedTotal) {
+            this.minutesPlayedTotal = minutesPlayedTotal;
+        }
+
+        public void setLight(String light) {
+            this.light = light;
+        }
+
+        public void setRaceHash(String raceHash) {
+            this.raceHash = raceHash;
+        }
+
+        public void setGenderHash(String genderHash) {
+            this.genderHash = genderHash;
+        }
+
+        public void setClassHash(String classHash) {
+            this.classHash = classHash;
+        }
+
+        public void setClassType(String classType) {
+            this.classType = classType;
+        }
+
+        public void setGenderType(String genderType) {
+            this.genderType = genderType;
+        }
+
+        public void setEmblemPath(String emblemPath) {
+            this.emblemPath = emblemPath;
+        }
+
+        public void setEmblemBackgroundPath(String emblemBackgroundPath) {
+            this.emblemBackgroundPath = emblemBackgroundPath;
+        }
+
+        public void setEmblemHash(String emblemHash) {
+            this.emblemHash = emblemHash;
+        }
+
+        public void setEmblemColor(EmblemColor emblemColor) {
+            this.emblemColor = emblemColor;
+        }
+
+        public void setLevelProgression(LevelProgression levelProgression) {
+            this.levelProgression = levelProgression;
+        }
+
+        public void setBaseCharacterLevel(String baseCharacterLevel) {
+            this.baseCharacterLevel = baseCharacterLevel;
+        }
+
+        public void setPercentToNextLevel(String percentToNextLevel) {
+            this.percentToNextLevel = percentToNextLevel;
         }
     }
 

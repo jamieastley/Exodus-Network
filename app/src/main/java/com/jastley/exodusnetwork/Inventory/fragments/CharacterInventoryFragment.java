@@ -1,10 +1,8 @@
 package com.jastley.exodusnetwork.Inventory.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -28,9 +26,8 @@ import android.widget.ProgressBar;
 
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jastley.exodusnetwork.Definitions;
+import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.Inventory.adapters.CharacterItemsRecyclerAdapter;
 import com.jastley.exodusnetwork.Inventory.holders.TransferItemViewHolder;
 import com.jastley.exodusnetwork.Inventory.interfaces.SuccessListener;
@@ -38,42 +35,25 @@ import com.jastley.exodusnetwork.Inventory.interfaces.TransferSelectListener;
 import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
-import com.jastley.exodusnetwork.MainActivity;
-import com.jastley.exodusnetwork.Milestones.models.InventoryDataModel;
 import com.jastley.exodusnetwork.R;
-import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.Vendors.HeaderItemDecoration;
 import com.jastley.exodusnetwork.api.BungieAPI;
-import com.jastley.exodusnetwork.api.RetrofitHelper;
-import com.jastley.exodusnetwork.database.AppManifestDatabase;
-import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
-import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.HttpException;
 
-import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CharacterInventoryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CharacterInventoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class CharacterInventoryFragment extends Fragment implements TransferSelectListener, SuccessListener, SearchView.OnQueryTextListener {
+public class CharacterInventoryFragment extends Fragment
+        implements TransferSelectListener,
+                    SuccessListener,
+                    SearchView.OnQueryTextListener {
 
     private int mTabNumber;
+    private boolean isVault;
     private CharacterDatabaseModel mCharacter;
 
     @BindView(R.id.inventory_items_recyclerview) RecyclerView mItemsRecyclerView;
@@ -83,8 +63,10 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
     private OnFragmentInteractionListener mListener;
     private BungieAPI mBungieAPI;
+
+    InventoryViewModel mViewModel;
     List<InventoryItemModel> itemList = new ArrayList<>();
-    private List<CharacterDatabaseModel> mCharacterList = new ArrayList<>();
+    private List<Response_GetAllCharacters.CharacterData> mCharacterList = new ArrayList<>();
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     HeaderItemDecoration headerItemDecoration;
@@ -95,18 +77,29 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     }
 
 
-    public static CharacterInventoryFragment newInstance(int tabNumber,
-                                                         CharacterDatabaseModel character,
-                                                         ArrayList<CharacterDatabaseModel> characterList,
-                                                         ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest) {
+//    public static CharacterInventoryFragment newInstance(int tabNumber,
+//                                                         CharacterDatabaseModel character,
+//                                                         ArrayList<CharacterDatabaseModel> characterList,
+//                                                         ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest) {
+//        CharacterInventoryFragment fragment = new CharacterInventoryFragment();
+//        Bundle args = new Bundle();
+//        System.out.println("Fragment created, tabIndex: " + tabNumber);
+//        args.putInt("ARG_TAB_NUMBER", tabNumber);
+//        args.putParcelable("ARG_CHARACTER_DATA", character);
+//        args.putParcelableArrayList("ARG_CHARACTER_LIST", characterList);
+//        args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", destinyInventoryItemDefinitionManifest);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
+
+    public static CharacterInventoryFragment newInstance(int tabNumber, boolean isVault) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
         Bundle args = new Bundle();
-        System.out.println("Fragment created, tabIndex: " + tabNumber);
+        Log.e("FRAGMENT_CREATE", String.valueOf(tabNumber));
         args.putInt("ARG_TAB_NUMBER", tabNumber);
-        args.putParcelable("ARG_CHARACTER_DATA", character);
-        args.putParcelableArrayList("ARG_CHARACTER_LIST", characterList);
-        args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", destinyInventoryItemDefinitionManifest);
+        args.putBoolean("ARG_IS_VAULT", isVault);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -115,8 +108,9 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
-            mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
-            mCharacterList = getArguments().getParcelableArrayList("ARG_CHARACTER_LIST");
+            isVault = getArguments().getBoolean("ARG_IS_VAULT");
+//            mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
+//            mCharacterList = getArguments().getParcelableArrayList("ARG_CHARACTER_LIST");
 
         }
 
@@ -137,42 +131,55 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
+        initialiseRecyclerViews();
 
-        String classType = mCharacter.getClassType();
+//        mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
 
-        if(classType.equals("vault")){
-            //get Vault items only
-            getVaultInventory(
-                    mCharacter.getMembershipType(),
-                    mCharacter.getMembershipId());
-        }
-        else {
-            getCharacterInventory(
-                mCharacter.getMembershipType(),
-                mCharacter.getMembershipId(),
-                mCharacter.getCharacterId());
-        }
+//        String classType = mCharacter.getClassType();
+
+//        if(classType.equals("vault")){
+//            //get Vault items only
+//            getVaultInventory(
+//                    mCharacter.getMembershipType(),
+//                    mCharacter.getMembershipId());
+//        }
+//        else {
+//            getCharacterInventory(
+//                mCharacter.getMembershipType(),
+//                mCharacter.getMembershipId(),
+//                mCharacter.getCharacterId());
+//        }
+
+
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             mSwipeRefreshLayout.setRefreshing(true);
 
 
-            if(classType.equals("vault")){
-                //get Vault items only
-                getVaultInventory(
-                        mCharacter.getMembershipType(),
-                        mCharacter.getMembershipId());
-            }
-            else {
-                getCharacterInventory(
-                        mCharacter.getMembershipType(),
-                        mCharacter.getMembershipId(),
-                        mCharacter.getCharacterId());
-            }
+//            if(classType.equals("vault")){
+//                //get Vault items only
+//                getVaultInventory(
+//                        mCharacter.getMembershipType(),
+//                        mCharacter.getMembershipId());
+//            }
+//            else {
+//                getCharacterInventory(
+//                        mCharacter.getMembershipType(),
+//                        mCharacter.getMembershipId(),
+//                        mCharacter.getCharacterId());
+//            }
         });
 
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
+
+//        getCharacterInventory(mTabNumber);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -199,12 +206,12 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        compositeDisposable.dispose();
+//        compositeDisposable.dispose();
 
         //Hide character tab bar
-        TabLayout mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
-
-        mTabLayout.setVisibility(View.GONE);
+//        TabLayout mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
+//
+//        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -224,6 +231,12 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
                 refreshInventory();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getCharacterInventory(mTabNumber);
     }
 
     @Override
@@ -267,14 +280,14 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
 
                 itemList.remove(position);
                 resetItemDecoration(itemList);
-                mItemsRecyclerAdapter.updateList(itemList);
+//                mItemsRecyclerAdapter.updateList(itemList);
                 Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }
             else {
                 itemList.remove(position);
                 resetItemDecoration(itemList);
-                mItemsRecyclerAdapter.updateList(itemList);
+//                mItemsRecyclerAdapter.updateList(itemList);
                 Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -296,6 +309,92 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
                     .show();
         }
+    }
+
+    private void getCharacterInventory(int slot) {
+
+        if(isVault) {
+            mViewModel.startInventoryRetrieval(slot, true);
+        }
+        else {
+            mViewModel.startInventoryRetrieval(slot, false);
+        }
+
+        switch (slot){
+            case 0:
+                mViewModel.getFirstSlotInventory().observe(this, itemList -> {
+                    if(itemList.getThrowable() != null) {
+                        showSnackbarMessage(itemList.getThrowable().getLocalizedMessage());
+                    }
+                    else if(itemList.getMessage() != null) {
+                        showSnackbarMessage(itemList.getMessage());
+                    }
+                    else if(itemList.getItemModelList() != null) {
+                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                    }
+                });
+                break;
+            case 1:
+                mViewModel.getSecondSlotInventory().observe(this, itemList -> {
+                    if(itemList.getThrowable() != null) {
+                        showSnackbarMessage(itemList.getThrowable().getLocalizedMessage());
+                    }
+                    else if(itemList.getMessage() != null) {
+                        showSnackbarMessage(itemList.getMessage());
+                    }
+                    else if(itemList.getItemModelList() != null) {
+                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                    }
+                });
+                break;
+            case 2:
+                mViewModel.getThirdSlotInventory().observe(this, itemList -> {
+                    if(itemList.getThrowable() != null) {
+                        showSnackbarMessage(itemList.getThrowable().getLocalizedMessage());
+                    }
+                    else if(itemList.getMessage() != null) {
+                        showSnackbarMessage(itemList.getMessage());
+                    }
+                    else if(itemList.getItemModelList() != null) {
+                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                    }
+                });
+                break;
+            case 3:
+                mViewModel.getFourthSlotInventory().observe(this, itemList -> {
+                    if(itemList.getThrowable() != null) {
+                        showSnackbarMessage(itemList.getThrowable().getLocalizedMessage());
+                    }
+                    else if(itemList.getMessage() != null) {
+                        showSnackbarMessage(itemList.getMessage());
+                    }
+                    else if(itemList.getItemModelList() != null) {
+                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                    }
+                });
+                break;
+        }
+
+
+    }
+
+    private void showSnackbarMessage(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    private void initialiseRecyclerViews() {
+        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter((view, position, holder) -> {
+            Toast.makeText(getContext(), holder.getItemName().getText().toString(), Toast.LENGTH_SHORT)
+            .show();
+        });
+        mSwipeRefreshLayout.setRefreshing(true);
+        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+        mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+        mItemsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mItemsRecyclerView.setNestedScrollingEnabled(false);
+        mItemsRecyclerView.setLayoutAnimation(animationController);
+
     }
 
     private void showLoadingDialog(String title, String message) {
@@ -323,7 +422,7 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
             final List<InventoryItemModel> filteredItems = filter(itemList, query);
 
             resetItemDecoration(filteredItems);
-            mItemsRecyclerAdapter.updateList(filteredItems);
+//            mItemsRecyclerAdapter.updateList(filteredItems);
             mItemsRecyclerView.scrollToPosition(0);
         }
         return true;
@@ -333,12 +432,12 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         final String lowerCaseQuery = query.toLowerCase();
 
         final List<InventoryItemModel> filteredList = new ArrayList<>();
-        for (InventoryItemModel item : itemList) {
-            final String text = item.getItemName().toLowerCase();
-            if(text.contains(lowerCaseQuery)) {
-                filteredList.add(item);
-            }
-        }
+//        for (InventoryItemModel item : itemList) {
+//            final String text = item.getItemName().toLowerCase();
+//            if(text.contains(lowerCaseQuery)) {
+//                filteredList.add(item);
+//            }
+//        }
         return filteredList;
     }
 
@@ -348,336 +447,336 @@ public class CharacterInventoryFragment extends Fragment implements TransferSele
         void onFragmentInteraction(String uri);
     }
 
-    public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
-
-        Disposable disposable = mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(response -> {
-
-                    //Error code checking
-                    if(!response.getErrorCode().equals("1")){
-                        Snackbar.make(getParentFragment().getView(), response.getMessage(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> refreshInventory())
-                                .show();
-                    }
-                    else {
-
-                        ArrayList<String> itemHashList = new ArrayList<>();
-
-                        itemList.clear();
-
-                        /* non-equipped items (getInventory()) */
-                        for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
-
-                            String primaryStatValue;
-                            String itemInstanceId = null;
-
-                            //add/calculate hashes
-                            String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
-                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
-
-                            itemHashList.add(primaryKey);
-
-                            InventoryItemModel itemModel = new InventoryItemModel();
-                            itemModel.setItemHash(itemHash);
-                            itemModel.setPrimaryKey(primaryKey);
-
-                            //Get instanceId to look up it's instanceData from the response
-                            if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
-                                itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
-                                itemModel.setItemInstanceId(itemInstanceId);
-
-                                //get damageType (if != null)
-                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
-                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
-                                }
-
-                            }
-
-                            try{
-                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                                itemModel.setPrimaryStatValue(primaryStatValue);
-                            }
-                            catch(Exception e){
-                                System.out.println("Not an instance-specific item");
-                            }
+//    public void getCharacterInventory(String membershipType, String membershipId, String characterId) {
 //
-                            itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
-                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash()));
-                            //Required to manipulate UI on transfer/equip modal
-                            itemModel.setClassType(mCharacter.getClassType());
-                            itemModel.setTabIndex(mTabNumber);
-                            itemList.add(itemModel);
-                        }
-
-                        /* character-equipped items (getEquipment()) */
-                        for(int i = 0; i < response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().size(); i++){
-
-                            String primaryStatValue;
-                            String itemInstanceId = null;
-
-                            //add/calculate hashes
-                            String itemHash = String.valueOf(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getItemHash());
-                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
-
-                            itemHashList.add(primaryKey);
-
-                            InventoryItemModel itemModel = new InventoryItemModel();
-                            itemModel.setItemHash(itemHash);
-                            itemModel.setPrimaryKey(primaryKey);
-
-                            //Get instanceId to look up it's instanceData from the response
-                            if(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getItemInstanceId() != null) {
-                                itemInstanceId = response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getItemInstanceId();
-                                itemModel.setItemInstanceId(itemInstanceId);
-
-                                itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
-                                itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
-
-                                //get damageType (if != null)
-                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
-                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
-                                }
-
-                            }
-
-                            try{
-                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                                itemModel.setPrimaryStatValue(primaryStatValue);
-                            }
-                            catch(Exception e){
-                                System.out.println("Not an instance-specific item");
-                            }
+//        Disposable disposable = mBungieAPI.getCharacterInventory(membershipType, membershipId, characterId)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .subscribe(response -> {
 //
-                            itemModel.setBucketHash(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getBucketHash());
-                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getEquipment().getEquipmentData().getEquipmentsItems().get(i).getBucketHash()));
-                            //Required to manipulate UI on transfer/equip modal
-                            itemModel.setClassType(mCharacter.getClassType());
-                            itemModel.setTabIndex(mTabNumber);
-                            itemList.add(itemModel);
-                        }
-
-
-                        //Sort lists by primary key value, must cast to Long as some values too large for int
-                        Collections.sort(itemHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
-                        Collections.sort(itemList, (t1, t2) -> Long.valueOf(t1.getPrimaryKey()).compareTo(Long.valueOf((t2.getPrimaryKey()))));
-
-                        getManifestData(itemHashList);
-                    }
-
-                }, throwable -> {
-                    if(throwable instanceof HttpException){
-//                        Snackbar.make(getParentFragment().getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
-//                                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+//                    //Error code checking
+//                    if(!response.getErrorCode().equals("1")){
+//                        Snackbar.make(getParentFragment().getView(), response.getMessage(), Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Retry", v -> refreshInventory())
 //                                .show();
-                    }
-                    else {
-                        Log.d("GET_CHARACTER_INVENTORY", throwable.getMessage());
-                        Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> refreshInventory())
-                                .show();
-                    }
+//                    }
+//                    else {
+//
+//                        ArrayList<String> itemHashList = new ArrayList<>();
+//
+//                        itemList.clear();
+//
+//                        /* non-equipped items (getInventory()) */
+//                        for(int i = 0; i < response.getResponse().getInventory().getData().getItems().size(); i++){
+//
+//                            String primaryStatValue;
+//                            String itemInstanceId = null;
+//
+//                            //add/calculate hashes
+//                            String itemHash = String.valueOf(response.getResponse().getInventory().getData().getItems().get(i).getItemHash());
+//                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
+//
+//                            itemHashList.add(primaryKey);
+//
+//                            InventoryItemModel itemModel = new InventoryItemModel();
+//                            itemModel.setItemHash(itemHash);
+//                            itemModel.setPrimaryKey(primaryKey);
+//
+//                            //Get instanceId to look up it's instanceData from the response
+//                            if(response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+//                                itemInstanceId = response.getResponse().getInventory().getData().getItems().get(i).getItemInstanceId();
+//                                itemModel.setItemInstanceId(itemInstanceId);
+//
+//                                //get damageType (if != null)
+//                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+//                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
+//                                }
+//
+//                            }
+//
+//                            try{
+//                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+//                                itemModel.setPrimaryStatValue(primaryStatValue);
+//                            }
+//                            catch(Exception e){
+//                                System.out.println("Not an instance-specific item");
+//                            }
+////
+//                            itemModel.setBucketHash(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash());
+//                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getInventory().getData().getItems().get(i).getBucketHash()));
+//                            //Required to manipulate UI on transfer/equip modal
+//                            itemModel.setClassType(mCharacter.getClassType());
+//                            itemModel.setTabIndex(mTabNumber);
+//                            itemList.add(itemModel);
+//                        }
+//
+//                        /* character-equipped items (getEquipment()) */
+//                        for(int i = 0; i < response.getResponse().getEquipment().getEquipmentData().getEquipmentItems().size(); i++){
+//
+//                            String primaryStatValue;
+//                            String itemInstanceId = null;
+//
+//                            //add/calculate hashes
+//                            String itemHash = String.valueOf(response.getResponse().getEquipment().getEquipmentData().getEquipmentItems().get(i).getItemHash());
+//                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
+//
+//                            itemHashList.add(primaryKey);
+//
+//                            InventoryItemModel itemModel = new InventoryItemModel();
+//                            itemModel.setItemHash(itemHash);
+//                            itemModel.setPrimaryKey(primaryKey);
+//
+//                            //Get instanceId to look up it's instanceData from the response
+//                            if(response.getResponse().getEquipment().getEquipmentData().getEquipmentItems().get(i).getItemInstanceId() != null) {
+//                                itemInstanceId = response.getResponse().getEquipment().getEquipmentData().getEquipmentItems().get(i).getItemInstanceId();
+//                                itemModel.setItemInstanceId(itemInstanceId);
+//
+//                                itemModel.setIsEquipped(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getIsEquipped());
+//                                itemModel.setCanEquip(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getCanEquip());
+//
+//                                //get damageType (if != null)
+//                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+//                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
+//                                }
+//
+//                            }
+//
+//                            try{
+//                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+//                                itemModel.setPrimaryStatValue(primaryStatValue);
+//                            }
+//                            catch(Exception e){
+//                                System.out.println("Not an instance-specific item");
+//                            }
+////
+//                            itemModel.setBucketHash(response.getResponse().getEquipment().getEquipmentData().getEquipmentItems().get(i).getBucketHash());
+//                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getEquipment().getEquipmentData().getEquipmentItems().get(i).getBucketHash()));
+//                            //Required to manipulate UI on transfer/equip modal
+//                            itemModel.setClassType(mCharacter.getClassType());
+//                            itemModel.setTabIndex(mTabNumber);
+//                            itemList.add(itemModel);
+//                        }
+//
+//
+//                        //Sort lists by primary key value, must cast to Long as some values too large for int
+//                        Collections.sort(itemHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
+//                        Collections.sort(itemList, (t1, t2) -> Long.valueOf(t1.getPrimaryKey()).compareTo(Long.valueOf((t2.getPrimaryKey()))));
+//
+//                        getManifestData(itemHashList);
+//                    }
+//
+//                }, throwable -> {
+//                    if(throwable instanceof HttpException){
+////                        Snackbar.make(getParentFragment().getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
+////                                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+////                                .show();
+//                    }
+//                    else {
+//                        Log.d("GET_CHARACTER_INVENTORY", throwable.getMessage());
+//                        Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Retry", v -> refreshInventory())
+//                                .show();
+//                    }
+//
+//                });
+//        compositeDisposable.add(disposable);
+//    }
 
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    public void getVaultInventory(String membershipType, String membershipId) {
-
-        Disposable disposable = mBungieAPI.getVaultInventory(membershipType, membershipId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(response -> {
-
-                    //Error code checking
-                    if(!response.getErrorCode().equals("1")){
-                        Snackbar.make(getParentFragment().getView(), response.getMessage(), Snackbar.LENGTH_INDEFINITE)
-                                .setAction("Retry", v -> refreshInventory())
-                                .show();
-                    }
-                    else {
-
-                        ArrayList<String> itemHashList = new ArrayList<>();
-
-                        itemList.clear();
-                        /** FOR VAULT INVENTORY, USE getProfileInventory(), NOT getInventory() **/
-                        for(int i = 0; i < response.getResponse().getProfileInventory().getData().getItems().size(); i++){
-
-                            String primaryStatValue;
-                            String itemInstanceId = null;
-
-                            //add/calculate hashes
-                            String itemHash = String.valueOf(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash());
-                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
-
-                            itemHashList.add(primaryKey);
-
-                            InventoryItemModel itemModel = new InventoryItemModel();
-
-                            itemModel.setItemHash(itemHash);
-                            itemModel.setPrimaryKey(primaryKey);
-
-                            //Get instanceId to look up it's instanceData from the response
-                            if(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
-                                itemInstanceId = response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
-                                itemModel.setItemInstanceId(itemInstanceId);
-
-                                //get damageType (if != null)
-                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
-                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
-                                }
-
-                            }
-
-                            try{
-                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
-                                itemModel.setPrimaryStatValue(primaryStatValue);
-
-                            }
-                            catch(Exception e){
-                                System.out.println("Not an instance-specific item");
-                            }
-
-                            itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
-                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
-                            //Required to manipulate UI on transfer/equip modal
-                            itemModel.setClassType(mCharacter.getClassType());
-                            itemModel.setTabIndex(mTabNumber);
-                            itemList.add(itemModel);
-                        }
-
-                        //Sort lists by primary key value, must cast to Long as some values too large for int
-                        Collections.sort(itemHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
-                        Collections.sort(itemList, (t1, t2) -> Long.valueOf(t1.getPrimaryKey()).compareTo(Long.valueOf((t2.getPrimaryKey()))));
-
-                        getManifestData(itemHashList);
-                    }
-
-                }, throwable -> {
-                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", v -> refreshInventory())
-                            .show();
-                });
-
-        compositeDisposable.add(disposable);
-    }
-
-
-    public void getManifestData(List<String> hashes){
-
-        InventoryItemDefinitionDAO mInventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
-
-        Disposable disposable = mInventoryItemDAO.getItemsListByKey(hashes)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.io())
-                .subscribe(items -> {
-
-                    for (int i = 0; i < items.size(); i++) {
-
-//                        Gson gson = new GsonBuilder().create();
-//                        InventoryDataModel itemData = gson.fromJson(items.get(i).getValue(), InventoryDataModel.class);
-
-                        for (int j = 0; j < itemList.size(); j++) {
-                            if(items.get(i).getValue().getHash().equals(itemList.get(j).getItemHash())) {
-
-                                itemList.get(j).setItemName(items.get(i).getValue().getDisplayProperties().getName());
-                                itemList.get(j).setItemTypeDisplayName(items.get(i).getValue().getItemTypeDisplayName());
-                                try{
-                                    Log.d("InventoryAPIListHash: ", itemList.get(j).getItemHash());
-                                    Log.d("ManifestItemHash: ", items.get(i).getValue().getHash());
-                                    itemList.get(j).setItemIcon(items.get(i).getValue().getDisplayProperties().getIcon());
-                                }
-                                catch(Exception e){
-                                    Log.d("getManifestData: ", e.getLocalizedMessage());
-                                }
-                            }
-
-                        }
-
-                    }
-
-                    //sort by slot order for RVItemDecoration
-                    Collections.sort(itemList, (inventoryItemModel, t1) -> inventoryItemModel.getSlot() - t1.getSlot());
-
-                    Handler mainHandler = new Handler(Looper.getMainLooper());
-                    Runnable mRunnable = () -> {
-                        setRecyclerView(itemList);
-                    };
-                    mainHandler.post(mRunnable);
-
-                }, throwable -> {
-                    Log.d("GET_MANIFEST_DATA", throwable.getLocalizedMessage());
-                    itemList.clear();
-                    mItemsRecyclerAdapter.notifyDataSetChanged();
-                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Retry", v -> refreshInventory())
-                            .show();
-                });
-        compositeDisposable.add(disposable);
-    }
+//    public void getVaultInventory(String membershipType, String membershipId) {
+//
+//        Disposable disposable = mBungieAPI.getVaultInventory(membershipType, membershipId)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .subscribe(response -> {
+//
+//                    //Error code checking
+//                    if(!response.getErrorCode().equals("1")){
+//                        Snackbar.make(getParentFragment().getView(), response.getMessage(), Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Retry", v -> refreshInventory())
+//                                .show();
+//                    }
+//                    else {
+//
+//                        ArrayList<String> itemHashList = new ArrayList<>();
+//
+//                        itemList.clear();
+//                        /** FOR VAULT INVENTORY, USE getProfileInventory(), NOT getInventory() **/
+//                        for(int i = 0; i < response.getResponse().getProfileInventory().getData().getItems().size(); i++){
+//
+//                            String primaryStatValue;
+//                            String itemInstanceId = null;
+//
+//                            //add/calculate hashes
+//                            String itemHash = String.valueOf(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemHash());
+//                            String primaryKey = UnsignedHashConverter.getPrimaryKey(itemHash);
+//
+//                            itemHashList.add(primaryKey);
+//
+//                            InventoryItemModel itemModel = new InventoryItemModel();
+//
+//                            itemModel.setItemHash(itemHash);
+//                            itemModel.setPrimaryKey(primaryKey);
+//
+//                            //Get instanceId to look up it's instanceData from the response
+//                            if(response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId() != null) {
+//                                itemInstanceId = response.getResponse().getProfileInventory().getData().getItems().get(i).getItemInstanceId();
+//                                itemModel.setItemInstanceId(itemInstanceId);
+//
+//                                //get damageType (if != null)
+//                                if(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType() != null){
+//                                    itemModel.setDamageType(response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getDamageType());
+//                                }
+//
+//                            }
+//
+//                            try{
+//                                primaryStatValue = response.getResponse().getItemComponents().getInstances().getInstanceData().get(itemInstanceId).getPrimaryStat().getValue();
+//                                itemModel.setPrimaryStatValue(primaryStatValue);
+//
+//                            }
+//                            catch(Exception e){
+//                                System.out.println("Not an instance-specific item");
+//                            }
+//
+//                            itemModel.setBucketHash(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash());
+//                            itemModel.setSlot(Definitions.sortBuckets(response.getResponse().getProfileInventory().getData().getItems().get(i).getBucketHash()));
+//                            //Required to manipulate UI on transfer/equip modal
+//                            itemModel.setClassType(mCharacter.getClassType());
+//                            itemModel.setTabIndex(mTabNumber);
+//                            itemList.add(itemModel);
+//                        }
+//
+//                        //Sort lists by primary key value, must cast to Long as some values too large for int
+//                        Collections.sort(itemHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
+//                        Collections.sort(itemList, (t1, t2) -> Long.valueOf(t1.getPrimaryKey()).compareTo(Long.valueOf((t2.getPrimaryKey()))));
+//
+//                        getManifestData(itemHashList);
+//                    }
+//
+//                }, throwable -> {
+//                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+//                            .setAction("Retry", v -> refreshInventory())
+//                            .show();
+//                });
+//
+////        compositeDisposable.add(disposable);
+//    }
+//
+//
+//    public void getManifestData(List<String> hashes){
+//
+//        InventoryItemDefinitionDAO mInventoryItemDAO = AppManifestDatabase.getManifestDatabase(getContext()).getInventoryItemDAO();
+//
+//        Disposable disposable = mInventoryItemDAO.getItemsListByKey(hashes)
+//                .subscribeOn(Schedulers.computation())
+//                .observeOn(Schedulers.io())
+//                .subscribe(items -> {
+//
+//                    for (int i = 0; i < items.size(); i++) {
+//
+////                        Gson gson = new GsonBuilder().create();
+////                        InventoryDataModel itemData = gson.fromJson(items.get(i).getValue(), InventoryDataModel.class);
+//
+//                        for (int j = 0; j < itemList.size(); j++) {
+//                            if(items.get(i).getValue().getHash().equals(itemList.get(j).getItemHash())) {
+//
+//                                itemList.get(j).setItemName(items.get(i).getValue().getDisplayProperties().getName());
+//                                itemList.get(j).setItemTypeDisplayName(items.get(i).getValue().getItemTypeDisplayName());
+//                                try{
+//                                    Log.d("InventoryAPIListHash: ", itemList.get(j).getItemHash());
+//                                    Log.d("ManifestItemHash: ", items.get(i).getValue().getHash());
+//                                    itemList.get(j).setItemIcon(items.get(i).getValue().getDisplayProperties().getIcon());
+//                                }
+//                                catch(Exception e){
+//                                    Log.d("getManifestData: ", e.getLocalizedMessage());
+//                                }
+//                            }
+//
+//                        }
+//
+//                    }
+//
+//                    //sort by slot order for RVItemDecoration
+    //                    Collections.sort(itemList, (inventoryItemModel, t1) -> inventoryItemModel.getSlot() - t1.getSlot());
+//
+//                    Handler mainHandler = new Handler(Looper.getMainLooper());
+//                    Runnable mRunnable = () -> {
+//                        setRecyclerView(itemList);
+//                    };
+//                    mainHandler.post(mRunnable);
+//
+//                }, throwable -> {
+//                    Log.d("GET_MANIFEST_DATA", throwable.getLocalizedMessage());
+////                    itemList.clear();
+////                    mItemsRecyclerAdapter.notifyDataSetChanged();
+////                    Snackbar.make(getParentFragment().getView(), throwable.getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+////                            .setAction("Retry", v -> refreshInventory())
+////                            .show();
+//                });
+////        compositeDisposable.add(disposable);
+//    }
 
     public void setRecyclerView(List<InventoryItemModel> itemList){
 
 
         resetItemDecoration(itemList);
 
-        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
-            Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
-
-            //get properties of clicked item
-            InventoryItemModel clickedItem = itemList.get(position);
-
-            clickedItem.setCurrentPosition(position);
-
-
-            //for transferring TO vault
-            clickedItem.setTabIndex(holder.getTabIndex());
-            clickedItem.setVaultCharacterId(mCharacter.getCharacterId());
-
-            ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(clickedItem, mTabNumber, mCharacterList, this);
-            Bundle args = new Bundle();
-            args.putParcelable("selectedItem", clickedItem);
-            args.putParcelableArrayList("characterList", (ArrayList<? extends Parcelable>) mCharacterList);
-            args.putInt("tabIndex", mTabNumber);
-            transferDialogFragment.setArguments(args);
-
-            transferDialogFragment.show(getChildFragmentManager(), "transferModalDialog");
-
-        });
-        mSwipeRefreshLayout.setRefreshing(false);
-
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
-        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
-
-        mItemsRecyclerView.setLayoutAnimation(controller);
-
-        mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
-
-        loadingProgress.setVisibility(View.GONE);
+//        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter(getContext(), itemList, (view, position, holder) -> {
+//            Log.d("ITEM_LIST_CLICK", holder.getItemName().getText().toString());
+//
+//            //get properties of clicked item
+//            InventoryItemModel clickedItem = itemList.get(position);
+//
+//            clickedItem.setCurrentPosition(position);
+//
+//
+//            //for transferring TO vault
+//            clickedItem.setTabIndex(holder.getTabIndex());
+//            clickedItem.setVaultCharacterId(mCharacter.getCharacterId());
+//
+//            ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(clickedItem, mTabNumber, mCharacterList, this);
+//            Bundle args = new Bundle();
+//            args.putParcelable("selectedItem", clickedItem);
+//            args.putParcelableArrayList("characterList", (ArrayList<? extends Parcelable>) mCharacterList);
+//            args.putInt("tabIndex", mTabNumber);
+//            transferDialogFragment.setArguments(args);
+//
+//            transferDialogFragment.show(getChildFragmentManager(), "transferModalDialog");
+//
+//        });
+//        mSwipeRefreshLayout.setRefreshing(false);
+//
+//        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getContext());
+//        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+//
+//        mItemsRecyclerView.setLayoutAnimation(controller);
+//
+//        mItemsRecyclerView.setLayoutManager(mLinearLayoutManager);
+//        mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+//
+//        loadingProgress.setVisibility(View.GONE);
     }
 
     public void refreshInventory() {
 
         mSwipeRefreshLayout.setRefreshing(true);
 
-        String classType = mCharacter.getClassType();
+//        String classType = mCharacter.getClassType();
 
-        if(classType.equals("vault")){
-
-            //get Vault items only
-            getVaultInventory(
-                    mCharacter.getMembershipType(),
-                    mCharacter.getMembershipId());
-        }
-        else {
-
-            getCharacterInventory(
-                    mCharacter.getMembershipType(),
-                    mCharacter.getMembershipId(),
-                    mCharacter.getCharacterId());
-        }
+//        if(classType.equals("vault")){
+//
+//            //get Vault items only
+//            getVaultInventory(
+//                    mCharacter.getMembershipType(),
+//                    mCharacter.getMembershipId());
+//        }
+//        else {
+//
+//            getCharacterInventory(
+//                    mCharacter.getMembershipType(),
+//                    mCharacter.getMembershipId(),
+//                    mCharacter.getCharacterId());
+//        }
     }
 
     public void resetItemDecoration(List<InventoryItemModel> newList) {

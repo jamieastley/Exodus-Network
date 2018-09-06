@@ -530,12 +530,13 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_inventory_fragment:
-                fragment = ParentInventoryFragment.newInstance("string", "string2");
+                fragment = ParentInventoryFragment.newInstance();
 
                 fragmentManager.beginTransaction()
                         .replace(R.id.parent_fragment_frame, fragment, "inventoryFrag")
 //                    .addToBackStack("inventoryFragment")
                         .commit();
+                break;
 
 //            case R.id.nav_refresh_auth:
 //                refreshAccessToken();

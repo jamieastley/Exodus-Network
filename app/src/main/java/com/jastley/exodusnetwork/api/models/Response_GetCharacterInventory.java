@@ -109,11 +109,18 @@ public class Response_GetCharacterInventory {
     public static class EquipmentData {
         @Expose
         @SerializedName("items")
-        private List<EquipmentItems> items;
+        private List<Items> equipmentItems;
+//        private List<EquipmentItems> items;
+//
+//        public List<EquipmentItems> getEquipmentItems() {
+//            return items;
+//        }
 
-        public List<EquipmentItems> getEquipmentsItems() {
-            return items;
+
+        public List<Items> getEquipmentItems() {
+            return equipmentItems;
         }
+
     }
 
     public static class EquipmentItems {

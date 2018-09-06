@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Vendors.holders.XurItemsViewHolder;
+import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +19,9 @@ import io.reactivex.subjects.PublishSubject;
 public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHolder> {
 
     private Context mContext;
-    private List<InventoryItemModel> xurItems = new ArrayList<>();
+    private List<Response_GetXurWeekly.Items> xurItems = new ArrayList<>();
 
-    public final PublishSubject<InventoryItemModel> onClickSubject = PublishSubject.create();
+    public final PublishSubject<Response_GetXurWeekly.Items> onClickSubject = PublishSubject.create();
 
     public XurItemsRecyclerAdapter(Context mContext) {
         this.mContext = mContext;
@@ -37,21 +38,21 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
 
     @Override
     public void onBindViewHolder(XurItemsViewHolder holder, int position) {
-        holder.setItemName(xurItems.get(position).getItemName());
-        holder.setItemIcon(xurItems.get(position).getItemIcon());
+        holder.setItemName(xurItems.get(position).getDisplayProperties().getName());
+        holder.setItemIcon(xurItems.get(position).getDisplayProperties().getIcon());
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
-        holder.setItemCostImage(xurItems.get(position).getCostItemIcon());
-        holder.setItemCostText(xurItems.get(position).getCostsQuantity());
-        holder.setSalesCount(xurItems.get(position).getSaleHistoryCount());
-        holder.setItemHash(xurItems.get(position).getItemHash());
+        holder.setItemCostImage(xurItems.get(position).getCost().getIcon());
+        holder.setItemCostText(xurItems.get(position).getCost().getQuantity());
+        holder.setSalesCount(xurItems.get(position).getSalesCount());
+        holder.setItemHash(xurItems.get(position).getHash());
 
-        final InventoryItemModel item = xurItems.get(position);
+        final Response_GetXurWeekly.Items item = xurItems.get(position);
 
         holder.itemView.setOnClickListener(view -> onClickSubject.onNext(item));
     }
 
-    public Observable<InventoryItemModel> getClickedItem() {
+    public Observable<Response_GetXurWeekly.Items> getClickedItem() {
         return onClickSubject;
     }
 
@@ -65,7 +66,7 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
         return position;
     }
 
-    public void setXurItems(List<InventoryItemModel> items) {
+    public void setXurItems(List<Response_GetXurWeekly.Items> items) {
         xurItems = items;
         notifyDataSetChanged();
     }

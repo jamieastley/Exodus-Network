@@ -143,12 +143,12 @@ public class ItemInspectFragment extends Fragment {
     }
 
     private void displayModelDetails() {
-        itemDescription.setText(mViewModel.getItemDetailsModel().getDescription());
-        itemName.setText(mViewModel.getItemDetailsModel().getItemName());
+        itemDescription.setText(mViewModel.getItemDetailsModel().getDisplayProperties().getDescription());
+        itemName.setText(mViewModel.getItemDetailsModel().getDisplayProperties().getName());
         itemType.setText(mViewModel.getItemDetailsModel().getItemTypeDisplayName());
 
         Picasso.get()
-                .load(baseURL + mViewModel.getItemDetailsModel().getItemIcon())
+                .load(baseURL + mViewModel.getItemDetailsModel().getDisplayProperties().getIcon())
                 .placeholder(R.drawable.missing_icon_d2)
                 .into(itemIcon);
     }

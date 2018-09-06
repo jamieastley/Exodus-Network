@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.Inventory.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
@@ -37,36 +39,35 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ParentInventoryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ParentInventoryFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * {@link ParentInventoryFragment} calls viewModel method to load account for active platform.
+ * - charactersList slot used as reference for which tab index it lives in
+ *
+ * - characterList holds a list of {@link com.jastley.exodusnetwork.api.models.Response_GetAllCharacters.CharacterData}
+ *      so all data is readily accessible via jsonModel
+ *
+ * - viewModel is shared between {@link ParentInventoryFragment} and {@link CharacterInventoryFragment}
+ *      so child fragment {@link CharacterInventoryFragment} can access the accountData, and write
+ *      each characters inventory item list to it
+ *
  */
 public class ParentInventoryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+
     @BindView(R.id.parent_inventory_viewpager) ViewPager mViewPager;
 //    @BindView((getActivity())R.id.inventory_sliding_tabs)
+    InventoryViewModel mViewModel;
     TabLayout mTabLayout;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private OnFragmentInteractionListener mListener;
-    private ArrayList<CharacterDatabaseModel> charactersList = new ArrayList<>();
+    private List<Response_GetAllCharacters.CharacterData> charactersList = new ArrayList<>();
     private ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest = new ArrayList<>();
 
     private int tabIndexCount;
@@ -75,31 +76,13 @@ public class ParentInventoryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ParentInventoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ParentInventoryFragment newInstance(String param1, String param2) {
-        ParentInventoryFragment fragment = new ParentInventoryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static ParentInventoryFragment newInstance() {
+        return new ParentInventoryFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         setHasOptionsMenu(true);
     }
 
@@ -118,15 +101,28 @@ public class ParentInventoryFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
-        mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
 
-        mTabLayout.setVisibility(View.VISIBLE);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-
-        getAccountCharacters();
+//        getAccountCharacters();
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
+
+        mViewModel.getAccountList().observe(this, accounts -> {
+            if(accounts.getThrowable()  != null) {
+                //TODO
+            }
+            else if(accounts.getCharacterDataList() != null) {
+                this.charactersList = accounts.getCharacterDataList();
+                setupSectionsPagerAdapter(accounts.getCharacterDataList().size());
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -177,25 +173,48 @@ public class ParentInventoryFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+
+    private void setupSectionsPagerAdapter(int count) {
+        mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
+
+        mTabLayout.setVisibility(View.VISIBLE);
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), count);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                System.out.println("tabSelectedListener: tab " + tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        int accountSize;
+
+        public SectionsPagerAdapter(FragmentManager fm, int count) {
             super(fm);
+            this.accountSize = count;
         }
 
         @Override
@@ -206,10 +225,11 @@ public class ParentInventoryFragment extends Fragment {
 //            return PlaceholderFragment.newInstance(position + 1);
 
 //            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), destinyInventoryItemDefinitionManifest);
-            return CharacterInventoryFragment.newInstance(position,
-                                                        charactersList.get(position),
-                                                        charactersList,
-                    destinyInventoryItemDefinitionManifest);
+            return CharacterInventoryFragment.newInstance(position, position == (accountSize - 1)
+//                                                        charactersList.get(position),
+//                                                        charactersList,
+//                    destinyInventoryItemDefinitionManifest
+            );
         }
 
         @Override
@@ -256,8 +276,8 @@ public class ParentInventoryFragment extends Fragment {
 //
 //                    for (Account account : accounts) {
 //
-//                        Gson gson = new GsonBuilder().create();
-//                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(account.getValue(), Response_GetAllCharacters.CharacterData.class);
+////                        Gson gson = new GsonBuilder().create();
+////                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(account.getValue(), Response_GetAllCharacters.CharacterData.class);
 //
 //                        //only get characters for selectedPlatform
 //                        if (accountCharacter.getMembershipType().equals(selectedPlatform)) {

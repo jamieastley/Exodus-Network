@@ -6,7 +6,39 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryItemData {
+public class InventoryItemJsonData {
+
+    private ItemData itemData;
+    private String message;
+    private Throwable throwable;
+    private List<InventoryItemJsonData> itemDataList;
+
+    public InventoryItemJsonData() {
+    }
+
+    public InventoryItemJsonData(String message) {
+        this.message = message;
+    }
+
+    public InventoryItemJsonData(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
+    public InventoryItemJsonData(List<InventoryItemJsonData> itemDataList) {
+        this.itemDataList = itemDataList;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    public List<InventoryItemJsonData> getItemDataList() {
+        return itemDataList;
+    }
 
     @Expose
     @SerializedName("displayProperties")
@@ -262,6 +294,10 @@ public class InventoryItemData {
         return isBlacklisted;
     }
 
+    public void setDisplayProperties(DisplayProperties displayProperties) {
+        this.displayProperties = displayProperties;
+    }
+
     public static class DisplayProperties {
         @Expose
         @SerializedName("description")
@@ -306,12 +342,12 @@ public class InventoryItemData {
         @Expose
         @SerializedName("requiredCooldownSeconds")
         private String requiredCooldownSeconds;
-        @Expose
-        @SerializedName("requiredItems")
-        private List<String> requiredItems;
+//        @Expose
+//        @SerializedName("requiredItems")
+//        private String[] requiredItems;
         @Expose
         @SerializedName("progressionRewards")
-        private List<String> progressionRewards;
+        private String[] progressionRewards;
         @Expose
         @SerializedName("actionTypeLabel")
         private String actionTypeLabel;
@@ -353,11 +389,11 @@ public class InventoryItemData {
             return requiredCooldownSeconds;
         }
 
-        public List<String> getRequiredItems() {
-            return requiredItems;
-        }
+//        public String[] getRequiredItems() {
+//            return requiredItems;
+//        }
 
-        public List<String> getProgressionRewards() {
+        public String[] getProgressionRewards() {
             return progressionRewards;
         }
 
@@ -1018,4 +1054,170 @@ public class InventoryItemData {
     public static class Perks {
         //TODO when I found out the values
     }
+
+    //Instance data for inventory
+    public class ItemData {
+        @Expose
+        @SerializedName("dismantlePermission")
+        private int dismantlePermission;
+        @Expose
+        @SerializedName("state")
+        private int state;
+        @Expose
+        @SerializedName("lockable")
+        private boolean lockable;
+        @Expose
+        @SerializedName("transferStatus")
+        private int transferStatus;
+        @Expose
+        @SerializedName("bucketHash")
+        private String bucketHash;
+        @Expose
+        @SerializedName("location")
+        private int location;
+        @Expose
+        @SerializedName("bindStatus")
+        private int bindStatus;
+        @Expose
+        @SerializedName("quantity")
+        private int quantity;
+        @Expose
+        @SerializedName("itemInstanceId")
+        private String itemInstanceId;
+        @Expose
+        @SerializedName("itemHash")
+        private String itemHash;
+
+        public int getDismantlePermission() {
+            return dismantlePermission;
+        }
+
+        public int getState() {
+            return state;
+        }
+
+        public boolean getLockable() {
+            return lockable;
+        }
+
+        public int getTransferStatus() {
+            return transferStatus;
+        }
+
+        public String getBucketHash() {
+            return bucketHash;
+        }
+
+        public int getLocation() {
+            return location;
+        }
+
+        public int getBindStatus() {
+            return bindStatus;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public String getItemInstanceId() {
+            return itemInstanceId;
+        }
+
+        public String getItemHash() {
+            return itemHash;
+        }
+    }
+
+    public ItemData getItemData() {
+        return itemData;
+    }
+
+    public void setItemData(ItemData itemData) {
+        this.itemData = itemData;
+    }
+
+    public static class InstanceData {
+        @Expose
+        @SerializedName("damageType")
+        private String damageType;
+        @Expose
+        @SerializedName("damageTypeHash")
+        private Double damageTypeHash;
+        @Expose
+        @SerializedName("itemLevel")
+        private int itemLevel;
+        @Expose
+        @SerializedName("quality")
+        private int quality;
+        @Expose
+        @SerializedName("isEquipped")
+        private boolean isEquipped;
+        @Expose
+        @SerializedName("canEquip")
+        private boolean canEquip;
+        @Expose
+        @SerializedName("equipRequiredLevel")
+        private int equipRequiredLevel;
+        @Expose
+        @SerializedName("primaryStat")
+        private PrimaryStat primaryStat;
+
+        public PrimaryStat getPrimaryStat() {
+            return primaryStat;
+        }
+
+        public String getDamageType() {
+            return damageType;
+        }
+
+        public Double getDamageTypeHash() {
+            return damageTypeHash;
+        }
+
+        public int getItemLevel() {
+            return itemLevel;
+        }
+
+        public int getQuality() {
+            return quality;
+        }
+
+        public boolean getIsEquipped() {
+            return isEquipped;
+        }
+
+        public boolean getCanEquip() {
+            return canEquip;
+        }
+
+        public int getEquipRequiredLevel() {
+            return equipRequiredLevel;
+        }
+
+        public static class PrimaryStat {
+            @Expose
+            @SerializedName("statHash")
+            private Double statHash;
+            @Expose
+            @SerializedName("value")
+            private String value;
+            @Expose
+            @SerializedName("maximumValue")
+            private int maximumValue;
+
+            public Double getStatHash() {
+                return statHash;
+            }
+
+            public String getValue() {
+                return value;
+            }
+
+            public int getMaximumValue() {
+                return maximumValue;
+            }
+        }
+    }
+
 }
