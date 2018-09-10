@@ -54,43 +54,21 @@ public class CharacterInventoryFragment extends Fragment
 
     private int mTabNumber;
     private boolean isVault;
-    private CharacterDatabaseModel mCharacter;
+    private List<InventoryItemModel> itemList = new ArrayList<>();
 
     @BindView(R.id.inventory_items_recyclerview) RecyclerView mItemsRecyclerView;
     @BindView(R.id.inventory_items_progress) ProgressBar loadingProgress;
     @BindView(R.id.inventory_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private CharacterItemsRecyclerAdapter mItemsRecyclerAdapter;
-
     private OnFragmentInteractionListener mListener;
-    private BungieAPI mBungieAPI;
 
     InventoryViewModel mViewModel;
-    List<InventoryItemModel> itemList = new ArrayList<>();
-    private List<Response_GetAllCharacters.CharacterData> mCharacterList = new ArrayList<>();
-
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
     HeaderItemDecoration headerItemDecoration;
 
 
     public CharacterInventoryFragment() {
         // Required empty public constructor
     }
-
-
-//    public static CharacterInventoryFragment newInstance(int tabNumber,
-//                                                         CharacterDatabaseModel character,
-//                                                         ArrayList<CharacterDatabaseModel> characterList,
-//                                                         ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest) {
-//        CharacterInventoryFragment fragment = new CharacterInventoryFragment();
-//        Bundle args = new Bundle();
-//        System.out.println("Fragment created, tabIndex: " + tabNumber);
-//        args.putInt("ARG_TAB_NUMBER", tabNumber);
-//        args.putParcelable("ARG_CHARACTER_DATA", character);
-//        args.putParcelableArrayList("ARG_CHARACTER_LIST", characterList);
-//        args.putParcelableArrayList("ARG_COLLECTABLES_MANIFEST", destinyInventoryItemDefinitionManifest);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     public static CharacterInventoryFragment newInstance(int tabNumber, boolean isVault) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
@@ -109,9 +87,6 @@ public class CharacterInventoryFragment extends Fragment
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
             isVault = getArguments().getBoolean("ARG_IS_VAULT");
-//            mCharacter = getArguments().getParcelable("ARG_CHARACTER_DATA");
-//            mCharacterList = getArguments().getParcelableArrayList("ARG_CHARACTER_LIST");
-
         }
 
     }
@@ -330,7 +305,7 @@ public class CharacterInventoryFragment extends Fragment
                         showSnackbarMessage(itemList.getMessage());
                     }
                     else if(itemList.getItemModelList() != null) {
-                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                        handleLiveDataResponse(itemList.getItemModelList());
                     }
                 });
                 break;
@@ -343,7 +318,7 @@ public class CharacterInventoryFragment extends Fragment
                         showSnackbarMessage(itemList.getMessage());
                     }
                     else if(itemList.getItemModelList() != null) {
-                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                        handleLiveDataResponse(itemList.getItemModelList());
                     }
                 });
                 break;
@@ -356,7 +331,7 @@ public class CharacterInventoryFragment extends Fragment
                         showSnackbarMessage(itemList.getMessage());
                     }
                     else if(itemList.getItemModelList() != null) {
-                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                        handleLiveDataResponse(itemList.getItemModelList());
                     }
                 });
                 break;
@@ -369,13 +344,23 @@ public class CharacterInventoryFragment extends Fragment
                         showSnackbarMessage(itemList.getMessage());
                     }
                     else if(itemList.getItemModelList() != null) {
-                        mItemsRecyclerAdapter.setItemList(itemList.getItemModelList());
+                        handleLiveDataResponse(itemList.getItemModelList());
                     }
                 });
                 break;
         }
+    }
 
+    private void handleLiveDataResponse(List<InventoryItemModel> items) {
+        hideLoading();
+        this.itemList = items;
+        resetItemDecoration(items);
+        mItemsRecyclerAdapter.setItemList(items);
+    }
 
+    private void hideLoading() {
+        loadingProgress.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     private void showSnackbarMessage(String message) {
@@ -422,7 +407,7 @@ public class CharacterInventoryFragment extends Fragment
             final List<InventoryItemModel> filteredItems = filter(itemList, query);
 
             resetItemDecoration(filteredItems);
-//            mItemsRecyclerAdapter.updateList(filteredItems);
+            mItemsRecyclerAdapter.setItemList(filteredItems);
             mItemsRecyclerView.scrollToPosition(0);
         }
         return true;
@@ -432,12 +417,12 @@ public class CharacterInventoryFragment extends Fragment
         final String lowerCaseQuery = query.toLowerCase();
 
         final List<InventoryItemModel> filteredList = new ArrayList<>();
-//        for (InventoryItemModel item : itemList) {
-//            final String text = item.getItemName().toLowerCase();
-//            if(text.contains(lowerCaseQuery)) {
-//                filteredList.add(item);
-//            }
-//        }
+        for (InventoryItemModel item : itemList) {
+            final String text = item.getItemName().toLowerCase();
+            if(text.contains(lowerCaseQuery)) {
+                filteredList.add(item);
+            }
+        }
         return filteredList;
     }
 

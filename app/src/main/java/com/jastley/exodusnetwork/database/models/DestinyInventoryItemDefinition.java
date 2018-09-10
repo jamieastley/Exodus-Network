@@ -8,6 +8,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
+import com.jastley.exodusnetwork.Milestones.models.InventoryDataModel;
 import com.jastley.exodusnetwork.database.converters.InventoryItemDefinitionConverter;
 import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 

@@ -29,6 +29,10 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.inventory_item_image) ImageView itemImage;
     @BindView(R.id.primary_stat_value) TextView statValue;
     @BindView(R.id.item_modifier_icon) ImageView modifierIcon;
+    @BindView(R.id.item_lock_status) ImageView lockStatus;
+    @BindView(R.id.item_masterwork_icon) ImageView masterworkIcon;
+    @BindView(R.id.item_quantity) TextView quantity;
+    @BindView(R.id.item_ammo_type) ImageView ammoType;
 
     @BindView(R.id.inventory_item_container) RelativeLayout cardContainer;
 
@@ -212,11 +216,50 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    public String getQuantity() {
+        return quantity.getText().toString();
+    }
+
+    public void setQuantity(int count) {
+        if(count > 1) {
+            this.quantity.setText(String.valueOf(count));
+            this.quantity.setVisibility(View.VISIBLE);
+        }
+    }
+
     public String getDamageType() {
         return damageType;
     }
 
     public void setDamageType(String damageType) {
         this.damageType = damageType;
+    }
+
+
+    //Item states
+    public void setLockStatus(boolean isLocked) {
+        if(isLocked) {
+            lockStatus.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setMasterworkIcon(boolean isMasterwork) {
+        if(isMasterwork) {
+            masterworkIcon.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setAmmoType(int type) {
+        switch(type) {
+            case 1:
+                ammoType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_primary));
+                break;
+            case 2:
+                ammoType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_special));
+                break;
+            case 3:
+                ammoType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_heavy));
+                break;
+        }
     }
 }

@@ -16,6 +16,7 @@ import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.MilestoneDAO;
 import com.jastley.exodusnetwork.database.jsonModels.MilestoneData;
+import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -189,20 +190,21 @@ public class MilestoneRepository {
         Disposable disposable = mInventoryItemDao.getItemsListByKey(rewardHashes)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(rewards -> {
+                .subscribe(rewardList -> {
 
-                    for (int i = 0; i < rewards.size(); i++) {
+//                    for (int i = 0; i < rewards.size(); i++) {
 
+                    for(DestinyInventoryItemDefinition reward : rewardList) {
 //                        InventoryDataModel item = gson.fromJson(rewards.get(i).getValue(), InventoryDataModel.class);
 
                         //check rewards for each milestone, append if match
                         for (int j = 0; j < milestoneModels.size(); j++) {
 
                             try {
-                                if (rewards.get(i).getValue().getHash().equals(milestoneModels.get(j).getMilestoneRewardHash())) {
+                                if (reward.getValue().getHash().equals(milestoneModels.get(j).getMilestoneRewardHash())) {
 
-                                    milestoneModels.get(j).setMilestoneRewardImageURL(rewards.get(i).getValue().getDisplayProperties().getIcon());
-                                    milestoneModels.get(j).setMilestoneRewardName(rewards.get(i).getValue().getDisplayProperties().getName());
+                                    milestoneModels.get(j).setMilestoneRewardImageURL(reward.getValue().getDisplayProperties().getIcon());
+                                    milestoneModels.get(j).setMilestoneRewardName(reward.getValue().getDisplayProperties().getName());
                                 }
                                 else {
                                     if(milestoneModels.get(j).getMilestoneName() == null){

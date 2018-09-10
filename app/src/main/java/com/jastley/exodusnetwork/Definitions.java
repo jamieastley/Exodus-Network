@@ -35,6 +35,7 @@ public class Definitions {
     public static final String ghost = "4023194814";
     public static final String emblems = "4274335291";
     public static final String clanBanners = "4292445962";
+    public static final String pursuits = "1345459588";
 
 
 //    Damage type definitions
@@ -47,6 +48,11 @@ public class Definitions {
 
     //Stat definitions
     public final String attack = "1480404414";
+
+    //Item states
+    public static final int isLocked = 1;
+    public static final int isTracked = 2;
+    public static final int isMasterwork = 4;
 
     //Sockets
     public static final String weaponPerksSockets = "4241085061";
@@ -132,6 +138,10 @@ public class Definitions {
                 value = 19;
                 break;
 
+            case pursuits:
+                value = 20;
+                break;
+
         }
         return value;
     }
@@ -197,6 +207,10 @@ public class Definitions {
                 break;
             case 19:
                 category = "Vehicles";
+                break;
+
+            case 20:
+                category = "Pursuits";
                 break;
         }
         return category;

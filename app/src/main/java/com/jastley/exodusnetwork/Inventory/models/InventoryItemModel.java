@@ -22,6 +22,7 @@ public class InventoryItemModel {
     private boolean canEquip;
     private String primaryStatValue;
     private String damageType;
+    private int quantity;
 
     //Manifest data
     private String classType;
@@ -31,6 +32,7 @@ public class InventoryItemModel {
     private String itemTypeDisplayName;
     private Long itemUnsignedHash;
     private String primaryKey;
+    private int ammoType;
 
     //Transferring/equipping
     private int tabIndex;
@@ -46,8 +48,11 @@ public class InventoryItemModel {
     //Sorting for RecyclerView
     private int slot;
     private String categoryName;
+    private boolean isLocked;
+    private boolean isMasterwork;
+    private boolean isTracked;
 
-//    public InventoryItemModel() {
+    //    public InventoryItemModel() {
 //    }
 //
 //    protected InventoryItemModel(Parcel in) {
@@ -387,11 +392,57 @@ public class InventoryItemModel {
         this.itemModelList = itemModelList;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public int getSlot() {
         return slot;
     }
 
     public void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    public void setIsLocked(int flag) {
+        if(flag != 0) {
+            this.isLocked = true;
+        }
+    }
+
+    public boolean getIsLocked() {
+        return isLocked;
+    }
+
+    public boolean isMasterwork() {
+        return isMasterwork;
+    }
+
+    public void setMasterwork(int flag) {
+        if(flag != 0) {
+            isMasterwork = true;
+        }
+    }
+
+    public boolean isTracked() {
+        return isTracked;
+    }
+
+    public void setTracked(int flag) {
+        if(flag != 0) {
+            isTracked = true;
+        }
+    }
+
+    public int getAmmoType() {
+        return ammoType;
+    }
+
+    public void setAmmoType(int ammoType) {
+        this.ammoType = ammoType;
     }
 }

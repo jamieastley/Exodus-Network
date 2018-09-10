@@ -24,7 +24,7 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
 
     ItemSelectionListener mListener;
 
-    List<InventoryItemModel> itemList = new ArrayList<>();
+    private List<InventoryItemModel> itemList = new ArrayList<>();
 
     public CharacterItemsRecyclerAdapter(ItemSelectionListener listener) {
         this.mListener = listener;
@@ -57,7 +57,11 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
         holder.setBucketHash(itemList.get(position).getBucketHash());
         holder.setItemTypeDisplayName(itemList.get(position).getItemTypeDisplayName());
         holder.setModifierIcon(itemList.get(position).getDamageType());
+        holder.setQuantity(itemList.get(position).getQuantity());
+        holder.setAmmoType(itemList.get(position).getAmmoType());
 
+        holder.setMasterworkIcon(itemList.get(position).isMasterwork());
+        holder.setLockStatus(itemList.get(position).getIsLocked());
 //        holder.setItemName(itemList.get(position).getDisplayProperties().getName());
 //        holder.setItemHash(itemList.get(position).getItemData().getItemHash());
 //        holder.setItemImage(itemList.get(position).getDisplayProperties().getIcon());
@@ -101,6 +105,10 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
     public void setItemList(List<InventoryItemModel> list) {
         itemList = list;
         notifyDataSetChanged();
+    }
+
+    public List<InventoryItemModel> getItemList() {
+        return itemList;
     }
 
     public void clearItemList() {

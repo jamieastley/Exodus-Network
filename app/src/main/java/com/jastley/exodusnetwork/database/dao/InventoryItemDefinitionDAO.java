@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.database.dao;
 
+
 import android.arch.paging.DataSource;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;

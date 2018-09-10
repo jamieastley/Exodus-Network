@@ -25,4 +25,5 @@
     <color name="primaryStatBackground">#5b000000</color>
     <color name="completed">#00bf2c</color>
     <color name="item_type_color">#cfcecc</color>
+    <color name="black">#000000</color>
 </resources>

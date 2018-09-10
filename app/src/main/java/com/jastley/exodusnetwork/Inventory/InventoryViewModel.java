@@ -33,7 +33,7 @@ public class InventoryViewModel extends ViewModel {
     }
 
     public void startInventoryRetrieval(int slot, boolean isVault) {
-        mRepository.startItemRetrievel(slot, isVault);
+        mRepository.startItemRetrieval(slot, isVault);
     }
 
     public LiveData<InventoryItemModel> getFirstSlotInventory() {

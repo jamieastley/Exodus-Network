@@ -15,6 +15,8 @@ import com.jastley.exodusnetwork.checklists.models.ChecklistModel;
 import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.jsonModels.ChecklistData;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
+import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -249,19 +251,20 @@ public class ChecklistsRepository {
                 .observeOn(Schedulers.io())
                 .subscribe(nodeInfoList -> {
 
-                    for(ListIterator iterator = nodeInfoList.listIterator(); iterator.hasNext(); iterator.next()) {
+//                    for(ListIterator iterator = nodeInfoList.listIterator(); iterator.hasNext(); iterator.next()) {
+                    for(DestinyInventoryItemDefinition node : nodeInfoList) {
 
-                        int position = iterator.nextIndex();
-                        Log.e(nodeInfoList.get(position).getId(), "pos: " + position);
+//                        int position = iterator.nextIndex();
+                        Log.e(node.getId(), "pos: " + nodeInfoList.indexOf(node));
 
 //                        InventoryItemJsonData data = gson.fromJson(nodeInfoList.get(position).getValue(), InventoryItemJsonData.class);
 
                         //iterate over all sleeperNode data from checklist API result and append description
                         for(int i = 0; i < sleeperNodesList.size(); i++) {
 
-                            if(sleeperNodesList.get(i).getItemHash().equals(nodeInfoList.get(position).getValue().getHash())) {
+                            if(sleeperNodesList.get(i).getItemHash().equals(node.getValue().getHash())) {
                                 sleeperNodesList.get(i)
-                                        .setDescription(nodeInfoList.get(position).getValue().getDisplayProperties().getDescription());
+                                        .setDescription(node.getValue().getDisplayProperties().getDescription());
                             }
                         }
                     }

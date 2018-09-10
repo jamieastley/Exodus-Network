@@ -65,7 +65,7 @@ public class InventoryItemJsonData {
     @SerializedName("stats")
     private Stats stats;
     @Expose
-    @SerializedName("equippingBLock")
+    @SerializedName("equippingBlock")
     private EquippingBlock equippingBlock;
     @Expose
     @SerializedName("quality")
@@ -580,6 +580,9 @@ public class InventoryItemJsonData {
         @Expose
         @SerializedName("displayStrings")
         private List<String> displayStringsList;
+        @Expose
+        @SerializedName("ammoType")
+        private int ammoType;
 
         public String getUniqueLabel() {
             return uniqueLabel;
@@ -607,6 +610,10 @@ public class InventoryItemJsonData {
 
         public List<String> getDisplayStringsList() {
             return displayStringsList;
+        }
+
+        public int getAmmoType() {
+            return ammoType;
         }
     }
 
