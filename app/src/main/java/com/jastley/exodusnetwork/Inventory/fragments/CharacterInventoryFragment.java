@@ -53,11 +53,12 @@ public class CharacterInventoryFragment extends Fragment
                     SearchView.OnQueryTextListener {
 
     private int mTabNumber;
+    private int mTabCount;
     private boolean isVault;
     private List<InventoryItemModel> itemList = new ArrayList<>();
 
     @BindView(R.id.inventory_items_recyclerview) RecyclerView mItemsRecyclerView;
-    @BindView(R.id.inventory_items_progress) ProgressBar loadingProgress;
+//    @BindView(R.id.inventory_items_progress) ProgressBar loadingProgress;
     @BindView(R.id.inventory_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private CharacterItemsRecyclerAdapter mItemsRecyclerAdapter;
     private OnFragmentInteractionListener mListener;
@@ -70,11 +71,12 @@ public class CharacterInventoryFragment extends Fragment
         // Required empty public constructor
     }
 
-    public static CharacterInventoryFragment newInstance(int tabNumber, boolean isVault) {
+    public static CharacterInventoryFragment newInstance(int tabNumber, int tabCount, boolean isVault) {
         CharacterInventoryFragment fragment = new CharacterInventoryFragment();
         Bundle args = new Bundle();
         Log.e("FRAGMENT_CREATE", String.valueOf(tabNumber));
         args.putInt("ARG_TAB_NUMBER", tabNumber);
+        args.putInt("ARG_TAB_COUNT", tabCount);
         args.putBoolean("ARG_IS_VAULT", isVault);
         fragment.setArguments(args);
 
@@ -86,6 +88,7 @@ public class CharacterInventoryFragment extends Fragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt("ARG_TAB_NUMBER");
+            mTabCount = getArguments().getInt("ARG_TAB_COUNT");
             isVault = getArguments().getBoolean("ARG_IS_VAULT");
         }
 
@@ -108,44 +111,10 @@ public class CharacterInventoryFragment extends Fragment
 
         initialiseRecyclerViews();
 
-//        mBungieAPI = RetrofitHelper.getAuthBungieAPI(getContext(), baseURL);
-
-//        String classType = mCharacter.getClassType();
-
-//        if(classType.equals("vault")){
-//            //get Vault items only
-//            getVaultInventory(
-//                    mCharacter.getMembershipType(),
-//                    mCharacter.getMembershipId());
-//        }
-//        else {
-//            getCharacterInventory(
-//                mCharacter.getMembershipType(),
-//                mCharacter.getMembershipId(),
-//                mCharacter.getCharacterId());
-//        }
-
-
-
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-
             mSwipeRefreshLayout.setRefreshing(true);
-
-
-//            if(classType.equals("vault")){
-//                //get Vault items only
-//                getVaultInventory(
-//                        mCharacter.getMembershipType(),
-//                        mCharacter.getMembershipId());
-//            }
-//            else {
-//                getCharacterInventory(
-//                        mCharacter.getMembershipType(),
-//                        mCharacter.getMembershipId(),
-//                        mCharacter.getCharacterId());
-//            }
+            getCharacterInventory(mTabNumber);
         });
-
     }
 
     @Override
@@ -153,6 +122,7 @@ public class CharacterInventoryFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
+
 
 //        getCharacterInventory(mTabNumber);
     }
@@ -203,8 +173,12 @@ public class CharacterInventoryFragment extends Fragment
         switch(item.getItemId()) {
 
             case R.id.inventory_refresh:
-                refreshInventory();
+//                refreshInventory();
+                mSwipeRefreshLayout.setRefreshing(true);
+                getCharacterInventory(mTabNumber);
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -212,6 +186,7 @@ public class CharacterInventoryFragment extends Fragment
     public void onStart() {
         super.onStart();
         getCharacterInventory(mTabNumber);
+
     }
 
     @Override
@@ -280,11 +255,27 @@ public class CharacterInventoryFragment extends Fragment
         dismissLoadingFragment();
 
         if(wasSuccessful){
-            refreshInventory();
+//            refreshInventory();
             Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
+    private void initialiseRecyclerViews() {
+        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter((view, position, holder) -> {
+//            Toast.makeText(getContext(), holder.getItemName().getText().toString(), Toast.LENGTH_SHORT)
+//                    .show();
+                mViewModel.setClickedItem(holder.getClickedItem());
+                handleItemClick();
+        });
+        mSwipeRefreshLayout.setRefreshing(true);
+        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
+        mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
+        mItemsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//        mItemsRecyclerView.setNestedScrollingEnabled(false);
+        mItemsRecyclerView.setLayoutAnimation(animationController);
+
+    }
+
 
     private void getCharacterInventory(int slot) {
 
@@ -358,8 +349,19 @@ public class CharacterInventoryFragment extends Fragment
         mItemsRecyclerAdapter.setItemList(items);
     }
 
+    private void handleItemClick(){
+        ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(mTabNumber, mTabCount);
+//        Bundle args = new Bundle();
+//
+//        args.putInt("tabIndex", mTabNumber);
+//        transferDialogFragment.setArguments(args);
+        transferDialogFragment.show(getChildFragmentManager(), "transferModalDialog");
+//        TestModal test = TestModal.newInstance(2);
+//        test.show(getChildFragmentManager(), "TEST_MODAL");
+    }
+
     private void hideLoading() {
-        loadingProgress.setVisibility(View.GONE);
+//        loadingProgress.setVisibility(View.GONE);
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
@@ -368,19 +370,7 @@ public class CharacterInventoryFragment extends Fragment
                 .show();
     }
 
-    private void initialiseRecyclerViews() {
-        mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter((view, position, holder) -> {
-            Toast.makeText(getContext(), holder.getItemName().getText().toString(), Toast.LENGTH_SHORT)
-            .show();
-        });
-        mSwipeRefreshLayout.setRefreshing(true);
-        LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
-        mItemsRecyclerView.setAdapter(mItemsRecyclerAdapter);
-        mItemsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mItemsRecyclerView.setNestedScrollingEnabled(false);
-        mItemsRecyclerView.setLayoutAnimation(animationController);
 
-    }
 
     private void showLoadingDialog(String title, String message) {
         LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
@@ -742,27 +732,6 @@ public class CharacterInventoryFragment extends Fragment
 //        loadingProgress.setVisibility(View.GONE);
     }
 
-    public void refreshInventory() {
-
-        mSwipeRefreshLayout.setRefreshing(true);
-
-//        String classType = mCharacter.getClassType();
-
-//        if(classType.equals("vault")){
-//
-//            //get Vault items only
-//            getVaultInventory(
-//                    mCharacter.getMembershipType(),
-//                    mCharacter.getMembershipId());
-//        }
-//        else {
-//
-//            getCharacterInventory(
-//                    mCharacter.getMembershipType(),
-//                    mCharacter.getMembershipId(),
-//                    mCharacter.getCharacterId());
-//        }
-    }
 
     public void resetItemDecoration(List<InventoryItemModel> newList) {
 
@@ -792,7 +761,7 @@ public class CharacterInventoryFragment extends Fragment
                 }
                 String itemCount = String.valueOf(count);
 
-                if(section < 10) { //item/armor/equippable item (can only hold 10)
+                if(section > 1 && section < 10) { //item/armor/equippable item (can only hold 10)
                     itemCount = itemCount+"/10";
                 }
 

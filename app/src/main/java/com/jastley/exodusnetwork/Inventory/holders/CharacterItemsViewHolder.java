@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jastley.exodusnetwork.Definitions;
+import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
 import com.squareup.picasso.Picasso;
 
@@ -35,6 +36,8 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.item_ammo_type) ImageView ammoType;
 
     @BindView(R.id.inventory_item_container) RelativeLayout cardContainer;
+
+    private InventoryItemModel clickedItem;
 
     //Hidden values to retain for retrieval later
     private String itemHash;
@@ -261,5 +264,13 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
                 ammoType.setImageDrawable(mContext.getResources().getDrawable(R.drawable.icon_heavy));
                 break;
         }
+    }
+
+    public InventoryItemModel getClickedItem() {
+        return clickedItem;
+    }
+
+    public void setClickedItem(InventoryItemModel clickedItem) {
+        this.clickedItem = clickedItem;
     }
 }

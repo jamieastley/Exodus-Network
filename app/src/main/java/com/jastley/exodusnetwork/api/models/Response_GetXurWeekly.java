@@ -8,19 +8,21 @@ import java.util.List;
 
 public class Response_GetXurWeekly {
 
-    private List<InventoryItemModel> itemList;
+//    private List<InventoryItemModel> itemList;
+    private Response_GetXurWeekly.Location xurLocation;
     private String errorMessage;
     private List<Items> xurItems;
 
     //Response successful
-    public Response_GetXurWeekly(List<Items> itemList) {
+    public Response_GetXurWeekly(List<Items> itemList, Location loc) {
         this.xurItems = itemList;
+        this.xurLocation = loc;
         this.errorMessage = null;
     }
 
     //API error
     public Response_GetXurWeekly(String error) {
-        this.itemList = null;
+        this.xurItems = null;
         this.errorMessage = error;
     }
 
@@ -36,8 +38,16 @@ public class Response_GetXurWeekly {
         return xurItems;
     }
 
-    public void setItemList(List<InventoryItemModel> itemList) {
-        this.itemList = itemList;
+//    public void setItemList(List<InventoryItemModel> itemList) {
+//        this.itemList = itemList;
+//    }
+
+    public Location getXurLocation() {
+        return xurLocation;
+    }
+
+    public void setXurLocation(Location xurLocation) {
+        this.xurLocation = xurLocation;
     }
 
     @Expose

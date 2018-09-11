@@ -10,34 +10,46 @@ import com.jastley.exodusnetwork.Inventory.interfaces.EquipSelectListener;
 import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemViewHolder> {
 
     private Context mContext;
-    private List<CharacterDatabaseModel> mCharacters;
+//    private List<CharacterDatabaseModel> mCharacters;
+    private List<Response_GetAllCharacters.CharacterData> characterList = new ArrayList<>();
     private EquipSelectListener mListener;
-    private InventoryItemModel mSelectedItem;
+    private InventoryItemModel selectedItem;
     private int mTabIndex;
 
-    public EquipItemRecyclerAdapter(Context context,
-                                    InventoryItemModel item,
-                                    int index,
-                                    List<CharacterDatabaseModel> characters,
-                                    EquipSelectListener listener) {
-        this.mContext = context;
-        this.mSelectedItem = item;
-        this.mTabIndex = index;
-        this.mCharacters = characters;
-        this.mListener = listener;
+//    public EquipItemRecyclerAdapter(Context context,
+//                                    InventoryItemModel item,
+//                                    int index,
+//                                    List<CharacterDatabaseModel> characters,
+//                                    EquipSelectListener listener) {
+//        this.mContext = context;
+//        this.mSelectedItem = item;
+//        this.mTabIndex = index;
+//        this.mCharacters = characters;
+//        this.mListener = listener;
+//    }
+
+
+    public EquipItemRecyclerAdapter(int mTabIndex,
+                                    InventoryItemModel item) {
+        this.mTabIndex = mTabIndex;
+        this.selectedItem = item;
     }
 
     @Override
     public EquipItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.modal_emblem_equip_row, parent, false);
+
+        this.mContext = parent.getContext();
 
         final EquipItemViewHolder mEquipViewHolder = new EquipItemViewHolder(mView);
 
@@ -51,30 +63,44 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
     @Override
     public void onBindViewHolder(EquipItemViewHolder holder, int position) {
 
-        holder.setEmblemIcon(mCharacters.get(position).getEmblemIcon(), mContext);
-        holder.setCharacterId(mCharacters.get(position).getCharacterId());
-        holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
-        holder.setClassType(mCharacters.get(position).getClassType());
+        if(!characterList.get(position).getClassType().toLowerCase().equals("vault")){
+            holder.setEmblemIcon(characterList.get(position).getEmblemPath(), mContext);
+    //        holder.setCharacterId(mCharacters.get(position).getCharacterId());
+    //        holder.setCharacterLevel(mCharacters.get(position).getBaseCharacterLevel());
 
-        if(mSelectedItem.getCanEquip()) {
-            holder.setDisabled();
-        }
-        //if user selected characters' sub-class
-        else if (mSelectedItem.getSlot() == 10) {
-            //if not equipped, only allow equipping for the character that the sub-class is for
-            if(position != mTabIndex){
+            holder.setClassType(characterList.get(position).getClassType(), mContext);
+
+            if(!selectedItem.getCanEquip()) {
                 holder.setDisabled();
+            }
+            else if(selectedItem.getIsEquipped()) {
+                holder.setDisabled();
+            }
+    //        //if user selected characters' sub-class
+            else if (selectedItem.getSlot() == 10) {
+                //if not equipped, only allow equipping for the character that the sub-class is for
+                if(position != mTabIndex){
+                    holder.setDisabled();
+                }
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return mCharacters.size();
+        return characterList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
         return position;
+    }
+
+    public void setCharacterList(List<Response_GetAllCharacters.CharacterData> list) {
+        //Last index is always vault, can't equip on vault so remove it for this adapter
+//        int size = list.size();
+//        list.remove(size -1);
+        this.characterList = list;
+        notifyDataSetChanged();
     }
 }

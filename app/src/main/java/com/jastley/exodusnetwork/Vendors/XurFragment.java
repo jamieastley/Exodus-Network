@@ -64,7 +64,7 @@ public class XurFragment extends Fragment {
     @BindView(R.id.xur_world_text) TextView xurWorldText;
     @BindView(R.id.xur_location_banner) ImageView xurImageBanner;
     @BindView(R.id.xur_items_recycler_view) RecyclerView mXurRecyclerView;
-    @BindView(R.id.xur_progress_bar) ProgressBar progressBar;
+//    @BindView(R.id.xur_progress_bar) ProgressBar progressBar;
     @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
 
     @BindView(R.id.xur_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
@@ -114,6 +114,7 @@ public class XurFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         setHasOptionsMenu(true);
+        mSwipeRefresh.setRefreshing(true);
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -237,10 +238,14 @@ public class XurFragment extends Fragment {
 
             }
             else {
+                xurImageBanner.setVisibility(View.VISIBLE);
                 mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
+                xurRegionText.setText(response_getXurWeekly.getXurLocation().getRegion());
+                xurWorldText.setText(response_getXurWeekly.getXurLocation().getWorld());
+                xurIcon.setVisibility(View.VISIBLE);
             }
             mSwipeRefresh.setRefreshing(false);
-            progressBar.setVisibility(View.GONE);
+//            progressBar.setVisibility(View.GONE);
         });
 
         //Get location data

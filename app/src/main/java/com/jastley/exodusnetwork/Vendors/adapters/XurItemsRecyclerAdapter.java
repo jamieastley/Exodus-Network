@@ -42,10 +42,12 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
         holder.setItemIcon(xurItems.get(position).getDisplayProperties().getIcon());
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
         holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
-        holder.setItemCostImage(xurItems.get(position).getCost().getIcon());
-        holder.setItemCostText(xurItems.get(position).getCost().getQuantity());
         holder.setSalesCount(xurItems.get(position).getSalesCount());
         holder.setItemHash(xurItems.get(position).getHash());
+        if(xurItems.get(position).getCost() != null) {
+            holder.setItemCostImage(xurItems.get(position).getCost().getIcon());
+            holder.setItemCostText(xurItems.get(position).getCost().getQuantity());
+        }
 
         final Response_GetXurWeekly.Items item = xurItems.get(position);
 

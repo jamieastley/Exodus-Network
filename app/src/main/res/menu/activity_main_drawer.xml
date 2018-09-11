@@ -17,7 +17,7 @@
 
         <item
             android:id="@+id/nav_inventory_fragment"
-            android:icon="@drawable/icon_vault_transparent"
+            android:icon="@drawable/icon_vault_small"
             android:title="@string/item_transfer"
             />
 

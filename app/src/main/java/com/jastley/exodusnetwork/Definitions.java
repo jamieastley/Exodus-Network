@@ -77,6 +77,9 @@ public class Definitions {
 
         switch(bucketHash){
 
+            case lostItems:
+                value = 0;
+                break;
             case kineticWeapons:
                 value = 1;
                 break;
@@ -151,6 +154,9 @@ public class Definitions {
         String category = "Other";
 
         switch(id) {
+            case 0:
+                category = "Postmaster";
+                break;
             case 1:
                 category = "Kinetic Weapons";
                 break;

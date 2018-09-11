@@ -77,7 +77,6 @@
                     android:layout_toStartOf="@id/xur_item_cost"
                     android:layout_toLeftOf="@id/xur_item_cost"
                     android:layout_centerVertical="true"
-                    android:text="32"
                     android:textSize="20sp"
                     android:textColor="@color/colorWhite"
 

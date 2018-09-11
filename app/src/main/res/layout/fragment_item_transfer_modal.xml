@@ -8,79 +8,122 @@
     android:background="@color/warmindDark"
     >
 
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/item_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="90dp"-->
+        <!--&gt;-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/selected_item_image"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:background="@drawable/image_border"-->
+            <!--/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/primary_stat_value"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignTop="@id/selected_item_image"-->
+            <!--android:layout_alignEnd="@id/selected_item_image"-->
+            <!--android:paddingStart="5dp"-->
+            <!--android:paddingEnd="5dp"-->
+            <!--android:text="@string/debug_primary_stat"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textAlignment="viewEnd"-->
+            <!--android:textColor="@color/colorWhite"-->
+            <!--android:gravity="end"-->
+            <!--/>-->
+
+        <!--&lt;!&ndash;set ImageView after textView so it stacks on top of background alpha&ndash;&gt;-->
+        <!--<ImageView-->
+            <!--android:id="@+id/item_modifier_icon"-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_alignTop="@id/selected_item_image"-->
+            <!--android:layout_alignStart="@id/selected_item_image"-->
+            <!--android:layout_margin="3dp"-->
+            <!--/>-->
+
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_toEndOf="@id/selected_item_image"-->
+            <!--android:layout_marginStart="10dp"-->
+            <!--android:orientation="vertical"-->
+            <!--&gt;-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/selected_item_name"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="@string/debug_item_name"-->
+                <!--android:gravity="center"-->
+                <!--android:textSize="20sp"-->
+                <!--android:textColor="@color/colorWhite"-->
+                <!--/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/selected_item_type"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/debug_item_type"-->
+                <!--android:textSize="15sp"-->
+                <!--android:textColor="@color/colorWhite"-->
+                <!--/>-->
+
+        <!--</LinearLayout>-->
+
+
+    <!--</RelativeLayout>-->
+
+    <include layout="@layout/inventory_item_row_layout"/>
+
     <RelativeLayout
+        android:id="@+id/seekbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="wrap_content"
+
         >
 
-        <ImageView
-            android:id="@+id/selected_item_image"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/image_border"
+        <TextView
+            android:id="@+id/seekbar_min_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:text="Selected: 3"
+            android:textColor="@color/colorWhite"
+            />
+
+        <SeekBar
+            android:id="@+id/item_seekbar_quantity"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/seekbar_max_text"
+            android:progressTint="@color/warmindAccent"
+            android:max="100"
+            android:progress="70"
             />
 
         <TextView
-            android:id="@+id/primary_stat_value"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/selected_item_image"
-            android:layout_alignEnd="@id/selected_item_image"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:text="@string/debug_primary_stat"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textAlignment="viewEnd"
-            android:textColor="@color/colorWhite"
-            android:gravity="end"
-            />
-
-        <!--set ImageView after textView so it stacks on top of background alpha-->
-        <ImageView
-            android:id="@+id/item_modifier_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignTop="@id/selected_item_image"
-            android:layout_alignStart="@id/selected_item_image"
-            android:layout_margin="3dp"
-            />
-
-
-        <LinearLayout
+            android:id="@+id/seekbar_max_text"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toEndOf="@id/selected_item_image"
-            android:layout_marginStart="10dp"
-            android:orientation="vertical"
-            >
-
-            <TextView
-                android:id="@+id/selected_item_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/debug_item_name"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:textColor="@color/colorWhite"
-                />
-
-            <TextView
-                android:id="@+id/selected_item_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/debug_item_type"
-                android:textSize="15sp"
-                android:textColor="@color/colorWhite"
-                />
-
-        </LinearLayout>
-
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:text="Max: 20"
+            android:textColor="@color/colorWhite"
+            />
 
     </RelativeLayout>
 
@@ -125,7 +168,7 @@
         <!--Equip directly to character-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="0.6"
             android:layout_gravity="end"
             android:orientation="vertical"

@@ -8,6 +8,8 @@ import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.repositories.InventoryRepository;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 public class InventoryViewModel extends ViewModel {
@@ -17,10 +19,13 @@ public class InventoryViewModel extends ViewModel {
     private LiveData<InventoryItemModel> thirdSlotInventory;
     private LiveData<InventoryItemModel> fourthSlotInventory;
 
+    private InventoryItemModel clickedItem;
+    private List<Response_GetAllCharacters.CharacterData> accountList;
+
     @Inject
     InventoryRepository mRepository;
 
-    private LiveData<Response_GetAllCharacters> accountList;
+    private LiveData<Response_GetAllCharacters> accountListLiveData;
     //TODO store clicked item here for bottomModalSheet
 
 
@@ -28,8 +33,8 @@ public class InventoryViewModel extends ViewModel {
         App.getApp().getAppComponent().inject(this);
     }
 
-    public LiveData<Response_GetAllCharacters> getAccountList() {
-        return accountList = mRepository.getAccountCharacters();
+    public LiveData<Response_GetAllCharacters> getAccountLiveData() {
+        return accountListLiveData = mRepository.getAccountCharacters();
     }
 
     public void startInventoryRetrieval(int slot, boolean isVault) {
@@ -51,4 +56,24 @@ public class InventoryViewModel extends ViewModel {
     public LiveData<InventoryItemModel> getFourthSlotInventory() {
         return fourthSlotInventory = mRepository.getFourthSlotInventory();
     }
+
+
+
+    //Item Transfer/equip modal
+    public void setAccountList(List<Response_GetAllCharacters.CharacterData> accountList) {
+        this.accountList = accountList;
+    }
+
+    public void setClickedItem(InventoryItemModel item) {
+        this.clickedItem = item;
+    }
+
+    public InventoryItemModel getClickedItem() {
+        return clickedItem;
+    }
+
+    public List<Response_GetAllCharacters.CharacterData> getAccountList() {
+        return accountList;
+    }
+
 }

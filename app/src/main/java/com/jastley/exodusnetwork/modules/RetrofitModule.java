@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jastley.exodusnetwork.BuildConfig;
 import com.jastley.exodusnetwork.Utils.NetworkInterceptor;
 
 import javax.inject.Named;
@@ -76,7 +77,7 @@ public class RetrofitModule {
                 .baseUrl(braytech)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(createOkHttpClient(application))
+                .client(createBrayTechClient(application))
                 .build();
     }
 
@@ -131,6 +132,23 @@ public class RetrofitModule {
             return chain.proceed(request);
         });
 
+        return httpClient.build();
+    }
+
+    @Provides
+    @Singleton
+    OkHttpClient createBrayTechClient(Application application) {
+        final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(new NetworkInterceptor(application));
+        httpClient.addInterceptor(chain -> {
+            final Request original = chain.request();
+
+            final Request.Builder requestBuilder = original.newBuilder()
+                    .header("X-Api-Key", BuildConfig.braytechApiKey);
+
+            final Request request = requestBuilder.build();
+            return chain.proceed(request);
+        });
         return httpClient.build();
     }
 

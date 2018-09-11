@@ -5,14 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.jastley.exodusnetwork.Vendors.XurFragment">
 
-    <ProgressBar
-        android:id="@+id/xur_progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:indeterminate="true"
-        style="?android:attr/progressBarStyleHorizontal"
-        />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/xur_progress_bar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:indeterminate="true"-->
+        <!--style="?android:attr/progressBarStyleHorizontal"-->
+        <!--/>-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/xur_swipe_refresh"
@@ -39,6 +39,8 @@
                         android:layout_alignParentTop="true"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
+                        android:src="@drawable/conceptual_xur"
+                        android:visibility="gone"
                         />
 
                     <ImageView

@@ -2,6 +2,7 @@ package com.jastley.exodusnetwork.api;
 
 import com.google.gson.JsonElement;
 
+import com.jastley.exodusnetwork.BuildConfig;
 import com.jastley.exodusnetwork.api.models.*;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -86,6 +87,10 @@ public interface BungieAPI {
     @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
     Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
 
+    //Pull item from Postmaster
+    @POST("/Platform/Destiny2/Actions/Items/PullFromPostmaster/")
+    Observable<Response_TransferEquipItem> pullFromPostmaster(@Body PostmasterTransferRequest postmasterBody);
+
     //Get Faction progression for character(?components=202)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
     Observable<Response_FactionProgression> getFactionProgress(@Path("membershipType") String membershipType,
@@ -142,10 +147,10 @@ public interface BungieAPI {
 
     //Get Weekly Xur stock
 //    @GET("/api/?request=history&for=xur")
-    @GET("https://braytech.org/api/")
-    Observable<Response_GetXurWeekly> getXurWeeklyInventory(@Query("key") String key,
-                                                            @Query("request") String request,
-                                                            @Query("for") String forVendor);
+//    @Headers("X-Api-Key: " + BuildConfig.braytechApiKey)
+    @GET("https://api.braytech.org/")
+    Observable<Response_GetXurWeekly> getXurWeeklyInventory(@Query("request") String request,
+                                                            @Query("get") String get);
 
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/Vendors/{vendorHash}/?components=400,402")
     Observable<Response_GetVendor> getVendorData(@Path("membershipType") String membershipType,

@@ -19,8 +19,8 @@
             <ImageView
                 android:id="@+id/item_screenshot"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/item_screenshot_example"
+                android:layout_height="230dp"
+
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:layout_alignParentTop="true"

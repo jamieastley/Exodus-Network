@@ -5,10 +5,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.jastley.exodusnetwork.Definitions;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
-import com.jastley.exodusnetwork.Milestones.models.InventoryDataModel;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
@@ -21,9 +21,7 @@ import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -172,7 +170,7 @@ public class InventoryRepository {
                 .subscribe(inventory -> {
 
                     if(!inventory.getErrorCode().equals("1")) {
-                        //TODO push error
+                        sendErrorData(characterSlot, new InventoryItemModel(inventory.getMessage()));
                     }
                     else {
 
@@ -182,8 +180,6 @@ public class InventoryRepository {
 
                         //non-equipped items stored on character
                         for(Response_GetCharacterInventory.Items item : inventory.getResponse().getInventory().getData().getItems()) {
-
-//                            int pos = inventory.getResponse().getInventory().getData().getItems().indexOf(item);
 
                             itemHashList.add(UnsignedHashConverter.getPrimaryKey(item.getItemHash()));
 
@@ -257,19 +253,6 @@ public class InventoryRepository {
 
                             itemModel.setSlot(Definitions.sortBuckets(equippedItem.getBucketHash()));
                             itemList.add(itemModel);
-
-//                            itemHashList.add(UnsignedHashConverter.getPrimaryKey(equippedItem.getItemHash()));
-//
-//                            InventoryItemModel itemModel = new InventoryItemModel();
-//                            itemModel.setItemData(equippedItem);
-//
-//                            if(equippedItem.getItemInstanceId() != null) {
-//                                String id = equippedItem.getItemInstanceId();
-//                                itemModel.setInstanceData(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id));
-//                            }
-//
-//                            itemModel.setSlot(Definitions.sortBuckets(equippedItem.getBucketHash()));
-//                            itemList.add(itemModel);
                         }
 
                         //Sort lists by primary key value
@@ -283,6 +266,7 @@ public class InventoryRepository {
                     }
 
                 }, throwable -> {
+                    Crashlytics.logException(throwable);
                     switch (characterSlot){
                         case 0:
                             firstSlotInventory.postValue(new InventoryItemModel(throwable));
@@ -309,20 +293,7 @@ public class InventoryRepository {
                 .subscribe(vaultItems -> {
 
                     if(!vaultItems.getErrorCode().equals("1")) {
-                        switch (characterSlot){
-                            case 0:
-                                firstSlotInventory.postValue(new InventoryItemModel(vaultItems.getMessage()));
-                                break;
-                            case 1:
-                                secondSlotInventory.postValue(new InventoryItemModel(vaultItems.getMessage()));
-                                break;
-                            case 2:
-                                thirdSlotInventory.postValue(new InventoryItemModel(vaultItems.getMessage()));
-                                break;
-                            case 3:
-                                fourthSlotInventory.postValue(new InventoryItemModel(vaultItems.getMessage()));
-                                break;
-                        }
+                        sendErrorData(characterSlot, new InventoryItemModel(vaultItems.getMessage()));
                     }
                     else {
 
@@ -389,6 +360,7 @@ public class InventoryRepository {
                     }
 
                 }, throwable -> {
+                    Crashlytics.logException(throwable);
                     switch (characterSlot){
                         case 0:
                             firstSlotInventory.postValue(new InventoryItemModel(throwable));
@@ -429,6 +401,11 @@ public class InventoryRepository {
                                 itemList.get(i).setItemName(definitionData.getValue().getDisplayProperties().getName());
                                 itemList.get(i).setItemTypeDisplayName(definitionData.getValue().getItemTypeDisplayName());
                                 try {
+                                    /** Destiny.DestinyAmmunitionType
+                                     * Primary : 1
+                                     * Special : 2
+                                     * Heavy : 3
+                                     */
                                     itemList.get(i).setAmmoType(definitionData.getValue().getEquippingBlock().getAmmoType());
                                 } catch(Exception e) {
                                     Log.e("MANIFEST_AMMO_TYPE", e.getLocalizedMessage());
@@ -464,6 +441,7 @@ public class InventoryRepository {
                             break;
                     }
                 }, throwable -> {
+                    Crashlytics.logException(throwable);
                     switch (characterSlot){
                         case 0:
                             firstSlotInventory.postValue(new InventoryItemModel(throwable));
@@ -484,7 +462,6 @@ public class InventoryRepository {
 
 
     //Get liveData
-
     public MutableLiveData<InventoryItemModel> getFirstSlotInventory() {
         return firstSlotInventory;
     }
@@ -499,5 +476,41 @@ public class InventoryRepository {
 
     public MutableLiveData<InventoryItemModel> getFourthSlotInventory() {
         return fourthSlotInventory;
+    }
+
+    private void sendErrorData(int slot, InventoryItemModel data) {
+
+        if(data.getThrowable() != null) {
+            switch (slot) {
+                case 0:
+                    firstSlotInventory.postValue(new InventoryItemModel(data.getThrowable()));
+                    break;
+                case 1:
+                    secondSlotInventory.postValue(new InventoryItemModel(data.getThrowable()));
+                    break;
+                case 2:
+                    thirdSlotInventory.postValue(new InventoryItemModel(data.getThrowable()));
+                    break;
+                case 3:
+                    fourthSlotInventory.postValue(new InventoryItemModel(data.getThrowable()));
+                    break;
+            }
+        }
+        else if(data.getMessage() != null) {
+            switch (slot) {
+                case 0:
+                    firstSlotInventory.postValue(new InventoryItemModel(data.getMessage()));
+                    break;
+                case 1:
+                    secondSlotInventory.postValue(new InventoryItemModel(data.getMessage()));
+                    break;
+                case 2:
+                    thirdSlotInventory.postValue(new InventoryItemModel(data.getMessage()));
+                    break;
+                case 3:
+                    fourthSlotInventory.postValue(new InventoryItemModel(data.getMessage()));
+                    break;
+            }
+        }
     }
 }

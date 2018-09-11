@@ -19,9 +19,11 @@ import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.StatDefinitionDAO;
 import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 import com.jastley.exodusnetwork.database.jsonModels.StatDefinitionData;
+import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyStatDefinition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,7 +35,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
+import static com.jastley.exodusnetwork.Definitions.armorModsSockets;
+import static com.jastley.exodusnetwork.Definitions.armorPerksSockets;
 import static com.jastley.exodusnetwork.Definitions.theNine;
+import static com.jastley.exodusnetwork.Definitions.weaponModsSockets;
+import static com.jastley.exodusnetwork.Definitions.weaponPerksSockets;
 import static com.jastley.exodusnetwork.api.apiKey.braytechApiKey;
 
 @Singleton
@@ -82,7 +88,7 @@ public class XurRepository {
         xurLiveDataList = new MutableLiveData<>();
 
         //get Xur inventory from WhatsXurGot API
-        Disposable disposable = retrofit.create(BungieAPI.class).getXurWeeklyInventory(braytechApiKey, "history", "xur")
+        Disposable disposable = retrofit.create(BungieAPI.class).getXurWeeklyInventory("xur", "history")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(xurData -> {
@@ -103,6 +109,7 @@ public class XurRepository {
                                     vendorModel = new XurVendorModel(xurData.getResponse().getData().getLocation().getWorld(),
                                             region,
                                             xurData.getResponse().getData().getLocation().getId());
+
 
 //                                    int listSize = response_getXurWeekly.getResponse().getData().getItems().size();
 //
@@ -142,9 +149,10 @@ public class XurRepository {
 //                                    }//end for loop
 
                                     if(!xurData.getResponse().getData().getItems().isEmpty()) {
-                                        xurLiveDataList.postValue(new Response_GetXurWeekly(xurData.getResponse().getData().getItems()));
+                                        xurLiveDataList.postValue(new Response_GetXurWeekly(xurData.getResponse().getData().getItems(),
+                                                                                            xurData.getResponse().getData().getLocation()));
                                     }
-                                    getLocationBanner(vendorModel);
+//                                    getLocationBanner(vendorModel);
                                 }
                                 catch(Exception e) {
                                     singleError.postValue("Error retrieving Xur data from server");
@@ -218,33 +226,42 @@ public class XurRepository {
         Disposable disposable = mInventoryItemDefinitionDAO.getItemByKey(itemHash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(destinyInventoryItemDefinition -> {
+                .subscribe(jsonData -> {
 
                     //Map item retrieved from DB to model class
                     try{
 //                        InventoryItemJsonData jsonData = gson.fromJson(destinyInventoryItemDefinition.getValue(), InventoryItemJsonData.class);
 //
 //                        //trigger observer to get basic info (name/screenshot)
-//                        inventoryItemJsonData.postValue(jsonData);
-//
-//
+                        inventoryItemJsonData.postValue(jsonData.getValue());
+////
 //
 //                        //Perks list from sockets
-//                        List<String> perkHashes = new ArrayList<>();
-//                        List<String> modHashes = new ArrayList<>();
-//                        List<String> statHashes = new ArrayList<>();
-//
+                        List<String> perkHashes = new ArrayList<>();
+                        List<String> modHashes = new ArrayList<>();
+                        List<String> statHashes = new ArrayList<>();
+
 //                        //Initialise Lists here to prevent remembering last selected item
-//                        perksModelList = new ArrayList<>();
-//                        modsModelList = new ArrayList<>();
-//                        statValuesList = new ArrayList<>();
+                        perksModelList = new ArrayList<>();
+                        modsModelList = new ArrayList<>();
+                        statValuesList = new ArrayList<>();
 //
 //                        //Perk socket indexes
-//                        List<Integer> perksSocketsIndexes = new ArrayList<>();
-//                        List<Integer> modsSocketsIndexes = new ArrayList<>();
+                        List<Integer> perksSocketsIndexes = new ArrayList<>();
+                        List<Integer> modsSocketsIndexes = new ArrayList<>();
 //                        for(int i = 0; i < jsonData.getSockets().getSocketCategoriesList().size(); i++) {
+                        for(InventoryItemJsonData.Sockets.SocketCategories socket : jsonData.getValue().getSockets().getSocketCategoriesList()) {
 //
 //                            //weapons/armor have DIFFERENT socketCategory hashes!
+                            if(socket.getSocketCategoryHash().equals(weaponPerksSockets) ||
+                                    socket.getSocketCategoryHash().equals(armorPerksSockets)) {
+
+                                perksSocketsIndexes.addAll(socket.getSocketIndexes());
+                            }
+                            else if(socket.getSocketCategoryHash().equals(weaponModsSockets) ||
+                                    socket.getSocketCategoryHash().equals(armorModsSockets)) {
+                                modsSocketsIndexes.addAll(socket.getSocketIndexes());
+                            }
 //                            if(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(weaponPerksSockets) ||
 //                                jsonData.getSockets().getSocketCategoriesList().get(i).getSocketCategoryHash().equals(armorPerksSockets)) {
 //
@@ -257,47 +274,47 @@ public class XurRepository {
 //                                modsSocketsIndexes.addAll(jsonData.getSockets().getSocketCategoriesList().get(i).getSocketIndexes());
 //
 //                            }
-//                        }
+                        }
 //
 //                        //Get perks
-//                        for (int index: perksSocketsIndexes) {
-//                            SocketModel plugItem = new SocketModel();
-//                            plugItem.setPlugItemHash(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash());
-//                            plugItem.setSocketIndex(index);
-//                            perkHashes.add(UnsignedHashConverter.getPrimaryKey(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
-//
-//                            perksModelList.add(plugItem);
-//                        }
-//                        getPerkPlugs(perkHashes);
+                        for (int index: perksSocketsIndexes) {
+                            SocketModel plugItem = new SocketModel();
+                            plugItem.setPlugItemHash(jsonData.getValue().getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash());
+                            plugItem.setSocketIndex(index);
+                            perkHashes.add(UnsignedHashConverter.getPrimaryKey(jsonData.getValue().getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
+
+                            perksModelList.add(plugItem);
+                        }
+                        getPerkPlugs(perkHashes);
 //
 //                        //Get mods
-//                        for (int index: modsSocketsIndexes) {
-//                            SocketModel plugItem = new SocketModel();
-//                            plugItem.setPlugItemHash(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash());
-//                            plugItem.setSocketIndex(index);
-//                            modHashes.add(UnsignedHashConverter.getPrimaryKey(jsonData.getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
-//
-//                            modsModelList.add(plugItem);
-//                        }
-//                        getModPlugs(modHashes);
+                        for (int index: modsSocketsIndexes) {
+                            SocketModel plugItem = new SocketModel();
+                            plugItem.setPlugItemHash(jsonData.getValue().getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash());
+                            plugItem.setSocketIndex(index);
+                            modHashes.add(UnsignedHashConverter.getPrimaryKey(jsonData.getValue().getSockets().getSocketEntriesList().get(index).getSingleInitialItemHash()));
+
+                            modsModelList.add(plugItem);
+                        }
+                        getModPlugs(modHashes);
 //
 //                        //Get stat values
-//                        int positionCount = 1;
-//                        for (InventoryItemJsonData.InvestmentStats statValue : jsonData.getInvestmentStatsList()) {
-//
-//                            if(statValue.getValue() != 0){
-//                                statHashes.add(UnsignedHashConverter.getPrimaryKey(statValue.getStatTypeHash()));
-//
-//                                SocketModel.InvestmentStats stat = new SocketModel.InvestmentStats(
-//                                        statValue.getStatTypeHash(),
-//                                        statValue.getValue(),
-//                                        positionCount
-//                                );
-//                                positionCount++;
-//                                statValuesList.add(stat);
-//                            }
-//                        }
-//                        getStatData(statHashes);
+                        int positionCount = 1;
+                        for (InventoryItemJsonData.InvestmentStats statValue : jsonData.getValue().getInvestmentStatsList()) {
+
+                            if(statValue.getValue() != 0){
+                                statHashes.add(UnsignedHashConverter.getPrimaryKey(statValue.getStatTypeHash()));
+
+                                SocketModel.InvestmentStats stat = new SocketModel.InvestmentStats(
+                                        statValue.getStatTypeHash(),
+                                        statValue.getValue(),
+                                        positionCount
+                                );
+                                positionCount++;
+                                statValuesList.add(stat);
+                            }
+                        }
+                        getStatData(statHashes);
 
                     }
                     catch(Exception e) {
@@ -322,23 +339,23 @@ public class XurRepository {
                 .subscribe(plugList -> {
 
                     try {
-//                        for(DestinyInventoryItemDefinition item: plugList) {
+                        for(DestinyInventoryItemDefinition item: plugList) {
 //                            InventoryItemJsonData itemData = gson.fromJson(item.getValue(), InventoryItemJsonData.class);
-//
-//                            for (int i = 0; i < perksModelList.size(); i++) {
-//                                if(itemData.getHash().equals(perksModelList.get(i).getPlugItemHash())) {
-//                                    perksModelList.get(i).setSocketName(itemData.getDisplayProperties().getName());
-//                                    perksModelList.get(i).setSocketDescription(itemData.getDisplayProperties().getDescription());
-//
-//                                    if(itemData.getDisplayProperties().isHasIcon()) {
-//                                        perksModelList.get(i).setSocketIcon(itemData.getDisplayProperties().getIcon());
-//                                    }
-//                                }
-//                            }
-//                        }
+
+                            for (int i = 0; i < perksModelList.size(); i++) {
+                                if(item.getValue().getHash().equals(perksModelList.get(i).getPlugItemHash())) {
+                                    perksModelList.get(i).setSocketName(item.getValue().getDisplayProperties().getName());
+                                    perksModelList.get(i).setSocketDescription(item.getValue().getDisplayProperties().getDescription());
+
+                                    if(item.getValue().getDisplayProperties().isHasIcon()) {
+                                        perksModelList.get(i).setSocketIcon(item.getValue().getDisplayProperties().getIcon());
+                                    }
+                                }
+                            }
+                        }
 //                        //Sort list based on display order
-//                        Collections.sort(perksModelList, (socketModel, t1) -> Long.compare(socketModel.getSocketIndex(), t1.getSocketIndex()));
-//                        perksLiveData.postValue(new SocketModel(perksModelList));
+                        Collections.sort(perksModelList, (socketModel, t1) -> Long.compare(socketModel.getSocketIndex(), t1.getSocketIndex()));
+                        perksLiveData.postValue(new SocketModel(perksModelList));
                     }
                     catch(Exception e) {
                         singleError.postValue(e.getLocalizedMessage());
@@ -355,23 +372,23 @@ public class XurRepository {
                 .subscribe(plugList -> {
 
                     try {
-//                        for(DestinyInventoryItemDefinition item: plugList) {
+                        for(DestinyInventoryItemDefinition item: plugList) {
 ////                            InventoryItemJsonData itemData = gson.fromJson(item.getValue(), InventoryItemJsonData.class);
 ////
-////                            for (int i = 0; i < modsModelList.size(); i++) {
-////                                if(itemData.getHash().equals(modsModelList.get(i).getPlugItemHash())) {
-////                                    modsModelList.get(i).setSocketName(itemData.getDisplayProperties().getName());
-////                                    modsModelList.get(i).setSocketDescription(itemData.getDisplayProperties().getDescription());
-////
-////                                    if(itemData.getDisplayProperties().isHasIcon()) {
-////                                        modsModelList.get(i).setSocketIcon(itemData.getDisplayProperties().getIcon());
-////                                    }
-////                                }
-////                            }
-////                        }
-////                        //Sort list based on display order
-////                        Collections.sort(modsModelList, (socketModel, t1) -> Long.compare(socketModel.getSocketIndex(), t1.getSocketIndex()));
-////                        modsLiveData.postValue(new SocketModel(modsModelList));
+                            for (int i = 0; i < modsModelList.size(); i++) {
+                                if(item.getValue().getHash().equals(modsModelList.get(i).getPlugItemHash())) {
+                                    modsModelList.get(i).setSocketName(item.getValue().getDisplayProperties().getName());
+                                    modsModelList.get(i).setSocketDescription(item.getValue().getDisplayProperties().getDescription());
+
+                                    if(item.getValue().getDisplayProperties().isHasIcon()) {
+                                        modsModelList.get(i).setSocketIcon(item.getValue().getDisplayProperties().getIcon());
+                                    }
+                                }
+                            }
+                        }
+                        //Sort list based on display order
+                        Collections.sort(modsModelList, (socketModel, t1) -> Long.compare(socketModel.getSocketIndex(), t1.getSocketIndex()));
+                        modsLiveData.postValue(new SocketModel(modsModelList));
                     }
                     catch(Exception e) {
                         singleError.postValue(e.getLocalizedMessage());

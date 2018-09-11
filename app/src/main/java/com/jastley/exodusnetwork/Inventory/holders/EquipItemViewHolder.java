@@ -1,19 +1,27 @@
 package com.jastley.exodusnetwork.Inventory.holders;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.jastley.exodusnetwork.R;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 
 public class EquipItemViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.equip_emblem_icon) ImageView emblemIcon;
+    @BindView(R.id.equip_class_name) TextView className;
 
     private String characterId;
     private String characterLevel;
@@ -37,7 +45,25 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
 
         Picasso.get()
                 .load(baseURL + iconUrl)
-                .into(this.emblemIcon);
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory
+                                .create(context.getResources(), bitmap);
+                        roundedBitmapDrawable.setCircular(true);
+                        emblemIcon.setImageDrawable(roundedBitmapDrawable);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                    }
+                });
     }
 
     public String getCharacterId() {
@@ -68,20 +94,20 @@ public class EquipItemViewHolder extends RecyclerView.ViewHolder {
         return classType;
     }
 
-    public void setClassType(String type) {
+    public void setClassType(String type, Context context) {
 
         switch (type) {
             case "0":
-                classType = "Titan";
+                className.setText(context.getString(R.string.titan));
                 break;
             case "1":
-                classType = "Hunter";
+                className.setText(context.getString(R.string.hunter));
                 break;
             case "2":
-                classType = "Warlock";
+                className.setText(context.getString(R.string.warlock));
                 break;
             default:
-                classType = "Unknown";
+                className.setText(context.getString(R.string.unknown));
                 break;
         }
 

@@ -57,18 +57,13 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class ParentInventoryFragment extends Fragment {
 
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-
     @BindView(R.id.parent_inventory_viewpager) ViewPager mViewPager;
-//    @BindView((getActivity())R.id.inventory_sliding_tabs)
     InventoryViewModel mViewModel;
     TabLayout mTabLayout;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private OnFragmentInteractionListener mListener;
     private List<Response_GetAllCharacters.CharacterData> charactersList = new ArrayList<>();
-    private ArrayList<DestinyInventoryItemDefinition> destinyInventoryItemDefinitionManifest = new ArrayList<>();
 
     private int tabIndexCount;
 
@@ -89,7 +84,6 @@ public class ParentInventoryFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        compositeDisposable.dispose();
     }
 
     @Override
@@ -98,12 +92,7 @@ public class ParentInventoryFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_inventory, container, false);
-
         ButterKnife.bind(this, rootView);
-
-
-
-//        getAccountCharacters();
 
         return rootView;
     }
@@ -114,12 +103,15 @@ public class ParentInventoryFragment extends Fragment {
 
         mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
 
-        mViewModel.getAccountList().observe(this, accounts -> {
+        mViewModel.getAccountLiveData().observe(this, accounts -> {
             if(accounts.getThrowable()  != null) {
-                //TODO
+                Snackbar.make(getView(), accounts.getThrowable().getLocalizedMessage(), Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> mViewModel.getAccountLiveData())
+                        .show();
             }
             else if(accounts.getCharacterDataList() != null) {
                 this.charactersList = accounts.getCharacterDataList();
+                mViewModel.setAccountList(accounts.getCharacterDataList());
                 setupSectionsPagerAdapter(accounts.getCharacterDataList().size());
             }
         });
@@ -147,8 +139,6 @@ public class ParentInventoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-
-        compositeDisposable.dispose();
     }
 
     @Override
@@ -219,24 +209,12 @@ public class ParentInventoryFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-//            PlaceholderFragment fragment = PlaceholderFragment.newInstance(position);
-//            return PlaceholderFragment.newInstance(position + 1);
-
-//            CharacterInventoryFragment fragment = CharacterInventoryFragment.newInstance(position, charactersList.get(position), destinyInventoryItemDefinitionManifest);
-            return CharacterInventoryFragment.newInstance(position, position == (accountSize - 1)
-//                                                        charactersList.get(position),
-//                                                        charactersList,
-//                    destinyInventoryItemDefinitionManifest
-            );
+            //Returns a fragment for each character + 1, the last being for the characters' vault
+            return CharacterInventoryFragment.newInstance(position, accountSize, position == (accountSize - 1));
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-//            return 5;
-//            notifyDataSetChanged();
             return charactersList.size();
         }
 
@@ -259,80 +237,6 @@ public class ParentInventoryFragment extends Fragment {
             }
             return super.getPageTitle(position);
         }
-    }
-
-    public void getAccountCharacters() {
-
-//        AccountDAO mAccountDAO = AppDatabase.getAppDatabase(getContext()).getAccountDAO();
-//        Disposable disposable = mAccountDAO.getAll()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(accounts -> {
-//
-//                    String tempMembershipId = "0";
-//                    String tempMembershipType = "0";
-//                    SharedPreferences savedPrefs = getActivity().getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//                    String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
-//
-//                    for (Account account : accounts) {
-//
-////                        Gson gson = new GsonBuilder().create();
-////                        Response_GetAllCharacters.CharacterData accountCharacter = gson.fromJson(account.getValue(), Response_GetAllCharacters.CharacterData.class);
-//
-//                        //only get characters for selectedPlatform
-//                        if (accountCharacter.getMembershipType().equals(selectedPlatform)) {
-//                            System.out.println("forLoop " + account.getKey());
-//                            CharacterDatabaseModel character = new CharacterDatabaseModel(
-//                                    accountCharacter.getMembershipId(),
-//                                    accountCharacter.getCharacterId(),
-//                                    accountCharacter.getMembershipType(),
-//                                    accountCharacter.getClassType(),
-//                                    accountCharacter.getEmblemPath(),
-//                                    accountCharacter.getEmblemBackgroundPath(),
-//                                    accountCharacter.getBaseCharacterLevel(),
-//                                    accountCharacter.getLight()
-//                            );
-//                            tempMembershipId = accountCharacter.getMembershipId();
-//                            tempMembershipType = accountCharacter.getMembershipType();
-//                            charactersList.add(character);
-//                        }
-//
-//                    }
-//
-//                    //Add vault fragment on the end
-//                    CharacterDatabaseModel vault = new CharacterDatabaseModel();
-//                    vault.setMembershipId(tempMembershipId);
-//                    vault.setMembershipType(tempMembershipType);
-//                    vault.setClassType("vault");
-//
-//                    charactersList.add(vault);
-//
-//                    mViewPager.setAdapter(mSectionsPagerAdapter);
-//                    mTabLayout.setupWithViewPager(mViewPager);
-//                    mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//                        @Override
-//                        public void onTabSelected(TabLayout.Tab tab) {
-//                            System.out.println("tabSelectedListener: tab " + tab.getPosition());
-//                        }
-//
-//                        @Override
-//                        public void onTabUnselected(TabLayout.Tab tab) {
-//
-//                        }
-//
-//                        @Override
-//                        public void onTabReselected(TabLayout.Tab tab) {
-//
-//                        }
-//                    });
-//                }, throwable -> {
-//                    Log.d("GET_ACCOUNT_CHARACTERS", throwable.getLocalizedMessage());
-//                    Snackbar.make(getView(), "Unable to read account data!", Snackbar.LENGTH_INDEFINITE)
-//                            .setAction("Retry", v -> getAccountCharacters())
-//                            .show();
-//                });
-//
-//        compositeDisposable.add(disposable);
     }
 
 }

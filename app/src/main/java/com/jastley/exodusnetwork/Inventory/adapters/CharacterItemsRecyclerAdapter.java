@@ -15,6 +15,8 @@ import com.jastley.exodusnetwork.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.subjects.PublishSubject;
+
 /**
  * Created by jamie1192 on 24/4/18.
  */
@@ -62,29 +64,8 @@ public class CharacterItemsRecyclerAdapter extends RecyclerView.Adapter<Characte
 
         holder.setMasterworkIcon(itemList.get(position).isMasterwork());
         holder.setLockStatus(itemList.get(position).getIsLocked());
-//        holder.setItemName(itemList.get(position).getDisplayProperties().getName());
-//        holder.setItemHash(itemList.get(position).getItemData().getItemHash());
-//        holder.setItemImage(itemList.get(position).getDisplayProperties().getIcon());
-//
-//        try {
-//            holder.setPrimaryStatValue(itemList.get(position).getInstanceData().getPrimaryStat().getValue());
-//            holder.setModifierIcon(itemList.get(position).getInstanceData().getDamageType());
-//        }
-//        catch(Exception e) {
-//            Log.e("INVENTORY_VIEWHOLDER", e.getLocalizedMessage());
-//        }
-//
-//        try {
-//            holder.setItemInstanceId(itemList.get(position).getItemData().getItemInstanceId());
-//            holder.setIsEquipped(itemList.get(position).getInstanceData().getIsEquipped());
-//            holder.setCanEquip(itemList.get(position).getInstanceData().getCanEquip());
-//        }
-//        catch(Exception e){
-//            Log.e("INVENTORY_VIEWHOLDER", e.getLocalizedMessage());
-//        }
-//        holder.setBucketHash(itemList.get(position).getItemData().getBucketHash());
-//        holder.setItemTypeDisplayName(itemList.get(position).getInventoryItem().getItemTypeDisplayName());
 
+        holder.setClickedItem(itemList.get(position));
     }
 
     @Override
