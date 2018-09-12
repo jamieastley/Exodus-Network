@@ -80,17 +80,6 @@ public interface BungieAPI {
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
     Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Transfer item to vault/character
-    @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
-    Observable<Response_TransferEquipItem> transferItem(@Body TransferItemRequestBody transferBody);
-
-    @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
-    Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
-
-    //Pull item from Postmaster
-    @POST("/Platform/Destiny2/Actions/Items/PullFromPostmaster/")
-    Observable<Response_TransferEquipItem> pullFromPostmaster(@Body PostmasterTransferRequest postmasterBody);
-
     //Get Faction progression for character(?components=202)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
     Observable<Response_FactionProgression> getFactionProgress(@Path("membershipType") String membershipType,
@@ -116,6 +105,26 @@ public interface BungieAPI {
     Observable<Response_GetCharacterChecklist> getCharacterChecklists(@Path("membershipType") String membershipType,
                                                                       @Path("membershipId") String membershipId,
                                                                       @Path("characterId") String characterId);
+
+
+    /** ITEM MANAGEMENT **/
+
+    //Transfer item to vault/character
+    @POST("/Platform/Destiny2/Actions/Items/TransferItem/")
+    Observable<Response_TransferEquipItem> transferItem(@Body TransferItemRequestBody transferBody);
+
+    @POST("/Platform/Destiny2/Actions/Items/EquipItem/")
+    Observable<Response_TransferEquipItem> equipItem(@Body EquipItemRequestBody equipBody);
+
+    //Pull item from Postmaster
+    @POST("/Platform/Destiny2/Actions/Items/PullFromPostmaster/")
+    Observable<Response_TransferEquipItem> pullFromPostmaster(@Body PostmasterTransferRequest postmasterBody);
+
+    //SetItem lock state
+    @POST("/Platform/Destiny2/Actions/Items/SetLockState/")
+    Observable<Response_TransferEquipItem> setLockState(@Body ItemLockStateBody lockStateBody);
+
+
 
     /** MANIFEST DATA **/
 

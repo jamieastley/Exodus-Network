@@ -25,8 +25,19 @@
             android:src="@drawable/item_icon_example"
             />
 
+        <ImageView
+            android:id="@+id/masterwork_gradient"
+            android:layout_width="80dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignBottom="@id/inventory_item_image"
+            android:src="@drawable/masterwork_gradient"
+            android:visibility="gone"
+            />
+
         <TextView
-            android:id="@+id/item_quantity"
+            android:id="@+id/item_quantity_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/inventory_item_image"
@@ -49,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/inventory_item_image"
             android:layout_alignEnd="@id/inventory_item_image"
+            android:layout_margin="2dp"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:textSize="18sp"
@@ -134,33 +146,44 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/item_icon_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
+        <!--<LinearLayout-->
+            <!--android:id="@+id/item_icon_layout"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:orientation="vertical"-->
+            <!--&gt;-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/item_modifier_icon"-->
+                <!--android:layout_width="25dp"-->
+                <!--android:layout_height="25dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/modifier_arc"-->
+                <!--/>-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/item_masterwork_icon"-->
+                <!--android:layout_width="25dp"-->
+                <!--android:layout_height="25dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/icon_masterwork"-->
+
+
+                <!--/>-->
+
+        <!--</LinearLayout>-->
+
+        <ImageView
+            android:id="@+id/item_modifier_icon"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
-            android:orientation="vertical"
-            >
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
 
-            <ImageView
-                android:id="@+id/item_modifier_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                />
-
-            <ImageView
-                android:id="@+id/item_masterwork_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:src="@drawable/icon_masterwork"
-                android:visibility="gone"
-
-                />
-
-        </LinearLayout>
+            />
 
 
     </RelativeLayout>

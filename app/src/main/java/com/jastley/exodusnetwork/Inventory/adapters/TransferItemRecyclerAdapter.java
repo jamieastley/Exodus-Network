@@ -15,6 +15,8 @@ import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jastley.exodusnetwork.Definitions.itemUnequippable;
+
 public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferItemViewHolder> {
 
     private Context mContext;
@@ -26,7 +28,9 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
     private String vaultCharacterId;
     private InventoryItemModel selectedItem;
 
-    public TransferItemRecyclerAdapter(int index, InventoryItemModel item)
+    public TransferItemRecyclerAdapter(int index,
+                                       InventoryItemModel item,
+                                       TransferSelectListener listener)
 //            Context context,
 //                                       InventoryItemModel selectedItem,
 //                                       int index,
@@ -39,6 +43,7 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
 //        this.mSelectedItem = selectedItem;
         this.mTabIndex = index;
         this.selectedItem = item;
+        this.mListener = listener;
 //        this.vaultCharacterId = vaultCharId;
 //        this.mCharacters = characters;
 //        this.mListener = listener;
@@ -80,23 +85,32 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
             holder.setClassType("vault");
         }
 
-        //Disable transferring item to character it already exists on
-        if(position == mTabIndex){
-            holder.setDisabled();
+        if(selectedItem.getSlot() != 0){ //not a lost item in Postmaster
+            //Disable transferring item to character it already exists on
+            if(position == mTabIndex){
+                holder.setDisabled();
+            }
+            //Cannot transfer items that are equipped to a character
+            else if(selectedItem.getIsEquipped()) {
+                holder.setDisabled();
+            }
+            //if user selected characters' sub-class
+            else if (selectedItem.getSlot() == 10) {
+                //Can't transfer subclasses
+                holder.setDisabled();
+            }
+            else if((selectedItem.getCannotEquipReason() & itemUnequippable) != 0) {
+                holder.setDisabled();
+            }
+//            else if(!selectedItem.getCanEquip()) {
+//                holder.setDisabled();
+//            }
         }
-        //Cannot transfer items that are equipped to a character
-        else if(selectedItem.getIsEquipped()) {
-            holder.setDisabled();
+        else {
+            if(position != mTabIndex) {
+                holder.setDisabled();
+            }
         }
-        //if user selected characters' sub-class
-        else if (selectedItem.getSlot() == 10) {
-            //Can't transfer subclasses
-            holder.setDisabled();
-        }
-//
-//        if(mSelectedItem.getCanEquip()) {
-//            holder.setDisabled();
-//        }
     }
 
     @Override

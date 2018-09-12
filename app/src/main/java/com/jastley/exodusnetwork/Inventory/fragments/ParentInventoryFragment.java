@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.MainActivity;
@@ -139,6 +140,7 @@ public class ParentInventoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -148,6 +150,7 @@ public class ParentInventoryFragment extends Fragment {
         if(activity != null) {
             activity.setActionBarTitle(getString(R.string.item_transfer));
         }
+        initialiseTransferObserver();
     }
 
     @Override
@@ -169,6 +172,30 @@ public class ParentInventoryFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    private void initialiseTransferObserver() {
+        mViewModel.getTransferEquipStatus().observe(this, status -> {
+            if(status.getThrowable() != null) {
+                dismissLoadingFragment();
+                showSnackbarMessage(status.getThrowable().getLocalizedMessage());
+            }
+            else if(status.getMessage() != null) {
+                dismissLoadingFragment();
+                showSnackbarMessage(status.getMessage());
+            }
+        });
+    }
+
+    private void showSnackbarMessage(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    private void dismissLoadingFragment() {
+        LoadingDialogFragment loadingFragment = (LoadingDialogFragment)getActivity().getFragmentManager().findFragmentByTag("loadingDialog");
+        if (loadingFragment != null){
+            loadingFragment.dismiss();
+        }
+    }
 
     private void setupSectionsPagerAdapter(int count) {
         mTabLayout = getActivity().findViewById(R.id.sliding_tabs);

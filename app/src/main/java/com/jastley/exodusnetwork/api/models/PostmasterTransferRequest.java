@@ -6,12 +6,14 @@ public class PostmasterTransferRequest {
     private String stackSize;
     private String itemId;
     private String characterId;
+    private String membershipType;
 
-    public PostmasterTransferRequest(String itemReferenceHash, String stackSize, String itemId, String characterId) {
+    public PostmasterTransferRequest(String itemReferenceHash, String stackSize, String itemId, String characterId, String mType) {
         this.itemReferenceHash = itemReferenceHash;
         this.stackSize = stackSize;
         this.itemId = itemId;
         this.characterId = characterId;
+        this.membershipType = mType;
     }
 
     public PostmasterTransferRequest() {
@@ -47,5 +49,13 @@ public class PostmasterTransferRequest {
 
     public void setCharacterId(String characterId) {
         this.characterId = characterId;
+    }
+
+    public String getMembershipType() {
+        return membershipType;
+    }
+
+    public void setMembershipType(String membershipType) {
+        this.membershipType = membershipType;
     }
 }

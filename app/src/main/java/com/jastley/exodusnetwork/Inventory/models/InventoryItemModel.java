@@ -23,6 +23,7 @@ public class InventoryItemModel {
     private String primaryStatValue;
     private String damageType;
     private int quantity;
+    private int cannotEquipReason;
 
     //Manifest data
     private String classType;
@@ -444,5 +445,13 @@ public class InventoryItemModel {
 
     public void setAmmoType(int ammoType) {
         this.ammoType = ammoType;
+    }
+
+    public int getCannotEquipReason() {
+        return cannotEquipReason;
+    }
+
+    public void setCannotEquipReason(int cannotEquipReason) {
+        this.cannotEquipReason = cannotEquipReason;
     }
 }

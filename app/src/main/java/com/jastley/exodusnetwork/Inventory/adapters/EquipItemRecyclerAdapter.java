@@ -16,6 +16,8 @@ import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jastley.exodusnetwork.Definitions.itemUnequippable;
+
 public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemViewHolder> {
 
     private Context mContext;
@@ -39,9 +41,11 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
 
 
     public EquipItemRecyclerAdapter(int mTabIndex,
-                                    InventoryItemModel item) {
+                                    InventoryItemModel item,
+                                    EquipSelectListener listener) {
         this.mTabIndex = mTabIndex;
         this.selectedItem = item;
+        this.mListener = listener;
     }
 
     @Override
@@ -70,7 +74,12 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
 
             holder.setClassType(characterList.get(position).getClassType(), mContext);
 
-            if(!selectedItem.getCanEquip()) {
+            if((selectedItem.getCannotEquipReason() & itemUnequippable) != 0) {
+                holder.setDisabled();
+            }
+            //Class item specific equip check
+            else if(!selectedItem.getClassType().equals("3")) { //3 = not restricted to a class
+                if(!selectedItem.getClassType().equals(characterList.get(position).getClassType()))
                 holder.setDisabled();
             }
             else if(selectedItem.getIsEquipped()) {

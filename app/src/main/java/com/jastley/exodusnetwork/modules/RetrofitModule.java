@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jastley.exodusnetwork.BuildConfig;
 import com.jastley.exodusnetwork.Utils.NetworkInterceptor;
+import com.jastley.exodusnetwork.Utils.UnauthorizedInterceptor;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -15,6 +16,7 @@ import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -156,7 +158,12 @@ public class RetrofitModule {
     @Singleton
     OkHttpClient createAuthOkHttpClient(Application application) {
         final OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+//        httpClient.addInterceptor(new UnauthorizedInterceptor());
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        httpClient.addInterceptor(loggingInterceptor);
         httpClient.addInterceptor(new NetworkInterceptor(application));
+
         httpClient.addInterceptor(chain -> {
             final Request original = chain.request();
 

@@ -54,6 +54,13 @@ public class Definitions {
     public static final int isTracked = 2;
     public static final int isMasterwork = 4;
 
+    //EquipReasonFailure (cannotEquipReason)
+    public static final int itemUnequippable = 1;
+    public static final int itemUniqueEquipRestricted = 2;
+    public static final int itemFailedUnlockCheck = 4;
+    public static final int itemFailedLevelCheck = 8;
+    public static final int itemNotOnCharacter = 16;
+
     //Sockets
     public static final String weaponPerksSockets = "4241085061";
     public static final String weaponModsSockets = "2685412949";

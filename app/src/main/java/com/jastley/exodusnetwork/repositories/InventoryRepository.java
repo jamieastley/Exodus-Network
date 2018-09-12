@@ -9,10 +9,15 @@ import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.jastley.exodusnetwork.Definitions;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
+import com.jastley.exodusnetwork.Inventory.models.TransferEquipStatus;
+import com.jastley.exodusnetwork.Utils.UnauthorizedException;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.api.BungieAPI;
+import com.jastley.exodusnetwork.api.models.EquipItemRequestBody;
+import com.jastley.exodusnetwork.api.models.PostmasterTransferRequest;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.api.models.Response_GetCharacterInventory;
+import com.jastley.exodusnetwork.api.models.TransferItemRequestBody;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
@@ -28,11 +33,13 @@ import javax.inject.Named;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 
 import static com.jastley.exodusnetwork.Definitions.isLocked;
 import static com.jastley.exodusnetwork.Definitions.isMasterwork;
 import static com.jastley.exodusnetwork.Definitions.isTracked;
+import static com.jastley.exodusnetwork.Definitions.itemUnequippable;
 
 public class InventoryRepository {
 
@@ -48,6 +55,9 @@ public class InventoryRepository {
     private List<InventoryItemModel> secondItemList = new ArrayList<>();
     private List<InventoryItemModel> thirdItemList = new ArrayList<>();
     private List<InventoryItemModel> fourthItemList = new ArrayList<>();
+
+    //Item transfer/equip
+    private MutableLiveData<TransferEquipStatus> transferEquipStatus = new MutableLiveData<>();
 
     @Inject
     @Named("Account")
@@ -66,6 +76,9 @@ public class InventoryRepository {
     @Inject
     @Named("savedPrefs")
     SharedPreferences sharedPreferences;
+
+    @Inject
+    AccountRepository accountRepository;
 
     @Inject
     public InventoryRepository() {
@@ -245,10 +258,17 @@ public class InventoryRepository {
                                 if(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat() != null) {
                                     itemModel.setPrimaryStatValue(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat().getValue());
                                 }
+                                //Check equipReasonFailure
+                                itemModel.setCannotEquipReason(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCannotEquipReason());
+//                                if(cannotEquipReason == 0) {
+//                                    itemModel.setCanEquip(true);
+//                                }
                                 itemModel.setIsEquipped(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
-                                itemModel.setCanEquip(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
-
-
+//                                else {
+//                                    itemModel.setCanEquip(false);
+//                                }
+                                //Needed separately to set item border
+                                itemModel.setIsEquipped(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
                             }
 
                             itemModel.setSlot(Definitions.sortBuckets(equippedItem.getBucketHash()));
@@ -266,20 +286,32 @@ public class InventoryRepository {
                     }
 
                 }, throwable -> {
-                    Crashlytics.logException(throwable);
-                    switch (characterSlot){
-                        case 0:
-                            firstSlotInventory.postValue(new InventoryItemModel(throwable));
-                            break;
-                        case 1:
-                            secondSlotInventory.postValue(new InventoryItemModel(throwable));
-                            break;
-                        case 2:
-                            thirdSlotInventory.postValue(new InventoryItemModel(throwable));
-                            break;
-                        case 3:
-                            fourthSlotInventory.postValue(new InventoryItemModel(throwable));
-                            break;
+                    if(throwable instanceof HttpException) {
+
+                        if(((HttpException) throwable).code() == 401) {
+                            Log.e("Http", "401");
+                            Log.d("GET_INVENTORY", throwable.getMessage());
+                            accountRepository.refreshAccessToken();
+                            getInventoryItems(characterSlot, mType, mId, cId);
+                        }
+                    }
+                    else {
+                        Crashlytics.logException(throwable);
+                        //TODO change below to one single snackbar message
+                        switch (characterSlot) {
+                            case 0:
+                                firstSlotInventory.postValue(new InventoryItemModel(throwable));
+                                break;
+                            case 1:
+                                secondSlotInventory.postValue(new InventoryItemModel(throwable));
+                                break;
+                            case 2:
+                                thirdSlotInventory.postValue(new InventoryItemModel(throwable));
+                                break;
+                            case 3:
+                                fourthSlotInventory.postValue(new InventoryItemModel(throwable));
+                                break;
+                        }
                     }
                 });
     }
@@ -333,9 +365,14 @@ public class InventoryRepository {
                                     itemModel.setPrimaryStatValue(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getPrimaryStat().getValue());
                                 }
 
-                                itemModel.setIsEquipped(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
-                                itemModel.setCanEquip(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
+                                //All items in vault have canEquip set to false, so check flag enum instead
+                                itemModel.setCannotEquipReason(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCannotEquipReason());
+//                                if((cannotEquipReason & itemUnequippable) == 0) {
+//                                    itemModel.setCanEquip(true);
+//                                }
 
+                                itemModel.setIsEquipped(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
+//                                itemModel.setCanEquip(vaultItems.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
                             }
 
 
@@ -360,6 +397,11 @@ public class InventoryRepository {
                     }
 
                 }, throwable -> {
+                    if(throwable instanceof UnauthorizedException) {
+                        Log.d("GET_INVENTORY", throwable.getMessage());
+                        accountRepository.refreshAccessToken();
+                        getVaultItems(characterSlot, mType, mId);
+                    }
                     Crashlytics.logException(throwable);
                     switch (characterSlot){
                         case 0:
@@ -387,8 +429,6 @@ public class InventoryRepository {
                 .observeOn(Schedulers.io())
                 .subscribe(definitions -> {
 
-                    System.out.println("OUTER_DEFINITIONS: " + definitions.size());
-
                     //iterate through all database results
                     List<InventoryItemModel> itemList = getSlotList(characterSlot);
 
@@ -398,6 +438,7 @@ public class InventoryRepository {
                         for (int i = 0; i < itemList.size(); i++) {
                             if(definitionData.getValue().getHash().equals(itemList.get(i).getItemHash())) {
 
+                                itemList.get(i).setClassType(String.valueOf(definitionData.getValue().getClassType()));
                                 itemList.get(i).setItemName(definitionData.getValue().getDisplayProperties().getName());
                                 itemList.get(i).setItemTypeDisplayName(definitionData.getValue().getItemTypeDisplayName());
                                 try {
@@ -412,8 +453,6 @@ public class InventoryRepository {
                                 }
 
                                 try{
-                                    Log.d("InventoryAPIListHash: ", itemList.get(i).getItemHash());
-                                    Log.d("ManifestItemHash: ", definitionData.getValue().getHash());
                                     itemList.get(i).setItemIcon(definitionData.getValue().getDisplayProperties().getIcon());
                                 } catch(Exception e){
                                     Log.d("getManifestData: ", e.getLocalizedMessage());
@@ -512,5 +551,136 @@ public class InventoryRepository {
                     break;
             }
         }
+    }
+
+
+    //Transfer/equipping starting point, if transferring this MUST be called first
+    public void transferToVault(TransferItemRequestBody transferBody,
+                                TransferItemRequestBody toCharacterBody,
+                                EquipItemRequestBody equipBody,
+                                boolean isEquipping,
+                                boolean vaultToCharacter) {
+
+
+
+        Disposable disposable = authRetrofit.create(BungieAPI.class)
+                .transferItem(transferBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+
+                    if(!response.getErrorCode().equals("1")) {
+                        //TODO error
+                        transferEquipStatus.postValue(new TransferEquipStatus(response.getMessage()));
+                    }
+                    else {
+                        //player clicked equip on an item from a different originating character, so
+                        //first transfer to vault, then transfer to target character
+                        if(isEquipping) {
+                            transferToCharacter(toCharacterBody, equipBody, true);
+                        }
+                        //item is just being transferred between characters, so now send to target character
+                        else if(!isEquipping && vaultToCharacter) {
+                            transferToCharacter(toCharacterBody, null, false);
+                        }
+                        //Item was only being transferred to vault, we're done
+                        else {
+                            //TODO push success message
+                            transferEquipStatus.postValue(new TransferEquipStatus("Item Transferred"));
+                        }
+
+                    }
+                }, throwable -> {
+                    //TODO catch 401 errors
+                    transferEquipStatus.postValue(new TransferEquipStatus(throwable));
+                });
+
+    }
+
+    public void transferToCharacter(TransferItemRequestBody transferBody,
+                                    EquipItemRequestBody equipBody,
+                                    boolean isEquipping) {
+
+
+        Disposable disposable = authRetrofit.create(BungieAPI.class)
+                .transferItem(transferBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+
+                    if(!response.getErrorCode().equals("1")) {
+                        //TODO error
+                        transferEquipStatus.postValue(new TransferEquipStatus(response.getMessage()));
+                    }
+                    else {
+                        //item was transferred to character, now equip it
+                        if(isEquipping) {
+                            equipItem(equipBody, false);
+                        }
+                        //just transferring, we're done
+                        else {
+                            transferEquipStatus.postValue(new TransferEquipStatus("Item Transferred"));
+                        }
+                    }
+                }, throwable -> {
+                    //TODO catch 401 errors
+                    transferEquipStatus.postValue(new TransferEquipStatus(throwable));
+                });
+
+
+    }
+
+
+    public void equipItem(EquipItemRequestBody equipBody,
+                          boolean sameCharacter) {
+
+        Disposable disposable = authRetrofit.create(BungieAPI.class)
+                .equipItem(equipBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+
+                    if(!response.getErrorCode().equals("1")) {
+                        //TODO error
+                    }
+                    else {
+                        //TODO generate particular message
+                        if(sameCharacter) {
+                            transferEquipStatus.postValue(new TransferEquipStatus("Item Equipped"));
+                        }
+                        else {
+                            transferEquipStatus.postValue(new TransferEquipStatus("Item Equipped"));
+                        }
+                    }
+
+                }, throwable -> {
+                    //TODO catch 401 errors
+                    transferEquipStatus.postValue(new TransferEquipStatus(throwable));
+                });
+    }
+
+    public void pullFromPostmaster(PostmasterTransferRequest request) {
+
+        Disposable disposable = authRetrofit.create(BungieAPI.class)
+                .pullFromPostmaster(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+
+                }, throwable -> {
+                    if(((HttpException) throwable).code() == 401) {
+                        Log.e("Http", "401");
+                        Log.d("GET_INVENTORY", throwable.getMessage());
+                        accountRepository.refreshAccessToken();
+                        pullFromPostmaster(request);
+                    }
+                    else {
+                        transferEquipStatus.postValue(new TransferEquipStatus(throwable.getLocalizedMessage()));
+                    }
+                });
+    }
+
+    public LiveData<TransferEquipStatus> getTransferEquipStatus() {
+        return transferEquipStatus;
     }
 }

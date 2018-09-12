@@ -26,7 +26,11 @@ import butterknife.ButterKnife;
 import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.Inventory.adapters.EquipItemRecyclerAdapter;
 import com.jastley.exodusnetwork.Inventory.adapters.TransferItemRecyclerAdapter;
+import com.jastley.exodusnetwork.Inventory.holders.EquipItemViewHolder;
+import com.jastley.exodusnetwork.Inventory.holders.TransferItemViewHolder;
+import com.jastley.exodusnetwork.Inventory.interfaces.EquipSelectListener;
 import com.jastley.exodusnetwork.Inventory.interfaces.SuccessListener;
+import com.jastley.exodusnetwork.Inventory.interfaces.TransferSelectListener;
 import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Definitions;
@@ -35,6 +39,7 @@ import com.jastley.exodusnetwork.Utils.ColumnCalculator;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.RetrofitHelper;
 import com.jastley.exodusnetwork.api.models.EquipItemRequestBody;
+import com.jastley.exodusnetwork.api.models.PostmasterTransferRequest;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.api.models.TransferItemRequestBody;
 import com.squareup.picasso.Picasso;
@@ -56,9 +61,8 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     @BindView(R.id.equip_recycler_view) RecyclerView mEquipRecyclerView;
 
     //Seek Bar for item quantity
-    @BindView(R.id.seekbar_layout) RelativeLayout seekbarLayout;
+
     @BindView(R.id.seekbar_min_text) TextView seekMinQuantity;
-    @BindView(R.id.seekbar_max_text) TextView seekMaxQuantity;
     @BindView(R.id.item_seekbar_quantity) SeekBar seekBar;
 
     //Selected item
@@ -68,14 +72,16 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 //    @BindView(R.id.selected_item_type) TextView itemType;
 //    @BindView(R.id.item_modifier_icon) ImageView damageTypeIcon;
     @BindView(R.id.inventory_item_image) ImageView itemImage;
-    @BindView(R.id.item_quantity) TextView itemQuantity;
+    @BindView(R.id.item_quantity_text) TextView itemQuantity;
     @BindView(R.id.primary_stat_value) TextView primaryStatValue;
     @BindView(R.id.inventory_item_name) TextView itemName;
     @BindView(R.id.item_lock_status) ImageView lockStatus;
     @BindView(R.id.inventory_item_type) TextView itemType;
     @BindView(R.id.item_ammo_type) ImageView ammoType;
     @BindView(R.id.item_modifier_icon) ImageView modifierIcon;
-    @BindView(R.id.item_masterwork_icon) ImageView masterworkIcon;
+    @BindView(R.id.masterwork_gradient) ImageView masterworkGradient;
+//    @BindView(R.id.item_masterwork_icon) ImageView masterworkIcon;
+    @BindView(R.id.seekbar_layout) RelativeLayout seekbarContainer;
 
     TransferItemRecyclerAdapter mTransferAdapter;
     EquipItemRecyclerAdapter mEquipAdapter;
@@ -90,24 +96,28 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     //class variable so equipping can access
     String className;
 
-    private BungieAPI mBungieApi;
+
     private int mTabIndex;
     private int mTabCount;
-    private OnFragmentInteractionListener mListener;
-    static SuccessListener mSuccessListener;
+    private int selectedQuantity = 1;
+//    private OnFragmentInteractionListener mListener;
+    static SuccessListener mListener;
     private Context mContext;
 
     InventoryViewModel mViewModel;
 
 //    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public static ItemTransferDialogFragment newInstance(int index, int count) {
+    public static ItemTransferDialogFragment newInstance(int index,
+                                                         int count,
+                                                         SuccessListener listener) {
 
         ItemTransferDialogFragment fragment = new ItemTransferDialogFragment();
 
         Bundle args = new Bundle();
         args.putInt("tabIndex", index);
         args.putInt("tabCount", count);
+        mListener = listener;
         fragment.setArguments(args);
 
         return fragment;
@@ -127,9 +137,9 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 ////        return fragment;
 //    }
 //
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String uri);
-    }
+//    public interface OnFragmentInteractionListener {
+//        void onFragmentInteraction(String uri);
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,11 +191,167 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
 
 
     private void initialiseRecyclerViews() {
-        mTransferAdapter = new TransferItemRecyclerAdapter(mTabIndex, selectedItem);
+        mTransferAdapter = new TransferItemRecyclerAdapter(mTabIndex, selectedItem, (view, position, holder) -> {
+            //pass selectedItem, accountList and tabIndex(character the item is coming from)
+            //to the transfer/equip methods
+
+            dismiss();
+            mListener.inProgress("Transferring");
+
+            //If not a lost item (stored in character postmaster)
+            if(selectedItem.getSlot() != 0) {
+
+                //Scenario 1: Transferring only TO Vault
+                if(position == characterList.size() - 1){ //position = character RV pos in modal
+                    TransferItemRequestBody transferToVault =
+                            new TransferItemRequestBody(
+                                    selectedItem.getItemHash(),
+                                    String.valueOf(selectedQuantity),
+                                    true,
+                                    selectedItem.getItemInstanceId(),
+                                    characterList.get(mTabIndex).getMembershipType(),
+                                    characterList.get(mTabIndex).getCharacterId());
+
+//                Log.e()
+
+                    mViewModel.transferToVault(transferToVault, null, null, false, false);
+                }
+                //Scenario 2: Vault tab is active so just transferring to a character
+                else if (characterList.get(mTabIndex).getClassType().toLowerCase().equals("vault")){
+
+                    TransferItemRequestBody transferToCharacter =
+                            new TransferItemRequestBody(
+                                    selectedItem.getItemHash(),
+                                    String.valueOf(selectedQuantity),
+                                    false,
+                                    selectedItem.getItemInstanceId(),
+                                    characterList.get(position).getMembershipType(),
+                                    characterList.get(position).getCharacterId());
+
+                    System.out.println("TRANSFER_2 " + transferToCharacter.toString());
+
+                    mViewModel.transferToCharacter(transferToCharacter, null, false);
+                }
+                //Scenario 3: transferring from character, to another character, so vault
+                //  transfer must be included as middle-man
+                else {
+
+                    //1. send item to Vault
+                    TransferItemRequestBody toVault =
+                            new TransferItemRequestBody(
+                                    selectedItem.getItemHash(),
+                                    String.valueOf(selectedQuantity),
+                                    true,
+                                    selectedItem.getItemInstanceId(),
+                                    characterList.get(position).getMembershipType(), //index doesn't matter, all mTypes are same
+                                    characterList.get(mTabIndex).getCharacterId()); //originating cId (active tab)
+
+                    //2. Then send item to target character
+                    TransferItemRequestBody toCharacter =
+                            new TransferItemRequestBody(
+                                    selectedItem.getItemHash(),
+                                    String.valueOf(selectedQuantity),
+                                    false,
+                                    selectedItem.getItemInstanceId(),
+                                    characterList.get(position).getMembershipType(),
+                                    characterList.get(position).getCharacterId()); //target cId from clicked icon in modal
+
+                    System.out.println("TRANSFER_3 " + toVault.toString());
+                    System.out.println("TRANSFER_3-2 " + toCharacter.toString());
+                    mViewModel.transferToVault(toVault, toCharacter, null, false, true);
+                }
+            }
+            else { //is lost item
+                PostmasterTransferRequest postmasterPull =
+                        new PostmasterTransferRequest(
+                                selectedItem.getItemHash(),
+                                String.valueOf(selectedQuantity),
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getCharacterId(),
+                                characterList.get(position).getMembershipType());
+
+                mViewModel.pullFromPostmaster(postmasterPull);
+            }
+
+
+        });
         mTransferRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mTabCount));
         mTransferRecyclerView.setAdapter(mTransferAdapter);
 
-        mEquipAdapter = new EquipItemRecyclerAdapter(mTabIndex, selectedItem);
+        mEquipAdapter = new EquipItemRecyclerAdapter(mTabIndex, selectedItem, (view, position, holder) -> {
+            //pass selectedItem, accountList and tabIndex(character the item is coming from)
+            //to the transfer/equip methods
+
+            dismiss();
+            mListener.inProgress("Equipping");
+
+            //Scenario 1: equip item to same character it's currently located
+            if(position == mTabIndex) {
+                EquipItemRequestBody equipBody =
+                        new EquipItemRequestBody(
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getCharacterId(),
+                                characterList.get(position).getMembershipType());
+                mViewModel.equipItem(equipBody, true);
+            }
+            //Scenario 2: selected item is stored in vault
+            else if(characterList.get(mTabIndex).getClassType().toLowerCase().equals("vault")) {
+
+                //Transfer to character
+                TransferItemRequestBody vaultToCharacter =
+                        new TransferItemRequestBody(
+                                selectedItem.getItemHash(),
+                                String.valueOf(selectedQuantity),
+                                false,
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getMembershipType(),
+                                characterList.get(position).getCharacterId()); //target cId
+
+
+                //Then equip it
+                EquipItemRequestBody equipBody =
+                        new EquipItemRequestBody(
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getCharacterId(),
+                                characterList.get(position).getMembershipType());
+
+                mViewModel.transferToCharacter(vaultToCharacter, equipBody, true);
+
+            }
+            //Scenario 3:selected item is stored in another character, so must be transferred to vault first
+            else {
+
+                //Transfer to vault
+                TransferItemRequestBody toVaultBody =
+                        new TransferItemRequestBody(
+                                selectedItem.getItemHash(),
+                                String.valueOf(selectedQuantity),
+                                true,
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getMembershipType(),
+                                characterList.get(mTabIndex).getCharacterId()); //originating character
+
+                //Then transfer to character
+                TransferItemRequestBody toCharacterBody =
+                        new TransferItemRequestBody(
+                                selectedItem.getItemHash(),
+                                String.valueOf(selectedQuantity),
+                                false,
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getMembershipType(),
+                                characterList.get(position).getCharacterId()); //Target character
+
+                //Then equip it to that character
+                EquipItemRequestBody equipBody =
+                        new EquipItemRequestBody(
+                                selectedItem.getItemInstanceId(),
+                                characterList.get(position).getCharacterId(),
+                                characterList.get(position).getMembershipType());
+
+                mViewModel.transferToVault(toVaultBody, toCharacterBody, equipBody, true, false);
+            }
+
+        });
         mEquipRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), mTabCount - 1));
         mEquipRecyclerView.setAdapter(mEquipAdapter);
 
@@ -197,20 +363,20 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-            mContext = context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnDetailsFragmentInteraction");
-        }
+//        if (context instanceof SuccessListener) {
+//            mListener = (SuccessListener) context;
+//            mContext = context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnDetailsFragmentInteraction");
+//        }
     }
 //
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-        mContext = null;
+//        mListener = null;
+//        mContext = null;
     }
 
 //    @Override
@@ -278,11 +444,40 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
                 .into(itemImage);
 
         if(selectedItem.getQuantity() > 1) {
+            seekbarContainer.setVisibility(View.VISIBLE);
             itemQuantity.setVisibility(View.VISIBLE);
-            itemQuantity.setText(selectedItem.getQuantity());
+            itemQuantity.setText(String.valueOf(selectedItem.getQuantity()));
+            seekBar.setMax(selectedItem.getQuantity());
+            seekMinQuantity.setText(String.valueOf(selectedItem.getQuantity()));
+            seekBar.setProgress(selectedItem.getQuantity());
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    if(seekBar.getProgress() < 1) {
+                        seekBar.setProgress(1);
+                        selectedQuantity = i;
+                        seekMinQuantity.setText(String.valueOf(1));
+                    } else
+                    seekMinQuantity.setText(String.valueOf(i));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
         }
 
-        primaryStatValue.setText(selectedItem.getPrimaryStatValue());
+        if(selectedItem.getPrimaryStatValue() != null) {
+            primaryStatValue.setText(selectedItem.getPrimaryStatValue());
+            primaryStatValue.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primaryStatBackground));
+        }
+
         itemName.setText(selectedItem.getItemName());
         if(selectedItem.getIsLocked()) {
             lockStatus.setVisibility(View.VISIBLE);
@@ -327,7 +522,14 @@ public class ItemTransferDialogFragment extends BottomSheetDialogFragment {
             }
         }
         if(selectedItem.isMasterwork()) {
-            masterworkIcon.setVisibility(View.VISIBLE);
+            masterworkGradient.setVisibility(View.VISIBLE);
+        }
+        //item border
+        if(selectedItem.getIsEquipped()) {
+            itemImage.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.item_equipped_border));
+        }
+        else {
+            itemImage.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.image_border));
         }
 
     }

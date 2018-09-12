@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity
                     AccountStatsFragment.OnAccountStatsInteractionListener,
                     MilestonesFragment.OnMilestoneFragmentInteractionListener,
                     CharacterInventoryFragment.OnFragmentInteractionListener,
-                    ItemTransferDialogFragment.OnFragmentInteractionListener,
+//                    ItemTransferDialogFragment.OnFragmentInteractionListener,
                     ParentInventoryFragment.OnFragmentInteractionListener {
 
 

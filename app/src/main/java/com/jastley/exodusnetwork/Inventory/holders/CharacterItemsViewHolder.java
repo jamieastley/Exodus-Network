@@ -31,9 +31,10 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.primary_stat_value) TextView statValue;
     @BindView(R.id.item_modifier_icon) ImageView modifierIcon;
     @BindView(R.id.item_lock_status) ImageView lockStatus;
-    @BindView(R.id.item_masterwork_icon) ImageView masterworkIcon;
-    @BindView(R.id.item_quantity) TextView quantity;
+//    @BindView(R.id.item_masterwork_icon) ImageView masterworkIcon;
+    @BindView(R.id.item_quantity_text) TextView quantity;
     @BindView(R.id.item_ammo_type) ImageView ammoType;
+    @BindView(R.id.masterwork_gradient) ImageView masterworkGradient;
 
     @BindView(R.id.inventory_item_container) RelativeLayout cardContainer;
 
@@ -248,7 +249,8 @@ public class CharacterItemsViewHolder extends RecyclerView.ViewHolder {
 
     public void setMasterworkIcon(boolean isMasterwork) {
         if(isMasterwork) {
-            masterworkIcon.setVisibility(View.VISIBLE);
+//            masterworkIcon.setVisibility(View.VISIBLE);
+            masterworkGradient.setVisibility(View.VISIBLE);
         }
     }
 

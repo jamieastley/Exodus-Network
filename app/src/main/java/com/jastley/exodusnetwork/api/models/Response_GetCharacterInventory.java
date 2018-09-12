@@ -241,6 +241,9 @@ public class Response_GetCharacterInventory {
         @Expose
         @SerializedName("primaryStat")
         private PrimaryStat primaryStat;
+        @Expose
+        @SerializedName("cannotEquipReason")
+        private int cannotEquipReason;
 
         public PrimaryStat getPrimaryStat() {
             return primaryStat;
@@ -272,6 +275,10 @@ public class Response_GetCharacterInventory {
 
         public int getEquipRequiredLevel() {
             return equipRequiredLevel;
+        }
+
+        public int getCannotEquipReason() {
+            return cannotEquipReason;
         }
     }
 

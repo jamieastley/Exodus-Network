@@ -91,17 +91,27 @@
         android:id="@+id/seekbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:visibility="gone"
         >
+
+        <TextView
+            android:id="@+id/seekbar_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:text="@string/selected"
+            android:textColor="@color/colorWhite"
+            />
 
         <TextView
             android:id="@+id/seekbar_min_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="20dp"
-            android:text="Selected: 3"
+            android:layout_toEndOf="@id/seekbar_selected"
+            android:layout_marginStart="3dp"
             android:textColor="@color/colorWhite"
+            android:textStyle="bold"
             />
 
         <SeekBar
@@ -109,20 +119,9 @@
             android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/seekbar_max_text"
+            android:layout_below="@id/seekbar_min_text"
             android:progressTint="@color/warmindAccent"
-            android:max="100"
-            android:progress="70"
-            />
-
-        <TextView
-            android:id="@+id/seekbar_max_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:text="Max: 20"
-            android:textColor="@color/colorWhite"
+            android:thumbTint="@color/warmindAccent"
             />
 
     </RelativeLayout>

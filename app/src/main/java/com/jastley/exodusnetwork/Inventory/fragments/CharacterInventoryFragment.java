@@ -123,7 +123,6 @@ public class CharacterInventoryFragment extends Fragment
 
         mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
 
-
 //        getCharacterInventory(mTabNumber);
     }
 
@@ -186,7 +185,7 @@ public class CharacterInventoryFragment extends Fragment
     public void onStart() {
         super.onStart();
         getCharacterInventory(mTabNumber);
-
+//        initialiseTransferObserver();
     }
 
     @Override
@@ -207,59 +206,56 @@ public class CharacterInventoryFragment extends Fragment
         System.out.println("onTransferSelect triggered");
     }
 
-    @Override
-    public void inProgress(String title) {
-        showLoadingDialog(title, "Please wait");
-    }
 
-    @Override
-    public void onAuthFail() {
-//        Snackbar.make(getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
-//                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
-//                .show();
-    }
 
-    @Override
-    public void onSuccess(int position, boolean wasSuccessful, String message, boolean isTransfer) {
-
-        dismissLoadingFragment();
-
-        if(wasSuccessful) {
-
-            if(isTransfer){
-
-                itemList.remove(position);
-                resetItemDecoration(itemList);
-//                mItemsRecyclerAdapter.updateList(itemList);
-                Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-            else {
-                itemList.remove(position);
-                resetItemDecoration(itemList);
-//                mItemsRecyclerAdapter.updateList(itemList);
-                Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-        }
-        else {
-            //Error handling
-            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    }
-
-    @Override
-    public void onEquipSameCharacter(int position, boolean wasSuccessful, String message, boolean isTransfer) {
-
-        dismissLoadingFragment();
-
-        if(wasSuccessful){
-//            refreshInventory();
-            Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    }
+//    @Override
+//    public void onAuthFail() {
+////        Snackbar.make(getView(), "Re-Authorization required.", Snackbar.LENGTH_INDEFINITE)
+////                .setAction("Re-Authorize", v -> ((MainActivity)Objects.requireNonNull(getActivity())).refreshAccessToken())
+////                .show();
+//    }
+//
+//    @Override
+//    public void onSuccess(int position, boolean wasSuccessful, String message, boolean isTransfer) {
+//
+//        dismissLoadingFragment();
+//
+//        if(wasSuccessful) {
+//
+//            if(isTransfer){
+//
+//                itemList.remove(position);
+//                resetItemDecoration(itemList);
+////                mItemsRecyclerAdapter.updateList(itemList);
+//                Snackbar.make(getView(), "Transferred to " + message, Snackbar.LENGTH_SHORT)
+//                        .show();
+//            }
+//            else {
+//                itemList.remove(position);
+//                resetItemDecoration(itemList);
+////                mItemsRecyclerAdapter.updateList(itemList);
+//                Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
+//                        .show();
+//            }
+//        }
+//        else {
+//            //Error handling
+//            Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+//                    .show();
+//        }
+//    }
+//
+//    @Override
+//    public void onEquipSameCharacter(int position, boolean wasSuccessful, String message, boolean isTransfer) {
+//
+//        dismissLoadingFragment();
+//
+//        if(wasSuccessful){
+////            refreshInventory();
+//            Snackbar.make(getView(), "Equipped to " + message, Snackbar.LENGTH_SHORT)
+//                    .show();
+//        }
+//    }
     private void initialiseRecyclerViews() {
         mItemsRecyclerAdapter = new CharacterItemsRecyclerAdapter((view, position, holder) -> {
 //            Toast.makeText(getContext(), holder.getItemName().getText().toString(), Toast.LENGTH_SHORT)
@@ -350,7 +346,7 @@ public class CharacterInventoryFragment extends Fragment
     }
 
     private void handleItemClick(){
-        ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(mTabNumber, mTabCount);
+        ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(mTabNumber, mTabCount, this);
 //        Bundle args = new Bundle();
 //
 //        args.putInt("tabIndex", mTabNumber);
@@ -359,6 +355,25 @@ public class CharacterInventoryFragment extends Fragment
 //        TestModal test = TestModal.newInstance(2);
 //        test.show(getChildFragmentManager(), "TEST_MODAL");
     }
+
+    @Override
+    public void inProgress(String title) {
+        showLoadingDialog(title, "Please wait");
+    }
+
+
+//    private void initialiseTransferObserver() {
+//        mViewModel.getTransferEquipStatus().observe(this, status -> {
+//            if(status.getThrowable() != null) {
+//                dismissLoadingFragment();
+//                showSnackbarMessage(status.getThrowable().getLocalizedMessage());
+//            }
+//            else if(status.getMessage() != null) {
+//                dismissLoadingFragment();
+//                showSnackbarMessage(status.getMessage());
+//            }
+//        });
+//    }
 
     private void hideLoading() {
 //        loadingProgress.setVisibility(View.GONE);
@@ -761,7 +776,7 @@ public class CharacterInventoryFragment extends Fragment
                 }
                 String itemCount = String.valueOf(count);
 
-                if(section > 1 && section < 10) { //item/armor/equippable item (can only hold 10)
+                if(section > 0 && section < 10) { //item/armor/equippable item (can only hold 10)
                     itemCount = itemCount+"/10";
                 }
 
