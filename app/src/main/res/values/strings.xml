@@ -186,6 +186,7 @@
     <string name="viewAccounts">View account data in database</string>
     <string name="title_activity_manifest_search">Manifest Items</string>
     <string name="selected">Selected:</string>
+    <string name="display_source_text">\"You\'ll need a good scope to get this done. Or maybe get real close.\" —Banshee-44</string>
 
 
 </resources>

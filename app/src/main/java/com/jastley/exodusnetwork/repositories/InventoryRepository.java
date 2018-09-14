@@ -40,6 +40,7 @@ import static com.jastley.exodusnetwork.Definitions.isLocked;
 import static com.jastley.exodusnetwork.Definitions.isMasterwork;
 import static com.jastley.exodusnetwork.Definitions.isTracked;
 import static com.jastley.exodusnetwork.Definitions.itemUnequippable;
+import static com.jastley.exodusnetwork.Definitions.pursuits;
 
 public class InventoryRepository {
 
@@ -218,6 +219,16 @@ public class InventoryRepository {
                                 }
                                 itemModel.setIsEquipped(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getIsEquipped());
                                 itemModel.setCanEquip(inventory.getResponse().getItemComponents().getInstances().getInstanceData().get(id).getCanEquip());
+
+                                //Objective data
+                                if(item.getBucketHash().equals(pursuits)) {
+                                    try {
+                                        itemModel.setObjectivesList(inventory.getResponse().getItemComponents().getObjectives().getData().get(id).getItemObjectives());
+                                    }
+                                    catch(Exception e) {
+                                        Log.e("OBJ_DATA", e.getLocalizedMessage());
+                                    }
+                                }
                             }
 
                             try {
@@ -457,6 +468,12 @@ public class InventoryRepository {
                                 } catch(Exception e){
                                     Log.d("getManifestData: ", e.getLocalizedMessage());
                                 }
+
+                                //Objective data
+                                itemList.get(i).setDescription(definitionData.getValue().getDisplayProperties().getDescription());
+                                itemList.get(i).setItemTypeDisplayName(definitionData.getValue().getItemTypeDisplayName());
+                                itemList.get(i).setDisplaySource(definitionData.getValue().getDisplaySource());
+
                             }
 
                         }

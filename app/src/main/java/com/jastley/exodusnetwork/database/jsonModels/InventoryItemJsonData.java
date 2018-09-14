@@ -44,6 +44,9 @@ public class InventoryItemJsonData {
     @SerializedName("displayProperties")
     private DisplayProperties displayProperties;
     @Expose
+    @SerializedName("displaySource")
+    private String displaySource;
+    @Expose
     @SerializedName("screenshot")
     private String screenshot;
     @Expose
@@ -296,6 +299,10 @@ public class InventoryItemJsonData {
 
     public void setDisplayProperties(DisplayProperties displayProperties) {
         this.displayProperties = displayProperties;
+    }
+
+    public String getDisplaySource() {
+        return displaySource;
     }
 
     public static class DisplayProperties {

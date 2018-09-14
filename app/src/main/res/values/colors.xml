@@ -30,4 +30,5 @@
     <color name="modifier_void">#b083c3</color>
     <color name="modifier_arc">#84c3ea</color>
     <color name="masterwork_yellow">#c1a536</color>
+    <color name="completed_green">#639865</color>
 </resources>

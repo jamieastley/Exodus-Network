@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.jastley.exodusnetwork.Inventory.holders.TransferItemViewHolder;
 import com.jastley.exodusnetwork.Inventory.interfaces.TransferSelectListener;
-import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
@@ -84,6 +83,7 @@ public class TransferItemRecyclerAdapter extends RecyclerView.Adapter<TransferIt
         else{ //still need a characterId to transfer to vault
             holder.setClassType("vault");
         }
+
 
         if(selectedItem.getSlot() != 0){ //not a lost item in Postmaster
             //Disable transferring item to character it already exists on

@@ -69,6 +69,7 @@ public class Response_GetCharacterInventory {
         @Expose
         @SerializedName("equipment")
         private Equipment equipment;
+
         @Expose
         @SerializedName("profileInventory")
         private ProfileInventory profileInventory;
@@ -88,6 +89,8 @@ public class Response_GetCharacterInventory {
         public Equipment getEquipment() {
             return equipment;
         }
+
+
     }
     public static class Equipment {
         @Expose
@@ -200,9 +203,16 @@ public class Response_GetCharacterInventory {
         @Expose
         @SerializedName("instances")
         private Instances instances;
+        @Expose
+        @SerializedName("objectives")
+        private Objectives objectives;
 
         public Instances getInstances() {
             return instances;
+        }
+
+        public Objectives getObjectives() {
+            return objectives;
         }
     }
 
@@ -420,6 +430,73 @@ public class Response_GetCharacterInventory {
 
         public String getItemHash() {
             return itemHash;
+        }
+    }
+
+    public static class Objectives {
+        @Expose
+        @SerializedName("data")
+        private Map<String, ObjectiveData> getData;
+
+        public Map<String, ObjectiveData> getData() {
+            return getData;
+        }
+
+        public static class ObjectiveData {
+            @Expose
+            @SerializedName("objectives")
+            private List<ItemObjectives> itemObjectives;
+            @Expose
+            @SerializedName("flavorObjective")
+            private ItemObjectives flavorObjective;
+
+            public List<ItemObjectives> getItemObjectives() {
+                return itemObjectives;
+            }
+
+            public ItemObjectives getFlavorObjective() {
+                return flavorObjective;
+            }
+
+            public static class ItemObjectives {
+                @Expose
+                @SerializedName("objectiveHash")
+                private String objectiveHash;
+                @Expose
+                @SerializedName("progress")
+                private int progress;
+                @Expose
+                @SerializedName("completionValue")
+                private int completionValue;
+                @Expose
+                @SerializedName("complete")
+                private boolean isComplete;
+                @Expose
+                @SerializedName("visible")
+                private boolean isVisible;
+
+                public String getObjectiveHash() {
+                    return objectiveHash;
+                }
+
+                public int getProgress() {
+                    return progress;
+                }
+
+                public int getCompletionValue() {
+                    return completionValue;
+                }
+
+                public boolean isComplete() {
+                    return isComplete;
+                }
+
+                public boolean isVisible() {
+                    return isVisible;
+                }
+            }
+
+
         }
     }
 }

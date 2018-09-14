@@ -53,6 +53,34 @@ public class InventoryItemModel {
     private boolean isMasterwork;
     private boolean isTracked;
 
+    //Objective data
+    private List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> objectivesList;
+    private String displaySource;
+
+    public String getDisplaySource() {
+        return displaySource;
+    }
+
+    public void setDisplaySource(String displaySource) {
+        this.displaySource = displaySource;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> getObjectivesList() {
+        return objectivesList;
+    }
+
+    public void setObjectivesList(List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> objectivesList) {
+        this.objectivesList = objectivesList;
+    }
+
     //    public InventoryItemModel() {
 //    }
 //

@@ -47,6 +47,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.CompositeDisposable;
 
+import static com.jastley.exodusnetwork.Definitions.pursuits;
+
 public class CharacterInventoryFragment extends Fragment
         implements TransferSelectListener,
                     SuccessListener,
@@ -261,7 +263,7 @@ public class CharacterInventoryFragment extends Fragment
 //            Toast.makeText(getContext(), holder.getItemName().getText().toString(), Toast.LENGTH_SHORT)
 //                    .show();
                 mViewModel.setClickedItem(holder.getClickedItem());
-                handleItemClick();
+                handleItemClick(holder.getClickedItem().getBucketHash());
         });
         mSwipeRefreshLayout.setRefreshing(true);
         LayoutAnimationController animationController = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation_slide_right);
@@ -345,15 +347,16 @@ public class CharacterInventoryFragment extends Fragment
         mItemsRecyclerAdapter.setItemList(items);
     }
 
-    private void handleItemClick(){
-        ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(mTabNumber, mTabCount, this);
-//        Bundle args = new Bundle();
-//
-//        args.putInt("tabIndex", mTabNumber);
-//        transferDialogFragment.setArguments(args);
-        transferDialogFragment.show(getChildFragmentManager(), "transferModalDialog");
-//        TestModal test = TestModal.newInstance(2);
-//        test.show(getChildFragmentManager(), "TEST_MODAL");
+    private void handleItemClick(String bucketHash){
+
+        if(bucketHash.equals(pursuits)) {
+            ObjectiveDetailsModal objModal = ObjectiveDetailsModal.newInstance(null, null);
+            objModal.show(getChildFragmentManager(), "objectiveModalDialog");
+        } else {
+
+            ItemTransferDialogFragment transferDialogFragment = ItemTransferDialogFragment.newInstance(mTabNumber, mTabCount, this);
+            transferDialogFragment.show(getChildFragmentManager(), "transferModalDialog");
+        }
     }
 
     @Override

@@ -7,11 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.jastley.exodusnetwork.Inventory.holders.EquipItemViewHolder;
 import com.jastley.exodusnetwork.Inventory.interfaces.EquipSelectListener;
-import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +24,7 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
     private EquipSelectListener mListener;
     private InventoryItemModel selectedItem;
     private int mTabIndex;
+
 
 //    public EquipItemRecyclerAdapter(Context context,
 //                                    InventoryItemModel item,
@@ -77,12 +76,12 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
             if((selectedItem.getCannotEquipReason() & itemUnequippable) != 0) {
                 holder.setDisabled();
             }
+            else if(selectedItem.getIsEquipped()) {
+                holder.setDisabled();
+            }
             //Class item specific equip check
             else if(!selectedItem.getClassType().equals("3")) { //3 = not restricted to a class
                 if(!selectedItem.getClassType().equals(characterList.get(position).getClassType()))
-                holder.setDisabled();
-            }
-            else if(selectedItem.getIsEquipped()) {
                 holder.setDisabled();
             }
     //        //if user selected characters' sub-class
