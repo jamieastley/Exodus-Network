@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Warmind for Destiny 2</string>
+    <string name="app_name">Exodus Network for Destiny 2</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="login_button_label">Log In</string>
@@ -26,7 +26,7 @@
     <string name="characters">Characters</string>
     <string name="lfg_feed">LFG Feed</string>
 
-    <string name="refresh_account">Switch Platform</string>
+    <string name="refresh_account">Refresh Account</string>
     <string name="log_in">Log In</string>
     <string name="action_lfg_pause">Pause live feed</string>
     <string name="submitPost">Submit Post</string>
@@ -157,9 +157,37 @@
     <string name="transfer_item_to">Transfer item to...</string>
     <string name="equip_on">Equip on...</string>
     <string name="debug_primary_stat">300</string>
-    <string name="header_decoration_spacer">2000</string>
+    <string name="header_decoration_spacer">20000</string>
     <string name="item_transfer">Item Transfer</string>
     <string name="descriptionCountPlaceholder">0/50</string>
+    <string name="rpm">Rounds Per Minute</string>
+    <string name="magazine">Magazine Size</string>
+    <string name="item_inspect_screenshot">Screenshot of item</string>
+    <string name="settings">Settings</string>
+    <string name="app_name_short">Exodus Network</string>
+    <string name="general">General</string>
+    <string name="general_summary">General App Settings</string>
+    <string name="debug">Debug</string>
+    <string name="settings_update_manifest">Update Bungie Manifest</string>
+    <string name="settings_redownload_subtext">If icons/resources aren\'t loading, try re-downloading the manifest</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="back_button_drawer">Open drawer on back button pressed</string>
+    <string name="checklists">Checklists</string>
+    <string name="checklist_spinner">Checklist Spinner</string>
+    <string name="title_activity_checklist">ChecklistActivity</string>
+    <string name="latent_memories">Latent Memories</string>
+    <string name="ghost_lore">Ghost Lore</string>
+    <string name="journals">Cayde-6 Journals</string>
+    <string name="sleeper_nodes">Sleeper Nodes</string>
+    <string name="raid_lairs">Raid Lairs</string>
+    <string name="item_collection">Item Collection</string>
+    <string name="checklist_icon">Checklist Icon</string>
+    <string name="item_details">Item Details</string>
+    <string name="viewAccounts">View account data in database</string>
+    <string name="title_activity_manifest_search">Manifest Items</string>
+    <string name="selected">Selected:</string>
+    <string name="display_source_text">\"You\'ll need a good scope to get this done. Or maybe get real close.\" —Banshee-44</string>
+    <string name="rewards">REWARDS:</string>
 
 
 </resources>

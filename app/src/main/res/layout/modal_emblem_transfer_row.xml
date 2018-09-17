@@ -1,153 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:orientation="vertical"
+
+    android:layout_centerInParent="true"
+
     android:clickable="true"
     android:focusable="true"
     >
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         >
 
         <ImageView
-            android:id="@+id/transfer_emblem_background"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/transfer_emblem_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/vault_banner"
-            />
-
-        <!--Left spacer for class type-->
-        <android.support.v4.widget.Space
-            android:id="@+id/transfer_class_spacer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.2"
-            app:layout_constraintLeft_toLeftOf="parent"
-            />
-
-        <!--top percent spacer for class type-->
-        <android.support.v4.widget.Space
-            android:id="@+id/top_left_spacer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.7"
-            app:layout_constraintHeight_percent="0.1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/transfer_class_spacer"
+            android:src="@drawable/icon_vault_small"
             />
 
         <TextView
-            android:id="@+id/transfer_class_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
-            app:layout_constraintTop_toBottomOf="@id/top_left_spacer"
-            android:textColor="@color/colorWhite"
-            android:text="@string/vault"
-            android:textSize="15sp"
-            />
-
-        <!--top right spacer for light level-->
-        <android.support.v4.widget.Space
-            android:id="@+id/top_right_spacer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintWidth_percent="0.3"
-            app:layout_constraintStart_toEndOf="@id/top_left_spacer"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-
-        <TextView
-            android:id="@+id/transfer_light_level"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            app:layout_constraintTop_toTopOf="@id/top_right_spacer"
-            app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"
-            android:textSize="22sp"
-            android:textColor="@color/lightLevelBlue"
-            />
-
-        <!--bottom percent spacer for class type-->
-        <android.support.v4.widget.Space
-            android:id="@+id/bottom_left_spacer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.7"
-            app:layout_constraintHeight_percent="0.1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"
-            />
-
-
-        <TextView
-            android:id="@+id/transfer_class_level"
+            android:id="@+id/transfer_class_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_left_spacer"
-            app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"
-            android:textSize="12sp"
-            android:textColor="@color/colorWhite"
+            android:layout_centerHorizontal="true"
 
+            android:textColor="@color/colorWhite"
+            android:layout_below="@id/transfer_emblem_icon"
             />
 
-        <!--<Space-->
-            <!--android:id="@+id/class_name_spacer"-->
+        <!--&lt;!&ndash;Left spacer for class type&ndash;&gt;-->
+        <!--<android.support.v4.widget.Space-->
+            <!--android:id="@+id/transfer_class_spacer"-->
             <!--android:layout_width="0dp"-->
             <!--android:layout_height="wrap_content"-->
-            <!--app:layout_constraintHorizontal_weight="1"-->
-            <!--app:layout_constraintWidth_percent="30"-->
-            <!--app:layout_constraintTop_toTopOf="@id/transfer_emblem_background"-->
-            <!--app:layout_constraintStart_toStartOf="@id/transfer_emblem_background"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.2"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--/>-->
 
+        <!--&lt;!&ndash;top percent spacer for class type&ndash;&gt;-->
+        <!--<android.support.v4.widget.Space-->
+            <!--android:id="@+id/top_left_spacer"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.7"-->
+            <!--app:layout_constraintHeight_percent="0.1"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintLeft_toLeftOf="@id/transfer_class_spacer"-->
             <!--/>-->
 
         <!--<TextView-->
-            <!--android:id="@+id/transfer_class_name"-->
+            <!--android:id="@+id/transfer_class_type"-->
             <!--android:layout_width="0dp"-->
             <!--android:layout_height="wrap_content"-->
-            <!--app:layout_constraintTop_toTopOf="@id/transfer_emblem_background"-->
-            <!--app:layout_constraintStart_toEndOf="@id/class_name_spacer"-->
-            <!--app:layout_constraintHorizontal_weight="1"-->
-            <!--app:layout_constraintHorizontal_chainStyle="spread"-->
-            <!--android:text="Warlock"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.5"-->
+            <!--app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/top_left_spacer"-->
+            <!--android:textColor="@color/colorWhite"-->
+            <!--android:text="@string/vault"-->
+            <!--android:textSize="15sp"-->
+            <!--/>-->
+
+        <!--&lt;!&ndash;top right spacer for light level&ndash;&gt;-->
+        <!--<android.support.v4.widget.Space-->
+            <!--android:id="@+id/top_right_spacer"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintHeight_percent="0.05"-->
+            <!--app:layout_constraintWidth_percent="0.3"-->
+            <!--app:layout_constraintStart_toEndOf="@id/top_left_spacer"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--/>-->
+
+
+        <!--<TextView-->
+            <!--android:id="@+id/transfer_light_level"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="5dp"-->
+            <!--app:layout_constraintTop_toTopOf="@id/top_right_spacer"-->
+            <!--app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"-->
+            <!--android:textSize="22sp"-->
+            <!--android:textColor="@color/lightLevelBlue"-->
+            <!--/>-->
+
+        <!--&lt;!&ndash;bottom percent spacer for class type&ndash;&gt;-->
+        <!--<android.support.v4.widget.Space-->
+            <!--android:id="@+id/bottom_left_spacer"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.7"-->
+            <!--app:layout_constraintHeight_percent="0.1"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"-->
+            <!--/>-->
+
+
+        <!--<TextView-->
+            <!--android:id="@+id/transfer_class_level"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_marginEnd="5dp"-->
+            <!--app:layout_constraintBottom_toTopOf="@id/bottom_left_spacer"-->
+            <!--app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"-->
             <!--android:textSize="12sp"-->
             <!--android:textColor="@color/colorWhite"-->
-            <!--/>-->
-        <!---->
 
-
-
-        <!--<TextView-->
-
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="0dp"-->
-            <!--app:layout_constraintBottom_toBottomOf="@id/transfer_emblem_background"-->
-            <!--app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"-->
-            <!--app:layout_constraintHeight_percent=".5"-->
-            <!--android:text="asdasdasdasdasds"-->
             <!--/>-->
 
+        <!--&lt;!&ndash;<Space&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/class_name_spacer"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintHorizontal_weight="1"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintWidth_percent="30"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintTop_toTopOf="@id/transfer_emblem_background"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintStart_toStartOf="@id/transfer_emblem_background"&ndash;&gt;-->
 
-    </android.support.constraint.ConstraintLayout>
+            <!--&lt;!&ndash;/>&ndash;&gt;-->
 
-</LinearLayout>
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/transfer_class_name"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintTop_toTopOf="@id/transfer_emblem_background"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintStart_toEndOf="@id/class_name_spacer"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintHorizontal_weight="1"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintHorizontal_chainStyle="spread"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="Warlock"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textSize="12sp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColor="@color/colorWhite"&ndash;&gt;-->
+            <!--&lt;!&ndash;/>&ndash;&gt;-->
+        <!--&lt;!&ndash;&ndash;&gt;-->
+
+
+
+        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+
+            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="0dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintBottom_toBottomOf="@id/transfer_emblem_background"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintEnd_toEndOf="@id/transfer_emblem_background"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintHeight_percent=".5"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="asdasdasdasdasds"&ndash;&gt;-->
+            <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

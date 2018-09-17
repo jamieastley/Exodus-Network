@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<item-->
+        <!--android:id="@+id/checklist_icon"-->
+        <!--android:title="@string/checklist_icon"-->
+        <!--android:icon="@drawable/icon_latent_memories"-->
+        <!--app:showAsAction="always"-->
+        <!--/>-->
+
+    <item
+        android:id="@+id/checklist_spinner"
+        android:title="@string/checklist_spinner"
+        android:orderInCategory="1"
+        android:popupBackground="@color/warmindCardBackground"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:actionViewClass="android.widget.Spinner"
+        app:showAsAction="always">
+
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/checklist_memories"-->
+                <!--android:icon="@drawable/icon_tick"-->
+                <!--android:title="@string/latent_memories"/>-->
+            <!--<item-->
+                <!--android:id="@+id/checklist_ghostlore"-->
+                <!--android:title="@string/ghost_lore"/>-->
+            <!--<item-->
+                <!--android:id="@+id/checklist_journals"-->
+                <!--android:title="@string/journals"/>-->
+            <!--<item-->
+                <!--android:id="@+id/checklist_sleepernodes"-->
+                <!--android:title="@string/sleeper_nodes"/>-->
+            <!--<item-->
+                <!--android:id="@+id/checklist_raidlairs"-->
+                <!--android:title="@string/raid_lairs"/>-->
+            <!--<item-->
+                <!--android:id="@+id/checklist_collection"-->
+                <!--android:title="@string/item_collection"/>-->
+        <!--</menu>-->
+
+    </item>
+</menu>

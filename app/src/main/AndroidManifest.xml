@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jastley.warmindfordestiny2">
+    package="com.jastley.exodusnetwork">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".app.App"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher_web"
-        android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher_web"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name_short"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name=".ui.SplashScreenActivity"
-            android:label="@string/app_name"
-            android:theme="@style/SplashTheme">
+            android:name=".onboarding.OnBoardingActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,13 +24,12 @@
         </activity>
         <activity
             android:name=".lfg.NewLFGPostActivity"
-            android:windowSoftInputMode="adjustPan"
             android:parentActivityName=".MainActivity"
-            />
-        <activity
-            android:name=".MainActivity">
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -39,7 +38,30 @@
                     android:scheme="warmindfordestiny" />
             </intent-filter>
         </activity>
+
         <!-- <activity android:name=".LFG.LFGPlayerDetails"></activity> -->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="8bef33dd3b39acd532da7af4c609440c1f5e7abd" />
+
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jastley.exodusnetwork.MainActivity" />
+        </activity>
+        <activity
+            android:name=".manifest.ManifestSearchActivity"
+            android:label="@string/title_activity_manifest_search"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jastley.exodusnetwork.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

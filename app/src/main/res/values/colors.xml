@@ -23,4 +23,12 @@
     <color name="placeholderHint">#a9a9a9</color>
 
     <color name="primaryStatBackground">#5b000000</color>
+    <color name="completed">#00bf2c</color>
+    <color name="item_type_color">#cfcecc</color>
+    <color name="black">#000000</color>
+    <color name="modifier_solar">#f0711b</color>
+    <color name="modifier_void">#b083c3</color>
+    <color name="modifier_arc">#84c3ea</color>
+    <color name="masterwork_yellow">#c1a536</color>
+    <color name="completed_green">#639865</color>
 </resources>

@@ -3,23 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.jastley.warmindfordestiny2.Vendors.XurFragment">
+    tools:context="com.jastley.exodusnetwork.Vendors.XurFragment">
 
-    <ProgressBar
-        android:id="@+id/xur_progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:indeterminate="true"
-        style="?android:attr/progressBarStyleHorizontal"
-        />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/xur_progress_bar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:indeterminate="true"-->
+        <!--style="?android:attr/progressBarStyleHorizontal"-->
+        <!--/>-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/xur_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -39,6 +39,8 @@
                         android:layout_alignParentTop="true"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
+                        android:src="@drawable/conceptual_xur"
+                        android:visibility="gone"
                         />
 
                     <ImageView
@@ -48,6 +50,8 @@
                         app:layout_constraintHeight_default="percent"
                         app:layout_constraintHeight_percent="0.25"
                         app:layout_constraintBottom_toTopOf="@id/xur_world_text"
+                        android:src="@drawable/xur_icon"
+                        android:visibility="invisible"
                         />
 
                     <TextView
@@ -112,7 +116,7 @@
 
         </RelativeLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

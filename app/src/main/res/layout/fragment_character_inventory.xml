@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.jastley.warmindfordestiny2.Inventory.fragments.CharacterInventoryFragment">
+    tools:context="com.jastley.exodusnetwork.Inventory.fragments.CharacterInventoryFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <!--<TextView-->
@@ -11,13 +11,6 @@
         <!--android:layout_height="match_parent"-->
         <!--android:text="@string/hello_blank_fragment" />-->
 
-    <ProgressBar
-        android:id="@+id/inventory_items_progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        style="?android:attr/progressBarStyleHorizontal"
-        />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/inventory_swipe_refresh"
@@ -26,17 +19,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
 
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/inventory_items_recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            >
-
-        </android.support.v7.widget.RecyclerView>
-
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/inventory_items_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

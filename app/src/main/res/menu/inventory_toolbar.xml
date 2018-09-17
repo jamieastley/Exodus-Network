@@ -7,13 +7,13 @@
         android:icon="@drawable/icon_search"
         android:title="@string/action_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom"
+        app:showAsAction="ifRoom|collapseActionView"
         />
 
     <item
         android:id="@+id/inventory_refresh"
         android:icon="@drawable/icon_refresh"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:title="@string/refresh"
         />
 

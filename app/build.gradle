@@ -1,13 +1,36 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+apply plugin: 'io.fabric'
+
+//Load keys/secrets
+def keysSecretFile = rootProject.file("keys.secret")
+def keyProperties = new Properties()
+keyProperties.load(new FileInputStream(keysSecretFile))
+
 
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.jastley.warmindfordestiny2"
+        applicationId "com.jastley.exodusnetwork"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.0 beta"
+//        multiDexEnabled = true
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
@@ -20,12 +43,20 @@ android {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
+
+        buildConfigField("String", "apiKey", keyProperties['apiKey'])
+        buildConfigField("String", "braytechApiKey", keyProperties['braytechApiKey'])
+        buildConfigField("String", "clientId", keyProperties['clientId'])
+        buildConfigField("String", "clientSecret", keyProperties['clientSecret'])
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dataBinding {
+        enabled = true
     }
 }
 
@@ -36,34 +67,48 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
 
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:cardview-v7:27.1.1'
-
+    //Retrofit + dependencies
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.1'
 
+    //Our lord and saviour
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.google.dagger:dagger:2.16'
+    implementation 'com.google.dagger:dagger-android-support:2.16'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 
+    //Android Arch Components
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
+    implementation 'android.arch.persistence.room:rxjava2:1.1.1'
+    implementation 'android.arch.paging:runtime:1.0.1'
 
-    implementation 'android.arch.persistence.room:runtime:1.1.0'
-    annotationProcessor 'android.arch.persistence.room:compiler:1.1.0'
-    implementation 'android.arch.persistence.room:rxjava2:1.1.0'
-
-    implementation 'com.google.firebase:firebase-core:16.0.0'
+    //Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-database:16.0.1'
 
+    //Crashlytics
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+        transitive = true
+    }
+
+    implementation 'com.airbnb.android:lottie:2.5.5'
 
 }
 

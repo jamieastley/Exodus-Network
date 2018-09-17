@@ -41,6 +41,6 @@ Quickly see what milestones are active this week and what rewards they're offeri
 
 # Xur
 
-Tired of looking for where Xur is this week? Wander no more as Exodus Network will grab his current location and stock list, along with sale history count courtesy of www.braytech.org
+Tired of looking for where Xur is this week? Wander no more as Warmind will grab his current location and stock list, along with sale history count courtesy of www.braytech.org/api.
 
 ![Xur](https://media.giphy.com/media/WNc9QbEO1GEHzIWT0j/giphy.gif)

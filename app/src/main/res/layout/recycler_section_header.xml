@@ -19,8 +19,9 @@
         android:textStyle="bold"
         />
 
-    <!--ItemDecoration doesn't seem to play nice without set widths so first matches parent, second TextView holds filler
-        content to space it out before being overwritten
+    <!--ItemDecoration doesn't seem to play nice without set widths (possibly due to being a canvas
+        instead of a view?), so first matches parent, second TextView (below) holds filler
+        content (20000) to space it out before being overwritten by slot count
     -->
 
     <TextView

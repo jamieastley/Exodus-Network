@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/warmindCardBackground"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/warmindCardBackground">
 
-    <ProgressBar
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/dialog_loading_progress_bar"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_margin="20dp"
-        android:progressTint="@color/colorAccent" />
+        app:lottie_rawRes="@raw/exodus_bodymovin_faster"
+        app:lottie_loop="true"
+        app:lottie_cacheStrategy="strong"
+        app:lottie_autoPlay="true" />
 
     <TextView
         android:id="@+id/dialog_loading_text"

@@ -17,7 +17,7 @@
 
         <item
             android:id="@+id/nav_inventory_fragment"
-            android:icon="@drawable/icon_vault_transparent"
+            android:icon="@drawable/icon_vault_small"
             android:title="@string/item_transfer"
             />
 
@@ -25,6 +25,12 @@
             android:id="@+id/nav_account_stats"
             android:icon="@drawable/icon_stats"
             android:title="@string/account_stats"
+            />
+
+        <item
+            android:id="@+id/nav_checklists"
+            android:icon="@drawable/icon_ticks"
+            android:title="@string/checklists"
             />
 
         <item
@@ -49,6 +55,13 @@
             android:id="@+id/nav_refresh_account"
             android:icon="@drawable/ic_refresh_black_24dp"
             android:title="@string/refresh_account" />
+
+        <item
+            android:visible="true"
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/icon_settings"
+            android:title="@string/settings"
+            />
 
         <!--<item-->
             <!--android:visible="true"-->

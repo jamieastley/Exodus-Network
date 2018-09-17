@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/inventory_item_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+       <LinearLayout
+           android:id="@+id/objective_header_container"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:minHeight="70dp"
+           android:background="#2d2d2d"
+           android:padding="10dp"
+           android:weightSum="2"
+           android:orientation="vertical"
+           >
+
+           <TextView
+               android:id="@+id/objective_name"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_weight="1"
+               android:gravity="center_vertical|start"
+               android:textSize="18sp"
+               android:textStyle="bold"
+
+               android:textColor="@color/colorWhite"
+               />
+
+           <TextView
+               android:id="@+id/objective_item_type"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_weight="1"
+               android:gravity="center"
+
+               android:textSize="@dimen/item_type_height"
+
+               android:textColor="@color/colorWhite"
+               />
+
+
+       </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center_vertical|start"
+        android:weightSum="2"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/objective_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical|start"
+            android:textSize="@dimen/item_type_height"
+            android:textStyle="italic"
+            android:textColor="@color/colorWhite"
+            />
+
+       <android.support.v7.widget.RecyclerView
+           android:id="@+id/objective_progress_recycler_view"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:layout_marginTop="10dp"
+           android:layout_marginBottom="10dp"
+           >
+
+       </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/objective_display_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="13sp"
+        android:textStyle="italic"
+        android:visibility="gone"
+        />
+
+    </LinearLayout>

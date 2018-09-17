@@ -1,10 +1,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.jastley.warmindfordestiny2.Inventory.CharacterInventoryActivity">
+    tools:context="com.jastley.exodusnetwork.Inventory.CharacterInventoryActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:id="@+id/action_favorites"
+        android:enabled="true"
+        android:icon="@drawable/icon_tick"
+        android:title="Title 1"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_schedules"
+        android:enabled="true"
+        android:icon="@drawable/icon_latent_memories"
+        android:title="Title 2"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_music"
+        android:enabled="true"
+        android:icon="@drawable/exodusnetwork_alpha_icon_small"
+        android:title="Title 3"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_account"
+        android:enabled="true"
+        android:icon="@drawable/icon_person_filled"
+        android:title="Account"
+        app:showAsAction="ifRoom" />
+
 </menu>

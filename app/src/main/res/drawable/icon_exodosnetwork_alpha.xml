@@ -1,0 +1,20 @@
+<vector android:height="24dp" android:viewportHeight="703"
+    android:viewportWidth="704.02" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#fff" android:pathData="M352.01,56a295,295 0,1 1,-115.21 23.26A294.14,294.14 0,0 1,352.01 56m0,-9c-168.45,0 -305,136.55 -305,305s136.55,305 305,305 305,-136.55 305,-305S520.46,47 352.01,47Z"/>
+    <path android:fillColor="#fff" android:pathData="M179.37,51.37 L525.61,52.51 698.24,352.64l-173.59,299L178.41,650.49 5.78,350.36l173.59,-299m-2.87,-5 l-176.49,304L175.51,655.48l352,1.16 176.49,-304L528.51,47.52 176.51,46.36Z"/>
+    <path android:fillColor="#fff" android:pathData="M352.15,5.77l299.93,173 -0.14,345.72L351.87,697.23l-299.93,-173 0.14,-345.72L352.15,5.77m0,-5.77L47.08,175.62l-0.14,351.5L351.87,703 656.94,527.38l0.14,-351.5L352.15,0Z"/>
+    <path android:fillColor="#fff" android:pathData="M352.3,418.27l119.01,165.7l-1.85,0l-117.18,-163.16l-117.72,163.19l-1.82,0l119.56,-165.73z"/>
+    <path android:fillColor="#fff" android:pathData="M352.31,408l-131.3,182l16.62,0l114.64,-158.92l114.12,158.89l16.62,0l-130.7,-181.97l0,0z"/>
+    <path android:fillColor="#fff" android:pathData="M352.01,103a36,36 0,1 1,-36 36,36 36,0 0,1 36,-36m0,-16a52,52 0,1 0,52 52,52 52,0 0,0 -52,-52Z"/>
+    <path android:fillColor="#fff" android:pathData="M352.01,210a36,36 0,1 1,-36 36,36 36,0 0,1 36,-36m0,-16a52,52 0,1 0,52 52,52 52,0 0,0 -52,-52Z"/>
+    <path android:fillColor="#fff" android:pathData="M352.01,317a36,36 0,1 1,-36 36,36 36,0 0,1 36,-36m0,-16a52,52 0,1 0,52 52,52 52,0 0,0 -52,-52Z"/>
+    <path android:fillColor="#fff"
+        android:pathData="M352.01,139m-34,0a34,34 0,1 1,68 0a34,34 0,1 1,-68 0"
+        android:strokeColor="#636363" android:strokeWidth="4"/>
+    <path android:fillColor="#fff"
+        android:pathData="M352.01,353m-34,0a34,34 0,1 1,68 0a34,34 0,1 1,-68 0"
+        android:strokeColor="#636363" android:strokeWidth="4"/>
+    <path android:fillColor="#fff"
+        android:pathData="M352.01,246m-34,0a34,34 0,1 1,68 0a34,34 0,1 1,-68 0"
+        android:strokeColor="#636363" android:strokeWidth="4"/>
+</vector>

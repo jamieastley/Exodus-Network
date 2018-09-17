@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.jastley.warmindfordestiny2.lfg.fragments.LFGDetailsFragment">
+    tools:context="com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment">
 
     <ScrollView
         android:layout_width="match_parent"
