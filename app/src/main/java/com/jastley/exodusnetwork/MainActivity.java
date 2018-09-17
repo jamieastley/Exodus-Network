@@ -1,14 +1,7 @@
 package com.jastley.exodusnetwork;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,11 +29,9 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import com.google.gson.JsonObject;
 import com.jastley.exodusnetwork.Account.fragments.AccountStatsFragment;
 import com.jastley.exodusnetwork.Inventory.fragments.CharacterInventoryFragment;
 import com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment;
-import com.jastley.exodusnetwork.Inventory.fragments.ItemTransferDialogFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.checklists.fragments.ChecklistsParentFragment;
@@ -50,33 +41,20 @@ import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
 import com.jastley.exodusnetwork.Dialogs.holders.PlatformRVHolder;
 import com.jastley.exodusnetwork.Dialogs.PlatformSelectionFragment;
 import com.jastley.exodusnetwork.Milestones.fragments.MilestonesFragment;
-import com.jastley.exodusnetwork.Utils.NoNetworkException;
 import com.jastley.exodusnetwork.Vendors.XurFragment;
-import com.jastley.exodusnetwork.api.*;
-import com.jastley.exodusnetwork.database.dao.AccountDAO;
-import com.jastley.exodusnetwork.database.AppDatabase;
-import com.jastley.exodusnetwork.database.models.Account;
 import com.jastley.exodusnetwork.settings.SettingsActivity;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.squareup.picasso.Target;
 
 import butterknife.OnClick;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
-import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 import static com.jastley.exodusnetwork.api.clientKeys.clientId;
-import static com.jastley.exodusnetwork.api.clientKeys.clientSecret;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
