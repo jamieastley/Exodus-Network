@@ -21,8 +21,10 @@ import com.jastley.exodusnetwork.api.models.TransferItemRequestBody;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 import com.jastley.exodusnetwork.database.models.Account;
 import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
+import com.jastley.exodusnetwork.database.models.DestinyObjectiveDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +41,6 @@ import retrofit2.Retrofit;
 import static com.jastley.exodusnetwork.Definitions.isLocked;
 import static com.jastley.exodusnetwork.Definitions.isMasterwork;
 import static com.jastley.exodusnetwork.Definitions.isTracked;
-import static com.jastley.exodusnetwork.Definitions.itemUnequippable;
 import static com.jastley.exodusnetwork.Definitions.pursuits;
 
 public class InventoryRepository {
@@ -59,6 +60,11 @@ public class InventoryRepository {
 
     //Item transfer/equip
     private MutableLiveData<TransferEquipStatus> transferEquipStatus = new MutableLiveData<>();
+
+    //Modal
+    private MutableLiveData<InventoryItemJsonData> singleInventoryItemData = new MutableLiveData<>();
+    private MutableLiveData<InventoryItemJsonData> inventoryItemList = new MutableLiveData<>();
+    private MutableLiveData<List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives>> objectiveData = new MutableLiveData<>();
 
     @Inject
     @Named("Account")
@@ -224,6 +230,13 @@ public class InventoryRepository {
                                 if(item.getBucketHash().equals(pursuits)) {
                                     try {
                                         itemModel.setObjectivesList(inventory.getResponse().getItemComponents().getObjectives().getData().get(id).getItemObjectives());
+                                        List<String> pkList = new ArrayList<>();
+
+                                        for(Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives obj
+                                                : inventory.getResponse().getItemComponents().getObjectives().getData().get(id).getItemObjectives()) {
+                                            pkList.add(UnsignedHashConverter.getPrimaryKey(obj.getObjectiveHash()));
+                                        }
+                                        itemModel.setObjectiveHashList(pkList);
                                     }
                                     catch(Exception e) {
                                         Log.e("OBJ_DATA", e.getLocalizedMessage());
@@ -474,6 +487,10 @@ public class InventoryRepository {
                                 itemList.get(i).setItemTypeDisplayName(definitionData.getValue().getItemTypeDisplayName());
                                 itemList.get(i).setDisplaySource(definitionData.getValue().getDisplaySource());
 
+                                if(definitionData.getValue() != null) {
+                                    //TODO
+                                }
+
                             }
 
                         }
@@ -516,6 +533,81 @@ public class InventoryRepository {
     }
 
 
+    //For pursuits/bounties/quests
+    public MutableLiveData<InventoryItemJsonData> getInventoryItem(String hash) {
+
+        String primaryKey = UnsignedHashConverter.getPrimaryKey(hash);
+
+        Disposable disposable = manifestDatabase.getInventoryItemDAO()
+                .getItemByKey(primaryKey)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(itemDefinition -> {
+
+                    List<String> rewardHashes = new ArrayList<>();
+
+                    //Get a list of hashes of the objective rewards (if any)
+                    if(itemDefinition.getValue().getValue() != null) {
+                        for(InventoryItemJsonData.Value.ItemValues reward : itemDefinition.getValue().getValue().getItemValuesList()) {
+                            if(!reward.getItemHash().equals("0")) {
+                                rewardHashes.add(UnsignedHashConverter.getPrimaryKey(reward.getItemHash()));
+                            }
+                        }
+                        singleInventoryItemData.postValue(new InventoryItemJsonData(itemDefinition.getValue()));
+
+                        getRewardItemList(rewardHashes);
+                    }
+                },
+                throwable -> singleInventoryItemData.postValue(new InventoryItemJsonData(throwable)));
+
+        return singleInventoryItemData;
+    }
+
+    public void getRewardItemList(List<String> hashes) {
+
+        Disposable disposable = manifestDatabase.getInventoryItemDAO()
+                .getItemsListByKey(hashes)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(definitionList -> {
+
+                    List<InventoryItemJsonData> rewardList = new ArrayList<>();
+
+                    for(DestinyInventoryItemDefinition item : definitionList) {
+                        rewardList.add(item.getValue());
+                    }
+
+                    inventoryItemList.postValue(new InventoryItemJsonData(rewardList));
+
+                }, throwable -> inventoryItemList.postValue(new InventoryItemJsonData(throwable)));
+    }
+
+    public MutableLiveData<List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives>> getObjectiveData(List<String> hashes,
+                                                                                                                    List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> objInstanceList) {
+
+        Disposable disposable = manifestDatabase.getObjectiveDAO()
+                .getObjectiveDefinitionList(hashes)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(objectiveList -> {
+
+                    for(DestinyObjectiveDefinition objectiveData : objectiveList) {
+
+                        for(int i = 0; i < objInstanceList.size(); i++) {
+
+                            if(objectiveData.getValue().getHash().equals(objInstanceList.get(i).getObjectiveHash())) {
+                                objInstanceList.get(i).setObjectiveDataName(objectiveData.getValue().getProgressDescription());
+                            }
+                        }
+                    }
+
+                    objectiveData.postValue(objInstanceList);
+                }, throwable -> {
+                    //TODO
+                });
+
+        return objectiveData;
+    }
 
     //Get liveData
     public MutableLiveData<InventoryItemModel> getFirstSlotInventory() {
@@ -532,6 +624,10 @@ public class InventoryRepository {
 
     public MutableLiveData<InventoryItemModel> getFourthSlotInventory() {
         return fourthSlotInventory;
+    }
+
+    public MutableLiveData<InventoryItemJsonData> getRewardItemList() {
+        return inventoryItemList;
     }
 
     private void sendErrorData(int slot, InventoryItemModel data) {
@@ -683,6 +779,16 @@ public class InventoryRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
+
+                    //error !=1
+                    if(!response.getErrorCode().equals("1")) {
+                        transferEquipStatus.postValue(new TransferEquipStatus(response.getMessage()));
+                    }
+                    else {
+                        transferEquipStatus.postValue(new TransferEquipStatus("Item pulled from Postmaster"));
+                    }
+
+                    //TODO success
 
                 }, throwable -> {
                     if(((HttpException) throwable).code() == 401) {

@@ -114,6 +114,8 @@ public class CharacterInventoryFragment extends Fragment
         initialiseRecyclerViews();
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mItemsRecyclerView.scheduleLayoutAnimation();
+            mItemsRecyclerAdapter.clearItemList();
             mSwipeRefreshLayout.setRefreshing(true);
             getCharacterInventory(mTabNumber);
         });
@@ -341,10 +343,11 @@ public class CharacterInventoryFragment extends Fragment
     }
 
     private void handleLiveDataResponse(List<InventoryItemModel> items) {
-        hideLoading();
+
         this.itemList = items;
         resetItemDecoration(items);
         mItemsRecyclerAdapter.setItemList(items);
+        hideLoading();
     }
 
     private void handleItemClick(String bucketHash){

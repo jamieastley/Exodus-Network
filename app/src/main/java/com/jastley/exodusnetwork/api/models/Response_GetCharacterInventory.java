@@ -475,6 +475,10 @@ public class Response_GetCharacterInventory {
                 @SerializedName("visible")
                 private boolean isVisible;
 
+                private String progressDescription;
+
+                private String objectiveDataName;
+
                 public String getObjectiveHash() {
                     return objectiveHash;
                 }
@@ -493,6 +497,22 @@ public class Response_GetCharacterInventory {
 
                 public boolean isVisible() {
                     return isVisible;
+                }
+
+                public String getObjectiveDataName() {
+                    return objectiveDataName;
+                }
+
+                public void setObjectiveDataName(String objectiveDataName) {
+                    this.objectiveDataName = objectiveDataName;
+                }
+
+                public String getProgressDescription() {
+                    return progressDescription;
+                }
+
+                public void setProgressDescription(String progressDescription) {
+                    this.progressDescription = progressDescription;
                 }
             }
 

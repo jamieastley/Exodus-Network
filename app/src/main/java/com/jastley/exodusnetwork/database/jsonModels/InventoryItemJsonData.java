@@ -12,6 +12,7 @@ public class InventoryItemJsonData {
     private String message;
     private Throwable throwable;
     private List<InventoryItemJsonData> itemDataList;
+    private InventoryItemJsonData singleItemData;
 
     public InventoryItemJsonData() {
     }
@@ -28,6 +29,10 @@ public class InventoryItemJsonData {
         this.itemDataList = itemDataList;
     }
 
+    public InventoryItemJsonData(InventoryItemJsonData data) {
+        this.singleItemData = data;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -38,6 +43,10 @@ public class InventoryItemJsonData {
 
     public List<InventoryItemJsonData> getItemDataList() {
         return itemDataList;
+    }
+
+    public InventoryItemJsonData getSingleItemData() {
+        return singleItemData;
     }
 
     @Expose
@@ -151,6 +160,10 @@ public class InventoryItemJsonData {
     @Expose
     @SerializedName("blacklisted")
     private boolean isBlacklisted;
+
+    @Expose
+    @SerializedName("value")
+    private Value value;
 
     //Getters
     public DisplayProperties getDisplayProperties() {
@@ -295,6 +308,10 @@ public class InventoryItemJsonData {
 
     public boolean isBlacklisted() {
         return isBlacklisted;
+    }
+
+    public Value getValue() {
+        return value;
     }
 
     public void setDisplayProperties(DisplayProperties displayProperties) {
@@ -561,6 +578,43 @@ public class InventoryItemJsonData {
 
             public String getMaximum() {
                 return maximum;
+            }
+        }
+    }
+
+    public static class Value {
+        @Expose
+        @SerializedName("itemValue")
+        private List<ItemValues> itemValuesList;
+
+        public List<ItemValues> getItemValuesList() {
+            return itemValuesList;
+        }
+
+        public static class ItemValues {
+            @Expose
+            @SerializedName("itemHash")
+            private String itemHash;
+            @Expose
+            @SerializedName("quantity")
+            private int quantity;
+
+            private int position;
+
+            public String getItemHash() {
+                return itemHash;
+            }
+
+            public int getQuantity() {
+                return quantity;
+            }
+
+            public int getPosition() {
+                return position;
+            }
+
+            public void setPosition(int position) {
+                this.position = position;
             }
         }
     }

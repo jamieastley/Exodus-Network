@@ -47,7 +47,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:gravity="center_vertical|start"
@@ -64,66 +64,19 @@
             android:gravity="center_vertical|start"
             android:textSize="@dimen/item_type_height"
             android:textStyle="italic"
-
             android:textColor="@color/colorWhite"
             />
 
-       <RelativeLayout
+       <android.support.v7.widget.RecyclerView
+           android:id="@+id/objective_progress_recycler_view"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_weight="1"
+           android:layout_marginTop="10dp"
+           android:layout_marginBottom="10dp"
            >
 
-           <ImageView
-               android:id="@+id/objective_status_icon"
-               android:layout_width="21dp"
-               android:layout_height="21dp"
-               android:layout_marginTop="1dp"
-               android:layout_alignTop="@id/objective_progress_bar"
-               android:src="@drawable/objective_pending_border"
-               />
-
-           <ProgressBar
-               android:id="@+id/objective_progress_bar"
-               android:layout_width="match_parent"
-               android:layout_height="25dp"
-               android:layout_toEndOf="@id/objective_status_icon"
-               android:layout_marginStart="10dp"
-               android:layout_centerVertical="true"
-               android:scaleY="5"
-               android:progressTint="@color/completed_green"
-               android:progressBackgroundTint="@color/placeholderHint"
-               style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-               />
-
-           <TextView
-               android:id="@+id/objective_data_name"
-               android:layout_width="wrap_content"
-               android:layout_height="25dp"
-               android:layout_alignStart="@id/objective_progress_bar"
-               android:layout_alignTop="@id/objective_progress_bar"
-               android:layout_alignBottom="@id/objective_progress_bar"
-               android:layout_marginTop="1dp"
-               android:layout_marginStart="5dp"
-
-               android:textColor="@color/colorWhite"
-               />
-
-           <TextView
-               android:id="@+id/objective_progress_value"
-               android:layout_width="wrap_content"
-               android:layout_height="20dp"
-               android:layout_alignTop="@id/objective_progress_bar"
-               android:layout_alignBottom="@id/objective_progress_bar"
-               android:layout_alignEnd="@id/objective_progress_bar"
-               android:layout_marginTop="1dp"
-               android:layout_marginEnd="5dp"
-
-               android:textColor="@color/colorWhite"
-               />
-
-
-       </RelativeLayout>
+       </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 
@@ -134,10 +87,10 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-
         android:textColor="@color/colorWhite"
         android:textSize="13sp"
         android:textStyle="italic"
+        android:visibility="gone"
         />
 
     </LinearLayout>

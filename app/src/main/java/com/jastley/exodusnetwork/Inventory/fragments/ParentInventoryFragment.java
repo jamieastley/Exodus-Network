@@ -140,7 +140,7 @@ public class ParentInventoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        mTabLayout.setVisibility(View.GONE);
+//        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -151,6 +151,12 @@ public class ParentInventoryFragment extends Fragment {
             activity.setActionBarTitle(getString(R.string.item_transfer));
         }
         initialiseTransferObserver();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mTabLayout.setVisibility(View.GONE);
     }
 
     @Override

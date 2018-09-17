@@ -8,8 +8,10 @@ import com.jastley.exodusnetwork.Inventory.models.TransferEquipStatus;
 import com.jastley.exodusnetwork.api.models.EquipItemRequestBody;
 import com.jastley.exodusnetwork.api.models.PostmasterTransferRequest;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
+import com.jastley.exodusnetwork.api.models.Response_GetCharacterInventory;
 import com.jastley.exodusnetwork.api.models.TransferItemRequestBody;
 import com.jastley.exodusnetwork.app.App;
+import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 import com.jastley.exodusnetwork.repositories.InventoryRepository;
 
 import java.util.List;
@@ -110,5 +112,18 @@ public class InventoryViewModel extends ViewModel {
 
     public LiveData<TransferEquipStatus> getTransferEquipStatus() {
         return getTransferEquipStatus = mRepository.getTransferEquipStatus();
+    }
+
+    public LiveData<InventoryItemJsonData> getSingleItemData(String hash) {
+        return mRepository.getInventoryItem(hash);
+    }
+
+    public LiveData<InventoryItemJsonData> getRewardsList() {
+        return mRepository.getRewardItemList();
+    }
+
+    public LiveData<List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives>> getObjectiveData(List<String> hashes,
+                                                        List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> objList) {
+        return mRepository.getObjectiveData(hashes, objList);
     }
 }

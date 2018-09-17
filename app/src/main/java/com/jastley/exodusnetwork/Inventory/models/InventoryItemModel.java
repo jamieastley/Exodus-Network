@@ -56,6 +56,7 @@ public class InventoryItemModel {
     //Objective data
     private List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> objectivesList;
     private String displaySource;
+    private List<String> objectiveHashList;
 
     public String getDisplaySource() {
         return displaySource;
@@ -79,6 +80,14 @@ public class InventoryItemModel {
 
     public void setObjectivesList(List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives> objectivesList) {
         this.objectivesList = objectivesList;
+    }
+
+    public List<String> getObjectiveHashList() {
+        return objectiveHashList;
+    }
+
+    public void setObjectiveHashList(List<String> objectiveHashList) {
+        this.objectiveHashList = objectiveHashList;
     }
 
     //    public InventoryItemModel() {
