@@ -78,6 +78,9 @@ public class Definitions {
     //Faction
     public static final String theNine = "1357903713";
 
+    //Vendor
+    public static final String xurVendor = "2190858386";
+
     public static int sortBuckets(String bucketHash){
 
         int value = 50;

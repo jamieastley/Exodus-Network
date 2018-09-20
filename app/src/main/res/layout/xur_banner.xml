@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="95dp"
+    android:background="@color/xur_banner_background"
+    >
+
+    <RelativeLayout
+        android:id="@+id/xur_icon_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/xur_banner_icon_green"
+        >
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="75dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/icon_xur_color"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/xur_middle_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/xur_icon_container"
+        android:layout_toStartOf="@id/xur_timer_container"
+        android:weightSum="2"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Earth"
+            android:textColor="@color/colorWhite"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:gravity="bottom"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="Tower Hangar"
+            android:textColor="@color/colorWhite"
+            android:textStyle="italic"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/xur_timer_container"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="end"
+            android:padding="5dp"
+            >
+
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/icon_patrol"
+                />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp"
+            android:layout_gravity="end"
+            android:textAlignment="viewEnd"
+            android:text="12312321312"
+            android:textColor="@color/placeholderHint"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

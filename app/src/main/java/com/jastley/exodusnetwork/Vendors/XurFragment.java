@@ -32,6 +32,15 @@ import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
 import com.squareup.picasso.Picasso;
 
 
+import org.threeten.bp.DateTimeUtils;
+import org.threeten.bp.DayOfWeek;
+import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.ZonedDateTime;
+
 import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 
 /**
@@ -60,12 +69,12 @@ public class XurFragment extends Fragment {
 
 
     //Xur related stuff
-    @BindView(R.id.xur_region_text) TextView xurRegionText;
-    @BindView(R.id.xur_world_text) TextView xurWorldText;
-    @BindView(R.id.xur_location_banner) ImageView xurImageBanner;
+//    @BindView(R.id.xur_region_text) TextView xurRegionText;
+//    @BindView(R.id.xur_world_text) TextView xurWorldText;
+//    @BindView(R.id.xur_location_banner) ImageView xurImageBanner;
     @BindView(R.id.xur_items_recycler_view) RecyclerView mXurRecyclerView;
 //    @BindView(R.id.xur_progress_bar) ProgressBar progressBar;
-    @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
+//    @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
 
     @BindView(R.id.xur_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
 
@@ -76,14 +85,6 @@ public class XurFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment XurFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static XurFragment newInstance(String param1, String param2) {
         XurFragment fragment = new XurFragment();
@@ -229,41 +230,70 @@ public class XurFragment extends Fragment {
 
     public void getXurInventory() {
 
+        DayOfWeek day = DayOfWeek.FRIDAY;
+
+
+        int range = DayOfWeek.from(day).compareTo(DayOfWeek.TUESDAY);
+//        LocalDate ld = LocalDate
+        ZonedDateTime zdtNow = ZonedDateTime.now(ZoneOffset.UTC);
+        DayOfWeek utcDayNow = zdtNow.getDayOfWeek();
+        int hour = zdtNow.getHour();
+        int min = zdtNow.getMinute();
+
+        if(utcDayNow.getValue() >= DayOfWeek.FRIDAY.getValue() &&
+                utcDayNow.getValue() <= DayOfWeek.TUESDAY.getValue()) {
+
+            String yus = "yus";
+        }
+        if(DayOfWeek.SATURDAY.getValue() >= DayOfWeek.FRIDAY.getValue() &&
+                utcDayNow.getValue() <= DayOfWeek.TUESDAY.getValue()) {
+
+            String yus = "yus";
+        }
+
+
+        mViewModel.getXurData().observe(this, xurData -> {
+            if(xurData.getFinalItemList() != null) {
+                mXurRecyclerAdapter.setXurItems(xurData.getFinalItemList());
+                mSwipeRefresh.setRefreshing(false);
+            }
+        });
+
         //Get current inventory
-        mViewModel.getXurData().observe(this, response_getXurWeekly -> {
-            if(response_getXurWeekly.getErrorMessage() != null) {
-                Snackbar.make(getView(), response_getXurWeekly.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Retry", v -> getXurInventory())
-                        .show();
-
-            }
-            else {
-                xurImageBanner.setVisibility(View.VISIBLE);
-                mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
-                xurRegionText.setText(response_getXurWeekly.getXurLocation().getRegion());
-                xurWorldText.setText(response_getXurWeekly.getXurLocation().getWorld());
-                xurIcon.setVisibility(View.VISIBLE);
-            }
-            mSwipeRefresh.setRefreshing(false);
-//            progressBar.setVisibility(View.GONE);
-        });
-
-        //Get location data
-        mViewModel.getXurLocationData().observe(this, xurVendorModel -> {
-            if(xurVendorModel.getErrorMessage() != null) {
-                Snackbar.make(getView(), xurVendorModel.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
-                        .show();
-            }
-            else {
-                Picasso.get()
-                        .load(baseURL + xurVendorModel.getLocationBanner())
-                        .into(xurImageBanner);
-
-                xurRegionText.setText(xurVendorModel.getRegionText());
-                xurWorldText.setText(xurVendorModel.getWorldName());
-                xurIcon.setVisibility(View.VISIBLE);
-            }
-        });
+//        mViewModel.getXurData().observe(this, response_getXurWeekly -> {
+//            if(response_getXurWeekly.getErrorMessage() != null) {
+//                Snackbar.make(getView(), response_getXurWeekly.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
+//                        .setAction("Retry", v -> getXurInventory())
+//                        .show();
+//
+//            }
+//            else {
+//                xurImageBanner.setVisibility(View.VISIBLE);
+//                mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
+//                xurRegionText.setText(response_getXurWeekly.getXurLocation().getRegion());
+//                xurWorldText.setText(response_getXurWeekly.getXurLocation().getWorld());
+//                xurIcon.setVisibility(View.VISIBLE);
+//            }
+//            mSwipeRefresh.setRefreshing(false);
+////            progressBar.setVisibility(View.GONE);
+//        });
+//
+//        //Get location data
+//        mViewModel.getXurLocationData().observe(this, xurVendorModel -> {
+//            if(xurVendorModel.getErrorMessage() != null) {
+//                Snackbar.make(getView(), xurVendorModel.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
+//                        .show();
+//            }
+//            else {
+//                Picasso.get()
+//                        .load(baseURL + xurVendorModel.getLocationBanner())
+//                        .into(xurImageBanner);
+//
+//                xurRegionText.setText(xurVendorModel.getRegionText());
+//                xurWorldText.setText(xurVendorModel.getWorldName());
+//                xurIcon.setVisibility(View.VISIBLE);
+//            }
+//        });
 
     }
 

@@ -9,6 +9,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.jastley.exodusnetwork.Definitions;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
+import com.jastley.exodusnetwork.Utils.SingleLiveEvent;
 import com.jastley.exodusnetwork.Inventory.models.TransferEquipStatus;
 import com.jastley.exodusnetwork.Utils.UnauthorizedException;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
@@ -59,7 +60,7 @@ public class InventoryRepository {
     private List<InventoryItemModel> fourthItemList = new ArrayList<>();
 
     //Item transfer/equip
-    private MutableLiveData<TransferEquipStatus> transferEquipStatus = new MutableLiveData<>();
+    private SingleLiveEvent<TransferEquipStatus> transferEquipStatus = new SingleLiveEvent<>();
 
     //Modal
     private MutableLiveData<InventoryItemJsonData> singleInventoryItemData = new MutableLiveData<>();

@@ -120,9 +120,13 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="icon_locked" />
-                            <entry key="sourceFile" value="C:\Users\jastl\Documents\Warmind for Destiny\ExodusNetwork_alpha.svg" />
+                            <entry key="height" value="650" />
+                            <entry key="outputName" value="ic_export" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="C:\Users\jastl\Documents\Warmind for Destiny\export.psd" />
+                            <entry key="width" value="652" />
                           </map>
                         </option>
                       </PersistentState>

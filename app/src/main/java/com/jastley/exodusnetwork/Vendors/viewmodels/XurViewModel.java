@@ -10,6 +10,7 @@ import com.jastley.exodusnetwork.Vendors.XurRepository;
 import com.jastley.exodusnetwork.Vendors.models.SocketModel;
 import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;
 import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
+import com.jastley.exodusnetwork.api.models.XurSaleItemModel;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
@@ -20,10 +21,12 @@ public class XurViewModel extends AndroidViewModel {
     @Inject
     XurRepository mXurRepository;
 
+    private LiveData<XurSaleItemModel> xurData;
+
     private LiveData<Response_GetXurWeekly> xurItemList;
     private LiveData<XurVendorModel> xurLocationData;
 
-    private Response_GetXurWeekly.Items itemDetailsModel;
+    private InventoryItemJsonData itemDetailsModel;
 
     //Item inspect/stats
 
@@ -37,12 +40,12 @@ public class XurViewModel extends AndroidViewModel {
 //        xurLocationData = mXurRepository.getXurData();
     }
 
-    public LiveData<Response_GetXurWeekly> getXurData() {
-        if(xurItemList == null) {
-            xurItemList = mXurRepository.getXurInventory();
-        }
-        return xurItemList;
-    }
+//    public LiveData<Response_GetXurWeekly> getXurData() {
+//        if(xurItemList == null) {
+//            xurItemList = mXurRepository.getXurInventory();
+//        }
+//        return xurItemList;
+//    }
 
     public LiveData<XurVendorModel> getXurLocationData() {
         if(xurLocationData == null) {
@@ -53,11 +56,11 @@ public class XurViewModel extends AndroidViewModel {
 
 
     //Item inspect/stats
-    public void setItemDetailsModel(Response_GetXurWeekly.Items itemDetailsModel) {
+    public void setItemDetailsModel(InventoryItemJsonData itemDetailsModel) {
         this.itemDetailsModel = itemDetailsModel;
     }
 
-    public Response_GetXurWeekly.Items getItemDetailsModel() {
+    public InventoryItemJsonData getItemDetailsModel() {
         return itemDetailsModel;
     }
 
@@ -75,5 +78,12 @@ public class XurViewModel extends AndroidViewModel {
 
     public LiveData<SocketModel.InvestmentStats> getStatData() {
         return mXurRepository.getStatData();
+    }
+
+    public LiveData<XurSaleItemModel> getXurData() {
+        if(xurData == null) {
+            mXurRepository.getXurVendor();
+        }
+        return mXurRepository.getXurSaleLiveDataModel();
     }
 }

@@ -95,11 +95,11 @@ public class ObjectiveDetailsModal extends BottomSheetDialogFragment {
 
         ButterKnife.bind(this, view);
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
-        selectedItem = mViewModel.getClickedItem();
-
-        initialiseRecyclerView();
-        setObjectiveUI();
+//        mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
+//        selectedItem = mViewModel.getClickedItem();
+//
+//        initialiseRecyclerView();
+//        setObjectiveUI();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -107,6 +107,17 @@ public class ObjectiveDetailsModal extends BottomSheetDialogFragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mViewModel = ViewModelProviders.of(getActivity()).get(InventoryViewModel.class);
+        selectedItem = mViewModel.getClickedItem();
+
+        initialiseRecyclerView();
+        setObjectiveUI();
     }
 
     @Override

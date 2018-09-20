@@ -2,7 +2,7 @@ package com.jastley.exodusnetwork.Vendors;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
+import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,8 +12,11 @@ import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.Vendors.models.SocketModel;
 import com.jastley.exodusnetwork.Vendors.models.XurVendorModel;
 import com.jastley.exodusnetwork.api.BungieAPI;
+import com.jastley.exodusnetwork.api.models.Response_GetVendor;
 import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
+import com.jastley.exodusnetwork.api.models.XurSaleItemModel;
 import com.jastley.exodusnetwork.app.App;
+import com.jastley.exodusnetwork.database.AppManifestDatabase;
 import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.StatDefinitionDAO;
@@ -24,7 +27,9 @@ import com.jastley.exodusnetwork.database.models.DestinyStatDefinition;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,12 +45,13 @@ import static com.jastley.exodusnetwork.Definitions.armorPerksSockets;
 import static com.jastley.exodusnetwork.Definitions.theNine;
 import static com.jastley.exodusnetwork.Definitions.weaponModsSockets;
 import static com.jastley.exodusnetwork.Definitions.weaponPerksSockets;
-import static com.jastley.exodusnetwork.api.apiKey.braytechApiKey;
+import static com.jastley.exodusnetwork.Definitions.xurVendor;
 
 @Singleton
 public class XurRepository {
 
     private MutableLiveData<Response_GetXurWeekly> xurLiveDataList;
+    private MutableLiveData<XurSaleItemModel> xurSaleLiveDataModel = new MutableLiveData<>();
     private MutableLiveData<XurVendorModel> xurLocationData = new MutableLiveData<>();
     private List<InventoryItemModel> xurItemsList = new ArrayList<>();
     private XurVendorModel vendorModel;
@@ -65,6 +71,17 @@ public class XurRepository {
     @Inject
     @Named("braytechApi")
     Retrofit retrofit;
+
+    @Inject
+    @Named("bungieAuthRetrofit")
+    Retrofit authRetrofit;
+
+    @Inject
+    @Named("savedPrefs")
+    SharedPreferences sharedPreferences;
+
+    @Inject
+    AppManifestDatabase manifestDatabase;
 
     @Inject
     Gson gson;
@@ -420,5 +437,99 @@ public class XurRepository {
                         statsLiveData.postValue(new SocketModel.InvestmentStats("Error retrieving stat data"));
                     }
                 }, throwable -> statsLiveData.postValue(new SocketModel.InvestmentStats(throwable)));
+    }
+
+    public void getXurVendor() {
+
+        String mType = sharedPreferences.getString("selectedPlatform", "");
+        String mId = sharedPreferences.getString("membershipId"+mType, "");
+        String cId = sharedPreferences.getString(mType+"characterId0", "");
+
+        Disposable disposable = authRetrofit.create(BungieAPI.class)
+                .getVendorData(mType, mId, cId, xurVendor)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(xurVendor -> {
+
+                    //Xur not present in game
+                    if(xurVendor.getErrorCode().equals("1627")) {
+                        xurSaleLiveDataModel.postValue(new XurSaleItemModel(xurVendor.getMessage()));
+                    }
+                    //API error
+                    else if(!xurVendor.getErrorCode().equals("1")) {
+                        xurSaleLiveDataModel.postValue(new XurSaleItemModel(xurVendor.getMessage()));
+                    }
+                    //Success
+                    else {
+
+                        List<String> itemHashList = new ArrayList<>();
+                        List<XurSaleItemModel> saleModelList = new ArrayList<>();
+
+                        Iterator<Map.Entry<String, Response_GetVendor.SalesData>> it = xurVendor.getResponse().getSales().getSalesData().entrySet().iterator();
+                        while(it.hasNext()) {
+                            Map.Entry<String, Response_GetVendor.SalesData> saleItem = it.next();
+
+                            itemHashList.add(UnsignedHashConverter.getPrimaryKey(saleItem.getValue().getItemHash()));
+
+                            //Five of Swords don't have a cost, so check whether item costs anything
+                            if(saleItem.getValue().getCostsList() != null) {
+                                for(Response_GetVendor.Costs itemCost : saleItem.getValue().getCostsList()) {
+                                    //Most items only have one cost, but this could change so let's just iterate
+                                    // over the list in-case items start requiring > 1 cost
+                                    itemHashList.add(UnsignedHashConverter.getPrimaryKey(itemCost.getItemHash()));
+                                }
+                            }
+                            XurSaleItemModel item = new XurSaleItemModel();
+                            item.setSalesData(saleItem.getValue());
+                            saleModelList.add(item);
+                        }
+
+                        getSalesItemData(itemHashList, saleModelList);
+
+                    }
+
+                }, throwable -> {
+                    xurSaleLiveDataModel.postValue(new XurSaleItemModel(throwable));
+                });
+    }
+
+    public void getSalesItemData(List<String> hashes, List<XurSaleItemModel> xurResponse) {
+
+        Disposable disposable = manifestDatabase.getInventoryItemDAO()
+                .getItemsListByKey(hashes)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(definitionData -> {
+
+                    for(DestinyInventoryItemDefinition itemDefinition : definitionData) {
+
+                        for(int i = 0; i < xurResponse.size(); i++) {
+
+                            //Item for sale
+                            if(xurResponse.get(i).getSalesData().getItemHash()
+                                    .equals(itemDefinition.getValue().getHash())) {
+
+                                xurResponse.get(i).setItemData(itemDefinition.getValue());
+
+                            }
+
+                            //Item cost could potentially change in the future so can't hardcode
+                            // legendary shards as cost, look up what is required to buy from Xur
+                            for(Response_GetVendor.Costs itemCost : xurResponse.get(i).getSalesData().getCostsList()) {
+
+                                if(itemCost.getItemHash().equals(itemDefinition.getValue().getHash())) {
+                                    xurResponse.get(i).setItemCost(itemDefinition.getValue());
+                                }
+                            }
+                        }
+                    }
+
+                    xurSaleLiveDataModel.postValue(new XurSaleItemModel(xurResponse));
+
+                }, throwable -> xurSaleLiveDataModel.postValue(new XurSaleItemModel(throwable)));
+    }
+
+    public LiveData<XurSaleItemModel> getXurSaleLiveDataModel() {
+        return xurSaleLiveDataModel;
     }
 }

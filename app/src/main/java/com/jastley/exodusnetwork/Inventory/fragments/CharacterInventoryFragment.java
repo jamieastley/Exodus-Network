@@ -114,8 +114,8 @@ public class CharacterInventoryFragment extends Fragment
         initialiseRecyclerViews();
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mItemsRecyclerView.scheduleLayoutAnimation();
-            mItemsRecyclerAdapter.clearItemList();
+//            mItemsRecyclerView.scheduleLayoutAnimation();
+//            mItemsRecyclerAdapter.clearItemList();
             mSwipeRefreshLayout.setRefreshing(true);
             getCharacterInventory(mTabNumber);
         });
