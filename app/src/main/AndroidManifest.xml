@@ -26,7 +26,10 @@
             android:name=".lfg.NewLFGPostActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/MaterialCustomTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

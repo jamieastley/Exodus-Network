@@ -22,6 +22,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,8 +48,20 @@ import com.jastley.exodusnetwork.settings.SettingsActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.squareup.picasso.Target;
 
 import butterknife.OnClick;
@@ -74,13 +88,15 @@ public class MainActivity extends AppCompatActivity
     DialogFragment platformDialog;
     ActionBarDrawerToggle toggle;
 
-    NavigationView navigationView;
-    DrawerLayout mDrawer;
+//    NavigationView navigationView;
+//    DrawerLayout mDrawer;
 
     MainActivityViewModel mViewModel;
 
     @BindView(R.id.nav_log_in_container) RelativeLayout mLogInContainer;
     @BindView(R.id.nav_log_out_container) RelativeLayout mLogOutContainer;
+
+    Drawer drawer;
 
     List<Target> targets = new ArrayList<>();
     private String redirectUri = "warmindfordestiny://callback";
@@ -102,18 +118,24 @@ public class MainActivity extends AppCompatActivity
 
         getSnackbarMessage();
 
-        mDrawer = findViewById(R.id.drawer_layout);
+//        mDrawer = findViewById(R.id.drawer_layout);
 
-        toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.addDrawerListener(toggle);
+//        toggle = new ActionBarDrawerToggle(
+//                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        mDrawer.addDrawerListener(toggle);
+//
+//        toggle.syncState();
 
-        toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View hView =  navigationView.getHeaderView(0);
+        setupDrawer();
 
+//        NavigationView navigationView = findViewById(R.id.nav_view);
+//        navigationView.setNavigationItemSelectedListener(this);
+//        View hView =  navigationView.getHeaderView(0);
+//
+//        expandableList = hView.findViewById(R.id.nav_account_switcher);
+//
+//        setupAccountSwitcher();
 
         //get Intent bundle from NewLFGPost (if exists)
         Intent intent = getIntent();
@@ -141,68 +163,180 @@ public class MainActivity extends AppCompatActivity
         });
 
         /** because toolbar is passed into ActionBarDrawerToggle, onOptionsItemSelected won't register so this is required as workaround **/
-        toggle.setToolbarNavigationClickListener(view -> {
-            int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
-            if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
-                getSupportFragmentManager().popBackStack();
+//        toggle.setToolbarNavigationClickListener(view -> {
+//            int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
+//            if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
+//                getSupportFragmentManager().popBackStack();
+//
+//                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//                getSupportActionBar().setHomeButtonEnabled(true);
+//                toggle.setDrawerIndicatorEnabled(true);
+//                toggle.syncState();
+//
+//            } else {
+//                toggle.setDrawerIndicatorEnabled(false);
+//                toggle.syncState();
+//                getSupportActionBar().setDisplayShowHomeEnabled(true);
+//                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//                getSupportActionBar().setHomeButtonEnabled(true);
+//            }
+//
+//        });
 
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                getSupportActionBar().setHomeButtonEnabled(true);
-                toggle.setDrawerIndicatorEnabled(true);
-                toggle.syncState();
+//        updateNavUI(hView);
+//        hideShowMenuItems();
+    }
 
-            } else {
-                toggle.setDrawerIndicatorEnabled(false);
-                toggle.syncState();
-                getSupportActionBar().setDisplayShowHomeEnabled(true);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setHomeButtonEnabled(true);
+
+
+    private void setupDrawer() {
+        // Create the AccountHeader
+
+            AccountHeader headerResult = new AccountHeaderBuilder()
+                    .withActivity(this)
+                    .withHeaderBackground(R.color.bungieCard)
+                    .addProfiles(
+                            new ProfileDrawerItem().withName("Not signed in")
+                                    .withIcon(getResources().getDrawable(R.drawable.exodusnetwork_alpha_icon_small))
+                    )
+                    .withSelectionListEnabledForSingleProfile(false)
+                    .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                        @Override
+                        public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+
+                            return false;
+                        }
+                    })
+                    .build();
+
+        //Now create your drawer and pass the AccountHeader.Result
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Primary");
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Secondary");
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+            drawer = new DrawerBuilder()
+                    .withAccountHeader(headerResult)
+                    .withActivity(this)
+                    .withToolbar(toolbar)
+                    .addDrawerItems(
+                            item1,
+                            new ExpandableDrawerItem().withName("Checklists")
+                                    .withIcon(getResources().getDrawable(R.drawable.icon_ticks)).withIdentifier(19)
+                                    .withSelectable(false)
+                                    .withSubItems(
+                                        new SecondaryDrawerItem().withName("Latent Memories")
+                                                .withLevel(2)
+                                                .withIcon(getResources().getDrawable(R.drawable.icon_latent_memories))
+                                                .withIdentifier(2002),
+                                        new SecondaryDrawerItem().withName("Sleeper Nodes")
+                                                .withLevel(2)
+                                                .withIcon(getResources().getDrawable(R.drawable.icon_crucible))
+                                                .withIdentifier(2003)
+                                    ),
+                            new SectionDrawerItem().withName("Section"),
+                            new DividerDrawerItem(),
+                            item2,
+                            new SecondaryDrawerItem().withName("Settings"))
+                    .withActionBarDrawerToggle(true)
+                    .build();
+//        }
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+        //Set initially selected account as active
+        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+        if(selectedPlatform != "") {
+            headerResult.removeProfile(0);
+            String displayName = savedPrefs.getString("displayName"+selectedPlatform, "");
+            String dNameFixed = displayName.replace("%23", "#");
+            switch(selectedPlatform) {
+                case "1": //Xbox
+                    headerResult.addProfiles(new ProfileDrawerItem().withName(dNameFixed).withIcon(getResources().getDrawable(R.drawable.icon_xbl)));
+                    break;
+                case "2": //PSN
+                    headerResult.addProfiles(new ProfileDrawerItem().withName(dNameFixed).withIcon(getResources().getDrawable(R.drawable.icon_psn)));
+                    break;
+                case "4": //BNet
+                    headerResult.addProfiles(new ProfileDrawerItem().withName(dNameFixed).withIcon(getResources().getDrawable(R.drawable.icon_blizzard)));
+                    break;
             }
 
-        });
+            //if user has accounts for other platforms
+            for(int i = 0; i <= 4; i++) {
+                //ignore already selectedPlatform
+                if (!String.valueOf(i).equals(selectedPlatform)) {
 
-        updateNavUI(hView);
-        hideShowMenuItems();
+                    String name = savedPrefs.getString("displayName" + i, "");
+                    if (name != "") {
+                        String nameFix = name.replace("%23", "#");
+                        switch (i) {
+                            case 1: //Xbox
+                                headerResult.addProfiles(new ProfileDrawerItem()
+                                        .withName(nameFix)
+                                        .withEmail("Xbox")
+                                        .withIcon(getResources().getDrawable(R.drawable.icon_xbl)));
+                                break;
+                            case 2: //PSN
+                                headerResult.addProfiles(new ProfileDrawerItem()
+                                        .withName(nameFix)
+                                        .withEmail("PlayStation")
+                                        .withIcon(getResources().getDrawable(R.drawable.icon_psn)));
+                                break;
+                            case 4: //BNet
+                                headerResult.addProfiles(new ProfileDrawerItem()
+                                        .withName(nameFix)
+                                        .withEmail("Battle.Net")
+                                        .withIcon(getResources().getDrawable(R.drawable.icon_blizzard)));
+                                break;
+                        }
+                    }
+
+                }
+            }
+        }
     }
+
+
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
 
-    private void hideShowMenuItems() {
-
-        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-        String membershipType = savedPrefs.getString("selectedPlatform", "");
-        String displayName = savedPrefs.getString("displayName"+membershipType, "");
-
-        //Battle.Net tags
-        if(displayName.contains("%23")){
-            displayName = displayName.replace("%23", "#");
-        }
-        navigationView = findViewById(R.id.nav_view);
-        Menu navMenu = navigationView.getMenu();
-
-
-        if((displayName != "") && (membershipType != "")) {
-
-
-            mLogInContainer.setVisibility(View.GONE);
-
-            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
-            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
-
-        }
-        else { //not logged in
-            mLogInContainer.setVisibility(View.VISIBLE);
-            mLogOutContainer.setVisibility(View.GONE);
-
-            navMenu.findItem(R.id.nav_account_stats).setVisible(false).setEnabled(false);
-            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
-            navMenu.findItem(R.id.nav_refresh_auth).setVisible(false).setEnabled(false);
-            navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
-
-        }
-
-    }
+//    private void hideShowMenuItems() {
+//
+//        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+//        String membershipType = savedPrefs.getString("selectedPlatform", "");
+//        String displayName = savedPrefs.getString("displayName"+membershipType, "");
+//
+//        //Battle.Net tags
+//        if(displayName.contains("%23")){
+//            displayName = displayName.replace("%23", "#");
+//        }
+//        navigationView = findViewById(R.id.nav_view);
+//        Menu navMenu = navigationView.getMenu();
+//
+//
+//        if((displayName != "") && (membershipType != "")) {
+//
+//
+//            mLogInContainer.setVisibility(View.GONE);
+//
+//            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
+//            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
+//
+//        }
+//        else { //not logged in
+//            mLogInContainer.setVisibility(View.VISIBLE);
+//            mLogOutContainer.setVisibility(View.GONE);
+//
+//            navMenu.findItem(R.id.nav_account_stats).setVisible(false).setEnabled(false);
+//            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
+//            navMenu.findItem(R.id.nav_refresh_auth).setVisible(false).setEnabled(false);
+//            navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
+//
+//        }
+//
+//    }
 
     private void setFragment(LFGPostsFragment postsFragment) {
 
@@ -213,53 +347,53 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-    private void updateNavUI(View hView) {
-        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
-
-        if(selectedPlatform != "") {
-            String name = savedPrefs.getString("displayName"+selectedPlatform, "");
-
-            //Battle.Net tags
-            if(name.contains("%23")){
-                name = name.replace("%23", "#");
-            }
-            TextView displayName = hView.findViewById(R.id.nav_displayName);
-            displayName.setText(name);
-
-            for(int i = 0; i < 3; i++){
-
-                int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
-                String emblem = savedPrefs.getString(selectedPlatform+"emblemIcon"+i, "");
-                ImageView emblemIcon = hView.findViewById(resID);
-
-                //if switching between accounts, reset drawables (required if other account has less characters than previous account)
-                emblemIcon.setImageDrawable(null);
-
-                if(emblem != ""){
-
-                    File dir = getDir("emblems", MODE_PRIVATE);
-                    File path = new File(dir, i+".jpeg");
-                    if(path.exists()){
-
-                        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
-                        roundedDrawable.setCircular(true);
-                        emblemIcon.setImageDrawable(roundedDrawable);
-                    }
-                }
-            }
-            navigationView = findViewById(R.id.nav_view);
-            Menu navMenu = navigationView.getMenu();
-
-            mLogInContainer.setVisibility(View.GONE);
-            mLogOutContainer.setVisibility(View.VISIBLE);
-
-            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
-            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
-            navMenu.findItem(R.id.nav_refresh_auth).setVisible(true).setEnabled(true);
-            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
-        }
-    }
+//    private void updateNavUI(View hView) {
+//        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
+//        String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+//
+//        if(selectedPlatform != "") {
+//            String name = savedPrefs.getString("displayName"+selectedPlatform, "");
+//
+//            //Battle.Net tags
+//            if(name.contains("%23")){
+//                name = name.replace("%23", "#");
+//            }
+////            TextView displayName = hView.findViewById(R.id.nav_displayName);
+////            displayName.setText(name);
+//
+//            for(int i = 0; i < 3; i++){
+//
+//                int resID = getResources().getIdentifier("character_header_icon_"+i, "id", getPackageName());
+//                String emblem = savedPrefs.getString(selectedPlatform+"emblemIcon"+i, "");
+//                ImageView emblemIcon = hView.findViewById(resID);
+//
+//                //if switching between accounts, reset drawables (required if other account has less characters than previous account)
+//                emblemIcon.setImageDrawable(null);
+//
+//                if(emblem != ""){
+//
+//                    File dir = getDir("emblems", MODE_PRIVATE);
+//                    File path = new File(dir, i+".jpeg");
+//                    if(path.exists()){
+//
+//                        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), path.getAbsolutePath());
+//                        roundedDrawable.setCircular(true);
+//                        emblemIcon.setImageDrawable(roundedDrawable);
+//                    }
+//                }
+//            }
+//            navigationView = findViewById(R.id.nav_view);
+//            Menu navMenu = navigationView.getMenu();
+//
+//            mLogInContainer.setVisibility(View.GONE);
+//            mLogOutContainer.setVisibility(View.VISIBLE);
+//
+//            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
+//            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(true).setEnabled(true);
+//            navMenu.findItem(R.id.nav_refresh_auth).setVisible(true).setEnabled(true);
+//            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
+//        }
+//    }
 
     public void showLoadingDialog(String title, String message) {
         LoadingDialogFragment fragment = LoadingDialogFragment.newInstance(title, message);
@@ -294,9 +428,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen()) {
+//            drawer.closeDrawer(GravityCompat.START);
+            drawer.closeDrawer();
         } else {
             super.onBackPressed();
         }

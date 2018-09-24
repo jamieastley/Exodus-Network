@@ -39,6 +39,30 @@
         <item name="android:colorBackground">@color/bungieBackground</item>
     </style>
 
+    <style name="MaterialCustomTheme" parent="MaterialDrawerTheme.TranslucentStatus">
+        <!-- ...and here we setting appcompat’s color theme attrs -->
+        <item name="colorPrimary">@color/warmindPrimary</item>
+        <item name="colorPrimaryDark">@color/warmindDark</item>
+        <item name="colorAccent">@color/warmindAccent</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/bungieBackground</item>
+        <item name="material_drawer_primary_text">@color/colorWhite</item>
+        <item name="material_drawer_secondary_text">@color/placeholderHint
+        </item>
+        <item name="material_drawer_hint_text">@color/placeholderHint</item>
+        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
+        <item name="material_drawer_selected">#1FF1433C</item>
+
+        <item name="material_drawer_selected_text">#F1433C</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_dark_primary_text
+        </item>
+
+
+    </style>
+
+
     <!--<style name="SpinnerItemStyle" parent="@style/Widget.AppCompat.Spinner.DropDown">-->
     <!--<item name="android:textColor">@color/colorWhite</item>-->
     <!--<item name="android:background">@color/warmindCardBackground</item>-->

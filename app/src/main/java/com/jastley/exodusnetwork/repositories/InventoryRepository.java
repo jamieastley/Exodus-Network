@@ -755,7 +755,7 @@ public class InventoryRepository {
                 .subscribe(response -> {
 
                     if(!response.getErrorCode().equals("1")) {
-                        //TODO error
+                        transferEquipStatus.postValue(new TransferEquipStatus(response.getMessage()));
                     }
                     else {
                         //TODO generate particular message
