@@ -6,13 +6,13 @@
         <!--<item-->
             <!--android:visible="true"-->
             <!--android:id="@+id/nav_log_in"-->
-            <!--android:icon="@drawable/ic_account_circle_black_24dp"-->
+            <!--android:icon="@drawable/icon_log_in"-->
             <!--android:title="@string/log_in" />-->
 
         <item
             android:visible="true"
             android:id="@+id/nav_refresh_account"
-            android:icon="@drawable/ic_account_circle_black_24dp"
+            android:icon="@drawable/icon_log_in"
             android:title="@string/refresh_account" />
 
         <!--TODO check logged user state and enable/disable each button-->

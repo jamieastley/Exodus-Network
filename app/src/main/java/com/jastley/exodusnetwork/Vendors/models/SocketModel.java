@@ -1,6 +1,5 @@
 package com.jastley.exodusnetwork.Vendors.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SocketModel {
@@ -85,35 +84,37 @@ public class SocketModel {
         this.socketDescription = socketDescription;
     }
 
-    public static class InvestmentStats {
+    public static class StatValues {
 
         private String statTypeHash;
         private int value;
+        private int maximum;
         private int position;
         private String statName;
 
         private String error;
         private Throwable throwable;
-        private List<SocketModel.InvestmentStats> statList;
+        private List<StatValues> statList;
 
         //Initial constructor
-        public InvestmentStats(String statTypeHash, int value, int position) {
+        public StatValues(String statTypeHash, int value, int max, int position) {
             this.statTypeHash = statTypeHash;
             this.value = value;
+            this.maximum = max;
             this.position = position;
         }
 
         //After extra data append
-        public InvestmentStats(List<InvestmentStats> statList) {
+        public StatValues(List<StatValues> statList) {
             this.statList = statList;
         }
 
         //Error retrieving extra data
-        public InvestmentStats(Throwable throwable) {
+        public StatValues(Throwable throwable) {
             this.throwable = throwable;
         }
         //Error message
-        public InvestmentStats(String error) {
+        public StatValues(String error) {
             this.error = error;
         }
 
@@ -131,6 +132,14 @@ public class SocketModel {
 
         public void setValue(int value) {
             this.value = value;
+        }
+
+        public int getMaximum() {
+            return maximum;
+        }
+
+        public void setMaximum(int maximum) {
+            this.maximum = maximum;
         }
 
         public int getPosition() {
@@ -153,7 +162,7 @@ public class SocketModel {
             return throwable;
         }
 
-        public List<InvestmentStats> getStatList() {
+        public List<StatValues> getStatList() {
             return statList;
         }
 

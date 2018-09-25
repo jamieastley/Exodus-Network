@@ -1,5 +1,7 @@
 package com.jastley.exodusnetwork;
 
+import java.util.Arrays;
+
 public class Definitions {
 
 //    Bucket Definitions
@@ -66,6 +68,40 @@ public class Definitions {
     public static final String weaponModsSockets = "2685412949";
     public static final String armorPerksSockets = "2518356196";
     public static final String armorModsSockets = "590099826";
+
+
+    //Swords
+    public static final String swingSpeed = "2837207746";
+    public static final String efficiency = "2762071195";
+    public static final String defense = "209426660";
+    public static final String ammoCapacity = "925767036";
+
+    //grenade/rocket launchers
+    public static final String blastRadius = "3614673599";
+    public static final String velocity = "2523465841";
+
+    public static final String impact = "4043523819";
+    public static final String range = "1240592695";
+    public static final String stability = "155624089";
+    public static final String handling = "943549884";
+    public static final String reloadSpeed = "4188031367";
+
+    //Bows
+    public static final String drawTime = "447667954";
+
+    //fusion rifles
+    public static final String chargeTime = "2961396640";
+
+    public static final String rpm = "4284893193";
+    public static final String magazine = "3871231066";
+
+    //Stat Definitions
+    private static final String[] statArray = {
+            swingSpeed, efficiency, defense, ammoCapacity, blastRadius,
+            velocity, impact, range, stability, handling, reloadSpeed,
+            drawTime, chargeTime, rpm, magazine
+    };
+
 
     //Checklists
     public static final String latentMemories = "2955980198";
@@ -232,4 +268,8 @@ public class Definitions {
         return category;
     }
 
+
+    public static boolean shouldDisplayStat(String statHash) {
+        return Arrays.asList(statArray).contains(statHash);
+    }
 }

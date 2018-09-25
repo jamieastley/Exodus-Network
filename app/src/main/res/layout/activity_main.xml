@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:tint="@color/colorWhite"
-                android:src="@drawable/ic_account_circle_black_24dp"
+                android:src="@drawable/icon_log_in"
                 />
 
             <TextView

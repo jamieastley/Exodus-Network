@@ -14,6 +14,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.Gson;
 import com.jastley.exodusnetwork.BuildConfig;
+import com.jastley.exodusnetwork.Utils.SingleLiveEvent;
 import com.jastley.exodusnetwork.Utils.SnackbarMessage;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.app.App;
@@ -44,9 +45,9 @@ import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
 @Singleton
 public class AccountRepository {
 
-    private MutableLiveData<SnackbarMessage> snackbarMessage = new MutableLiveData<>();
+    private SingleLiveEvent<SnackbarMessage> snackbarMessage = new SingleLiveEvent<>();
     private MutableLiveData<ArrayList<String>> platformSelector = new MutableLiveData<>();
-    private MutableLiveData<EmblemIconDownload> emblemDownloadProgress = new MutableLiveData<>();
+    private SingleLiveEvent<EmblemIconDownload> emblemDownloadProgress = new SingleLiveEvent<>();
 
     @Inject
     @Named("OAuthRetrofit")

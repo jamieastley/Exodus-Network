@@ -151,7 +151,7 @@ public class NewLFGPostActivity extends AppCompatActivity {
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe(characters -> {
 //
-//                    Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.ic_account_circle_black_24dp);
+//                    Drawable coloredPlaceholder = getApplicationContext().getResources().getDrawable(R.drawable.icon_log_in);
 //                    coloredPlaceholder.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN);
 //
 //                    SharedPreferences savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);

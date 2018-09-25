@@ -18,6 +18,7 @@ import com.jastley.exodusnetwork.api.models.EquipItemRequestBody;
 import com.jastley.exodusnetwork.api.models.PostmasterTransferRequest;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.api.models.Response_GetCharacterInventory;
+import com.jastley.exodusnetwork.api.models.Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives;
 import com.jastley.exodusnetwork.api.models.TransferItemRequestBody;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.AppDatabase;
@@ -63,9 +64,9 @@ public class InventoryRepository {
     private SingleLiveEvent<TransferEquipStatus> transferEquipStatus = new SingleLiveEvent<>();
 
     //Modal
-    private MutableLiveData<InventoryItemJsonData> singleInventoryItemData = new MutableLiveData<>();
-    private MutableLiveData<InventoryItemJsonData> inventoryItemList = new MutableLiveData<>();
-    private MutableLiveData<List<Response_GetCharacterInventory.Objectives.ObjectiveData.ItemObjectives>> objectiveData = new MutableLiveData<>();
+    private SingleLiveEvent<InventoryItemJsonData> singleInventoryItemData = new SingleLiveEvent<>();
+    private SingleLiveEvent<InventoryItemJsonData> inventoryItemList = new SingleLiveEvent<>();
+    private SingleLiveEvent<List<ItemObjectives>> objectiveData = new SingleLiveEvent<>();
 
     @Inject
     @Named("Account")

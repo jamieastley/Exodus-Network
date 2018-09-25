@@ -27,6 +27,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +62,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.squareup.picasso.Target;
 
@@ -68,6 +70,10 @@ import butterknife.OnClick;
 
 import io.reactivex.disposables.CompositeDisposable;
 
+import static com.jastley.exodusnetwork.Definitions.caydeJournals;
+import static com.jastley.exodusnetwork.Definitions.ghostLore;
+import static com.jastley.exodusnetwork.Definitions.latentMemories;
+import static com.jastley.exodusnetwork.Definitions.sleeperNodes;
 import static com.jastley.exodusnetwork.api.clientKeys.clientId;
 
 public class MainActivity extends AppCompatActivity
@@ -118,24 +124,7 @@ public class MainActivity extends AppCompatActivity
 
         getSnackbarMessage();
 
-//        mDrawer = findViewById(R.id.drawer_layout);
-
-//        toggle = new ActionBarDrawerToggle(
-//                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        mDrawer.addDrawerListener(toggle);
-//
-//        toggle.syncState();
-
-
         setupDrawer();
-
-//        NavigationView navigationView = findViewById(R.id.nav_view);
-//        navigationView.setNavigationItemSelectedListener(this);
-//        View hView =  navigationView.getHeaderView(0);
-//
-//        expandableList = hView.findViewById(R.id.nav_account_switcher);
-//
-//        setupAccountSwitcher();
 
         //get Intent bundle from NewLFGPost (if exists)
         Intent intent = getIntent();
@@ -144,101 +133,151 @@ public class MainActivity extends AppCompatActivity
         postsFragment = LFGPostsFragment.newInstance(isLFGPost);
         setFragment(postsFragment);
 
+        //hacky workaround to toggle between drawer/home depending on back-stack
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
             if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
-                toggle.setDrawerIndicatorEnabled(false);
-                toggle.syncState();
-                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setHomeButtonEnabled(true);
-
-
             } else {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                getSupportActionBar().setHomeButtonEnabled(true);
-                toggle.setDrawerIndicatorEnabled(true);
-                toggle.syncState();
+                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+                LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("LFG_FRAGMENT");
+                if(fragment != null && fragment.isVisible()) {
+                    drawer.setSelection(5);
+                }
             }
         });
 
-        /** because toolbar is passed into ActionBarDrawerToggle, onOptionsItemSelected won't register so this is required as workaround **/
-//        toggle.setToolbarNavigationClickListener(view -> {
-//            int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
-//            if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
-//                getSupportFragmentManager().popBackStack();
-//
-//                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//                getSupportActionBar().setHomeButtonEnabled(true);
-//                toggle.setDrawerIndicatorEnabled(true);
-//                toggle.syncState();
-//
-//            } else {
-//                toggle.setDrawerIndicatorEnabled(false);
-//                toggle.syncState();
-//                getSupportActionBar().setDisplayShowHomeEnabled(true);
-//                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//                getSupportActionBar().setHomeButtonEnabled(true);
-//            }
-//
-//        });
-
-//        updateNavUI(hView);
-//        hideShowMenuItems();
     }
 
 
 
     private void setupDrawer() {
         // Create the AccountHeader
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.bungieCard)
+                .addProfiles(
+                        new ProfileDrawerItem()
+                                .withEmail("Not signed in")
+                                .withIcon(getResources().getDrawable(R.drawable.exodusnetwork_alpha_icon_small))
+                )
+                .withSelectionListEnabledForSingleProfile(false)
+                .withOnAccountHeaderListener((view, profile, currentProfile) -> {
 
-            AccountHeader headerResult = new AccountHeaderBuilder()
-                    .withActivity(this)
-                    .withHeaderBackground(R.color.bungieCard)
-                    .addProfiles(
-                            new ProfileDrawerItem().withName("Not signed in")
-                                    .withIcon(getResources().getDrawable(R.drawable.exodusnetwork_alpha_icon_small))
-                    )
-                    .withSelectionListEnabledForSingleProfile(false)
-                    .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                        @Override
-                        public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                    //TODO: update account data on switch and store in DB
 
-                            return false;
-                        }
-                    })
-                    .build();
+                    if(!currentProfile) {
+                        Toast.makeText(MainActivity.this, String.valueOf(profile.getIdentifier()), Toast.LENGTH_SHORT).show();
+                        SharedPreferences.Editor editor = savedPrefs.edit();
+                        editor.putString("selectedPlatform", String.valueOf(profile.getIdentifier()));
+                        editor.apply();
 
-        //Now create your drawer and pass the AccountHeader.Result
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Primary");
-        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Secondary");
+                        getAllCharacterData(String.valueOf(profile.getIdentifier()));
+                    }
+
+                    return false;
+                })
+                .build();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-            drawer = new DrawerBuilder()
-                    .withAccountHeader(headerResult)
-                    .withActivity(this)
-                    .withToolbar(toolbar)
-                    .addDrawerItems(
-                            item1,
-                            new ExpandableDrawerItem().withName("Checklists")
-                                    .withIcon(getResources().getDrawable(R.drawable.icon_ticks)).withIdentifier(19)
-                                    .withSelectable(false)
-                                    .withSubItems(
-                                        new SecondaryDrawerItem().withName("Latent Memories")
-                                                .withLevel(2)
-                                                .withIcon(getResources().getDrawable(R.drawable.icon_latent_memories))
-                                                .withIdentifier(2002),
-                                        new SecondaryDrawerItem().withName("Sleeper Nodes")
-                                                .withLevel(2)
-                                                .withIcon(getResources().getDrawable(R.drawable.icon_crucible))
-                                                .withIdentifier(2003)
-                                    ),
-                            new SectionDrawerItem().withName("Section"),
-                            new DividerDrawerItem(),
-                            item2,
-                            new SecondaryDrawerItem().withName("Settings"))
-                    .withActionBarDrawerToggle(true)
-                    .build();
+        drawer = new DrawerBuilder()
+                .withAccountHeader(headerResult)
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        // identifiers < 5 reserved for membershipTypes in ProfileDrawer
+                        new PrimaryDrawerItem().withIdentifier(5).withName(getResources().getString(R.string.lfg_feed))
+                                .withIcon(getResources().getDrawable(R.drawable.icon_lfg)),
+
+                        //Dynamically items are inserted here if account is logged in
+
+                        new PrimaryDrawerItem().withIdentifier(11).withName(getResources().getString(R.string.settings))
+                                .withIcon(getResources().getDrawable(R.drawable.icon_settings)),
+
+                        new PrimaryDrawerItem().withIdentifier(99).withName("Log In")
+                                .withIcon(getResources().getDrawable(R.drawable.icon_log_in))
+                                .withIconColorRes(R.color.colorWhite)
+                )
+//                .addStickyDrawerItems(new PrimaryDrawerItem().withIdentifier(99).withName("Log In")
+//                        .withIcon(getResources().getDrawable(R.drawable.icon_log_in))
+//                        .withIconColorRes(R.color.colorWhite))
+                .withActionBarDrawerToggle(true)
+                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
+                    //Top-level items
+                    if(drawerItem instanceof PrimaryDrawerItem) {
+                        Toast.makeText(MainActivity.this, "Position: " + position, Toast.LENGTH_SHORT).show();
+
+                        Fragment fragment;
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+
+                        //lfg
+                        if(drawerItem.getIdentifier() == 5) {
+                            fragment = LFGPostsFragment.newInstance(false);
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "LFG_FRAGMENT")
+                                    .commit();
+                        }
+                        //Item Transfer
+                        else if(drawerItem.getIdentifier() == 6) {
+                            fragment = ParentInventoryFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "INVENTORY_FRAGMENT")
+                                    .commit();
+                        }
+                        //Account stats
+                        else if(drawerItem.getIdentifier() == 7) {
+                            fragment = AccountStatsFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "ACCT_STATS_FRAGMENT")
+                                    .commit();
+                        }
+                        //Xur (9 of course ;) )
+                        else if(drawerItem.getIdentifier() == 9) {
+                            fragment = XurFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "ACCT_STATS_FRAGMENT")
+                                    .commit();
+                        }
+                        //Milestones
+                        else if(drawerItem.getIdentifier() == 10) {
+                            fragment = MilestonesFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "MILESTONES_FRAGMENT")
+                                    .commit();
+                        }
+                        //Settings
+                        else if(drawerItem.getIdentifier() == 11) {
+                            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                            startActivity(intent);
+                        }
+                        //Log In
+                        else if(drawerItem.getIdentifier() == 99) {
+                            Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
+                            startActivity(oauthIntent);
+                        }
+
+                    }
+                    //Items within ExpandableListView
+                    else if(drawerItem instanceof SecondaryDrawerItem) {
+
+                        if(drawerItem.getIdentifier() == Long.valueOf(latentMemories)) {
+                            Toast.makeText(MainActivity.this, "TODO: Latent memories", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(drawerItem.getIdentifier() == Long.valueOf(sleeperNodes)) {
+                            Toast.makeText(MainActivity.this, "TODO: Sleeper Nodes", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(drawerItem.getIdentifier() == Long.valueOf(ghostLore)) {
+                            Toast.makeText(MainActivity.this, "TODO: Ghost Lore", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(drawerItem.getIdentifier() == Long.valueOf(caydeJournals)) {
+                            Toast.makeText(MainActivity.this, "TODO: Cayde Journals", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    return false;
+                })
+                .build();
 //        }
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -246,25 +285,79 @@ public class MainActivity extends AppCompatActivity
         //Set initially selected account as active
         savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
         String selectedPlatform = savedPrefs.getString("selectedPlatform", "");
+
         if(selectedPlatform != "") {
             headerResult.removeProfile(0);
             String displayName = savedPrefs.getString("displayName"+selectedPlatform, "");
             String dNameFixed = displayName.replace("%23", "#");
             switch(selectedPlatform) {
                 case "1": //Xbox
-                    headerResult.addProfiles(new ProfileDrawerItem().withName(dNameFixed).withIcon(getResources().getDrawable(R.drawable.icon_xbl)));
+                    headerResult.addProfiles(new ProfileDrawerItem()
+                            .withEmail(dNameFixed)
+                            .withNameShown(false)
+                            .withIdentifier(1)
+                            .withIcon(getResources().getDrawable(R.drawable.icon_xbl)));
+//                            .withIdentifier());
                     break;
                 case "2": //PSN
-                    headerResult.addProfiles(new ProfileDrawerItem().withName(dNameFixed).withIcon(getResources().getDrawable(R.drawable.icon_psn)));
+                    headerResult.addProfiles(new ProfileDrawerItem()
+                            .withEmail(dNameFixed)
+                            .withNameShown(false)
+                            .withIdentifier(2)
+                            .withIcon(getResources().getDrawable(R.drawable.icon_psn)));
                     break;
                 case "4": //BNet
-                    headerResult.addProfiles(new ProfileDrawerItem().withName(dNameFixed).withIcon(getResources().getDrawable(R.drawable.icon_blizzard)));
+                    headerResult.addProfiles(new ProfileDrawerItem()
+                            .withEmail(dNameFixed)
+                            .withNameShown(false)
+                            .withIdentifier(4)
+                            .withIcon(getResources().getDrawable(R.drawable.icon_blizzard)));
                     break;
             }
 
+            //remove log-in button
+            drawer.removeItem(99);
+            drawer.removeAllStickyFooterItems();
+
+            drawer.addItemsAtPosition(2,
+                    new DividerDrawerItem(),
+                    new PrimaryDrawerItem().withIdentifier(6).withName(getResources().getString(R.string.item_transfer))
+                            .withIcon(getResources().getDrawable(R.drawable.icon_vault_small)),
+                    new PrimaryDrawerItem().withIdentifier(7).withName(getResources().getString(R.string.account_stats))
+                            .withIcon(getResources().getDrawable(R.drawable.icon_stats)),
+                    new ExpandableDrawerItem().withName("Checklists")
+                            .withIcon(getResources().getDrawable(R.drawable.icon_ticks))
+                            .withIdentifier(8)
+                            .withSelectable(false)
+                            .withSubItems(
+                                    new SecondaryDrawerItem().withName("Latent Memories")
+                                            .withLevel(2)
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_latent_memories))
+                                            .withIdentifier(Long.valueOf(latentMemories)),
+                                    new SecondaryDrawerItem().withName(getResources().getString(R.string.ghost_lore))
+                                            .withLevel(2)
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_hunter))
+                                            .withIdentifier(Long.valueOf(ghostLore)),
+                                    new SecondaryDrawerItem().withName(getResources().getString(R.string.journals))
+                                            .withLevel(2)
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_journals))
+                                            .withIdentifier(Long.valueOf(caydeJournals)),
+                                    new SecondaryDrawerItem().withName("Sleeper Nodes")
+                                            .withLevel(2)
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_crucible))
+                                            .withIdentifier(Long.valueOf(sleeperNodes))
+                            ),
+
+                    new PrimaryDrawerItem().withIdentifier(10).withName(getResources().getString(R.string.milestones))
+                            .withIcon(getResources().getDrawable(R.drawable.milestone_icon)),
+                    new PrimaryDrawerItem().withIdentifier(9).withName(getResources().getString(R.string.xur))
+                            .withIcon(getResources().getDrawable(R.drawable.ic_xur_icon_svg)),
+                    new DividerDrawerItem()
+                    );
+
             //if user has accounts for other platforms
             for(int i = 0; i <= 4; i++) {
-                //ignore already selectedPlatform
+                //loop through saved account data, ignore already selectedPlatform
                 if (!String.valueOf(i).equals(selectedPlatform)) {
 
                     String name = savedPrefs.getString("displayName" + i, "");
@@ -273,20 +366,23 @@ public class MainActivity extends AppCompatActivity
                         switch (i) {
                             case 1: //Xbox
                                 headerResult.addProfiles(new ProfileDrawerItem()
-                                        .withName(nameFix)
-                                        .withEmail("Xbox")
+                                        .withEmail(nameFix)
+                                        .withNameShown(false)
+                                        .withIdentifier(1)
                                         .withIcon(getResources().getDrawable(R.drawable.icon_xbl)));
                                 break;
                             case 2: //PSN
                                 headerResult.addProfiles(new ProfileDrawerItem()
-                                        .withName(nameFix)
-                                        .withEmail("PlayStation")
+                                        .withEmail(nameFix)
+                                        .withNameShown(false)
+                                        .withIdentifier(2)
                                         .withIcon(getResources().getDrawable(R.drawable.icon_psn)));
                                 break;
                             case 4: //BNet
                                 headerResult.addProfiles(new ProfileDrawerItem()
-                                        .withName(nameFix)
-                                        .withEmail("Battle.Net")
+                                        .withEmail(nameFix)
+                                        .withNameShown(false)
+                                        .withIdentifier(4)
                                         .withIcon(getResources().getDrawable(R.drawable.icon_blizzard)));
                                 break;
                         }
@@ -302,41 +398,6 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(title);
     }
 
-//    private void hideShowMenuItems() {
-//
-//        savedPrefs = getSharedPreferences("saved_prefs", MODE_PRIVATE);
-//        String membershipType = savedPrefs.getString("selectedPlatform", "");
-//        String displayName = savedPrefs.getString("displayName"+membershipType, "");
-//
-//        //Battle.Net tags
-//        if(displayName.contains("%23")){
-//            displayName = displayName.replace("%23", "#");
-//        }
-//        navigationView = findViewById(R.id.nav_view);
-//        Menu navMenu = navigationView.getMenu();
-//
-//
-//        if((displayName != "") && (membershipType != "")) {
-//
-//
-//            mLogInContainer.setVisibility(View.GONE);
-//
-//            navMenu.findItem(R.id.nav_refresh_account).setVisible(true).setEnabled(true);
-//            navMenu.findItem(R.id.nav_account_stats).setVisible(true).setEnabled(true);
-//
-//        }
-//        else { //not logged in
-//            mLogInContainer.setVisibility(View.VISIBLE);
-//            mLogOutContainer.setVisibility(View.GONE);
-//
-//            navMenu.findItem(R.id.nav_account_stats).setVisible(false).setEnabled(false);
-//            navMenu.findItem(R.id.nav_inventory_fragment).setVisible(false).setEnabled(false);
-//            navMenu.findItem(R.id.nav_refresh_auth).setVisible(false).setEnabled(false);
-//            navMenu.findItem(R.id.nav_refresh_account).setVisible(false).setEnabled(false);
-//
-//        }
-//
-//    }
 
     private void setFragment(LFGPostsFragment postsFragment) {
 
@@ -634,7 +695,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.xur:
-                fragment = XurFragment.newInstance("something", "else");
+                fragment = XurFragment.newInstance();
 
                 fragmentManager.beginTransaction()
                         .replace(R.id.parent_fragment_frame, fragment)

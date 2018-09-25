@@ -15,7 +15,7 @@ import java.util.List;
 
 public class StatValuesRecyclerAdapter extends RecyclerView.Adapter<StatViewHolder> {
 
-    private List<SocketModel.InvestmentStats> statData = new ArrayList<>();
+    private List<SocketModel.StatValues> statData = new ArrayList<>();
 
     @NonNull
     @Override
@@ -34,7 +34,7 @@ public class StatValuesRecyclerAdapter extends RecyclerView.Adapter<StatViewHold
 
             holder.setStatName(statData.get(position).getStatName());
             holder.setStatValue(String.valueOf(statData.get(position).getValue()));
-            holder.setStatProgressBar(statData.get(position).getValue());
+            holder.setStatProgressBar(statData.get(position).getValue(), statData.get(position).getMaximum());
         }
     }
 
@@ -48,7 +48,12 @@ public class StatValuesRecyclerAdapter extends RecyclerView.Adapter<StatViewHold
         return position;
     }
 
-    public void setStatData(List<SocketModel.InvestmentStats> statList) {
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public void setStatData(List<SocketModel.StatValues> statList) {
         this.statData = statList;
         notifyDataSetChanged();
     }

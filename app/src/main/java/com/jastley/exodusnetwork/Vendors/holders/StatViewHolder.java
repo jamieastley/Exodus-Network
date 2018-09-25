@@ -42,16 +42,16 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
         return statProgressBar;
     }
 
-    public void setStatProgressBar(int value) {
+    public void setStatProgressBar(int value, int max) {
 
-        if(value <= 100) {
+        if(max <= 100) {
             this.statProgressBar.setVisibility(View.VISIBLE);
             this.statProgressBar.setMax(100);
             this.statProgressBar.setProgress(value);
         }
         else {
             this.statProgressBar.setVisibility(View.VISIBLE);
-            this.statProgressBar.setMax(value);
+            this.statProgressBar.setMax(max);
             this.statProgressBar.setProgress(value);
         }
     }

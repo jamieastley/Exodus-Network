@@ -47,11 +47,13 @@
                 android:focusable="true"
                 />
 
-            <CheckBox
+            <Switch
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignBaseline="@id/first_button"
+                android:theme="@style/WarmindSwitch"
+
                 />
 
         </RelativeLayout>
@@ -83,6 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/settings_debug_header"
+
             >
 
         </android.support.v7.widget.RecyclerView>

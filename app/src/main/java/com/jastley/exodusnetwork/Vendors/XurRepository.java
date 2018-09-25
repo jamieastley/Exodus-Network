@@ -42,6 +42,7 @@ import retrofit2.Retrofit;
 
 import static com.jastley.exodusnetwork.Definitions.armorModsSockets;
 import static com.jastley.exodusnetwork.Definitions.armorPerksSockets;
+import static com.jastley.exodusnetwork.Definitions.shouldDisplayStat;
 import static com.jastley.exodusnetwork.Definitions.theNine;
 import static com.jastley.exodusnetwork.Definitions.weaponModsSockets;
 import static com.jastley.exodusnetwork.Definitions.weaponPerksSockets;
@@ -60,11 +61,11 @@ public class XurRepository {
     private MutableLiveData<InventoryItemJsonData> inventoryItemJsonData = new MutableLiveData<>();
     private MutableLiveData<SocketModel> perksLiveData = new MutableLiveData<>();
     private MutableLiveData<SocketModel> modsLiveData = new MutableLiveData<>();
-    private MutableLiveData<SocketModel.InvestmentStats> statsLiveData = new MutableLiveData<>();
+    private MutableLiveData<SocketModel.StatValues> statsLiveData = new MutableLiveData<>();
     //TODO stats
     private List<SocketModel> perksModelList;// = new ArrayList<>();
     private List<SocketModel> modsModelList;// = new ArrayList<>();
-    private List<SocketModel.InvestmentStats> statValuesList;
+    private List<SocketModel.StatValues> statValuesList;
 
     private MutableLiveData<String> singleError = new MutableLiveData<>();
 
@@ -232,7 +233,7 @@ public class XurRepository {
         return modsLiveData;
     }
 
-    public LiveData<SocketModel.InvestmentStats> getStatData() {
+    public LiveData<SocketModel.StatValues> getStatData() {
         return statsLiveData;
     }
 
@@ -315,20 +316,26 @@ public class XurRepository {
                         }
                         getModPlugs(modHashes);
 //
-//                        //Get stat values
+                        //Get stat values
                         int positionCount = 1;
-                        for (InventoryItemJsonData.InvestmentStats statValue : jsonData.getValue().getInvestmentStatsList()) {
+//                        for (InventoryItemJsonData.Stats.StatValues statValue : jsonData.getValue().getStats().getStatValues()) {
+                        for(Map.Entry<String, InventoryItemJsonData.Stats.StatValues> statValue :
+                                jsonData.getValue().getStats().getStatValues().entrySet()){
 
-                            if(statValue.getValue() != 0){
-                                statHashes.add(UnsignedHashConverter.getPrimaryKey(statValue.getStatTypeHash()));
+                            if(statValue.getValue().getValue() != 0){
+                                //Manifest has many irrelevant values, only show values that are displayed in-game
+                                if(shouldDisplayStat(statValue.getValue().getStatHash())) {
+                                    statHashes.add(UnsignedHashConverter.getPrimaryKey(statValue.getValue().getStatHash()));
 
-                                SocketModel.InvestmentStats stat = new SocketModel.InvestmentStats(
-                                        statValue.getStatTypeHash(),
-                                        statValue.getValue(),
-                                        positionCount
-                                );
-                                positionCount++;
-                                statValuesList.add(stat);
+                                    SocketModel.StatValues stat = new SocketModel.StatValues(
+                                            statValue.getValue().getStatHash(),
+                                            statValue.getValue().getValue(),
+                                            statValue.getValue().getMaximum(),
+                                            positionCount
+                                    );
+                                    positionCount++;
+                                    statValuesList.add(stat);
+                                }
                             }
                         }
                         getStatData(statHashes);
@@ -431,12 +438,12 @@ public class XurRepository {
                                 }
                             }
                         }
-                        statsLiveData.postValue(new SocketModel.InvestmentStats(statValuesList));
+                        statsLiveData.postValue(new SocketModel.StatValues(statValuesList));
                     }
                     catch(Exception e) {
-                        statsLiveData.postValue(new SocketModel.InvestmentStats("Error retrieving stat data"));
+                        statsLiveData.postValue(new SocketModel.StatValues("Error retrieving stat data"));
                     }
-                }, throwable -> statsLiveData.postValue(new SocketModel.InvestmentStats(throwable)));
+                }, throwable -> statsLiveData.postValue(new SocketModel.StatValues(throwable)));
     }
 
     public void getXurVendor() {

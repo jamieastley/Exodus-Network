@@ -556,27 +556,27 @@ public class InventoryItemJsonData {
             private String statHash;
             @Expose
             @SerializedName("value")
-            private String value;
+            private int value;
             @Expose
             @SerializedName("minimum")
-            private String minimum;
+            private int minimum;
             @Expose
             @SerializedName("maximum")
-            private String maximum;
+            private int maximum;
 
             public String getStatHash() {
                 return statHash;
             }
 
-            public String getValue() {
+            public int getValue() {
                 return value;
             }
 
-            public String getMinimum() {
+            public int getMinimum() {
                 return minimum;
             }
 
-            public String getMaximum() {
+            public int getMaximum() {
                 return maximum;
             }
         }
@@ -1103,6 +1103,12 @@ public class InventoryItemJsonData {
         @SerializedName("value")
         private int value;
         @Expose
+        @SerializedName("minimum")
+        private int minimum;
+        @Expose
+        @SerializedName("maximum")
+        private int maximum;
+        @Expose
         @SerializedName("isConditionallyActive")
         private boolean isConditionallyActive;
 
@@ -1112,6 +1118,14 @@ public class InventoryItemJsonData {
 
         public int getValue() {
             return value;
+        }
+
+        public int getMinimum() {
+            return minimum;
+        }
+
+        public int getMaximum() {
+            return maximum;
         }
 
         public boolean isConditionallyActive() {
