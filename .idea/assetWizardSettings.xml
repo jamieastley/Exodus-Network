@@ -110,7 +110,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_account_circle_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/device/ic_location_disabled_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -121,7 +121,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="icon_log_in" />
+                            <entry key="outputName" value="icon_location_disabled" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\jastl\Documents\Warmind for Destiny\icon_destiny_white.svg" />
                           </map>

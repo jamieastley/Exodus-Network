@@ -69,15 +69,15 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
     public void setDateTime(String time, String edited) {
 
         //Using ThreeTen Backport to utilise Java 8+ time features
-        Long post = Instant.parse(time).toEpochMilli();
-        Long edit = Instant.parse(edited).toEpochMilli();
-        Long now = Instant.now().toEpochMilli();
-
-        CharSequence timeDiff = DateUtils.getRelativeTimeSpanString(post, now, 0);
-        String editDiff = "(edited " + DateUtils.getRelativeTimeSpanString(edit, now, 0) + ")";
-
-        this.dateTime.setText(timeDiff);
-        this.editTime.setText(editDiff);
+//        Long post = Instant.parse(time).toEpochMilli();
+//        Long edit = Instant.parse(edited).toEpochMilli();
+//        Long now = Instant.now().toEpochMilli();
+//
+//        CharSequence timeDiff = DateUtils.getRelativeTimeSpanString(post, now, 0);
+//        String editDiff = "(edited " + DateUtils.getRelativeTimeSpanString(edit, now, 0) + ")";
+//
+//        this.dateTime.setText(timeDiff);
+//        this.editTime.setText(editDiff);
     }
 
     public String getMembershipType() {
