@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.Inventory.adapters.ObjectiveRewardsAdapter;
 import com.jastley.exodusnetwork.Inventory.adapters.ProgressRecyclerAdapter;

@@ -19,7 +19,6 @@ import com.jastley.exodusnetwork.Utils.SnackbarMessage;
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.AppDatabase;
-import com.jastley.exodusnetwork.database.dao.AccountDAO;
 import com.jastley.exodusnetwork.database.models.Account;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -33,9 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.internal.operators.single.SingleToObservable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
@@ -158,17 +155,11 @@ public class AccountRepository {
         }
         if (timestamp != 0) {
             Long hour = 60L * 60L * 1000L;
+            Long halfHour = hour / 2;
             Long now = System.currentTimeMillis();
             Long timespan = now - timestamp;
 
-            if (timespan > hour) {
-
-                return true;
-
-            }
-            else {
-                return false;
-            }
+            return timespan > halfHour;
         }
         return true;
     }
@@ -190,8 +181,7 @@ public class AccountRepository {
 
                         int membershipsCount = currentUser.getResponse().getDestinyMemberships().size();
 
-                        //initialise string array based on number of memberships
-//                        String[] memberships = new String[membershipsCount];
+                        //initialise ArrayList based on number of memberships
                         ArrayList<String> membershipTypes = new ArrayList<>();
 
                         //store all found membership details
@@ -200,33 +190,59 @@ public class AccountRepository {
                             try {
 
                                 //current membershipType within arrayList (eg. 2 == PSN)
-                                String mId = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
-                                membershipTypes.add(mId);
+                                String mType = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
+                                membershipTypes.add(mType);
 
 //                                memberships[i] = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
 
-                                editor.putString("membershipType" + mId, mId);
-                                editor.putString("membershipId" + mId, currentUser.getResponse().getDestinyMemberships().get(i).getMembershipId());
+                                editor.putString("membershipType" + mType, mType);
+                                editor.putString("membershipId" + mType, currentUser.getResponse().getDestinyMemberships().get(i).getMembershipId());
 
                                 //sanitise BattleNet displayName for Firebase
                                 if(currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType().equals("4")){
 
-                                    String displayName = currentUser.getResponse().getBungieNetUser().getBlizzardDisplayName();
-                                    if(displayName.contains("#")){
-                                        displayName = displayName.replace("#", "%23");
-                                        editor.putString("displayName" + mId, displayName);
+                                    //Privacy settings for account may be changed so this can't be accessed, check first
+                                    String displayName;
+                                    if(currentUser.getResponse().getBungieNetUser().getBlizzardDisplayName() != null){
+                                        displayName = currentUser.getResponse().getBungieNetUser().getBlizzardDisplayName();
+                                        if(displayName.contains("#")){
+                                            displayName = displayName.replace("#", "%23");
+
+                                        }
                                     }
+                                    else {
+                                        displayName = "Battle.Net";
+                                    }
+                                    editor.putString("displayName" + mType, displayName);
+
                                 }
                                 //PlayStation/Xbox players
                                 else {
-                                    editor.putString("displayName" + mId, currentUser.getResponse().getDestinyMemberships().get(i).getDisplayName());
+                                    //Privacy settings for account may be changed so this can't be accessed, check first
+                                    String displayName;
+                                    if(currentUser.getResponse().getDestinyMemberships().get(i).getDisplayName() != null) {
+                                        displayName = currentUser.getResponse().getDestinyMemberships().get(i).getDisplayName();
+                                    }
+                                    else {
+                                        //Set a placeholder name if all else fails
+                                        switch(mType) {
+                                            case "1":
+                                                displayName = "Xbox";
+                                                break;
+                                            case "2":
+                                                displayName = "PlayStation";
+                                                break;
+                                            default:
+                                                displayName = "Unknown";
+                                                break;
+                                        }
+                                    }
+                                    editor.putString("displayName" + mType, displayName);
                                 }
                                 editor.apply();
                             }
                             catch(Exception e){
-                                Log.d("GET_CURRENT_USER_PARSE", e.getLocalizedMessage());
-
-                                //TODO error handling
+                                Crashlytics.log(1, "GET_CURRENT_USER_PARSE", e.getLocalizedMessage());
                                 snackbarMessage.postValue(new SnackbarMessage(e.getLocalizedMessage()));
                             }
                         }
@@ -234,11 +250,6 @@ public class AccountRepository {
 
                         //ask user to select which platform they want to use
                         if(membershipsCount > 1) {
-
-//                            for (int i = 0; i < membershipsCount; i++) {
-//                                memberships[i] = currentUser.getResponse().getDestinyMemberships().get(i).getMembershipType();
-//                            }
-
                             //notify Activity/fragment to show platformDialogFragment with these options
                             platformSelector.postValue(membershipTypes);
                         }
@@ -246,7 +257,6 @@ public class AccountRepository {
                         //only one active platform
                         else {
                             String membershipType = membershipTypes.get(0);
-//                            editor = savedPrefs.edit();
                             editor.putString("selectedPlatform", membershipType);
                             editor.apply();
 
@@ -314,8 +324,7 @@ public class AccountRepository {
                             //write all characters' data to Room
                             accountDatabase.getAccountDAO().insertAll(accountList);
 
-//                            //Download each icon to storage for use later
-//                            downloadEmblems(emblemIconList);
+                        //Download each icon to storage for use later
                         } catch(Exception e) {
                             Crashlytics.log(1, "GET_ALL_CHARACTERS", e.getLocalizedMessage());
                             snackbarMessage.postValue(new SnackbarMessage("Couldn't retrieve character data"));
@@ -328,7 +337,6 @@ public class AccountRepository {
                             downloadEmblems(emblemIconList);
                         };
                         mainHandler.post(mRunnable);
-//                        downloadEmblems(emblemIconList);
                     }
 
                 }, throwable -> snackbarMessage.postValue(new SnackbarMessage(throwable.getMessage())));
@@ -366,16 +374,7 @@ public class AccountRepository {
 
                         //All icons have been downloaded
                         if(pos == urls.size() -1){
-//                                    targets = null;
-
-//                                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-////
-//                                    //set flags so pressing back won't trigger previous state of MainActivity
-//                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                    startActivity(intent);
-//                                    finish();
                             emblemDownloadProgress.postValue(new EmblemIconDownload(true));
-
                         }
                     }
                     catch(Exception e){
