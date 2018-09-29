@@ -28,9 +28,11 @@
             android:id="@+id/sliding_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabTextColor="@color/warmindAccent"
             android:background="@color/warmindDark"
+            app:tabMaxWidth="0dp"
+            app:tabGravity="fill"
             app:tabBackground="@color/warmindPrimary"
+            app:tabTextColor="@color/warmindAccent"
             app:tabMode="fixed"
             android:visibility="gone"
             />

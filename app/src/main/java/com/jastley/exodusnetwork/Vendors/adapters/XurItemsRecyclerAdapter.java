@@ -40,18 +40,6 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
 
     @Override
     public void onBindViewHolder(XurItemsViewHolder holder, int position) {
-//        holder.setItemName(xurItems.get(position).getDisplayProperties().getName());
-//        holder.setItemIcon(xurItems.get(position).getDisplayProperties().getIcon());
-//        holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
-//        holder.setItemType(xurItems.get(position).getItemTypeDisplayName());
-//        holder.setSalesCount(xurItems.get(position).getSalesCount());
-//        holder.setItemHash(xurItems.get(position).getHash());
-//        if(xurItems.get(position).getCost() != null) {
-//            holder.setItemCostImage(xurItems.get(position).getCost().getIcon());
-//            holder.setItemCostText(xurItems.get(position).getCost().getQuantity());
-//        }
-//
-//        final Response_GetXurWeekly.Items item = xurItems.get(position);
 
         holder.setItemName(xurItems.get(position).getItemData().getDisplayProperties().getName());
         holder.setItemIcon(xurItems.get(position).getItemData().getDisplayProperties().getIcon());

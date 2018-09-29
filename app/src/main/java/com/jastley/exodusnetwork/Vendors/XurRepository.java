@@ -101,12 +101,13 @@ public class XurRepository {
         App.getApp().getAppComponent().inject(this);
     }
 
-    public LiveData<Response_GetXurWeekly> getXurInventory() {
+    public LiveData<Response_GetXurWeekly> getXurLocation() {
 
         xurLiveDataList = new MutableLiveData<>();
 
         //get Xur inventory from WhatsXurGot API
-        Disposable disposable = retrofit.create(BungieAPI.class).getXurWeeklyInventory("xur", "history")
+        Disposable disposable = retrofit.create(BungieAPI.class)
+                .getXurWeeklyInventory("xur", "history")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(xurData -> {

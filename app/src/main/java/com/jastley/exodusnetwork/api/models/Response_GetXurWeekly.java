@@ -72,6 +72,14 @@ public class Response_GetXurWeekly {
         @SerializedName("data")
         private Data data;
 
+        @Expose
+        @SerializedName("lastModified")
+        private String lastModified;
+
+        @Expose
+        @SerializedName("refresh")
+        private String refresh;
+
         public String getStatus() {
             return status;
         }
@@ -83,12 +91,24 @@ public class Response_GetXurWeekly {
         public Data getData() {
             return data;
         }
+
+        public String getLastModified() {
+            return lastModified;
+        }
+
+        public String getRefresh() {
+            return refresh;
+        }
     }
 
     public static class Data {
         @Expose
         @SerializedName("location")
         private Location location;
+
+        @Expose
+        @SerializedName("retrieved")
+        private String retrieved;
 
         @Expose
         @SerializedName("season")
@@ -104,6 +124,10 @@ public class Response_GetXurWeekly {
 
         public Location getLocation() {
             return location;
+        }
+
+        public String getRetrieved() {
+            return retrieved;
         }
 
         public String getSeason() {

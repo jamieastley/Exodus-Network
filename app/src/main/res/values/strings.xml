@@ -191,6 +191,9 @@
     <string name="overview">Overview</string>
     <string name="xur_arrives_in">Arrives in:</string>
     <string name="xur_departs_in">Departs in:</string>
+    <string name="getXurLocation">Get Location</string>
+    <string name="xurWorldUnknown">\???</string>
+    <string name="xurRegionUnknown">\??</string>
 
 
 </resources>

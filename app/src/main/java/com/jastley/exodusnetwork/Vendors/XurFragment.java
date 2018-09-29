@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -240,7 +241,6 @@ public class XurFragment extends Fragment {
 
             setCountdownTimer(millis);
             xurStatus.setText(R.string.xur_departs_in);
-            xurTrackButton.setBackground(getResources().getDrawable(R.drawable.icon_patrol));
         }
         else {
 
@@ -323,5 +323,10 @@ public class XurFragment extends Fragment {
             }
         };
         mCountDownTimer.start();
+    }
+
+    @OnClick(R.id.xur_track_button)
+    public void onTrackButtonClick() {
+        Toast.makeText(getContext(), "clicked", Toast.LENGTH_SHORT).show();
     }
 }

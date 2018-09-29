@@ -13,7 +13,11 @@ public class ServerTimerCheck {
 
         //check if we're currently within the window for Xur
         if(utcDayNow.getValue() >= DayOfWeek.FRIDAY.getValue() &&
-                utcDayNow.getValue() <= DayOfWeek.TUESDAY.getValue()) {
+//                utcDayNow.getValue() <= DayOfWeek.TUESDAY.getValue()) {
+            zdtUtcNow.isBefore(getResetTime())) {
+
+            System.out.println("NOW: " + DayOfWeek.FRIDAY.getValue());
+            System.out.println("TUESDAY: " + DayOfWeek.TUESDAY.getValue());
 
             //check if after reset time if currently Friday
             if(utcDayNow.getValue() == DayOfWeek.FRIDAY.getValue()) {
@@ -21,12 +25,6 @@ public class ServerTimerCheck {
                 //5PM UTC time
                 return zdtUtcNow.getHour() >= 17;
 
-            }
-            //check if before reset time on Tuesday
-            else if(utcDayNow.getValue() == DayOfWeek.TUESDAY.getValue()) {
-
-                //5PM UTC time
-                return zdtUtcNow.getHour() < 17;
             }
             //Currently Saturday-Monday (UTC), Xur's definitely in-game
             else {

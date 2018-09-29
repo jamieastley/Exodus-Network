@@ -42,7 +42,7 @@
             android:layout_weight="1"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:text="Earth"
+            android:text="@string/xurWorldUnknown"
             android:textColor="@color/colorWhite"
             android:textStyle="bold"
             android:textSize="24sp"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
-            android:text="Tower Hangar"
+            android:text="@string/xurRegionUnknown"
             android:textColor="@color/colorWhite"
             android:textStyle="italic"
             />
@@ -81,11 +81,13 @@
 
             <Button
                 android:id="@+id/xur_track_button"
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginEnd="5dp"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/icon_patrol"
+                android:text="@string/getXurLocation"
+                android:textColor="@color/xur_track_btn_selector"
+                android:background="@android:color/transparent"
                 />
 
 

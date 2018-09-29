@@ -38,6 +38,7 @@ import com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.checklists.fragments.ChecklistsParentFragment;
+import com.jastley.exodusnetwork.checklists.fragments.GenericChecklistFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGPostsFragment;
 import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
@@ -262,7 +263,14 @@ public class MainActivity extends AppCompatActivity
                     //Items within ExpandableListView
                     else if(drawerItem instanceof SecondaryDrawerItem) {
 
+                        Fragment fragment;
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+
                         if(drawerItem.getIdentifier() == Long.valueOf(latentMemories)) {
+                            fragment = GenericChecklistFragment.newInstance("1", "2");
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "CHECKLIST_FRAGMENT")
+                                    .commit();
                             Toast.makeText(MainActivity.this, "TODO: Latent memories", Toast.LENGTH_SHORT).show();
                         }
                         else if(drawerItem.getIdentifier() == Long.valueOf(sleeperNodes)) {
