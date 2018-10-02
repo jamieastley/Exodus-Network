@@ -32,7 +32,7 @@
             app:tabMaxWidth="0dp"
             app:tabGravity="fill"
             app:tabBackground="@color/warmindPrimary"
-            app:tabTextColor="@color/warmindAccent"
+            app:tabTextColor="@color/toolbar_text_selector"
             app:tabMode="fixed"
             android:visibility="gone"
             />

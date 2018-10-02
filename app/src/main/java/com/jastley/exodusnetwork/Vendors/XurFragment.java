@@ -295,7 +295,7 @@ public class XurFragment extends Fragment {
 
     private void setupXurGone() {
 
-        xurTrackButton.setBackground(getResources().getDrawable(R.drawable.icon_location_disabled));
+//        xurTrackButton.setBackground(getResources().getDrawable(R.drawable.icon_location_disabled));
         xurWorldText.setText("???");
         xurRegionText.setText("??");
         xurStatus.setText(R.string.xur_arrives_in);

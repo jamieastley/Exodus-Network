@@ -458,6 +458,7 @@ public class InventoryRepository {
                     //iterate through all database results
                     List<InventoryItemModel> itemList = getSlotList(characterSlot);
 
+
                     for(DestinyInventoryItemDefinition definitionData : definitions) {
 
 

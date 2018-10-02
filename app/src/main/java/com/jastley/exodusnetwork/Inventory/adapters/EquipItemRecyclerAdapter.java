@@ -96,7 +96,7 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
 
     @Override
     public int getItemCount() {
-        return characterList.size();
+        return characterList.size() - 1;
     }
 
     @Override
@@ -108,6 +108,7 @@ public class EquipItemRecyclerAdapter extends RecyclerView.Adapter<EquipItemView
         //Last index is always vault, can't equip on vault so remove it for this adapter
 //        int size = list.size();
 //        list.remove(size -1);
+
         this.characterList = list;
         notifyDataSetChanged();
     }
