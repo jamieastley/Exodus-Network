@@ -15,7 +15,6 @@ import retrofit2.http.*;
 public interface BungieAPI {
 
     String baseURL = "https://www.bungie.net";
-    String plumbingURL = "https://destiny.plumbing/en/";
 
     //OAuth
     @Headers("Accept: application/json")
@@ -84,11 +83,22 @@ public interface BungieAPI {
     @GET("/Platform/GroupV2/User/{membershipType}/{membershipId}/0/1/")
     Observable<Response_GetGroupsForMember> getClanData(@Path("membershipType") String membershipType, @Path("membershipId") String membershipId);
 
-    //Get Faction progression for character(?components=202)
+    //Get progression for character(?components=202)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
-    Observable<Response_FactionProgression> getFactionProgress(@Path("membershipType") String membershipType,
-                                                               @Path("membershipId") String membershipId,
-                                                               @Path("characterId") String characterId);
+    Observable<Response_FactionProgression> getCharacterProgressions(@Path("membershipType") String membershipType,
+                                                                     @Path("membershipId") String membershipId,
+                                                                     @Path("characterId") String characterId);
+    //Profile-level progressions
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=202")
+    Observable<Response_FactionProgression> getProfileProgressions(@Path("membershipType") String membershipType,
+                                                                     @Path("membershipId") String membershipId);
+
+    //Profile-wide collectables
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=800")
+    Observable<Response_GetProfileCollections> getProfileCollectibles(@Path("membershipType") String membershipType,
+                                                                     @Path("membershipId") String membershipId);
+
+
 
     //Fireteams/LFG
     @GET("/Platform/Fireteam/Search/Available/{platform}/{activityType}/{dateRange}/{slotFilter}/{page}/")

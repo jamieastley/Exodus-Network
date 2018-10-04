@@ -113,6 +113,25 @@ public class Definitions {
             "So lonely here..."
     };
 
+    //Valor and Glory rankings
+    public static String getValorGloryRank(int level) {
+        switch(level) {
+            case 0:
+                return "Guardian";
+            case 1:
+                return "Brave";
+            case 2:
+                return "Heroic";
+            case 3:
+                return "Fabled";
+            case 4:
+                return "Mythic";
+            case 5:
+                return "Legend";
+            default:
+                return "Unknown";
+        }
+    }
 
     //Checklists
     public static final String latentMemories = "2955980198";

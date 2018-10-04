@@ -16,6 +16,7 @@ import com.jastley.exodusnetwork.database.dao.ActivityTypeDAO;
 import com.jastley.exodusnetwork.database.dao.BondDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.ClassDefinitionDAO;
+import com.jastley.exodusnetwork.database.dao.CollectibleDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.DamageTypeDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.DestinationDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.EnemyRaceDefinitionDAO;
@@ -58,6 +59,7 @@ import com.jastley.exodusnetwork.database.models.DestinyActivityTypeDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyBondDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyChecklistDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyClassDefinition;
+import com.jastley.exodusnetwork.database.models.DestinyCollectibleDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyDamageTypeDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyDestinationDefinition;
 import com.jastley.exodusnetwork.database.models.DestinyEnemyRaceDefinition;
@@ -101,6 +103,7 @@ import com.jastley.exodusnetwork.database.models.DestinyVendorGroupDefinition;
                     DestinyBondDefinition.class,
                     DestinyChecklistDefinition.class,
                     DestinyClassDefinition.class,
+                    DestinyCollectibleDefinition.class,
                     DestinyDamageTypeDefinition.class,
                     DestinyDestinationDefinition.class,
                     DestinyEnemyRaceDefinition.class,
@@ -150,6 +153,7 @@ public abstract class AppManifestDatabase extends RoomDatabase {
     public abstract BondDefinitionDAO getBondDefinitionDAO();
     public abstract ChecklistDefinitionDAO getChecklistDAO();
     public abstract ClassDefinitionDAO getClassDefinitionDAO();
+    public abstract CollectibleDefinitionDAO getCollectibleDefinitionDAO();
     public abstract DamageTypeDefinitionDAO getDamageTypeDAO();
     public abstract DestinationDefinitionDAO getDestinationDAO();
     public abstract EnemyRaceDefinitionDAO getEnemyRaceDAO();

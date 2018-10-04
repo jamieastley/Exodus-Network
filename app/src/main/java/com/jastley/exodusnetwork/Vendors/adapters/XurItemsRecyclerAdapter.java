@@ -23,7 +23,7 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
     private Context mContext;
     private List<XurSaleItemModel> xurItems = new ArrayList<>();
 
-    public final PublishSubject<InventoryItemJsonData> onClickSubject = PublishSubject.create();
+    public final PublishSubject<String> onClickSubject = PublishSubject.create();
 
     public XurItemsRecyclerAdapter(Context mContext) {
         this.mContext = mContext;
@@ -34,6 +34,12 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
     public XurItemsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.xur_inventory_row, parent, false);
+
+        final XurItemsViewHolder xurItemsViewHolder = new XurItemsViewHolder(mView, parent.getContext());
+
+        xurItemsViewHolder.itemView.setOnClickListener(view -> {
+            onClickSubject.onNext(xurItemsViewHolder.getItemHash());
+        });
 
         return new XurItemsViewHolder(mView, mContext);
     }
@@ -51,12 +57,12 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
             holder.setItemCostText(xurItems.get(position).getSalesData().getCostsList().get(0).getQuantity());
         }
 
-        final InventoryItemJsonData item = xurItems.get(position).getItemData();
-
-        holder.itemView.setOnClickListener(view -> onClickSubject.onNext(item));
+//        final InventoryItemJsonData item = xurItems.get(position).getItemData();
+//
+//        holder.itemView.setOnClickListener(view -> onClickSubject.onNext(item));
     }
 
-    public Observable<InventoryItemJsonData> getClickedItem() {
+    public Observable<String> getClickedItem() {
         return onClickSubject;
     }
 

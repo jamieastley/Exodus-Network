@@ -404,7 +404,7 @@ public class LFGDetailsFragment extends Fragment {
 
     public void getFactionStats(String membershipType, String membershipId, String characterId){
 
-        Disposable disposable = mBungieAPI.getFactionProgress(membershipType, membershipId, characterId)
+        Disposable disposable = mBungieAPI.getCharacterProgressions(membershipType, membershipId, characterId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(response_factionProgression -> {

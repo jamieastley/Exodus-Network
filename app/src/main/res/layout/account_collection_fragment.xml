@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".collections.AccountCollectionFragment">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/collectible_swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/collectibles_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/account_collectables"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:id="@+id/collectibles_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                android:text="123/798"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/collection_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/collectibles_title"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+</RelativeLayout>

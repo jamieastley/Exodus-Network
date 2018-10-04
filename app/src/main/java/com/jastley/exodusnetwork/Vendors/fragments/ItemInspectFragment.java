@@ -45,19 +45,28 @@ public class ItemInspectFragment extends Fragment {
     private PerksModsRecyclerAdapter perksAdapter;
     private XurViewModel mViewModel;
 
+    private static final String ARG_ITEM_HASH = "itemHash";
+    private String itemHash;
+
     public ItemInspectFragment() {
         // Required empty public constructor
     }
 
 
-    public static ItemInspectFragment newInstance() {
-        return new ItemInspectFragment();
+    public static ItemInspectFragment newInstance(String hash) {
+        ItemInspectFragment fragment = new ItemInspectFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ITEM_HASH, hash);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if(getArguments() !=  null) {
+            itemHash = getArguments().getString(ARG_ITEM_HASH);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -85,7 +94,7 @@ public class ItemInspectFragment extends Fragment {
 
         mViewModel = ViewModelProviders.of(getActivity()).get(XurViewModel.class);
 
-        displayModelDetails();
+//        displayModelDetails();
         getItemDetails();
     }
 
@@ -105,10 +114,21 @@ public class ItemInspectFragment extends Fragment {
         ((MainActivity) getActivity())
                 .setActionBarTitle(getString(R.string.item_details));
 
-        mViewModel.getInventoryItemData().observe(this, data -> {
-            Picasso.get()
-                    .load(baseURL + data.getScreenshot())
-                    .into(itemScreenshot);
+        mViewModel.getInventoryItemData(itemHash).observe(this, data -> {
+            if(data.getDisplayProperties() != null) {
+                itemDescription.setText(data.getDisplayProperties().getDescription());
+                itemName.setText(data.getDisplayProperties().getName());
+                itemType.setText(data.getItemTypeDisplayName());
+
+                Picasso.get()
+                        .load(baseURL + data.getDisplayProperties().getIcon())
+                        .placeholder(R.drawable.missing_icon_d2)
+                        .into(itemIcon);
+
+                Picasso.get()
+                        .load(baseURL + data.getScreenshot())
+                        .into(itemScreenshot);
+            }
         });
 
         mViewModel.getStatData().observe(this, stats -> {

@@ -194,6 +194,8 @@
     <string name="getXurLocation">Get Location</string>
     <string name="xurWorldUnknown">\???</string>
     <string name="xurRegionUnknown">\??</string>
+    <string name="collectibles">Collectibles</string>
+    <string name="account_collectables">Account Collectables</string>
 
 
 </resources>

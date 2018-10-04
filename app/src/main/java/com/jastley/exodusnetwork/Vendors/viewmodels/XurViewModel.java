@@ -63,8 +63,8 @@ public class XurViewModel extends AndroidViewModel {
         return itemDetailsModel;
     }
 
-    public LiveData<InventoryItemJsonData> getInventoryItemData() {
-        return mXurRepository.getInventoryItemData(itemDetailsModel.getHash());
+    public LiveData<InventoryItemJsonData> getInventoryItemData(String hash) {
+        return mXurRepository.getInventoryItemData(hash);
     }
 
     public LiveData<SocketModel> getPerkSockets() {

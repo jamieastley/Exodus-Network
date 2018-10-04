@@ -39,6 +39,7 @@ import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.checklists.fragments.ChecklistsParentFragment;
 import com.jastley.exodusnetwork.checklists.fragments.GenericChecklistFragment;
+import com.jastley.exodusnetwork.collections.AccountCollectionFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGPostsFragment;
 import com.jastley.exodusnetwork.lfg.models.SelectedPlayerModel;
@@ -253,6 +254,13 @@ public class MainActivity extends AppCompatActivity
                             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                             startActivity(intent);
                         }
+                        else if(drawerItem.getIdentifier() == 12) {
+                            fragment = AccountCollectionFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "MILESTONES_FRAGMENT")
+                                    .commit();
+                        }
+
                         //Log In
                         else if(drawerItem.getIdentifier() == 99) {
                             Intent oauthIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.bungie.net/en/OAuth/Authorize" + "?client_id=" + clientId + "&response_type=code&redirect_uri=" +redirectUri));
@@ -355,6 +363,9 @@ public class MainActivity extends AppCompatActivity
                                             .withIcon(getResources().getDrawable(R.drawable.icon_crucible))
                                             .withIdentifier(Long.valueOf(sleeperNodes))
                             ),
+                    new PrimaryDrawerItem().withName(getResources().getString(R.string.collectibles))
+                    .withIcon(getResources().getDrawable(R.drawable.icon_ticks))
+                    .withIdentifier(12),
 
                     new PrimaryDrawerItem().withIdentifier(10).withName(getResources().getString(R.string.milestones))
                             .withIcon(getResources().getDrawable(R.drawable.milestone_icon)),

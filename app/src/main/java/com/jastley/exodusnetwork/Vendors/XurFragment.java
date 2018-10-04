@@ -129,10 +129,10 @@ public class XurFragment extends Fragment {
         getXurInventory();
 
         Disposable disposable = mXurRecyclerAdapter.getClickedItem()
-                .subscribe(inventoryItemModel -> {
-                    mViewModel.setItemDetailsModel(inventoryItemModel);
+                .subscribe(itemHash -> {
+//                    mViewModel.setItemDetailsModel(inventoryItemModel);
 
-                    Fragment inspectFragment = ItemInspectFragment.newInstance();
+                    Fragment inspectFragment = ItemInspectFragment.newInstance(itemHash);
 
 //                    FragmentManager fragmentManager = getFragmentManager();
                     if(getActivity() != null){
@@ -255,25 +255,7 @@ public class XurFragment extends Fragment {
             setCountdownTimer(millis);
 
         }
-        //Get current inventory
-//        mViewModel.getXurData().observe(this, response_getXurWeekly -> {
-//            if(response_getXurWeekly.getErrorMessage() != null) {
-//                Snackbar.make(getView(), response_getXurWeekly.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
-//                        .setAction("Retry", v -> getXurInventory())
-//                        .show();
-//
-//            }
-//            else {
-//                xurImageBanner.setVisibility(View.VISIBLE);
-//                mXurRecyclerAdapter.setXurItems(response_getXurWeekly.getItemList());
-//                xurRegionText.setText(response_getXurWeekly.getXurLocation().getRegion());
-//                xurWorldText.setText(response_getXurWeekly.getXurLocation().getWorld());
-//                xurIcon.setVisibility(View.VISIBLE);
-//            }
-//            mSwipeRefresh.setRefreshing(false);
-////            progressBar.setVisibility(View.GONE);
-//        });
-//
+
 //        //Get location data
 //        mViewModel.getXurLocationData().observe(this, xurVendorModel -> {
 //            if(xurVendorModel.getErrorMessage() != null) {
@@ -311,7 +293,7 @@ public class XurFragment extends Fragment {
                 long hours = minutes / 60;
                 long days = hours / 24;
 
-                //2d:2h:23m:21s
+                //1d:2h:34m:56s
                 String time = days + "d: " + hours % 24 + "h: " + minutes % 60 + "m: " + seconds % 60 + "s";
 
                 xurTimer.setText(time);
@@ -327,6 +309,6 @@ public class XurFragment extends Fragment {
 
     @OnClick(R.id.xur_track_button)
     public void onTrackButtonClick() {
-        Toast.makeText(getContext(), "clicked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "TODO", Toast.LENGTH_SHORT).show();
     }
 }
