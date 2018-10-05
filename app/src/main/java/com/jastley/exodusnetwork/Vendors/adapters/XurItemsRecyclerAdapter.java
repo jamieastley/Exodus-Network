@@ -41,7 +41,7 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
             onClickSubject.onNext(xurItemsViewHolder.getItemHash());
         });
 
-        return new XurItemsViewHolder(mView, mContext);
+        return xurItemsViewHolder;
     }
 
     @Override
@@ -57,9 +57,6 @@ public class XurItemsRecyclerAdapter extends RecyclerView.Adapter<XurItemsViewHo
             holder.setItemCostText(xurItems.get(position).getSalesData().getCostsList().get(0).getQuantity());
         }
 
-//        final InventoryItemJsonData item = xurItems.get(position).getItemData();
-//
-//        holder.itemView.setOnClickListener(view -> onClickSubject.onNext(item));
     }
 
     public Observable<String> getClickedItem() {

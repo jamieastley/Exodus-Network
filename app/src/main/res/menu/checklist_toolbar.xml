@@ -5,7 +5,7 @@
     <!--<item-->
         <!--android:id="@+id/checklist_icon"-->
         <!--android:title="@string/checklist_icon"-->
-        <!--android:icon="@drawable/icon_latent_memories"-->
+        <!--android:icon="@drawable/oldicon_latent_memories"-->
         <!--app:showAsAction="always"-->
         <!--/>-->
 

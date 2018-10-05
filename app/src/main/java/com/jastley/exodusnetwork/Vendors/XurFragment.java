@@ -207,6 +207,7 @@ public class XurFragment extends Fragment {
                 if (xurData.getFinalItemList() != null) {
                     mXurRecyclerAdapter.setXurItems(xurData.getFinalItemList());
                     mSwipeRefresh.setRefreshing(false);
+                    xurGoneContainer.setVisibility(View.GONE);
                 }
             });
             Instant now = ServerTimerCheck.getUTCNow().toInstant();

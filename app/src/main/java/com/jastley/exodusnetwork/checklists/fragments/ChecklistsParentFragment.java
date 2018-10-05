@@ -10,8 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.jastley.exodusnetwork.MainActivity;
@@ -36,16 +33,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.jastley.exodusnetwork.Definitions.caydeJournals;
-import static com.jastley.exodusnetwork.Definitions.forsakenCollection;
 import static com.jastley.exodusnetwork.Definitions.ghostLore;
 import static com.jastley.exodusnetwork.Definitions.latentMemories;
-import static com.jastley.exodusnetwork.Definitions.raidLairs;
 import static com.jastley.exodusnetwork.Definitions.sleeperNodes;
 
 public class ChecklistsParentFragment extends Fragment {
 
     private ChecklistsViewModel mViewModel;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPagerAdapter mSectionsPagerAdapter;
 //    @BindView(R.id.parent_checklist_viewpager) ViewPager mViewPager;
 //    @BindView(R.id.checklist_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.checklist_bottom_nav) BottomNavigationView bottomNav;
@@ -72,7 +67,7 @@ public class ChecklistsParentFragment extends Fragment {
 //        mSwipeRefreshLayout.setRefreshing(true);
 
         setHasOptionsMenu(true);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
+        mSectionsPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
 //        populateFragmentList();
 
         return rootView;
@@ -99,12 +94,10 @@ public class ChecklistsParentFragment extends Fragment {
     }
 
     private void populateFragmentList() {
-        tabFragmentList.add(new ChecklistTabModel("Latent Memories", latentMemories));
-        tabFragmentList.add(new ChecklistTabModel("Ghost Lore", ghostLore));
-        tabFragmentList.add(new ChecklistTabModel("Journals", caydeJournals));
-        tabFragmentList.add(new ChecklistTabModel("Sleeper Nodes", sleeperNodes));
-        tabFragmentList.add(new ChecklistTabModel("Raid Lairs", raidLairs));
-        tabFragmentList.add(new ChecklistTabModel("Items", forsakenCollection));
+        tabFragmentList.add(new ChecklistTabModel("Latent Memories", latentMemories, R.drawable.icon_latent_memories));
+        tabFragmentList.add(new ChecklistTabModel("Ghost Lore", ghostLore, R.drawable.icon_ghost));
+        tabFragmentList.add(new ChecklistTabModel("Journals", caydeJournals, R.drawable.icon_journals));
+        tabFragmentList.add(new ChecklistTabModel("Sleeper Nodes", sleeperNodes, R.drawable.icon_latent_memories));
     }
 
     @Override
@@ -180,9 +173,9 @@ public class ChecklistsParentFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -196,7 +189,8 @@ public class ChecklistsParentFragment extends Fragment {
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            return tabFragmentList.get(position).getTabTitle();
+//            return tabFragmentList.get(position).getTabTitle();
+            return null;
         }
 
         @Override
