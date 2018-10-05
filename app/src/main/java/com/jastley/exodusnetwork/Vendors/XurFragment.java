@@ -7,19 +7,16 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.*;
 
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,52 +32,32 @@ import com.jastley.exodusnetwork.Utils.ServerTimerCheck;
 import com.jastley.exodusnetwork.Vendors.adapters.XurItemsRecyclerAdapter;
 import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
 import com.jastley.exodusnetwork.Vendors.viewmodels.XurViewModel;
-import com.squareup.picasso.Picasso;
 
-
-import org.threeten.bp.DateTimeUtils;
-import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.MonthDay;
-import org.threeten.bp.Period;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZoneOffset;
-import org.threeten.bp.ZonedDateTime;
-import org.threeten.bp.temporal.ChronoUnit;
 
-import static com.jastley.exodusnetwork.api.BungieAPI.baseURL;
+import java.util.Random;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link XurFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link XurFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import static com.jastley.exodusnetwork.Definitions.xurQuoteArray;
+
 public class XurFragment extends Fragment {
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private OnFragmentInteractionListener mListener;
     private XurViewModel mViewModel;
-
     private CountDownTimer mCountDownTimer;
 
     //Xur related stuff
     @BindView(R.id.xur_region) TextView xurRegionText;
     @BindView(R.id.xur_world) TextView xurWorldText;
     @BindView(R.id.xur_arrive_depart_status) TextView xurStatus;
-//    @BindView(R.id.xur_location_banner) ImageView xurImageBanner;
     @BindView(R.id.xur_items_recycler_view) RecyclerView xurRecyclerView;
     @BindView(R.id.xur_timer) TextView xurTimer;
-//    @BindView(R.id.xur_progress_bar) ProgressBar progressBar;
-//    @BindView(R.id.xur_the_nine_icon) ImageView xurIcon;
     @BindView(R.id.xur_track_button) Button xurTrackButton;
     @BindView(R.id.xur_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
+
+    @BindView(R.id.xur_gone_container) RelativeLayout xurGoneContainer;
+    @BindView(R.id.xur_random_text) TextView xurGoneText;
 
     XurItemsRecyclerAdapter mXurRecyclerAdapter;
 
@@ -105,11 +82,9 @@ public class XurFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_xur, container, false);
-
         ButterKnife.bind(this, rootView);
-
         setHasOptionsMenu(true);
-        // Inflate the layout for this fragment
+
         return rootView;
     }
 
@@ -277,7 +252,10 @@ public class XurFragment extends Fragment {
 
     private void setupXurGone() {
 
-//        xurTrackButton.setBackground(getResources().getDrawable(R.drawable.icon_location_disabled));
+        xurGoneContainer.setVisibility(View.VISIBLE);
+        Random random = new Random();
+        int quoteSlot = random.nextInt(((xurQuoteArray.length - 1)) + 1);
+        xurGoneText.setText(xurQuoteArray[quoteSlot]);
         xurWorldText.setText("???");
         xurRegionText.setText("??");
         xurStatus.setText(R.string.xur_arrives_in);

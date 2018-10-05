@@ -12,7 +12,8 @@
 
         <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -36,5 +37,38 @@
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <RelativeLayout
+        android:id="@+id/xur_gone_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/xur_gone_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/xur_icon_large"
+            />
+
+        <TextView
+            android:id="@+id/xur_random_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/xur_gone_icon"
+            android:textColor="@color/placeholderHint"
+            android:textAlignment="center"
+            android:textStyle="italic"
+            android:textSize="18sp"
+            />
+
+    </RelativeLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

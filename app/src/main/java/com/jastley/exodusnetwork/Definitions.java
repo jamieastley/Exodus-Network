@@ -103,14 +103,14 @@ public class Definitions {
     };
 
     public static final String[] xurQuoteArray = {
-            "His will is not his own...",
+            "\"My will is not my own...\"",
             "He may be here when you return.",
-            "The Nine's eye is still watching.",
-            "There is a door in the woods. It is opening.",
-            "Do not go looking for the Nine. They will come to you",
-            "If I am here, it is the Nine who sent me.",
-            "His movements are to a significant degree dependent on planetary alignments",
-            "So lonely here..."
+            "\"The Nine's eye is still watching.\"",
+            "\"There is a door in the woods. It is opening.\"",
+            "\"Do not go looking for the Nine. They will come to you\"",
+            "\"If I am here, it is the Nine who sent me.\"",
+            "\"My movements are to a significant degree, dependent on planetary alignments\"",
+            "\"So lonely here...\""
     };
 
     //Valor and Glory rankings
