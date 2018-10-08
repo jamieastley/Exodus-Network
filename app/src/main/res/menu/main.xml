@@ -26,9 +26,9 @@
 
         <menu>
             <item
-                android:id="@+id/filter_none"
+                android:id="@+id/filter_all"
                 android:icon="@drawable/icon_clear"
-                android:title="@string/none"/>
+                android:title="@string/all"/>
             <item
                 android:id="@+id/filter_psn"
                 android:icon="@drawable/icon_psn"

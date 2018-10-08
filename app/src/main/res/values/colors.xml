@@ -33,4 +33,7 @@
     <color name="completed_green">#639865</color>
     <color name="xur_banner_icon_green">#1c291a</color>
     <color name="xur_banner_background">#2a402c</color>
+
+    <color name="valorProgress">#c87731</color>
+    <color name="gloryProgress">#b31c1d</color>
 </resources>

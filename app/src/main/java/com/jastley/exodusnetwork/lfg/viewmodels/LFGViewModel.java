@@ -23,8 +23,8 @@ public class LFGViewModel extends AndroidViewModel {
         App.getApp().getAppComponent().inject(this);
     }
 
-    public LiveData<Response_GetPublicFireteams> getAllFireteams() {
-        fireteamsLiveData = lfgRepository.getAllPublicFireteams();
+    public LiveData<Response_GetPublicFireteams> getAllFireteams(String platform, String aType, String dRange, String slotFilter, String page) {
+        fireteamsLiveData = lfgRepository.getAllPublicFireteams(platform, aType, dRange, slotFilter, page);
         return fireteamsLiveData;
     }
 }

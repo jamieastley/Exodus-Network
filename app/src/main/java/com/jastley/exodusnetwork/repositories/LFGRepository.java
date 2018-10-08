@@ -29,10 +29,10 @@ public class LFGRepository {
         App.getApp().getAppComponent().inject(this);
     }
 
-    public LiveData<Response_GetPublicFireteams> getAllPublicFireteams() {
+    public LiveData<Response_GetPublicFireteams> getAllPublicFireteams(String platform, String aType, String dRange, String slotFilter, String page) {
 
         Disposable disposable = retrofit.create(BungieAPI.class)
-                .getPublicFireteams("0", "0", "0", "0", "1")
+                .getPublicFireteams(platform, aType, dRange, slotFilter, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(fireteams -> {

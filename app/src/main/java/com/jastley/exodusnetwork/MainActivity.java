@@ -249,6 +249,14 @@ public class MainActivity extends AppCompatActivity
                                     .replace(R.id.parent_fragment_frame, fragment, "MILESTONES_FRAGMENT")
                                     .commit();
                         }
+                        //Refresh account
+                        else if(drawerItem.getIdentifier() == 14) {
+                            String mType = savedPrefs.getString("selectedPlatform", "");
+                            if(mType != "") {
+
+                                getAllCharacterData(mType);
+                            }
+                        }
 
                         //Log In
                         else if(drawerItem.getIdentifier() == 99) {
@@ -309,7 +317,7 @@ public class MainActivity extends AppCompatActivity
                             .withEmail(dNameFixed)
                             .withNameShown(false)
                             .withIdentifier(2)
-                            .withIcon(getResources().getDrawable(R.drawable.icon_psn)));
+                            .withIcon(getResources().getDrawable(R.drawable.icon_psn_classic)));
                     break;
                 case "4": //BNet
                     headerResult.addProfiles(new ProfileDrawerItem()
@@ -341,27 +349,31 @@ public class MainActivity extends AppCompatActivity
                                             .withIdentifier(Long.valueOf(latentMemories)),
                                     new SecondaryDrawerItem().withName(getResources().getString(R.string.ghost_lore))
                                             .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_hunter))
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_ghost))
                                             .withIdentifier(Long.valueOf(ghostLore)),
                                     new SecondaryDrawerItem().withName(getResources().getString(R.string.journals))
                                             .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_journals))
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_spades))
                                             .withIdentifier(Long.valueOf(caydeJournals)),
                                     new SecondaryDrawerItem().withName("Sleeper Nodes")
                                             .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_crucible))
+                                            .withIcon(getResources().getDrawable(R.drawable.icon_sleeper_nodes))
                                             .withIdentifier(Long.valueOf(sleeperNodes))
                             ),
                     new PrimaryDrawerItem().withName(getResources().getString(R.string.collectibles))
-                    .withIcon(getResources().getDrawable(R.drawable.icon_ticks))
+                    .withIcon(getResources().getDrawable(R.drawable.icon_collection))
                     .withIdentifier(12),
 
                     new PrimaryDrawerItem().withIdentifier(10).withName(getResources().getString(R.string.milestones))
                             .withIcon(getResources().getDrawable(R.drawable.milestone_icon)),
                     new PrimaryDrawerItem().withIdentifier(9).withName(getResources().getString(R.string.xur))
                             .withIcon(getResources().getDrawable(R.drawable.ic_xur_icon_svg)),
-                    new DividerDrawerItem()
-                    );
+
+                    new DividerDrawerItem(),
+
+                    new PrimaryDrawerItem().withIdentifier(14).withName(getResources().getString(R.string.refresh_account))
+                            .withIcon(getResources().getDrawable(R.drawable.icon_refresh))
+            );
 
             //if user has accounts for other platforms
             for(int i = 0; i <= 4; i++) {
@@ -384,7 +396,7 @@ public class MainActivity extends AppCompatActivity
                                         .withEmail(nameFix)
                                         .withNameShown(false)
                                         .withIdentifier(2)
-                                        .withIcon(getResources().getDrawable(R.drawable.icon_psn)));
+                                        .withIcon(getResources().getDrawable(R.drawable.icon_psn_classic)));
                                 break;
                             case 4: //BNet
                                 headerResult.addProfiles(new ProfileDrawerItem()

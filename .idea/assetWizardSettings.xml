@@ -122,11 +122,11 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="height" value="25" />
-                            <entry key="outputName" value="icon_ghost" />
+                            <entry key="height" value="32" />
+                            <entry key="outputName" value="modifier_void" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\jastl\Documents\Warmind for Destiny\braytech todos\icon_ghost.svg" />
-                            <entry key="width" value="25" />
+                            <entry key="sourceFile" value="E:\Downloads\icomoon (3)\SVG\damage_void.svg" />
+                            <entry key="width" value="32" />
                           </map>
                         </option>
                       </PersistentState>

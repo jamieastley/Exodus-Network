@@ -175,7 +175,7 @@ public class LFGDetailsFragment extends Fragment {
                     platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_xbl));
                     break;
                 case "2":
-                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn));
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn_classic));
                     break;
                 case "4":
                     platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_blizzard));
@@ -216,7 +216,7 @@ public class LFGDetailsFragment extends Fragment {
                     platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_xbl));
                     break;
                 case "2":
-                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn));
+                    platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_psn_classic));
                     break;
                 case "4":
                     platformIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.icon_blizzard));

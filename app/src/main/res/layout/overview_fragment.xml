@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    tools:context=".overview.OverviewFragment">
+
+    <ImageView
+        android:id="@+id/overview_platform"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/icon_blizzard" />
+
+    <TextView
+        android:id="@+id/overview_displayname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Jamie92#1135"
+        android:textColor="@color/colorWhite"
+        android:textSize="23sp"
+        app:layout_constraintBottom_toBottomOf="@id/overview_platform"
+        app:layout_constraintStart_toEndOf="@id/overview_platform"
+        app:layout_constraintTop_toTopOf="@id/overview_platform"
+
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="59dp" />
+
+
+    <ProgressBar
+        android:id="@+id/overview_valor_progress"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:indeterminate="false"
+        android:progressDrawable="@drawable/valor_progress_bar"
+        android:background="@drawable/circle_progress_background"
+        android:max="100"
+        android:progress="70"
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/overview_glory_progress"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintTop_toTopOf="@id/overview_valor_progress"
+            app:layout_constraintBottom_toBottomOf="@id/overview_valor_progress"
+            app:layout_constraintEnd_toStartOf="@+id/overview_glory_progress"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/icon_valor_legend"
+            />
+
+        <TextView
+            android:id="@+id/valor_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintTop_toBottomOf="@id/overview_valor_progress"
+            app:layout_constraintEnd_toEndOf="@+id/overview_valor_progress"
+            app:layout_constraintStart_toStartOf="@+id/overview_valor_progress"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:text="@string/valor_rank"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            />
+
+        <TextView
+            android:id="@+id/valor_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintTop_toBottomOf="@id/valor_title"
+            app:layout_constraintEnd_toEndOf="@+id/overview_valor_progress"
+            app:layout_constraintStart_toStartOf="@+id/overview_valor_progress"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:text="BRAVE"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+    <ImageView
+        android:id="@+id/valor_rank_value_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintTop_toTopOf="@id/valor_rank_value"
+        app:layout_constraintStart_toStartOf="@id/valor_rank"
+        app:layout_constraintBottom_toBottomOf="@id/valor_rank_value"
+        app:layout_constraintEnd_toStartOf="@id/valor_rank_value"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:src="@drawable/icon_valor_brave"
+        />
+
+    <TextView
+        android:id="@+id/valor_rank_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@id/valor_rank"
+        app:layout_constraintEnd_toEndOf="@+id/overview_valor_progress"
+        app:layout_constraintStart_toStartOf="@id/valor_rank"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:text="252"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"
+
+        />
+
+
+    <ProgressBar
+        android:id="@+id/overview_glory_progress"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="35"
+        android:progressDrawable="@drawable/glory_progress_bar"
+        android:background="@drawable/circle_progress_background"
+        android:indeterminateTint="#f40a1a"
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/overview_valor_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintTop_toTopOf="@id/overview_glory_progress"
+            app:layout_constraintBottom_toBottomOf="@id/overview_glory_progress"
+            app:layout_constraintStart_toStartOf="@id/overview_glory_progress"
+            app:layout_constraintEnd_toEndOf="@id/overview_glory_progress"
+            android:src="@drawable/icon_glory_legend"
+            />
+
+        <TextView
+            android:id="@+id/glory_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintTop_toBottomOf="@id/overview_glory_progress"
+            app:layout_constraintStart_toStartOf="@id/overview_glory_progress"
+            app:layout_constraintEnd_toEndOf="@id/overview_glory_progress"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:text="@string/glory_rank"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+
+            />
+
+        <TextView
+            android:id="@+id/glory_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintTop_toBottomOf="@id/glory_title"
+            app:layout_constraintEnd_toEndOf="@+id/overview_glory_progress"
+            app:layout_constraintStart_toStartOf="@+id/overview_glory_progress"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:text="MYTHIC"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+        <ImageView
+            android:id="@+id/glory_rank_value_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintTop_toTopOf="@id/glory_rank_value"
+            app:layout_constraintStart_toStartOf="@id/glory_rank"
+            app:layout_constraintBottom_toBottomOf="@id/glory_rank_value"
+            app:layout_constraintEnd_toStartOf="@id/glory_rank_value"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:src="@drawable/icon_glory_brave"
+            />
+
+        <TextView
+            android:id="@+id/glory_rank_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintTop_toBottomOf="@id/glory_rank"
+            app:layout_constraintEnd_toEndOf="@+id/overview_glory_progress"
+            app:layout_constraintStart_toStartOf="@id/glory_rank"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:text="252"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+
+            />
+
+
+</android.support.constraint.ConstraintLayout>

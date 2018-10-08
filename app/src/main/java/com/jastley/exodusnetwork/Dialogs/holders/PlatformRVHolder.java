@@ -34,7 +34,7 @@ public class PlatformRVHolder extends RecyclerView.ViewHolder {
     public void setPlatformIcon(String icon, Context context) {
 
         if (icon.equals("2")) {
-            platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
+            platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn_classic));
         }
         else if (icon.equals("1")) {
             platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_xbl));

@@ -10,7 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.Utils.ServerTimerCheck;
 
+import org.jsoup.Jsoup;
+import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 
 import butterknife.BindView;
@@ -43,7 +46,8 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
 
     public void setActivityTitle(String title) {
-        activityTitle.setText(title);
+        String parsedTitle = Jsoup.parse(title).text();
+        activityTitle.setText(parsedTitle);
     }
 
     public void setPlatformIcon(String platform, Context context) {
@@ -55,7 +59,7 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         switch (platform) {
             case "1":
                 //Use setImageResource runs on UI thread and can cause hiccups, use setImageDrawable
-                platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn));
+                platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_psn_classic));
                 break;
             case "2":
                 platformIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_xbl));
@@ -66,18 +70,20 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
         }
     }
 
-    public void setDateTime(String time, String edited) {
+    public void setDateTime(String posted, String edited) {
 
         //Using ThreeTen Backport to utilise Java 8+ time features
-//        Long post = Instant.parse(time).toEpochMilli();
-//        Long edit = Instant.parse(edited).toEpochMilli();
-//        Long now = Instant.now().toEpochMilli();
-//
-//        CharSequence timeDiff = DateUtils.getRelativeTimeSpanString(post, now, 0);
-//        String editDiff = "(edited " + DateUtils.getRelativeTimeSpanString(edit, now, 0) + ")";
-//
-//        this.dateTime.setText(timeDiff);
-//        this.editTime.setText(editDiff);
+        Instant now = ServerTimerCheck.getUTCNow().toInstant();
+
+        Long postMillis = Instant.parse(posted).toEpochMilli();
+        Long editMillis = Instant.parse(edited).toEpochMilli();
+        Long nowMillis = now.toEpochMilli();
+
+        CharSequence timeDiff = DateUtils.getRelativeTimeSpanString(postMillis, nowMillis, 0);
+        String editDiff = "(edited " + DateUtils.getRelativeTimeSpanString(editMillis, nowMillis, 0) + ")";
+
+        this.dateTime.setText(timeDiff);
+        this.editTime.setText(editDiff);
     }
 
     public String getMembershipType() {
@@ -109,6 +115,10 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
             case 5:
                 this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.fireteam_anything));
                 break;
+            case 6:
+                this.activityType.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_gambit));
+                break;
+
         }
     }
 
@@ -126,22 +136,22 @@ public class LFGPostViewHolder extends RecyclerView.ViewHolder{
 
         int totalSlots = players + groupSize;
 
-        for (int i = 1; i <= totalSlots; i++) {
-
-            ImageView iv = new ImageView(context);
-
-            //filled spots
-            if(i <= players) {
-                iv.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_person_filled));
-            }
-            //empty spots
-            else {
-                iv.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_person_empty));
-            }
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            iv.setLayoutParams(lp);
-
-            this.playerCountContainer.addView(iv);
-        }
+//        for (int i = 1; i <= totalSlots; i++) {
+//
+//            ImageView iv = new ImageView(context);
+//
+//            //filled spots
+//            if(i <= players) {
+//                iv.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_person_filled));
+//            }
+//            //empty spots
+//            else {
+//                iv.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_person_empty));
+//            }
+//            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            iv.setLayoutParams(lp);
+//
+//            this.playerCountContainer.addView(iv);
+//        }
     }
 }

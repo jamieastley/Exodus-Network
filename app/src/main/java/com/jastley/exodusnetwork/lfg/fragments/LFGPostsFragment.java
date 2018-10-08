@@ -55,10 +55,15 @@ public class LFGPostsFragment extends Fragment {
 
     private String displayName = "";
     private View mView;
-
     private LFGViewModel mViewModel;
 
     private boolean isNewLFGPost = false;
+
+    private String platform = "0";
+    private String aType = "0";
+    private String dRange = "0";
+    private String slotFilter = "0";
+    private String page = "1";
 
     @BindView(R.id.fab) FloatingActionButton mFab;
     private boolean isFabVisible = false;
@@ -133,7 +138,7 @@ public class LFGPostsFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mSwipeRefreshLayout.setRefreshing(true);
 
-            loadLFGPosts();
+            loadLFGPosts(platform, aType, dRange, slotFilter, page);
         });
     }
 
@@ -144,7 +149,7 @@ public class LFGPostsFragment extends Fragment {
         mViewModel = ViewModelProviders.of(this).get(LFGViewModel.class);
 
         initialiseRecyclerView();
-        loadLFGPosts();
+        loadLFGPosts(platform, aType, dRange, slotFilter, page);
         mSwipeRefreshLayout.setRefreshing(true);
     }
 
@@ -215,38 +220,42 @@ public class LFGPostsFragment extends Fragment {
 
         switch(item.getItemId()){
 
-//            case R.id.action_refresh:
-//                mSwipeRefreshLayout.setRefreshing(true);
-//                loadFilteredLFGPosts(null);
-//                mLFGPostAdapter.notifyDataSetChanged();
-//                break;
-//            case R.id.action_filter:
-//                break;
-//
-//            case R.id.filter_none:
-//                loadLFGPosts(null);
-//                break;
-//
-//            case R.id.filter_psn:
-//                query = mDatabase.child("lfg")
-//                        .orderByChild("membershipType")
-//                        .equalTo("2");
-//                loadLFGPosts(query);
-//                break;
-//
-//            case R.id.filter_xbox:
-//                query = mDatabase.child("lfg")
-//                        .orderByChild("membershipType")
-//                        .equalTo("1");
-//                loadLFGPosts(query);
-//                break;
-//
-//            case R.id.filter_bnet:
-//                query = mDatabase.child("lfg")
-//                        .orderByChild("membershipType")
-//                        .equalTo("4");
-//                loadLFGPosts(query);
-//                break;
+            //All = 0
+            //PSN = 1
+            //Xbox = 2
+            //Bnet = 3
+
+            case R.id.action_refresh:
+                mSwipeRefreshLayout.setRefreshing(true);
+                loadLFGPosts(platform, aType, dRange, slotFilter, page);
+                mLFGPostAdapter.notifyDataSetChanged();
+                break;
+            case R.id.action_filter:
+                break;
+
+            case R.id.filter_all:
+                mSwipeRefreshLayout.setRefreshing(true);
+                platform = "0";
+                loadLFGPosts(platform, aType, dRange, slotFilter, page);
+                break;
+
+            case R.id.filter_psn:
+                mSwipeRefreshLayout.setRefreshing(true);
+                platform = "1";
+                loadLFGPosts(platform, aType, dRange, slotFilter, page);
+                break;
+
+            case R.id.filter_xbox:
+                mSwipeRefreshLayout.setRefreshing(true);
+                platform = "2";
+                loadLFGPosts(platform, aType, dRange, slotFilter, page);
+                break;
+
+            case R.id.filter_bnet:
+                mSwipeRefreshLayout.setRefreshing(true);
+                platform = "3";
+                loadLFGPosts(platform, aType, dRange, slotFilter, page);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -255,22 +264,25 @@ public class LFGPostsFragment extends Fragment {
 
 
 
-    public void loadLFGPosts() {
+    public void loadLFGPosts(String platform, String aType, String dRange, String slotFilter, String page) {
 
-        mViewModel.getAllFireteams().observe(this, fireteamsList -> {
-            mSwipeRefreshLayout.setRefreshing(false);
+        mViewModel.getAllFireteams(platform, aType, dRange, slotFilter, page)
+                .observe(this, fireteamsList -> {
 
             if(fireteamsList.getThrowable() != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(getView(), fireteamsList.getThrowable().getMessage(), Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Retry", v -> loadLFGPosts())
+                        .setAction("Retry", v -> loadLFGPosts(platform, aType, dRange, slotFilter, page))
                         .show();
             }
             else if(fireteamsList.getErrorMessage() != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(getView(), fireteamsList.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Retry", v -> loadLFGPosts())
+                        .setAction("Retry", v -> loadLFGPosts(platform, aType, dRange, slotFilter, page))
                         .show();
             }
             else if(fireteamsList.getFireteamsList() != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 mLFGPostAdapter.setItems(fireteamsList.getFireteamsList());
             }
         });

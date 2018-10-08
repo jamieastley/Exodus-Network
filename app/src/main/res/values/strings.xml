@@ -196,6 +196,9 @@
     <string name="xurRegionUnknown">\??</string>
     <string name="collectibles">Collectibles</string>
     <string name="account_collectables">Account Collectables</string>
+    <string name="all">All</string>
+    <string name="valor_rank">Valor Rank</string>
+    <string name="glory_rank">Glory Rank</string>
 
 
 </resources>
