@@ -31,7 +31,6 @@ import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.NoNetworkException;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.api.BungieAPI;
-import com.jastley.exodusnetwork.api.RetrofitHelper;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
 import com.jastley.exodusnetwork.database.dao.FactionDefinitionDAO;
 import com.squareup.picasso.Picasso;
@@ -130,7 +129,7 @@ public class LFGDetailsFragment extends Fragment {
             Bundle bundle = getArguments();
             receivedPlayerClick = bundle.getParcelable("clickedPlayer");
 
-            mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, getContext());
+//            mBungieAPI = RetrofitHelper.getBungieAPI(baseURL, getContext());
 
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);

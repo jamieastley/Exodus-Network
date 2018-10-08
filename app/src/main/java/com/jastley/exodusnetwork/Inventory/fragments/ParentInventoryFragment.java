@@ -150,7 +150,7 @@ public class ParentInventoryFragment extends Fragment {
         if(activity != null) {
             activity.setActionBarTitle(getString(R.string.item_transfer));
         }
-        initialiseTransferObserver();
+//        initialiseTransferObserver();
     }
 
     @Override
@@ -176,31 +176,6 @@ public class ParentInventoryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void initialiseTransferObserver() {
-        mViewModel.getTransferEquipStatus().observe(this, status -> {
-            if(status.getThrowable() != null) {
-                dismissLoadingFragment();
-                showSnackbarMessage(status.getThrowable().getLocalizedMessage());
-            }
-            else if(status.getMessage() != null) {
-                dismissLoadingFragment();
-                showSnackbarMessage(status.getMessage());
-            }
-        });
-    }
-
-    private void showSnackbarMessage(String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
-                .show();
-    }
-
-    private void dismissLoadingFragment() {
-        LoadingDialogFragment loadingFragment = (LoadingDialogFragment)getActivity().getFragmentManager().findFragmentByTag("loadingDialog");
-        if (loadingFragment != null){
-            loadingFragment.dismiss();
-        }
     }
 
     private void setupSectionsPagerAdapter(int count) {

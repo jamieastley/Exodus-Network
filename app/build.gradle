@@ -116,5 +116,4 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.3'
 }
 
-
 apply plugin: 'com.google.gms.google-services'

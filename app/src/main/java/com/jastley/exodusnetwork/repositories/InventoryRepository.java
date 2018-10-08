@@ -702,7 +702,7 @@ public class InventoryRepository {
                         //Item was only being transferred to vault, we're done
                         else {
                             //TODO push success message
-                            transferEquipStatus.postValue(new TransferEquipStatus("Item Transferred"));
+                            transferEquipStatus.postValue(new TransferEquipStatus("Item transferred to Vault"));
                         }
 
                     }

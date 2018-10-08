@@ -7,17 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
 import com.jastley.exodusnetwork.Inventory.adapters.ObjectiveRewardsAdapter;
 import com.jastley.exodusnetwork.Inventory.adapters.ProgressRecyclerAdapter;
@@ -35,10 +31,6 @@ public class ObjectiveDetailsModal extends BottomSheetDialogFragment {
     @BindView(R.id.objective_item_type) TextView objItemType;
     @BindView(R.id.objective_description) TextView objDescription;
     @BindView(R.id.rewards_title) TextView rewardsHeader;
-//    @BindView(R.id.objective_status_icon) ImageView objStatusIcon;
-//    @BindView(R.id.objective_progress_bar) ProgressBar objProgressBar;
-//    @BindView(R.id.objective_data_name) TextView objDataName;
-//    @BindView(R.id.objective_progress_value) TextView objProgressValue;
     @BindView(R.id.objective_display_source) TextView objDisplaySource;
     @BindView(R.id.objective_progress_recycler_view) RecyclerView progressRecyclerView;
 
@@ -124,12 +116,6 @@ public class ObjectiveDetailsModal extends BottomSheetDialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -179,9 +165,14 @@ public class ObjectiveDetailsModal extends BottomSheetDialogFragment {
         if(!selectedItem.getDescription().equals("")) {
             objDescription.setText(selectedItem.getDescription());
         }
+        if(!selectedItem.getItemName().equals("")) {
+            objectiveName.setText(selectedItem.getItemName());
+        }
+        if(!selectedItem.getItemTypeDisplayName().equals("")) {
+            objItemType.setText(selectedItem.getItemTypeDisplayName());
+        }
 
         //Objective rewards
-
         mViewModel.getRewardsList().observe(this, rewards -> {
             if(rewards.getItemDataList() != null) {
                 rewardsHeader.setVisibility(View.VISIBLE);
@@ -197,19 +188,7 @@ public class ObjectiveDetailsModal extends BottomSheetDialogFragment {
                     progressRecyclerAdapter.setItemsList(objectives);
                 }
             });
-//            progressRecyclerAdapter.setItemsList(selectedItem.getObjectivesList());
-            //TODO search objectiveDefinition table for each objective and send to adapter
-//            if(selectedItem.getObjectivesList().get(0).isComplete()) {
-//                objStatusIcon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.objective_completed_border));
-//            }
-//            objProgressBar.setMax(selectedItem.getObjectivesList().get(0).getCompletionValue());
-//            objProgressBar.setProgress(selectedItem.getObjectivesList().get(0).getProgress());
-//            objProgressValue.setText(String.valueOf(
-//                    selectedItem.getObjectivesList().get(0).getProgress() +
-//                    "/" +
-//                    selectedItem.getObjectivesList().get(0).getCompletionValue()
-//            ));
-            //TODO lookup objective name
+
             objItemType.setText(selectedItem.getItemTypeDisplayName());
             objectiveName.setText(selectedItem.getItemName());
             if(!selectedItem.getDisplaySource().equals("")) {

@@ -28,8 +28,7 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/MaterialCustomTheme"
-            >
+            android:theme="@style/MaterialCustomTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

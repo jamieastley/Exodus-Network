@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,8 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.ProgressBar;
-
 
 import android.widget.Toast;
 
@@ -32,20 +29,16 @@ import com.jastley.exodusnetwork.Inventory.adapters.CharacterItemsRecyclerAdapte
 import com.jastley.exodusnetwork.Inventory.holders.TransferItemViewHolder;
 import com.jastley.exodusnetwork.Inventory.interfaces.SuccessListener;
 import com.jastley.exodusnetwork.Inventory.interfaces.TransferSelectListener;
-import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Vendors.HeaderItemDecoration;
-import com.jastley.exodusnetwork.api.BungieAPI;
-import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.CompositeDisposable;
 
 import static com.jastley.exodusnetwork.Definitions.pursuits;
 
@@ -60,7 +53,6 @@ public class CharacterInventoryFragment extends Fragment
     private List<InventoryItemModel> itemList = new ArrayList<>();
 
     @BindView(R.id.inventory_items_recyclerview) RecyclerView mItemsRecyclerView;
-//    @BindView(R.id.inventory_items_progress) ProgressBar loadingProgress;
     @BindView(R.id.inventory_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     private CharacterItemsRecyclerAdapter mItemsRecyclerAdapter;
     private OnFragmentInteractionListener mListener;
@@ -189,7 +181,7 @@ public class CharacterInventoryFragment extends Fragment
     public void onStart() {
         super.onStart();
         getCharacterInventory(mTabNumber);
-//        initialiseTransferObserver();
+        initialiseTransferObserver();
     }
 
     @Override
@@ -320,18 +312,20 @@ public class CharacterInventoryFragment extends Fragment
     }
 
 
-//    private void initialiseTransferObserver() {
-//        mViewModel.getTransferEquipStatus().observe(this, status -> {
-//            if(status.getThrowable() != null) {
-//                dismissLoadingFragment();
-//                showSnackbarMessage(status.getThrowable().getLocalizedMessage());
-//            }
-//            else if(status.getMessage() != null) {
-//                dismissLoadingFragment();
-//                showSnackbarMessage(status.getMessage());
-//            }
-//        });
-//    }
+    private void initialiseTransferObserver() {
+        mViewModel.getTransferEquipStatus().observe(this, status -> {
+            if(status.getThrowable() != null) {
+                dismissLoadingFragment();
+                showSnackbarMessage(status.getThrowable().getLocalizedMessage());
+            }
+            else if(status.getMessage() != null) {
+                mSwipeRefreshLayout.setRefreshing(true);
+                dismissLoadingFragment();
+                showSnackbarMessage(status.getMessage());
+                getCharacterInventory(mTabNumber);
+            }
+        });
+    }
 
     private void hideLoading() {
 //        loadingProgress.setVisibility(View.GONE);

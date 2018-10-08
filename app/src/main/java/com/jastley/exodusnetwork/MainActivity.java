@@ -41,6 +41,7 @@ import com.jastley.exodusnetwork.Dialogs.holders.PlatformRVHolder;
 import com.jastley.exodusnetwork.Dialogs.PlatformSelectionFragment;
 import com.jastley.exodusnetwork.Milestones.fragments.MilestonesFragment;
 import com.jastley.exodusnetwork.Vendors.XurFragment;
+import com.jastley.exodusnetwork.overview.OverviewFragment;
 import com.jastley.exodusnetwork.settings.SettingsActivity;
 
 import java.util.ArrayList;
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity
                 .withOnDrawerItemClickListener((view, position, drawerItem) -> {
                     //Top-level items
                     if(drawerItem instanceof PrimaryDrawerItem) {
-                        Toast.makeText(MainActivity.this, "Position: " + position, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, "Position: " + position, Toast.LENGTH_SHORT).show();
 
                         Fragment fragment;
                         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -256,6 +257,13 @@ public class MainActivity extends AppCompatActivity
 
                                 getAllCharacterData(mType);
                             }
+                        }
+                        //Overview
+                        else if(drawerItem.getIdentifier() == 15) {
+                            fragment = OverviewFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "MILESTONES_FRAGMENT")
+                                    .commit();
                         }
 
                         //Log In
@@ -334,6 +342,9 @@ public class MainActivity extends AppCompatActivity
 
             drawer.addItemsAtPosition(2,
                     new DividerDrawerItem(),
+
+                    new PrimaryDrawerItem().withIdentifier(15).withName(getResources().getString(R.string.overview))
+                            .withIcon(getResources().getDrawable(R.drawable.icon_destiny)),
                     new PrimaryDrawerItem().withIdentifier(6).withName(getResources().getString(R.string.item_transfer))
                             .withIcon(getResources().getDrawable(R.drawable.icon_vault_small)),
                     new PrimaryDrawerItem().withIdentifier(7).withName(getResources().getString(R.string.account_stats))
