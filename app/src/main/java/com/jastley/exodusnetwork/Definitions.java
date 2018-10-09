@@ -4,6 +4,10 @@ import java.util.Arrays;
 
 public class Definitions {
 
+    public static final String titan = "0";
+    public static final String hunter = "1";
+    public static final String warlock = "2";
+
 //    Bucket Definitions
     public static final String chestArmor = "14239492";
     public static final String shaders = "18606351";

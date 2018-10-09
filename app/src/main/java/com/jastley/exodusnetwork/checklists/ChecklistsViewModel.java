@@ -3,9 +3,9 @@ package com.jastley.exodusnetwork.checklists;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.api.models.Response_GetChecklists;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.repositories.ChecklistsRepository;
@@ -19,7 +19,8 @@ public class ChecklistsViewModel extends AndroidViewModel {
     private LiveData<Response_GetChecklists> journals;
     private LiveData<Response_GetChecklists> sleeperNodes;
     private LiveData<Response_GetChecklists> raidLairs;
-    private LiveData<Response_GetChecklists> forsakenItems;
+
+    private LiveData<Response_GetAllCharacters> characters;
 
     @Inject
     ChecklistsRepository repository;
@@ -30,7 +31,7 @@ public class ChecklistsViewModel extends AndroidViewModel {
     }
 
     public void loadChecklistData() {
-        repository.getChecklistProgression();
+        repository.getAccountChecklistProgression();
     }
 
     public LiveData<Response_GetChecklists> getLatentMemories() {
@@ -58,9 +59,9 @@ public class ChecklistsViewModel extends AndroidViewModel {
         return raidLairs;
     }
 
-    public LiveData<Response_GetChecklists> getForsakenItems() {
-        this.forsakenItems = repository.getForsakenChecklist();
-        return forsakenItems;
+    public LiveData<Response_GetAllCharacters> getCharacters() {
+        this.characters = repository.getAccountData();
+        return characters;
     }
 
     public void dispose() {

@@ -1,5 +1,6 @@
 package com.jastley.exodusnetwork.repositories;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,13 +10,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;
 import com.jastley.exodusnetwork.api.BungieAPI;
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.api.models.Response_GetChecklists;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.checklists.models.ChecklistModel;
+import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.jsonModels.ChecklistData;
 import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
+import com.jastley.exodusnetwork.database.models.Account;
 import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 
 import java.util.ArrayList;
@@ -49,6 +53,8 @@ public class ChecklistsRepository {
     private MutableLiveData<Response_GetChecklists> raidLairsChecklist = new MutableLiveData<>();
     private MutableLiveData<Response_GetChecklists> forsakenChecklist = new MutableLiveData<>();
 
+    private MutableLiveData<Response_GetAllCharacters> characterList = new MutableLiveData<>();
+
     private List<String> checklistCategories;
     private List<ChecklistModel> latentMemoriesList;
     private List<ChecklistModel> ghostLoreList;
@@ -80,11 +86,38 @@ public class ChecklistsRepository {
     InventoryItemDefinitionDAO inventoryItemDefinitionDAO;
 
     @Inject
+    @Named("Account")
+    AppDatabase accountDatabase;
+
+    @Inject
     public ChecklistsRepository() {
         App.getApp().getAppComponent().inject(this);
     }
 
-    public void getChecklistProgression() {
+    public LiveData<Response_GetAllCharacters> getAccountData() {
+
+        Disposable disposable = accountDatabase.getAccountDAO().getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(accounts -> {
+
+                    String selectedPlatform = sharedPreferences.getString("selectedPlatform", "");
+
+                   List<Response_GetAllCharacters.CharacterData> characterDataList = new ArrayList<>();
+
+                    for (Account account : accounts) {
+
+                        if(account.getValue().getMembershipType().equals(selectedPlatform)) {
+                            characterDataList.add(account.getValue());
+                        }
+                    }
+                    characterList.postValue(new Response_GetAllCharacters(characterDataList));
+                });
+
+        return characterList;
+    }
+
+    public void getAccountChecklistProgression() {
 
         checklistCategories = new ArrayList<>();
         latentMemoriesList = new ArrayList<>();
@@ -97,7 +130,8 @@ public class ChecklistsRepository {
         String mType = sharedPreferences.getString("selectedPlatform" , "");
         String mId = sharedPreferences.getString("membershipId" + mType, "");
 
-        Disposable disposable = retrofit.create(BungieAPI.class).getProfileChecklists(mType, mId)
+        Disposable disposable = retrofit.create(BungieAPI.class)
+                .getProfileChecklists(mType, mId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
@@ -150,9 +184,9 @@ public class ChecklistsRepository {
                                     case sleeperNodes:
                                         sleeperNodesList.add(objective);
                                         break;
-                                    case forsakenCollection:
-                                        forsakenList.add(objective);
-                                        break;
+//                                    case forsakenCollection:
+//                                        forsakenList.add(objective);
+//                                        break;
                                 }
 
                             }
@@ -161,7 +195,7 @@ public class ChecklistsRepository {
                         getChecklistData(checklistCategories);
                     }
                 }, throwable -> checklistsData.postValue(new Response_GetChecklists(throwable)));
-        compositeDisposable.add(disposable);
+//        compositeDisposable.add(disposable);
     }
 
     public void getChecklistData(List<String> keys) {
@@ -220,15 +254,15 @@ public class ChecklistsRepository {
                                 }
                                 getSleeperNodesInfo(nodeHashes);
                                 break;
-                            case forsakenCollection:
-                                for(ListIterator listIterator = forsakenList.listIterator(); listIterator.hasNext(); listIterator.next()) {
-                                    int listPosition = listIterator.nextIndex();
-                                    forsakenList.get(listPosition)
-                                                .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
-                                    forsakenList.get(listPosition)
-                                            .setItemImage(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getIcon());
-                                }
-                                break;
+//                            case forsakenCollection:
+//                                for(ListIterator listIterator = forsakenList.listIterator(); listIterator.hasNext(); listIterator.next()) {
+//                                    int listPosition = listIterator.nextIndex();
+//                                    forsakenList.get(listPosition)
+//                                                .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
+//                                    forsakenList.get(listPosition)
+//                                            .setItemImage(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getIcon());
+//                                }
+//                                break;
                         }
 
                     }
@@ -238,10 +272,10 @@ public class ChecklistsRepository {
                     journalsChecklist.postValue(new Response_GetChecklists(journalsList));
                     raidLairsChecklist.postValue(new Response_GetChecklists(raidLairsList));
 //                    sleeperNodesChecklist.postValue(new Response_GetChecklists(sleeperNodesList));
-                    forsakenChecklist.postValue(new Response_GetChecklists(forsakenList));
+//                    forsakenChecklist.postValue(new Response_GetChecklists(forsakenList));
 
                 });
-        compositeDisposable.add(disposable);
+//        compositeDisposable.add(disposable);
     }
 
     private void getSleeperNodesInfo(List<String> nodeHashes) {
@@ -273,12 +307,7 @@ public class ChecklistsRepository {
 
     }
 
-    public void setupBottomNav() {
 
-        String mType = sharedPreferences.getString("selectedPlatform", "");
-        String mId = sharedPreferences.getString("membershipId"+mType, "");
-
-    }
 
     public void dispose() {
         compositeDisposable.dispose();

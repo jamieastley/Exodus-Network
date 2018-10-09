@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".checklists.fragments.ChecklistsParentFragment">
+    tools:context=".checklists.fragments.AccountChecklistsParentFragment">
 
     <!--<android.support.v4.widget.SwipeRefreshLayout-->
         <!--android:id="@+id/checklist_swipe_refresh"-->
@@ -26,6 +26,7 @@
         android:id="@+id/parent_checklist_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/checklist_bottom_nav"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
 
@@ -33,16 +34,18 @@
         android:id="@+id/checklist_bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:itemBackground="@color/warmindPrimary"
-        app:itemIconTint="@color/colorWhite"
-        app:itemTextColor="@color/colorWhite"
-        app:menu="@menu/menu_character_inventory"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="56dp"
+        android:background="@color/warmindPrimary"
+        app:itemIconTint="@color/toolbar_icon_selector"
+        app:itemTextColor="@color/toolbar_icon_selector"
+
+
+        app:labelVisibilityMode="auto"
         app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
         >
 
     </android.support.design.widget.BottomNavigationView>
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

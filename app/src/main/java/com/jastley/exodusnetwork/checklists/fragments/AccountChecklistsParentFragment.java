@@ -17,13 +17,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.checklists.ChecklistsViewModel;
 import com.jastley.exodusnetwork.checklists.models.ChecklistTabModel;
 
@@ -35,10 +33,13 @@ import butterknife.ButterKnife;
 
 import static com.jastley.exodusnetwork.Definitions.caydeJournals;
 import static com.jastley.exodusnetwork.Definitions.ghostLore;
+import static com.jastley.exodusnetwork.Definitions.hunter;
 import static com.jastley.exodusnetwork.Definitions.latentMemories;
 import static com.jastley.exodusnetwork.Definitions.sleeperNodes;
+import static com.jastley.exodusnetwork.Definitions.titan;
+import static com.jastley.exodusnetwork.Definitions.warlock;
 
-public class ChecklistsParentFragment extends Fragment {
+public class AccountChecklistsParentFragment extends Fragment {
 
     private ChecklistsViewModel mViewModel;
     private ViewPagerAdapter mSectionsPagerAdapter;
@@ -47,19 +48,21 @@ public class ChecklistsParentFragment extends Fragment {
     @BindView(R.id.checklist_bottom_nav) BottomNavigationView bottomNav;
     TabLayout mTabLayout;
 
+    private int characterIndex = 0;
+
     private List<ChecklistTabModel> tabFragmentList = new ArrayList<>();
 
-    public static ChecklistsParentFragment newInstance() {
-        return new ChecklistsParentFragment();
+    public static AccountChecklistsParentFragment newInstance() {
+        return new AccountChecklistsParentFragment();
     }
 
-    public ChecklistsParentFragment() {
+    public AccountChecklistsParentFragment() {
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.parent_checklists_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.parent_account_checklists_fragment, container, false);
 
         ButterKnife.bind(this, rootView);
 
@@ -82,6 +85,7 @@ public class ChecklistsParentFragment extends Fragment {
 
 //        setupViewpager();
         populateFragmentList();
+        setupBottomNav();
         getChecklistData();
 
     }
@@ -146,58 +150,58 @@ public class ChecklistsParentFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         menu.clear();
-        inflater.inflate(R.menu.checklist_toolbar, menu);
-
-        MenuItem item = menu.findItem(R.id.checklist_spinner);
-        Spinner spinner = (Spinner) item.getActionView();
-
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.checklist_options, R.layout.spinner_list_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(adapter);
-        spinner.setPopupBackgroundResource(R.color.bungieBackground);
-        spinner.setOnItemSelectedListener(itemSelectedListener);
+//        inflater.inflate(R.menu.checklist_toolbar, menu);
+//
+//        MenuItem item = menu.findItem(R.id.checklist_spinner);
+//        Spinner spinner = (Spinner) item.getActionView();
+//
+//
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+//                R.array.checklist_options, R.layout.spinner_list_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//        spinner.setAdapter(adapter);
+//        spinner.setPopupBackgroundResource(R.color.bungieBackground);
+//        spinner.setOnItemSelectedListener(itemSelectedListener);
     }
 
-    private AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
-
-            Fragment fragment;
-            FragmentManager fragmentManager = getChildFragmentManager();
-
-            switch(adapterView.getItemAtPosition(i).toString()) {
-
-                case "Latent Memories":
-                    fragment = LatentMemoriesFragment.newInstance(null, null);
-
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
-//                            .commit();
-                    break;
-                case "Sleeper Nodes":
-                    fragment = SleeperNodesFragment.newInstance(null, null);
-
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.checklist_fragment_container, fragment, "sleeperNodesFrag")
-//                            .commit();
-                    break;
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-    };
+//    private AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
+//        @Override
+//        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//            Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
+//
+//            Fragment fragment;
+//            FragmentManager fragmentManager = getChildFragmentManager();
+//
+//            switch(adapterView.getItemAtPosition(i).toString()) {
+//
+//                case "Latent Memories":
+//                    fragment = LatentMemoriesFragment.newInstance(null, null);
+//
+////                    fragmentManager.beginTransaction()
+////                            .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
+////                            .commit();
+//                    break;
+//                case "Sleeper Nodes":
+//                    fragment = SleeperNodesFragment.newInstance(null, null);
+//
+////                    fragmentManager.beginTransaction()
+////                            .replace(R.id.checklist_fragment_container, fragment, "sleeperNodesFrag")
+////                            .commit();
+//                    break;
+//            }
+//        }
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//        }
+//    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        Toast.makeText(getContext(), item.getItemId(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), item.getItemId(), Toast.LENGTH_SHORT).show();
 
         return super.onOptionsItemSelected(item);
     }
@@ -211,7 +215,7 @@ public class ChecklistsParentFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             //returns null by default, this will throw "Attempt to invoke virtual method 'java.lang.Class java.lang.Object.getClass()'"
-            return ChecklistsContentFragment.newInstance(tabFragmentList.get(position).getTabTitle(),
+            return AccountChecklistsContentFragment.newInstance(tabFragmentList.get(position).getTabTitle(),
                                                         tabFragmentList.get(position).getChecklistHash());
         }
 
@@ -238,7 +242,7 @@ public class ChecklistsParentFragment extends Fragment {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Toast.makeText(getContext(), tab.getText(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), tabFragmentList.get(tab.getPosition()).getTabTitle(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -254,18 +258,18 @@ public class ChecklistsParentFragment extends Fragment {
     }
 //
     private void getChecklistData() {
-//        mViewModel.loadChecklistData();
+        mViewModel.loadChecklistData();
 
 
-//        mViewModel.getLatentMemories().observe(getActivity(), response -> {
+        mViewModel.getLatentMemories().observe(getActivity(), response -> {
 //            mSwipeRefreshLayout.setRefreshing(false);
-//            if(response.getErrorMessage() != null) {
-//                showSnackbar(response.getErrorMessage());
-//            }
-//            else if(response.getThrowable() != null) {
-//                showSnackbar(response.getThrowable().getLocalizedMessage());
-//            }
-//        });
+            if(response.getErrorMessage() != null) {
+                showSnackbar(response.getErrorMessage());
+            }
+            else if(response.getThrowable() != null) {
+                showSnackbar(response.getThrowable().getLocalizedMessage());
+            }
+        });
     }
 
     private void showSnackbar(String message) {
@@ -276,7 +280,38 @@ public class ChecklistsParentFragment extends Fragment {
 
     private void setupBottomNav() {
 
-        Menu menu = bottomNav.getMenu();
-        
+        mViewModel.getCharacters().observe(this, characters -> {
+            if(characters.getCharacterDataList() != null) {
+
+                Menu menu = bottomNav.getMenu();
+                menu.clear();
+
+                for(Response_GetAllCharacters.CharacterData character : characters.getCharacterDataList()) {
+
+                    switch(character.getClassType()) {
+
+                        case titan:
+                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.titan)).setIcon(R.drawable.icon_titan);
+                            break;
+                        case hunter:
+                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.hunter)).setIcon(R.drawable.icon_hunter);
+                            break;
+                        case warlock:
+                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.warlock)).setIcon(R.drawable.icon_warlock);
+                            break;
+                    }
+
+                }
+
+            }
+        });
+
+
+
+        bottomNav.setOnNavigationItemSelectedListener(menuItem -> {
+            Toast.makeText(getContext(), String.valueOf(menuItem.getItemId()), Toast.LENGTH_SHORT).show();
+//            this.characterIndex = menuItem.
+            return true;
+        });
     }
 }

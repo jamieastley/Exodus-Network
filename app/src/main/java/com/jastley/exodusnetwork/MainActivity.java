@@ -31,7 +31,7 @@ import com.jastley.exodusnetwork.Inventory.fragments.CharacterInventoryFragment;
 import com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
-import com.jastley.exodusnetwork.checklists.fragments.ChecklistsParentFragment;
+import com.jastley.exodusnetwork.checklists.fragments.AccountChecklistsParentFragment;
 import com.jastley.exodusnetwork.checklists.fragments.GenericChecklistFragment;
 import com.jastley.exodusnetwork.collections.AccountCollectionFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity
                             Toast.makeText(MainActivity.this, "TODO: Latent memories", Toast.LENGTH_SHORT).show();
                         }
                         else if(drawerItem.getIdentifier() == Long.valueOf(sleeperNodes)) {
-                            fragment = ChecklistsParentFragment.newInstance();
+                            fragment = AccountChecklistsParentFragment.newInstance();
                             fragmentManager.beginTransaction()
                                     .replace(R.id.parent_fragment_frame, fragment, "CHECKLIST_PARENT_FRAGMENT")
                                     .commit();
@@ -712,7 +712,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_checklists:
-                fragment = ChecklistsParentFragment.newInstance();
+                fragment = AccountChecklistsParentFragment.newInstance();
 
                 fragmentManager.beginTransaction()
                         .replace(R.id.parent_fragment_frame, fragment, "checklistsFrag")
