@@ -235,6 +235,8 @@ public class ChecklistsRepository {
                                     int listPosition = listIterator.nextIndex();
                                     journalsList.get(listPosition)
                                                 .setChecklistItemName(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getName());
+                                    journalsList.get(listPosition)
+                                            .setDescription(data.getEntriesList().get(listPosition).getChecklistDisplayProperties().getDescription());
                                 }
                                 break;
                             case sleeperNodes:

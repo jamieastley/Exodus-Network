@@ -45,7 +45,7 @@ public class AccountChecklistsParentFragment extends Fragment {
     private ViewPagerAdapter mSectionsPagerAdapter;
     @BindView(R.id.parent_checklist_viewpager) ViewPager mViewPager;
 //    @BindView(R.id.checklist_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.checklist_bottom_nav) BottomNavigationView bottomNav;
+//    @BindView(R.id.checklist_bottom_nav) BottomNavigationView bottomNav;
     TabLayout mTabLayout;
 
     private int characterIndex = 0;
@@ -85,7 +85,7 @@ public class AccountChecklistsParentFragment extends Fragment {
 
 //        setupViewpager();
         populateFragmentList();
-        setupBottomNav();
+//        setupBottomNav();
         getChecklistData();
 
     }
@@ -215,8 +215,20 @@ public class AccountChecklistsParentFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             //returns null by default, this will throw "Attempt to invoke virtual method 'java.lang.Class java.lang.Object.getClass()'"
-            return AccountChecklistsContentFragment.newInstance(tabFragmentList.get(position).getTabTitle(),
-                                                        tabFragmentList.get(position).getChecklistHash());
+//            return AccountChecklistsContentFragment.newInstance(tabFragmentList.get(position).getTabTitle(),
+//                                                        tabFragmentList.get(position).getChecklistHash());
+            switch(position) {
+                case 0:
+                    return LatentMemoriesFragment.newInstance("0", tabFragmentList.get(position).getTabTitle());
+                case 1:
+                    return GhostLoreFragment.newInstance("1", tabFragmentList.get(position).getTabTitle());
+                case 2:
+                    return JournalsFragment.newInstance("2", tabFragmentList.get(position).getTabTitle());
+                case 3:
+                    return SleeperNodesFragment.newInstance("3", tabFragmentList.get(position).getTabTitle());
+                default:
+                    return null;
+            }
         }
 
         @Nullable
@@ -261,15 +273,15 @@ public class AccountChecklistsParentFragment extends Fragment {
         mViewModel.loadChecklistData();
 
 
-        mViewModel.getLatentMemories().observe(getActivity(), response -> {
-//            mSwipeRefreshLayout.setRefreshing(false);
-            if(response.getErrorMessage() != null) {
-                showSnackbar(response.getErrorMessage());
-            }
-            else if(response.getThrowable() != null) {
-                showSnackbar(response.getThrowable().getLocalizedMessage());
-            }
-        });
+//        mViewModel.getLatentMemories().observe(getActivity(), response -> {
+////            mSwipeRefreshLayout.setRefreshing(false);
+//            if(response.getErrorMessage() != null) {
+//                showSnackbar(response.getErrorMessage());
+//            }
+//            else if(response.getThrowable() != null) {
+//                showSnackbar(response.getThrowable().getLocalizedMessage());
+//            }
+//        });
     }
 
     private void showSnackbar(String message) {
@@ -278,40 +290,38 @@ public class AccountChecklistsParentFragment extends Fragment {
                 .show();
     }
 
-    private void setupBottomNav() {
-
-        mViewModel.getCharacters().observe(this, characters -> {
-            if(characters.getCharacterDataList() != null) {
-
-                Menu menu = bottomNav.getMenu();
-                menu.clear();
-
-                for(Response_GetAllCharacters.CharacterData character : characters.getCharacterDataList()) {
-
-                    switch(character.getClassType()) {
-
-                        case titan:
-                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.titan)).setIcon(R.drawable.icon_titan);
-                            break;
-                        case hunter:
-                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.hunter)).setIcon(R.drawable.icon_hunter);
-                            break;
-                        case warlock:
-                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.warlock)).setIcon(R.drawable.icon_warlock);
-                            break;
-                    }
-
-                }
-
-            }
-        });
-
-
-
-        bottomNav.setOnNavigationItemSelectedListener(menuItem -> {
-            Toast.makeText(getContext(), String.valueOf(menuItem.getItemId()), Toast.LENGTH_SHORT).show();
-//            this.characterIndex = menuItem.
-            return true;
-        });
-    }
+//    private void setupBottomNav() {
+//
+//        mViewModel.getCharacters().observe(this, characters -> {
+//            if(characters.getCharacterDataList() != null) {
+//
+//                Menu menu = bottomNav.getMenu();
+//                menu.clear();
+//
+//                for(Response_GetAllCharacters.CharacterData character : characters.getCharacterDataList()) {
+//
+//                    switch(character.getClassType()) {
+//
+//                        case titan:
+//                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.titan)).setIcon(R.drawable.icon_titan);
+//                            break;
+//                        case hunter:
+//                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.hunter)).setIcon(R.drawable.icon_hunter);
+//                            break;
+//                        case warlock:
+//                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.warlock)).setIcon(R.drawable.icon_warlock);
+//                            break;
+//                    }
+//
+//                }
+//
+//            }
+//        });
+//
+//        bottomNav.setOnNavigationItemSelectedListener(menuItem -> {
+//            Toast.makeText(getContext(), String.valueOf(menuItem.getItemId()), Toast.LENGTH_SHORT).show();
+////            this.characterIndex = menuItem.
+//            return true;
+//        });
+//    }
 }

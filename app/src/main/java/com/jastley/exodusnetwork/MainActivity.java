@@ -279,25 +279,14 @@ public class MainActivity extends AppCompatActivity
                         Fragment fragment;
                         FragmentManager fragmentManager = getSupportFragmentManager();
 
-                        if(drawerItem.getIdentifier() == Long.valueOf(latentMemories)) {
-                            fragment = GenericChecklistFragment.newInstance("1", "2");
-                            fragmentManager.beginTransaction()
-                                    .replace(R.id.parent_fragment_frame, fragment, "CHECKLIST_FRAGMENT")
-                                    .commit();
-                            Toast.makeText(MainActivity.this, "TODO: Latent memories", Toast.LENGTH_SHORT).show();
-                        }
-                        else if(drawerItem.getIdentifier() == Long.valueOf(sleeperNodes)) {
+                        if(drawerItem.getIdentifier() == 81) {
                             fragment = AccountChecklistsParentFragment.newInstance();
                             fragmentManager.beginTransaction()
                                     .replace(R.id.parent_fragment_frame, fragment, "CHECKLIST_PARENT_FRAGMENT")
                                     .commit();
-                            Toast.makeText(MainActivity.this, "TODO: Sleeper Nodes", Toast.LENGTH_SHORT).show();
                         }
-                        else if(drawerItem.getIdentifier() == Long.valueOf(ghostLore)) {
-                            Toast.makeText(MainActivity.this, "TODO: Ghost Lore", Toast.LENGTH_SHORT).show();
-                        }
-                        else if(drawerItem.getIdentifier() == Long.valueOf(caydeJournals)) {
-                            Toast.makeText(MainActivity.this, "TODO: Cayde Journals", Toast.LENGTH_SHORT).show();
+                        else if(drawerItem.getIdentifier() == 82) {
+                            Toast.makeText(MainActivity.this, "TODO: Character checklists", Toast.LENGTH_SHORT).show();
                         }
                     }
                     return false;
@@ -358,22 +347,12 @@ public class MainActivity extends AppCompatActivity
                             .withIdentifier(8)
                             .withSelectable(false)
                             .withSubItems(
-                                    new SecondaryDrawerItem().withName("Latent Memories")
+                                    new SecondaryDrawerItem().withName(R.string.accountChecklists)
                                             .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_latent_memories))
-                                            .withIdentifier(Long.valueOf(latentMemories)),
-                                    new SecondaryDrawerItem().withName(getResources().getString(R.string.ghost_lore))
+                                            .withIdentifier(81),
+                                    new SecondaryDrawerItem().withName(R.string.characterChecklists)
                                             .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_ghost))
-                                            .withIdentifier(Long.valueOf(ghostLore)),
-                                    new SecondaryDrawerItem().withName(getResources().getString(R.string.journals))
-                                            .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_spades))
-                                            .withIdentifier(Long.valueOf(caydeJournals)),
-                                    new SecondaryDrawerItem().withName("Sleeper Nodes")
-                                            .withLevel(2)
-                                            .withIcon(getResources().getDrawable(R.drawable.icon_sleeper_nodes))
-                                            .withIdentifier(Long.valueOf(sleeperNodes))
+                                            .withIdentifier(82)
                             ),
                     new PrimaryDrawerItem().withName(getResources().getString(R.string.collectibles))
                     .withIcon(getResources().getDrawable(R.drawable.icon_collection))

@@ -275,5 +275,7 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="open_drawer_back_press">Open drawer on back button</string>
     <string name="default_back_press_preference">false</string>
+    <string name="accountChecklists">Account Checklists</string>
+    <string name="characterChecklists">Character Checklists</string>
 
 </resources>

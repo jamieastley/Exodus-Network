@@ -26,26 +26,8 @@
         android:id="@+id/parent_checklist_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/checklist_bottom_nav"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/checklist_bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="56dp"
-        android:background="@color/warmindPrimary"
-        app:itemIconTint="@color/toolbar_icon_selector"
-        app:itemTextColor="@color/toolbar_icon_selector"
-
-
-        app:labelVisibilityMode="auto"
-        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-        >
-
-    </android.support.design.widget.BottomNavigationView>
 
 </RelativeLayout>
