@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,7 +42,7 @@ public class ChecklistsParentFragment extends Fragment {
 
     private ChecklistsViewModel mViewModel;
     private ViewPagerAdapter mSectionsPagerAdapter;
-//    @BindView(R.id.parent_checklist_viewpager) ViewPager mViewPager;
+    @BindView(R.id.parent_checklist_viewpager) ViewPager mViewPager;
 //    @BindView(R.id.checklist_swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.checklist_bottom_nav) BottomNavigationView bottomNav;
     TabLayout mTabLayout;
@@ -80,6 +81,7 @@ public class ChecklistsParentFragment extends Fragment {
         mViewModel = ViewModelProviders.of(getActivity()).get(ChecklistsViewModel.class);
 
 //        setupViewpager();
+        populateFragmentList();
         getChecklistData();
 
     }
@@ -96,8 +98,28 @@ public class ChecklistsParentFragment extends Fragment {
     private void populateFragmentList() {
         tabFragmentList.add(new ChecklistTabModel("Latent Memories", latentMemories, R.drawable.icon_latent_memories));
         tabFragmentList.add(new ChecklistTabModel("Ghost Lore", ghostLore, R.drawable.icon_ghost));
-        tabFragmentList.add(new ChecklistTabModel("Journals", caydeJournals, R.drawable.icon_journals));
-        tabFragmentList.add(new ChecklistTabModel("Sleeper Nodes", sleeperNodes, R.drawable.icon_latent_memories));
+        tabFragmentList.add(new ChecklistTabModel("Journals", caydeJournals, R.drawable.icon_spades));
+        tabFragmentList.add(new ChecklistTabModel("Sleeper Nodes", sleeperNodes, R.drawable.icon_sleeper_nodes));
+
+        setupViewpager();
+
+        for (int i = 0; i < tabFragmentList.size(); i++) {
+
+            switch(i) {
+                case 0:
+                    mTabLayout.getTabAt(i).setIcon(R.drawable.icon_latent_memories);
+                    break;
+                case 1:
+                    mTabLayout.getTabAt(i).setIcon(R.drawable.icon_ghost);
+                    break;
+                case 2:
+                    mTabLayout.getTabAt(i).setIcon(R.drawable.icon_spades);
+                    break;
+                case 3:
+                    mTabLayout.getTabAt(i).setIcon(R.drawable.icon_sleeper_nodes);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -108,8 +130,15 @@ public class ChecklistsParentFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
+        mTabLayout.setVisibility(View.GONE);
 //        mViewModel.dispose();
     }
 
@@ -145,16 +174,16 @@ public class ChecklistsParentFragment extends Fragment {
                 case "Latent Memories":
                     fragment = LatentMemoriesFragment.newInstance(null, null);
 
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
-                            .commit();
+//                    fragmentManager.beginTransaction()
+//                            .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
+//                            .commit();
                     break;
                 case "Sleeper Nodes":
                     fragment = SleeperNodesFragment.newInstance(null, null);
 
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.checklist_fragment_container, fragment, "sleeperNodesFrag")
-                            .commit();
+//                    fragmentManager.beginTransaction()
+//                            .replace(R.id.checklist_fragment_container, fragment, "sleeperNodesFrag")
+//                            .commit();
                     break;
             }
         }
@@ -199,29 +228,35 @@ public class ChecklistsParentFragment extends Fragment {
         }
     }
 
-//    private void setupViewpager() {
-//        mViewPager.setAdapter(mSectionsPagerAdapter);
-//        mTabLayout.setupWithViewPager(mViewPager);
-//        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                Toast.makeText(getContext(), tab.getText(), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
-//    }
+    private void setupViewpager() {
+        mTabLayout = getActivity().findViewById(R.id.checklist_tab_layout);
+
+        mTabLayout.setVisibility(View.VISIBLE);
+
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Toast.makeText(getContext(), tab.getText(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
 //
     private void getChecklistData() {
-        mViewModel.loadChecklistData();
+//        mViewModel.loadChecklistData();
+
+
 //        mViewModel.getLatentMemories().observe(getActivity(), response -> {
 //            mSwipeRefreshLayout.setRefreshing(false);
 //            if(response.getErrorMessage() != null) {

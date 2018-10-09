@@ -33,9 +33,28 @@
             app:tabGravity="fill"
             app:tabBackground="@color/warmindPrimary"
             app:tabTextColor="@color/toolbar_text_selector"
+            app:tabIndicatorColor="@color/warmindAccent"
+            app:tabIndicatorHeight="2dp"
             app:tabMode="fixed"
             android:visibility="gone"
             />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/checklist_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/warmindDark"
+            app:tabMaxWidth="0dp"
+            app:tabGravity="fill"
+            app:tabBackground="@color/warmindPrimary"
+            app:tabTextColor="@color/toolbar_icon_selector"
+            app:tabIndicatorColor="@color/warmindAccent"
+            app:tabIndicatorHeight="2dp"
+            app:tabMode="fixed"
+            android:visibility="gone"
+            >
+
+        </android.support.design.widget.TabLayout>
 
     </android.support.design.widget.AppBarLayout>
 

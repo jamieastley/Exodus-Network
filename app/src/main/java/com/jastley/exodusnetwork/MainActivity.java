@@ -287,6 +287,10 @@ public class MainActivity extends AppCompatActivity
                             Toast.makeText(MainActivity.this, "TODO: Latent memories", Toast.LENGTH_SHORT).show();
                         }
                         else if(drawerItem.getIdentifier() == Long.valueOf(sleeperNodes)) {
+                            fragment = ChecklistsParentFragment.newInstance();
+                            fragmentManager.beginTransaction()
+                                    .replace(R.id.parent_fragment_frame, fragment, "CHECKLIST_PARENT_FRAGMENT")
+                                    .commit();
                             Toast.makeText(MainActivity.this, "TODO: Sleeper Nodes", Toast.LENGTH_SHORT).show();
                         }
                         else if(drawerItem.getIdentifier() == Long.valueOf(ghostLore)) {
