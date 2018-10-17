@@ -17,6 +17,7 @@ import com.jastley.exodusnetwork.modules.RoomModule;
 import com.jastley.exodusnetwork.modules.SharedPrefsModule;
 
 import com.jastley.exodusnetwork.onboarding.OnBoardingViewModel;
+import com.jastley.exodusnetwork.overview.viewmodels.OverviewViewModel;
 import com.jastley.exodusnetwork.repositories.AccountRepository;
 import com.jastley.exodusnetwork.repositories.AccountStatsRepository;
 import com.jastley.exodusnetwork.repositories.ChecklistsRepository;
@@ -26,6 +27,7 @@ import com.jastley.exodusnetwork.repositories.LFGRepository;
 import com.jastley.exodusnetwork.repositories.ManifestRepository;
 import com.jastley.exodusnetwork.repositories.MilestoneRepository;
 import com.jastley.exodusnetwork.repositories.OnBoardingRepository;
+import com.jastley.exodusnetwork.repositories.OverviewRepository;
 
 import javax.inject.Singleton;
 
@@ -63,4 +65,6 @@ public interface AppComponent {
     void inject(InventoryRepository inventoryRepository);
     void inject(CollectionsRepository collectionsRepository);
     void inject(AccountCollectionViewModel accountCollectionViewModel);
+    void inject(OverviewRepository overviewRepository);
+    void inject(OverviewViewModel overviewViewModel);
 }

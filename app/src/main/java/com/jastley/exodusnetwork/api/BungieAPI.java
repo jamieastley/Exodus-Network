@@ -2,7 +2,6 @@ package com.jastley.exodusnetwork.api;
 
 import com.google.gson.JsonElement;
 
-import com.jastley.exodusnetwork.BuildConfig;
 import com.jastley.exodusnetwork.api.models.*;
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -85,13 +84,13 @@ public interface BungieAPI {
 
     //Get progression for character(?components=202)
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/?components=202")
-    Observable<Response_FactionProgression> getCharacterProgressions(@Path("membershipType") String membershipType,
+    Observable<Response_GetProfileOverview> getCharacterProgressions(@Path("membershipType") String membershipType,
                                                                      @Path("membershipId") String membershipId,
                                                                      @Path("characterId") String characterId);
     //Profile-level progressions
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=202")
-    Observable<Response_FactionProgression> getProfileProgressions(@Path("membershipType") String membershipType,
-                                                                     @Path("membershipId") String membershipId);
+    Observable<Response_GetProfileOverview> getProfileProgressions(@Path("membershipType") String membershipType,
+                                                                   @Path("membershipId") String membershipId);
 
     //Profile-wide collectables
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=800")

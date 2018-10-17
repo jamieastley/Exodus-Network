@@ -122,10 +122,10 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="height" value="18" />
-                            <entry key="outputName" value="icon_warlock" />
+                            <entry key="height" value="32" />
+                            <entry key="outputName" value="icon_power" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="E:\Downloads\icomoon (3)\SVG\icon_warlock.svg" />
+                            <entry key="sourceFile" value="E:\Downloads\icomoon (3)\SVG\power.svg" />
                             <entry key="width" value="32" />
                           </map>
                         </option>

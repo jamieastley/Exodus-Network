@@ -137,6 +137,48 @@ public class Definitions {
         }
     }
 
+    public static String getInfamyRank(int level) {
+        switch(level) {
+            case 0:
+                return "Guardian I";
+            case 1:
+                return "Guardian II";
+            case 2:
+                return "Guardian III";
+            case 3:
+                return "Brave I";
+            case 4:
+                return "Brave II";
+            case 5:
+                return "Brave III";
+            case 6:
+                return "Heroic I";
+            case 7:
+                return "Heroic II";
+            case 8:
+                return "Heroic III";
+            case 9:
+                return "Fabled I";
+            case 10:
+                return "Fabled II";
+            case 11:
+                return "Fabled III";
+            case 12:
+                return "Mythic I";
+            case 13:
+                return "Mythic II";
+            case 14:
+                return "Mythic III";
+            case 15:
+                return "Legend";
+            case 16:
+                return "Legend";
+
+            default:
+                return "Unknown";
+        }
+    }
+
     //Checklists
     public static final String latentMemories = "2955980198";
     public static final String ghostLore = "2360931290";
@@ -144,6 +186,14 @@ public class Definitions {
     public static final String sleeperNodes = "365218222";
     public static final String raidLairs = "110198094";
     public static final String forsakenCollection = "3393554306";
+
+    //Progressions
+    public static final String infamyProgressionHash = "2772425241";
+    public static final String gloryProgressionHash = "2679551909";
+    public static final String valorProgressionHash = "3882308435";
+    public static final int maxGloryScore = 5500;
+    public static final int maxValorScore = 2000;
+    public static final int maxInfamyScore = 15000;
 
     //Faction
     public static final String theNine = "1357903713";

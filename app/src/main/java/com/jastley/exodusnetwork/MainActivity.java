@@ -32,7 +32,6 @@ import com.jastley.exodusnetwork.Inventory.fragments.ParentInventoryFragment;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.Interfaces.PlatformSelectionListener;
 import com.jastley.exodusnetwork.checklists.fragments.AccountChecklistsParentFragment;
-import com.jastley.exodusnetwork.checklists.fragments.GenericChecklistFragment;
 import com.jastley.exodusnetwork.collections.AccountCollectionFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGDetailsFragment;
 import com.jastley.exodusnetwork.lfg.fragments.LFGPostsFragment;
@@ -41,7 +40,7 @@ import com.jastley.exodusnetwork.Dialogs.holders.PlatformRVHolder;
 import com.jastley.exodusnetwork.Dialogs.PlatformSelectionFragment;
 import com.jastley.exodusnetwork.Milestones.fragments.MilestonesFragment;
 import com.jastley.exodusnetwork.Vendors.XurFragment;
-import com.jastley.exodusnetwork.overview.OverviewFragment;
+import com.jastley.exodusnetwork.overview.fragments.OverviewFragment;
 import com.jastley.exodusnetwork.settings.SettingsActivity;
 
 import java.util.ArrayList;
@@ -62,10 +61,6 @@ import butterknife.OnClick;
 
 import io.reactivex.disposables.CompositeDisposable;
 
-import static com.jastley.exodusnetwork.Definitions.caydeJournals;
-import static com.jastley.exodusnetwork.Definitions.ghostLore;
-import static com.jastley.exodusnetwork.Definitions.latentMemories;
-import static com.jastley.exodusnetwork.Definitions.sleeperNodes;
 import static com.jastley.exodusnetwork.api.clientKeys.clientId;
 
 public class MainActivity extends AppCompatActivity

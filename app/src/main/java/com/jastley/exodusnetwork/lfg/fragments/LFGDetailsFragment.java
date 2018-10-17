@@ -416,31 +416,31 @@ public class LFGDetailsFragment extends Fragment {
                         ArrayList<String> factionHashList = new ArrayList<>();
 
                         //get stats from API response, keySet required for iteration instead of forLoop .get(i)
-                        if(response_factionProgression.getResponse().getProgressions() != null) {
+                        if(response_factionProgression.getResponse().getCharacterProgressions() != null) {
 
                             try {
 
-                                for (Iterator iterator = response_factionProgression.getResponse().getProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext(); ) {
-
-                                    FactionProgressModel factionProgressModel = new FactionProgressModel();
-
-                                    String currentKey = (String) iterator.next();
-                                    String primaryKey = UnsignedHashConverter.getPrimaryKey(currentKey);
-
-                                    factionHashList.add(primaryKey);
-
-                                    if(BuildConfig.DEBUG){
-                                        Log.d("FACTION_API_RESPONSE", primaryKey);
-                                    }
-                                    factionProgressModel.setPrimaryKey(primaryKey);
-                                    factionProgressModel.setFactionHash(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getFactionHash());
-                                    factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
-                                    factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
-                                    factionProgressModel.setLevel(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getLevel());
-                                    factionProgressModel.setNextLevelAt(response_factionProgression.getResponse().getProgressions().getData().getFactions().get(currentKey).getNextLevelAt());
-
-                                    factionProgressionsList.add(factionProgressModel);
-                                }
+//                                for (Iterator iterator = response_factionProgression.getResponse().getCharacterProgressions().getData().getFactions().keySet().iterator(); iterator.hasNext(); ) {
+//
+//                                    FactionProgressModel factionProgressModel = new FactionProgressModel();
+//
+//                                    String currentKey = (String) iterator.next();
+//                                    String primaryKey = UnsignedHashConverter.getPrimaryKey(currentKey);
+//
+//                                    factionHashList.add(primaryKey);
+//
+//                                    if(BuildConfig.DEBUG){
+//                                        Log.d("FACTION_API_RESPONSE", primaryKey);
+//                                    }
+//                                    factionProgressModel.setPrimaryKey(primaryKey);
+//                                    factionProgressModel.setFactionHash(response_factionProgression.getResponse().getCharacterProgressions().getData().getFactions().get(currentKey).getFactionHash());
+//                                    factionProgressModel.setCurrentProgress(response_factionProgression.getResponse().getCharacterProgressions().getData().getFactions().get(currentKey).getCurrentProgress());
+//                                    factionProgressModel.setProgressToNextLevel(response_factionProgression.getResponse().getCharacterProgressions().getData().getFactions().get(currentKey).getProgressToNextLevel());
+//                                    factionProgressModel.setLevel(response_factionProgression.getResponse().getCharacterProgressions().getData().getFactions().get(currentKey).getLevel());
+//                                    factionProgressModel.setNextLevelAt(response_factionProgression.getResponse().getCharacterProgressions().getData().getFactions().get(currentKey).getNextLevelAt());
+//
+//                                    factionProgressionsList.add(factionProgressModel);
+//                                }
 
                                 Collections.sort(factionHashList, (s, t1) -> Long.valueOf(s).compareTo(Long.valueOf(t1)));
                                 Collections.sort(factionProgressionsList, (f1, f2) -> Long.valueOf(f1.getPrimaryKey()).compareTo(Long.valueOf((f2.getPrimaryKey()))));
@@ -454,7 +454,7 @@ public class LFGDetailsFragment extends Fragment {
                             }
                         }
                         else {
-                            Log.d("GET_FACTION_PROGRESS", "getProgressions() is null");
+                            Log.d("GET_FACTION_PROGRESS", "getCharacterProgressions() is null");
                             Handler mainHandler = new Handler(Looper.getMainLooper());
                             Runnable mRunnable = this::displayError;
                             mainHandler.post(mRunnable);
