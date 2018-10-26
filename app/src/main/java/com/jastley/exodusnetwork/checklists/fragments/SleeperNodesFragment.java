@@ -94,7 +94,6 @@ public class SleeperNodesFragment extends Fragment {
         mRecyclerAdapter = new ChecklistTextRecyclerAdapter();
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
 

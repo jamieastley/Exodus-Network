@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import static com.jastley.exodusnetwork.Definitions.maxValorScore;
 public class OverviewFragment extends Fragment {
 
     private OverviewViewModel mViewModel;
+//    @BindView(R.id.overview_swipe_refresh) SwipeRefreshLayout swipeRefresh;
+
     @BindView(R.id.overview_valor_progress) ProgressBar valorProgressBar;
     @BindView(R.id.overview_glory_progress) ProgressBar gloryProgressBar;
     @BindView(R.id.overview_infamy_progress) ProgressBar infamyProgressBar;
@@ -62,6 +65,8 @@ public class OverviewFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        swipeRefresh.setRefreshing(true);
     }
 
     @Override
@@ -81,6 +86,9 @@ public class OverviewFragment extends Fragment {
     private void displayProfileOverview() {
 
         mViewModel.getValorLiveData().observe(this, valor -> {
+
+//            swipeRefresh.setRefreshing(false);
+
             valorCurrentProgress.setText(String.valueOf(valor.getCurrentProgress()));
             valorProgressBar.setMax(valor.getNextLevelAt());
             animateProgress(valorProgressBar, valor.getProgressToNextLevel());

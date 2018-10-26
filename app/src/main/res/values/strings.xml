@@ -279,5 +279,6 @@
     <string name="characterChecklists">Character Checklists</string>
     <string name="profileProgressionError">An error occurred while trying to retrieve profile progressions.</string>
     <string name="zero">0</string>
+    <string name="guardian">Guardian</string>
 
 </resources>
