@@ -7,7 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jastley.exodusnetwork.R;
+import com.jastley.exodusnetwork.overview.adapters.EmblemRecyclerAdapter;
 import com.jastley.exodusnetwork.overview.viewmodels.OverviewViewModel;
 
 import butterknife.BindView;
@@ -24,9 +26,6 @@ import butterknife.ButterKnife;
 
 import static com.jastley.exodusnetwork.Definitions.getInfamyRank;
 import static com.jastley.exodusnetwork.Definitions.getValorGloryRank;
-import static com.jastley.exodusnetwork.Definitions.maxGloryScore;
-import static com.jastley.exodusnetwork.Definitions.maxInfamyScore;
-import static com.jastley.exodusnetwork.Definitions.maxValorScore;
 
 public class OverviewFragment extends Fragment {
 
@@ -49,6 +48,9 @@ public class OverviewFragment extends Fragment {
     @BindView(R.id.infamy_rank) TextView infamyRank;
     @BindView(R.id.infamy_current_progress) TextView infamyCurrentProgress;
 
+    @BindView(R.id.overview_character_recycler_view) RecyclerView charactersRecyclerView;
+    private EmblemRecyclerAdapter emblemRecyclerAdapter;
+
 
     public static OverviewFragment newInstance() {
         return new OverviewFragment();
@@ -67,6 +69,7 @@ public class OverviewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 //        swipeRefresh.setRefreshing(true);
+        initialiseRecyclerView();
     }
 
     @Override
@@ -80,7 +83,11 @@ public class OverviewFragment extends Fragment {
     }
 
     private void initialiseRecyclerView() {
-        //TODO
+        emblemRecyclerAdapter = new EmblemRecyclerAdapter();
+        charactersRecyclerView.setNestedScrollingEnabled(false);
+        charactersRecyclerView.setAdapter(emblemRecyclerAdapter);
+        charactersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
     }
 
     private void displayProfileOverview() {
@@ -180,6 +187,11 @@ public class OverviewFragment extends Fragment {
             else if(level <= 16) {
                 infamyRankIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.icon_gambit_legend));
             }
+        });
+
+
+        mViewModel.getCharacterData().observe(this, characterData -> {
+            emblemRecyclerAdapter.setItemsList(characterData);
         });
     }
 

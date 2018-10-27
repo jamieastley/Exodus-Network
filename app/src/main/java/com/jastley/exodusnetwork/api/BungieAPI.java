@@ -87,8 +87,8 @@ public interface BungieAPI {
     Observable<Response_GetProfileOverview> getCharacterProgressions(@Path("membershipType") String membershipType,
                                                                      @Path("membershipId") String membershipId,
                                                                      @Path("characterId") String characterId);
-    //Profile-level progressions
-    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=202")
+    //Profile-level progressions for Overview fragment
+    @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/?components=200,202")
     Observable<Response_GetProfileOverview> getProfileProgressions(@Path("membershipType") String membershipType,
                                                                    @Path("membershipId") String membershipId);
 

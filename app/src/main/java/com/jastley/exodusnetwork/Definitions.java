@@ -8,6 +8,31 @@ public class Definitions {
     public static final String hunter = "1";
     public static final String warlock = "2";
 
+    //Gender
+    public static String getGender(int value) {
+        switch(value) {
+            case 0:
+                return "Male";
+            case 1:
+                return "Female";
+            default:
+                return "Unknown";
+        }
+    }
+
+    public static String getRace(int value) {
+        switch(value) {
+            case 0:
+                return "Human";
+            case 1:
+                return "Awoken";
+            case 2:
+                return "Exo";
+            default:
+                return "Unknown";
+        }
+    }
+
 //    Bucket Definitions
     public static final String chestArmor = "14239492";
     public static final String shaders = "18606351";

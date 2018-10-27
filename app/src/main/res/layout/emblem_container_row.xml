@@ -4,10 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:orientation="vertical"
     >
 
     <ImageView
-        android:id="@+id/character_emblem_background"
+        android:id="@+id/emblem_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,7 +20,7 @@
         />
     <!--Left spacer for class type-->
     <android.support.v4.widget.Space
-        android:id="@+id/character_class_spacer"
+        android:id="@+id/emblem_class_spacer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_default="percent"
@@ -28,25 +30,25 @@
 
     <!--top percent spacer for class type-->
     <android.support.v4.widget.Space
-        android:id="@+id/character_top_left_spacer"
+        android:id="@+id/emblem_top_left_spacer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.7"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/character_class_spacer"
+        app:layout_constraintLeft_toLeftOf="@id/emblem_class_spacer"
         />
 
     <TextView
-        android:id="@+id/character_class_name"
+        android:id="@+id/emblem_class_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.5"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintStart_toEndOf="@id/character_class_spacer"
-        app:layout_constraintTop_toBottomOf="@id/character_top_left_spacer"
+        app:layout_constraintStart_toEndOf="@id/emblem_class_spacer"
+        app:layout_constraintTop_toBottomOf="@id/emblem_top_left_spacer"
         android:gravity="center|start"
         android:text="Hunter"
         android:textStyle="bold"
@@ -55,15 +57,15 @@
         />
 
     <TextView
-        android:id="@+id/character_emblem_race_name"
+        android:id="@+id/emblem_race_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.5"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintStart_toEndOf="@id/character_class_spacer"
-        app:layout_constraintTop_toBottomOf="@id/character_class_name"
+        app:layout_constraintStart_toEndOf="@id/emblem_class_spacer"
+        app:layout_constraintTop_toBottomOf="@id/emblem_class_name"
         app:layout_constraintBottom_toBottomOf="@id/character_bottom_left_spacer"
         android:text="Awoken Female"
         android:gravity="center|start"
@@ -72,29 +74,31 @@
         />
 
     <ImageView
+        android:id="@+id/emblem_power_icon"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.05"
-        app:layout_constraintEnd_toStartOf="@id/character_emblem_light"
+        app:layout_constraintEnd_toStartOf="@id/emblem_light"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/icon_power"
         />
 
     <TextView
-        android:id="@+id/character_emblem_light"
+        android:id="@+id/emblem_light"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginEnd="5dp"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.15"
+        app:layout_constraintWidth_percent="0.13"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center|start"
+        android:gravity="end"
         android:text="540"
         android:textColor="@color/lightLevelBlue"
         app:autoSizeTextType="uniform"
@@ -113,7 +117,7 @@
         />
 
     <TextView
-        android:id="@+id/character_level"
+        android:id="@+id/emblem_character_level"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentEnd="true"
@@ -122,10 +126,10 @@
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.2"
-        app:layout_constraintTop_toBottomOf="@id/character_emblem_light"
+        app:layout_constraintTop_toBottomOf="@id/emblem_light"
         app:layout_constraintBottom_toBottomOf="@id/character_bottom_left_spacer"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
+        android:gravity="end"
         android:text="Level 50"
         android:textColor="@color/colorWhite"
         android:textStyle="bold"

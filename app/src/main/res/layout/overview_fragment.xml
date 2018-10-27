@@ -1,94 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    tools:context=".overview.fragments.OverviewFragment"
     >
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/constraint_ranks_container"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        tools:context=".overview.fragments.OverviewFragment">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
 
-        <ImageView
-            android:id="@+id/overview_platform"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/icon_blizzard"
-            app:layout_constraintBottom_toBottomOf="@id/overview_displayname"
-            app:layout_constraintEnd_toStartOf="@id/overview_displayname"
-            app:layout_constraintTop_toTopOf="@id/overview_displayname" />
-
-        <TextView
-            android:id="@+id/overview_displayname"
-            android:layout_width="wrap_content"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraint_ranks_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Jamie92#1135"
-            android:textColor="@color/colorWhite"
-            android:textSize="23sp"
-            app:layout_constraintBottom_toBottomOf="@id/overview_platform"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/overview_platform"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/overview_platform"
 
-            />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="59dp" />
+            <ImageView
+                android:id="@+id/overview_platform"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/icon_blizzard"
+                app:layout_constraintBottom_toBottomOf="@id/overview_displayname"
+                app:layout_constraintEnd_toStartOf="@id/overview_displayname"
+                app:layout_constraintTop_toTopOf="@id/overview_displayname" />
 
-        <TextView
-            android:id="@+id/valor_rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/guardian"
-            android:textAlignment="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/overview_valor_progress"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/overview_valor_progress"
-            app:layout_constraintTop_toBottomOf="@id/guideline"
-            />
+            <TextView
+                android:id="@+id/overview_displayname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Jamie92#1135"
+                android:textColor="@color/colorWhite"
+                android:textSize="23sp"
+                app:layout_constraintBottom_toBottomOf="@id/overview_platform"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/overview_platform"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/overview_platform"
 
-        <ProgressBar
-            android:id="@+id/overview_valor_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:background="@drawable/circle_progress_background"
-            android:indeterminate="false"
-            android:progressDrawable="@drawable/valor_progress_bar"
-            app:layout_constraintEnd_toStartOf="@+id/overview_glory_progress"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/valor_rank" />
+                />
 
-        <ImageView
-            android:id="@+id/valor_rank_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintBottom_toBottomOf="@id/overview_valor_progress"
-            app:layout_constraintEnd_toStartOf="@+id/overview_glory_progress"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/overview_valor_progress" />
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="59dp" />
+
+            <TextView
+                android:id="@+id/valor_rank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/guardian"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/overview_valor_progress"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/overview_valor_progress"
+                app:layout_constraintTop_toBottomOf="@id/guideline"
+                />
+
+            <ProgressBar
+                android:id="@+id/overview_valor_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:background="@drawable/circle_progress_background"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/valor_progress_bar"
+                app:layout_constraintEnd_toStartOf="@+id/overview_glory_progress"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/valor_rank" />
+
+            <ImageView
+                android:id="@+id/valor_rank_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintBottom_toBottomOf="@id/overview_valor_progress"
+                app:layout_constraintEnd_toStartOf="@+id/overview_glory_progress"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/overview_valor_progress" />
 
 
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/valor_title"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
@@ -102,79 +109,79 @@
             <!--app:layout_constraintStart_toStartOf="@+id/overview_valor_progress"-->
             <!--app:layout_constraintTop_toBottomOf="@id/overview_valor_progress" />-->
 
-        <!-- rank text was here-->
+            <!-- rank text was here-->
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@id/overview_valor_progress"
-            app:layout_constraintEnd_toEndOf="@id/overview_valor_progress"
-            app:layout_constraintTop_toBottomOf="@id/overview_valor_progress"
-            >
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/overview_valor_progress"
+                app:layout_constraintEnd_toEndOf="@id/overview_valor_progress"
+                app:layout_constraintTop_toBottomOf="@id/overview_valor_progress"
+                >
 
-            <ImageView
-                android:id="@+id/valor_rank_value_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="5dp"
-                android:src="@drawable/icon_valor_brave"
-                app:layout_constraintTop_toTopOf="@id/valor_current_progress"
-                app:layout_constraintBottom_toBottomOf="@id/valor_current_progress"
-                app:layout_constraintEnd_toStartOf="@id/valor_current_progress"
-                />
+                <ImageView
+                    android:id="@+id/valor_rank_value_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/icon_valor_brave"
+                    app:layout_constraintTop_toTopOf="@id/valor_current_progress"
+                    app:layout_constraintBottom_toBottomOf="@id/valor_current_progress"
+                    app:layout_constraintEnd_toStartOf="@id/valor_current_progress"
+                    />
+
+                <TextView
+                    android:id="@+id/valor_current_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="@string/zero"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+
+            </android.support.constraint.ConstraintLayout>
+
 
             <TextView
-                android:id="@+id/valor_current_progress"
+                android:id="@+id/glory_rank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="@string/zero"
+                android:text="@string/guardian"
+                android:textAlignment="center"
                 android:textColor="@color/colorWhite"
-                android:textSize="18sp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/overview_glory_progress"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/overview_glory_progress"
+                app:layout_constraintTop_toBottomOf="@id/guideline" />
+
+
+            <ProgressBar
+                android:id="@+id/overview_glory_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:background="@drawable/circle_progress_background"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/glory_progress_bar"
                 app:layout_constraintEnd_toEndOf="parent"
-                />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/overview_valor_progress"
+                app:layout_constraintTop_toBottomOf="@id/glory_rank" />
 
-        </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/glory_rank_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintBottom_toBottomOf="@id/overview_glory_progress"
+                app:layout_constraintEnd_toEndOf="@id/overview_glory_progress"
+                app:layout_constraintStart_toStartOf="@id/overview_glory_progress"
+                app:layout_constraintTop_toTopOf="@id/overview_glory_progress" />
 
-
-        <TextView
-            android:id="@+id/glory_rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/guardian"
-            android:textAlignment="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/overview_glory_progress"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/overview_glory_progress"
-            app:layout_constraintTop_toBottomOf="@id/guideline" />
-
-
-        <ProgressBar
-            android:id="@+id/overview_glory_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:background="@drawable/circle_progress_background"
-            android:indeterminate="false"
-            android:progressDrawable="@drawable/glory_progress_bar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/overview_valor_progress"
-            app:layout_constraintTop_toBottomOf="@id/glory_rank" />
-
-        <ImageView
-            android:id="@+id/glory_rank_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintBottom_toBottomOf="@id/overview_glory_progress"
-            app:layout_constraintEnd_toEndOf="@id/overview_glory_progress"
-            app:layout_constraintStart_toStartOf="@id/overview_glory_progress"
-            app:layout_constraintTop_toTopOf="@id/overview_glory_progress" />
-
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/glory_title"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
@@ -189,84 +196,84 @@
 
             <!--app:layout_constraintTop_toBottomOf="@id/overview_glory_progress" />-->
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/overview_glory_progress"
-            app:layout_constraintStart_toStartOf="@id/overview_glory_progress"
-            app:layout_constraintEnd_toEndOf="@id/overview_glory_progress"
-            >
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/overview_glory_progress"
+                app:layout_constraintStart_toStartOf="@id/overview_glory_progress"
+                app:layout_constraintEnd_toEndOf="@id/overview_glory_progress"
+                >
 
-            <ImageView
-                android:id="@+id/glory_rank_value_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/icon_glory_brave"
-                app:layout_constraintTop_toTopOf="@id/glory_current_progress"
-                app:layout_constraintBottom_toBottomOf="@id/glory_current_progress"
-                app:layout_constraintEnd_toStartOf="@+id/glory_current_progress"
+                <ImageView
+                    android:id="@+id/glory_rank_value_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/icon_glory_brave"
+                    app:layout_constraintTop_toTopOf="@id/glory_current_progress"
+                    app:layout_constraintBottom_toBottomOf="@id/glory_current_progress"
+                    app:layout_constraintEnd_toStartOf="@+id/glory_current_progress"
 
-                />
+                    />
+
+                <TextView
+                    android:id="@+id/glory_current_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="@string/zero"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/infamy_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="260dp" />
 
             <TextView
-                android:id="@+id/glory_current_progress"
+                android:id="@+id/infamy_rank"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="@string/zero"
+                android:text="@string/guardian"
+                android:textAlignment="center"
                 android:textColor="@color/colorWhite"
-                android:textSize="18sp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/overview_infamy_progress"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/overview_infamy_progress"
+                app:layout_constraintTop_toBottomOf="@id/infamy_guideline" />
+
+            <ProgressBar
+                android:id="@+id/overview_infamy_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:background="@drawable/circle_progress_background"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/gambit_progress_bar"
                 app:layout_constraintEnd_toEndOf="parent"
-                />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/infamy_rank" />
 
-        </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/gambit_rank_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:layout_constraintBottom_toBottomOf="@id/overview_infamy_progress"
+                app:layout_constraintEnd_toEndOf="@id/overview_infamy_progress"
+                app:layout_constraintStart_toStartOf="@id/overview_infamy_progress"
+                app:layout_constraintTop_toTopOf="@id/overview_infamy_progress" />
 
-
-        <android.support.constraint.Guideline
-            android:id="@+id/infamy_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="260dp" />
-
-        <TextView
-            android:id="@+id/infamy_rank"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/guardian"
-            android:textAlignment="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/overview_infamy_progress"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/overview_infamy_progress"
-            app:layout_constraintTop_toBottomOf="@id/infamy_guideline" />
-
-        <ProgressBar
-            android:id="@+id/overview_infamy_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:background="@drawable/circle_progress_background"
-            android:indeterminate="false"
-            android:progressDrawable="@drawable/gambit_progress_bar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/infamy_rank" />
-
-        <ImageView
-            android:id="@+id/gambit_rank_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:layout_constraintBottom_toBottomOf="@id/overview_infamy_progress"
-            app:layout_constraintEnd_toEndOf="@id/overview_infamy_progress"
-            app:layout_constraintStart_toStartOf="@id/overview_infamy_progress"
-            app:layout_constraintTop_toTopOf="@id/overview_infamy_progress" />
-
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/infamy_title"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
@@ -281,44 +288,44 @@
 
             <!--app:layout_constraintTop_toBottomOf="@id/overview_infamy_progress" />-->
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/infamy_score_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/overview_infamy_progress"
-            app:layout_constraintStart_toStartOf="@id/overview_infamy_progress"
-            app:layout_constraintEnd_toEndOf="@id/overview_infamy_progress"
-            >
-
-            <ImageView
-                android:id="@+id/infamy_rank_value_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="8dp"
-                android:src="@drawable/icon_infamy"
-                app:layout_constraintTop_toTopOf="@+id/infamy_current_progress"
-                app:layout_constraintBottom_toBottomOf="@+id/infamy_current_progress"
-                app:layout_constraintEnd_toStartOf="@+id/infamy_current_progress"
-
-                />
-
-            <TextView
-                android:id="@+id/infamy_current_progress"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/infamy_score_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/zero"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
+                app:layout_constraintTop_toBottomOf="@id/overview_infamy_progress"
+                app:layout_constraintStart_toStartOf="@id/overview_infamy_progress"
+                app:layout_constraintEnd_toEndOf="@id/overview_infamy_progress"
+                >
 
-        </android.support.constraint.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/infamy_rank_value_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/icon_infamy"
+                    app:layout_constraintTop_toTopOf="@+id/infamy_current_progress"
+                    app:layout_constraintBottom_toBottomOf="@+id/infamy_current_progress"
+                    app:layout_constraintEnd_toStartOf="@+id/infamy_current_progress"
+
+                    />
+
+                <TextView
+                    android:id="@+id/infamy_current_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="@string/zero"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    />
+
+            </android.support.constraint.ConstraintLayout>
 
 
 
 
-        <!--<ImageView-->
+            <!--<ImageView-->
             <!--android:id="@+id/overview_clan_icon"-->
             <!--android:layout_width="80dp"-->
             <!--android:layout_height="80dp"-->
@@ -328,7 +335,7 @@
 
             <!--app:layout_constraintTop_toBottomOf="@id/infamy_current_progress" />-->
 
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/overview_clan_name"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
@@ -340,22 +347,25 @@
             <!--app:layout_constraintStart_toEndOf="@id/overview_clan_icon"-->
             <!--app:layout_constraintTop_toTopOf="@id/overview_clan_icon" />-->
 
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:id="@+id/overview_clan_motto"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content" />-->
 
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/overview_character_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/infamy_score_container">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/overview_character_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/infamy_score_container" />
 
-        </android.support.v7.widget.RecyclerView>
+
+        </android.support.constraint.ConstraintLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
 
-</android.support.v4.widget.NestedScrollView>
+
+</android.support.constraint.ConstraintLayout>

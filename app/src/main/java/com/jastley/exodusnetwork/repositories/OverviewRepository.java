@@ -8,9 +8,14 @@ import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.SingleLiveEvent;
 import com.jastley.exodusnetwork.Utils.SnackbarMessage;
 import com.jastley.exodusnetwork.api.BungieAPI;
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters.CharacterData;
 import com.jastley.exodusnetwork.api.models.Response_GetProfileOverview.ProgressionsData;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,6 +35,8 @@ public class OverviewRepository {
     private MutableLiveData<ProgressionsData> gloryProgression = new MutableLiveData<>();
     private MutableLiveData<ProgressionsData> valorProgression = new MutableLiveData<>();
     private MutableLiveData<ProgressionsData> infamyProgression = new MutableLiveData<>();
+
+    private MutableLiveData<List<CharacterData>> characterData = new MutableLiveData<>();
 
     private SingleLiveEvent<SnackbarMessage> snackbarMessage = new SingleLiveEvent<>();
 
@@ -71,6 +78,16 @@ public class OverviewRepository {
                             gloryProgression.postValue(progressions.getResponse().getCharacterProgressions().getData().get(key).getProgressionsData().get(gloryProgressionHash));
                             valorProgression.postValue(progressions.getResponse().getCharacterProgressions().getData().get(key).getProgressionsData().get(valorProgressionHash));
                             infamyProgression.postValue(progressions.getResponse().getCharacterProgressions().getData().get(key).getProgressionsData().get(infamyProgressionHash));
+
+                            List<CharacterData> characterList = new ArrayList<>();
+
+                            for(Map.Entry<String, CharacterData> entry : progressions.getResponse().getCharacters().getData().entrySet()) {
+                                String characterKey = entry.getKey();
+
+                                characterList.add(progressions.getResponse().getCharacters().getData().get(characterKey));
+                            }
+
+                            characterData.postValue(characterList);
                         }
 
                     }, throwable -> snackbarMessage.postValue(new SnackbarMessage(throwable)));
@@ -90,6 +107,10 @@ public class OverviewRepository {
 
     public MutableLiveData<ProgressionsData> getInfamyProgression() {
         return infamyProgression;
+    }
+
+    public MutableLiveData<List<CharacterData>> getCharacterData() {
+        return characterData;
     }
 
     public SingleLiveEvent<SnackbarMessage> getSnackbarMessage() {

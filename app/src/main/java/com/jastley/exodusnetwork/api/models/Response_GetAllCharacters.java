@@ -121,11 +121,14 @@ public class Response_GetAllCharacters {
         @SerializedName("classHash")
         private String classHash;
         @Expose
+        @SerializedName("raceType")
+        private int raceType;
+        @Expose
         @SerializedName("classType")
         private String classType;
         @Expose
         @SerializedName("genderType")
-        private String genderType;
+        private int genderType;
         @Expose
         @SerializedName("emblemPath")
         private String emblemPath;
@@ -192,7 +195,11 @@ public class Response_GetAllCharacters {
             return classType;
         }
 
-        public String getGenderType() {
+        public int getRaceType() {
+            return raceType;
+        }
+
+        public int getGenderType() {
             return genderType;
         }
 
@@ -270,7 +277,7 @@ public class Response_GetAllCharacters {
             this.classType = classType;
         }
 
-        public void setGenderType(String genderType) {
+        public void setGenderType(int genderType) {
             this.genderType = genderType;
         }
 

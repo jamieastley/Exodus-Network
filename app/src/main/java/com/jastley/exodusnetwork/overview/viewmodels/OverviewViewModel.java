@@ -5,9 +5,12 @@ import android.arch.lifecycle.ViewModel;
 
 import com.jastley.exodusnetwork.Utils.SingleLiveEvent;
 import com.jastley.exodusnetwork.Utils.SnackbarMessage;
+import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.api.models.Response_GetProfileOverview.ProgressionsData;
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.repositories.OverviewRepository;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -17,6 +20,7 @@ public class OverviewViewModel extends ViewModel {
     private LiveData<ProgressionsData> valorLiveData;
     private LiveData<ProgressionsData> infamyLiveData;
     private SingleLiveEvent<SnackbarMessage> snackbarMessage;
+    private LiveData<List<Response_GetAllCharacters.CharacterData>> characterData;
 
     @Inject
     OverviewRepository repository;
@@ -43,5 +47,10 @@ public class OverviewViewModel extends ViewModel {
 
     public SingleLiveEvent<SnackbarMessage> getSnackbarMessage() {
         return snackbarMessage = repository.getSnackbarMessage();
+    }
+
+    public LiveData<List<Response_GetAllCharacters.CharacterData>> getCharacterData() {
+        characterData = repository.getCharacterData();
+        return characterData;
     }
 }
