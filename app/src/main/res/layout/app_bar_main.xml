@@ -14,7 +14,7 @@
         android:label="@string/lfg_feed"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay"
-
+        app:layout_scrollFlags="scroll|enterAlways|snap"
         >
 
         <android.support.v7.widget.Toolbar

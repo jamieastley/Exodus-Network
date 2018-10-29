@@ -171,8 +171,8 @@ public interface BungieAPI {
 //    @GET("/api/?request=history&for=xur")
 //    @Headers("X-Api-Key: " + BuildConfig.braytechApiKey)
     @GET("https://api.braytech.org/")
-    Observable<Response_GetXurWeekly> getXurWeeklyInventory(@Query("request") String request,
-                                                            @Query("get") String get);
+    Observable<Response_GetXurWeekly> getBrayTechXur(@Query("request") String request,
+                                                     @Query("get") String get);
 
     @GET("/Platform/Destiny2/{membershipType}/Profile/{membershipId}/Character/{characterId}/Vendors/{vendorHash}/?components=400,402")
     Observable<Response_GetVendor> getVendorData(@Path("membershipType") String membershipType,

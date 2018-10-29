@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import android.view.*;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +55,6 @@ public class XurFragment extends Fragment {
     @BindView(R.id.xur_arrive_depart_status) TextView xurStatus;
     @BindView(R.id.xur_items_recycler_view) RecyclerView xurRecyclerView;
     @BindView(R.id.xur_timer) TextView xurTimer;
-    @BindView(R.id.xur_track_button) Button xurTrackButton;
     @BindView(R.id.xur_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
 
     @BindView(R.id.xur_gone_container) RelativeLayout xurGoneContainer;
@@ -203,8 +204,14 @@ public class XurFragment extends Fragment {
         mSwipeRefresh.setRefreshing(true);
 
         if(ServerTimerCheck.isXurAvailable()) {
+
             mViewModel.getXurData().observe(this, xurData -> {
-                if (xurData.getFinalItemList() != null) {
+                if(xurData.getMessage() != null) {
+                    mSwipeRefresh.setRefreshing(false);
+                    showSnackbarMessage(xurData.getMessage());
+                    setupXurGone();
+                }
+                else if (xurData.getFinalItemList() != null) {
                     mXurRecyclerAdapter.setXurItems(xurData.getFinalItemList());
                     mSwipeRefresh.setRefreshing(false);
                     xurGoneContainer.setVisibility(View.GONE);
@@ -217,6 +224,13 @@ public class XurFragment extends Fragment {
 
             setCountdownTimer(millis);
             xurStatus.setText(R.string.xur_departs_in);
+
+            mViewModel.getXurLocationData().observe(this, location -> {
+                xurRegionText.setText(location.getRegionText());
+                xurWorldText.setText(location.getWorldName());
+
+            });
+
         }
         else {
 
@@ -232,22 +246,14 @@ public class XurFragment extends Fragment {
 
         }
 
-//        //Get location data
-//        mViewModel.getXurLocationData().observe(this, xurVendorModel -> {
-//            if(xurVendorModel.getErrorMessage() != null) {
-//                Snackbar.make(getView(), xurVendorModel.getErrorMessage(), Snackbar.LENGTH_INDEFINITE)
-//                        .show();
-//            }
-//            else {
-//                Picasso.get()
-//                        .load(baseURL + xurVendorModel.getLocationBanner())
-//                        .into(xurImageBanner);
-//
-//                xurRegionText.setText(xurVendorModel.getRegionText());
-//                xurWorldText.setText(xurVendorModel.getWorldName());
-//                xurIcon.setVisibility(View.VISIBLE);
-//            }
-//        });
+        mViewModel.getSnackbarMessage().observe(this, message -> {
+            if(message.getThrowable() != null) {
+                showSnackbarMessage(message.getThrowable().getLocalizedMessage());
+            }
+            else if(message.getMessage() != null) {
+                showSnackbarMessage(message.getMessage());
+            }
+        });
 
     }
 
@@ -286,8 +292,12 @@ public class XurFragment extends Fragment {
         mCountDownTimer.start();
     }
 
-    @OnClick(R.id.xur_track_button)
-    public void onTrackButtonClick() {
-        Toast.makeText(getContext(), "TODO", Toast.LENGTH_SHORT).show();
+
+    private void showSnackbarMessage(String message) {
+
+        mSwipeRefresh.setRefreshing(false);
+
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG)
+                .show();
     }
 }

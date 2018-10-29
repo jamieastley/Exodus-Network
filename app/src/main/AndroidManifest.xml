@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jastley.exodusnetwork">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -28,7 +29,9 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/MaterialCustomTheme">
+            android:theme="@style/MaterialCustomTheme"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -50,7 +53,9 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jastley.exodusnetwork.MainActivity" />
@@ -59,11 +64,14 @@
             android:name=".manifest.ManifestSearchActivity"
             android:label="@string/title_activity_manifest_search"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jastley.exodusnetwork.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>

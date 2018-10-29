@@ -73,6 +73,18 @@
 
     </style>
 
+    <style name="SettingsTheme" parent="android:Theme.Light">
+        <!-- Override properties according to your need -->
+        <item name="android:colorBackground">#ffffff</item>
+        <item name="android:colorForeground">#aaaaaa</item>
+
+        <item name="android:textColorPrimary">#ff0000</item>
+        <item name="android:textColorSecondary">#0000ff</item>
+        <item name="android:textColorTertiary">#00ff00</item>
+        <item name="android:textColorPrimaryDisableOnly">#888888</item>
+        <item name="android:textColorHint">#778899</item>
+    </style>
+
 
     <!--<style name="SpinnerItemStyle" parent="@style/Widget.AppCompat.Spinner.DropDown">-->
     <!--<item name="android:textColor">@color/colorWhite</item>-->

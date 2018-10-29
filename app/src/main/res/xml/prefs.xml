@@ -11,7 +11,7 @@
             android:key="backOpensDrawer"
             android:title="@string/open_drawer_back_press"
             android:defaultValue="@string/default_back_press_preference"
-
+            
             />
 
     </PreferenceCategory>

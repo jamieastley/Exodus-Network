@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -17,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.overview.adapters.EmblemRecyclerAdapter;
 import com.jastley.exodusnetwork.overview.viewmodels.OverviewViewModel;
@@ -31,6 +34,7 @@ public class OverviewFragment extends Fragment {
 
     private OverviewViewModel mViewModel;
 //    @BindView(R.id.overview_swipe_refresh) SwipeRefreshLayout swipeRefresh;
+    @BindView(R.id.overview_progress_bar) ProgressBar progressBar;
 
     @BindView(R.id.overview_valor_progress) ProgressBar valorProgressBar;
     @BindView(R.id.overview_glory_progress) ProgressBar gloryProgressBar;
@@ -54,6 +58,12 @@ public class OverviewFragment extends Fragment {
 
     public static OverviewFragment newInstance() {
         return new OverviewFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,6 +92,22 @@ public class OverviewFragment extends Fragment {
         displayProfileOverview();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MainActivity activity = (MainActivity)getActivity();
+        if(activity != null) {
+            activity.setActionBarTitle(getString(R.string.overview));
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
+
     private void initialiseRecyclerView() {
         emblemRecyclerAdapter = new EmblemRecyclerAdapter();
         charactersRecyclerView.setNestedScrollingEnabled(false);
@@ -95,6 +121,7 @@ public class OverviewFragment extends Fragment {
         mViewModel.getValorLiveData().observe(this, valor -> {
 
 //            swipeRefresh.setRefreshing(false);
+            progressBar.setVisibility(View.GONE);
 
             valorCurrentProgress.setText(String.valueOf(valor.getCurrentProgress()));
             valorProgressBar.setMax(valor.getNextLevelAt());

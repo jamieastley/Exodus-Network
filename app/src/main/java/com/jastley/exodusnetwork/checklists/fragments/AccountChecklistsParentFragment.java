@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,11 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
-import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
 import com.jastley.exodusnetwork.checklists.ChecklistsViewModel;
 import com.jastley.exodusnetwork.checklists.models.ChecklistTabModel;
 
@@ -33,11 +30,8 @@ import butterknife.ButterKnife;
 
 import static com.jastley.exodusnetwork.Definitions.caydeJournals;
 import static com.jastley.exodusnetwork.Definitions.ghostLore;
-import static com.jastley.exodusnetwork.Definitions.hunter;
 import static com.jastley.exodusnetwork.Definitions.latentMemories;
 import static com.jastley.exodusnetwork.Definitions.sleeperNodes;
-import static com.jastley.exodusnetwork.Definitions.titan;
-import static com.jastley.exodusnetwork.Definitions.warlock;
 
 public class AccountChecklistsParentFragment extends Fragment {
 
@@ -65,10 +59,6 @@ public class AccountChecklistsParentFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.parent_account_checklists_fragment, container, false);
 
         ButterKnife.bind(this, rootView);
-
-//        mTabLayout = getActivity().findViewById(R.id.sliding_tabs);
-//        mTabLayout.setVisibility(View.VISIBLE);
-//        mSwipeRefreshLayout.setRefreshing(true);
 
         setHasOptionsMenu(true);
         mSectionsPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
@@ -150,53 +140,8 @@ public class AccountChecklistsParentFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         menu.clear();
-//        inflater.inflate(R.menu.checklist_toolbar, menu);
-//
-//        MenuItem item = menu.findItem(R.id.checklist_spinner);
-//        Spinner spinner = (Spinner) item.getActionView();
-//
-//
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-//                R.array.checklist_options, R.layout.spinner_list_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        spinner.setAdapter(adapter);
-//        spinner.setPopupBackgroundResource(R.color.bungieBackground);
-//        spinner.setOnItemSelectedListener(itemSelectedListener);
     }
 
-//    private AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
-//        @Override
-//        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//            Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(), Toast.LENGTH_SHORT).show();
-//
-//            Fragment fragment;
-//            FragmentManager fragmentManager = getChildFragmentManager();
-//
-//            switch(adapterView.getItemAtPosition(i).toString()) {
-//
-//                case "Latent Memories":
-//                    fragment = LatentMemoriesFragment.newInstance(null, null);
-//
-////                    fragmentManager.beginTransaction()
-////                            .replace(R.id.checklist_fragment_container, fragment, "latentMemoriesFrag")
-////                            .commit();
-//                    break;
-//                case "Sleeper Nodes":
-//                    fragment = SleeperNodesFragment.newInstance(null, null);
-//
-////                    fragmentManager.beginTransaction()
-////                            .replace(R.id.checklist_fragment_container, fragment, "sleeperNodesFrag")
-////                            .commit();
-//                    break;
-//            }
-//        }
-//
-//        @Override
-//        public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//        }
-//    };
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -272,16 +217,6 @@ public class AccountChecklistsParentFragment extends Fragment {
     private void getChecklistData() {
         mViewModel.loadChecklistData();
 
-
-//        mViewModel.getLatentMemories().observe(getActivity(), response -> {
-////            mSwipeRefreshLayout.setRefreshing(false);
-//            if(response.getErrorMessage() != null) {
-//                showSnackbar(response.getErrorMessage());
-//            }
-//            else if(response.getThrowable() != null) {
-//                showSnackbar(response.getThrowable().getLocalizedMessage());
-//            }
-//        });
     }
 
     private void showSnackbar(String message) {
@@ -290,38 +225,4 @@ public class AccountChecklistsParentFragment extends Fragment {
                 .show();
     }
 
-//    private void setupBottomNav() {
-//
-//        mViewModel.getCharacters().observe(this, characters -> {
-//            if(characters.getCharacterDataList() != null) {
-//
-//                Menu menu = bottomNav.getMenu();
-//                menu.clear();
-//
-//                for(Response_GetAllCharacters.CharacterData character : characters.getCharacterDataList()) {
-//
-//                    switch(character.getClassType()) {
-//
-//                        case titan:
-//                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.titan)).setIcon(R.drawable.icon_titan);
-//                            break;
-//                        case hunter:
-//                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.hunter)).setIcon(R.drawable.icon_hunter);
-//                            break;
-//                        case warlock:
-//                            menu.add(0, characters.getCharacterDataList().indexOf(character), Menu.NONE, getResources().getString(R.string.warlock)).setIcon(R.drawable.icon_warlock);
-//                            break;
-//                    }
-//
-//                }
-//
-//            }
-//        });
-//
-//        bottomNav.setOnNavigationItemSelectedListener(menuItem -> {
-//            Toast.makeText(getContext(), String.valueOf(menuItem.getItemId()), Toast.LENGTH_SHORT).show();
-////            this.characterIndex = menuItem.
-//            return true;
-//        });
-//    }
 }

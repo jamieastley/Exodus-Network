@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitle(R.string.lfg_feed);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
@@ -120,14 +120,46 @@ public class MainActivity extends AppCompatActivity
         postsFragment = LFGPostsFragment.newInstance(isLFGPost);
         setFragment(postsFragment);
 
+        //required for toolbar back/home button
+        drawer.setOnDrawerNavigationListener(clickedView -> {
+            int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
+            if(stackHeight > 0) {
+
+                getSupportFragmentManager().popBackStack();
+
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setHomeButtonEnabled(true);
+                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+                drawer.getActionBarDrawerToggle().syncState();
+            }
+            else {
+                drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+                drawer.getActionBarDrawerToggle().syncState();
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+
+            }
+
+            return true;
+        });
+
         //hacky workaround to toggle between drawer/home depending on back-stack
         getSupportFragmentManager().addOnBackStackChangedListener(() -> {
             int stackHeight = getSupportFragmentManager().getBackStackEntryCount();
             if (stackHeight > 0) { // if we have something on the stack (doesn't include the current shown fragment)
                 drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+                drawer.getActionBarDrawerToggle().syncState();
+
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+
             } else {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setHomeButtonEnabled(true);
                 drawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+                drawer.getActionBarDrawerToggle().syncState();
 
                 LFGPostsFragment fragment = (LFGPostsFragment) getSupportFragmentManager().findFragmentByTag("LFG_FRAGMENT");
                 if(fragment != null && fragment.isVisible()) {
