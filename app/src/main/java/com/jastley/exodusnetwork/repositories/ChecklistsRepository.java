@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork.repositories;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -18,7 +18,6 @@ import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.dao.ChecklistDefinitionDAO;
 import com.jastley.exodusnetwork.database.dao.InventoryItemDefinitionDAO;
 import com.jastley.exodusnetwork.database.jsonModels.ChecklistData;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 import com.jastley.exodusnetwork.database.models.Account;
 import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
 
@@ -37,7 +36,6 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 import static com.jastley.exodusnetwork.Definitions.caydeJournals;
-import static com.jastley.exodusnetwork.Definitions.forsakenCollection;
 import static com.jastley.exodusnetwork.Definitions.ghostLore;
 import static com.jastley.exodusnetwork.Definitions.latentMemories;
 import static com.jastley.exodusnetwork.Definitions.sleeperNodes;

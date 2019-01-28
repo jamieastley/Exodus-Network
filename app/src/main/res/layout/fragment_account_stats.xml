@@ -6,13 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Account.fragments.AccountStatsFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/account_stats_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
@@ -23,7 +23,7 @@
                 android:orientation="vertical">
 
                 <!--PvP Banner container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_pvp_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
                     app:cardBackgroundColor="@color/bungieCard"
                     >
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -58,12 +58,12 @@
                             android:textColor="@color/colorWhite"
                             />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <!--PvP stats container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_pvp_recycler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,20 +84,20 @@
                         android:visibility="gone"
                         />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/account_stats_pvp_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         >
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
 
                 <!--Raid Banner -->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_raid_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
                     app:cardBackgroundColor="@color/bungieCard"
                     >
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -133,12 +133,12 @@
                         android:textColor="@color/colorWhite"
                         />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <!--Raid stats container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_raid_recycler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -159,19 +159,19 @@
                         android:visibility="gone"
                         />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/account_stats_raid_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         >
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
 
                 <!--Strikes Banner container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_strikes_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                     app:cardBackgroundColor="@color/bungieCard"
                     >
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -207,12 +207,12 @@
                             android:textColor="@color/colorWhite"
                             />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <!--Strikes stats container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_strikes_recycler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -233,19 +233,19 @@
                         android:visibility="gone"
                         />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/account_stats_strikes_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         >
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
 
                 <!--Story Banner container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_story_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -256,7 +256,7 @@
                     app:cardBackgroundColor="@color/bungieCard"
                     >
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -281,12 +281,12 @@
                             android:textColor="@color/colorWhite"
                             />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <!--Story stats container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_story_recycler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -307,18 +307,18 @@
                         android:visibility="gone"
                         />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/account_stats_story_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         >
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
                 <!--Patrol Banner Container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_patrol_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -329,7 +329,7 @@
                     app:cardBackgroundColor="@color/bungieCard"
                     >
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -354,12 +354,12 @@
                             android:textColor="@color/colorWhite"
                             />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <!--Patrol stats container-->
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:id="@+id/account_stats_patrol_recycler_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -381,19 +381,19 @@
                         android:visibility="gone"
                         />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/account_stats_patrol_recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         >
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

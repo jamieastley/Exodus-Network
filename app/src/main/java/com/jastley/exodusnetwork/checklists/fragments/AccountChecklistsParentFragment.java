@@ -1,15 +1,12 @@
 package com.jastley.exodusnetwork.checklists.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.checklists.ChecklistsViewModel;
@@ -25,6 +24,7 @@ import com.jastley.exodusnetwork.checklists.models.ChecklistTabModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

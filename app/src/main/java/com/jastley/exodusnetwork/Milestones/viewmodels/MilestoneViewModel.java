@@ -1,9 +1,9 @@
 package com.jastley.exodusnetwork.Milestones.viewmodels;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
 
 import com.jastley.exodusnetwork.api.models.Response_GetMilestones;
 import com.jastley.exodusnetwork.app.App;

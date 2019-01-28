@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.repositories;
 
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -11,7 +11,6 @@ import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters.CharacterData;
 import com.jastley.exodusnetwork.api.models.Response_GetProfileOverview.ProgressionsData;
 import com.jastley.exodusnetwork.app.App;
-import com.jastley.exodusnetwork.database.AppManifestDatabase;
 
 import java.util.ArrayList;
 import java.util.List;

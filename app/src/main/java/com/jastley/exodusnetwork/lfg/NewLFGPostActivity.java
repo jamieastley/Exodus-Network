@@ -4,20 +4,17 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,24 +26,17 @@ import android.widget.*;
 import butterknife.*;
 
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.*;
 import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
 import com.jastley.exodusnetwork.lfg.models.LFGPost;
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.NetworkUtil;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
-import com.jastley.exodusnetwork.database.dao.AccountDAO;
-import com.jastley.exodusnetwork.database.AppDatabase;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class NewLFGPostActivity extends AppCompatActivity {

@@ -1,8 +1,8 @@
 package com.jastley.exodusnetwork.repositories;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.paging.LivePagedListBuilder;
-import android.arch.paging.PagedList;
+import androidx.lifecycle.LiveData;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;

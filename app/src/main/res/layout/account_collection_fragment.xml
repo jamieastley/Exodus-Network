@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".collections.AccountCollectionFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/collectible_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,20 +36,20 @@
                 android:textSize="18sp"
                 />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/collection_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/collectibles_title"
                 >
 
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
 
         </RelativeLayout>
 
 
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 

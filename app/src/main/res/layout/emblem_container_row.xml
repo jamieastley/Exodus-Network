@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,6 +12,7 @@
         android:id="@+id/emblem_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_alignParentEnd="true"
         android:adjustViewBounds="true"
@@ -19,17 +20,18 @@
         android:src="@drawable/emblem_background_sample"
         />
     <!--Left spacer for class type-->
-    <android.support.v4.widget.Space
+    <Space
         android:id="@+id/emblem_class_spacer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.2"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         />
 
     <!--top percent spacer for class type-->
-    <android.support.v4.widget.Space
+    <Space
         android:id="@+id/emblem_top_left_spacer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -81,6 +83,7 @@
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintWidth_default="percent"
         app:layout_constraintWidth_percent="0.05"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/emblem_light"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
@@ -105,7 +108,7 @@
         />
 
     <!--bottom percent spacer for class type-->
-    <android.support.v4.widget.Space
+    <Space
         android:id="@+id/character_bottom_left_spacer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -137,4 +140,4 @@
         />
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

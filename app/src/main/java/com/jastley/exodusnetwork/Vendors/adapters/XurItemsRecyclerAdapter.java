@@ -1,16 +1,14 @@
 package com.jastley.exodusnetwork.Vendors.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
+
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Vendors.holders.XurItemsViewHolder;
-import com.jastley.exodusnetwork.api.models.Response_GetXurWeekly;
 import com.jastley.exodusnetwork.api.models.XurSaleItemModel;
-import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork.overview.viewmodels;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.jastley.exodusnetwork.Utils.SingleLiveEvent;
 import com.jastley.exodusnetwork.Utils.SnackbarMessage;

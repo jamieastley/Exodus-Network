@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork.database.models;
 
-import android.arch.persistence.room.*;
-import android.support.annotation.NonNull;
+import androidx.room.*;
+import androidx.annotation.NonNull;
 
 @Entity
 public class DestinyFactionDefinition {

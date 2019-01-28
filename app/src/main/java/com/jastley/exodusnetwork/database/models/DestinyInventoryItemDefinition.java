@@ -1,15 +1,13 @@
 package com.jastley.exodusnetwork.database.models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
-import com.jastley.exodusnetwork.Milestones.models.InventoryDataModel;
 import com.jastley.exodusnetwork.database.converters.InventoryItemDefinitionConverter;
 import com.jastley.exodusnetwork.database.jsonModels.InventoryItemJsonData;
 

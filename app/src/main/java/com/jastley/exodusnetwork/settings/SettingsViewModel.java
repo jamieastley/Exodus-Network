@@ -1,6 +1,6 @@
 package com.jastley.exodusnetwork.settings;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 public class SettingsViewModel extends ViewModel {
 

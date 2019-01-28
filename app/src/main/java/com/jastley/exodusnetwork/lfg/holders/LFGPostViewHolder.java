@@ -1,10 +1,9 @@
 package com.jastley.exodusnetwork.lfg.holders;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,7 +12,6 @@ import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.ServerTimerCheck;
 
 import org.jsoup.Jsoup;
-import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 
 import butterknife.BindView;

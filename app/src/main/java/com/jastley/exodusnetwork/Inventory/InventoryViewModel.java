@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork.Inventory;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.jastley.exodusnetwork.Inventory.models.InventoryItemModel;
 import com.jastley.exodusnetwork.Inventory.models.TransferEquipStatus;

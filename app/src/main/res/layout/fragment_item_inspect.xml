@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Vendors.fragments.ItemInspectFragment">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -91,7 +91,7 @@
                 />
 
             <!--Item stats RView-->
-           <android.support.v7.widget.RecyclerView
+           <androidx.recyclerview.widget.RecyclerView
                android:id="@+id/stat_row_recycler_view"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
@@ -100,32 +100,32 @@
 
                >
 
-           </android.support.v7.widget.RecyclerView>
+           </androidx.recyclerview.widget.RecyclerView>
 
 
             <!--Item perks RView-->
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/item_inspect_perks_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/stat_row_recycler_view"
 
                 >
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
 
 
             <!--Item mods RView-->
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/item_inspect_mods_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/item_inspect_perks_recycler"
                 >
 
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
 
         </RelativeLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

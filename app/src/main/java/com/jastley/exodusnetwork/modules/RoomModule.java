@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork.modules;
 
 import android.app.Application;
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 
 import com.jastley.exodusnetwork.database.AppDatabase;
 import com.jastley.exodusnetwork.database.AppManifestDatabase;

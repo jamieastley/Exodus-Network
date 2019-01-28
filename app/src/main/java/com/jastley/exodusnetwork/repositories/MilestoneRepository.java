@@ -1,11 +1,10 @@
 package com.jastley.exodusnetwork.repositories;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.jastley.exodusnetwork.Milestones.models.InventoryDataModel;
 import com.jastley.exodusnetwork.Milestones.models.MilestoneModel;
 import com.jastley.exodusnetwork.Utils.NoNetworkException;
 import com.jastley.exodusnetwork.Utils.UnsignedHashConverter;

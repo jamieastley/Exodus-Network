@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork.repositories;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.jastley.exodusnetwork.api.BungieAPI;
 import com.jastley.exodusnetwork.api.models.Response_GetPublicFireteams;

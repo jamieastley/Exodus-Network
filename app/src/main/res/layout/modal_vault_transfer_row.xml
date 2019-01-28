@@ -10,7 +10,7 @@
     android:focusable="true"
     >
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -18,47 +18,47 @@
 
         <ImageView
             android:id="@+id/transfer_vault_background"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/vault_banner"
+            android:src="@drawable/vault_icon"
             />
 
         <!--Left spacer for class type-->
-        <android.support.v4.widget.Space
-            android:id="@+id/transfer_class_spacer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.2"
-            app:layout_constraintLeft_toLeftOf="parent"
-            />
+        <!--<android.support.v4.widget.Space-->
+            <!--android:id="@+id/transfer_class_spacer"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.2"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--/>-->
 
-        <!--top percent spacer for class type-->
-        <android.support.v4.widget.Space
-            android:id="@+id/top_left_spacer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.7"
-            app:layout_constraintHeight_percent="0.1"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/transfer_class_spacer"
-            />
+        <!--&lt;!&ndash;top percent spacer for class type&ndash;&gt;-->
+        <!--<android.support.v4.widget.Space-->
+            <!--android:id="@+id/top_left_spacer"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="0dp"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.7"-->
+            <!--app:layout_constraintHeight_percent="0.1"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintLeft_toLeftOf="@id/transfer_class_spacer"-->
+            <!--/>-->
 
-        <TextView
-            android:id="@+id/milestone_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.5"
-            app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"
-            app:layout_constraintTop_toBottomOf="@id/top_left_spacer"
-            android:textColor="@color/colorWhite"
-            android:text="@string/vault"
-            android:textSize="15sp"
-            />
+        <!--<TextView-->
+            <!--android:id="@+id/milestone_name"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:layout_constraintWidth_default="percent"-->
+            <!--app:layout_constraintWidth_percent="0.5"-->
+            <!--app:layout_constraintStart_toEndOf="@id/transfer_class_spacer"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/top_left_spacer"-->
+            <!--android:textColor="@color/colorWhite"-->
+            <!--android:text="@string/vault"-->
+            <!--android:textSize="15sp"-->
+            <!--/>-->
 
         <!--top right spacer for light level-->
 
@@ -101,6 +101,6 @@
         <!--/>-->
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

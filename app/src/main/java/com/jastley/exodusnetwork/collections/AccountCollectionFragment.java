@@ -1,13 +1,13 @@
 package com.jastley.exodusnetwork.collections;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,9 +20,6 @@ import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.Utils.ColumnCalculator;
 import com.jastley.exodusnetwork.Vendors.fragments.ItemInspectFragment;
 import com.jastley.exodusnetwork.collections.adapters.CollectionImageRecyclerAdapter;
-import com.jastley.exodusnetwork.database.models.DestinyCollectibleDefinition;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

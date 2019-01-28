@@ -1,18 +1,17 @@
 package com.jastley.exodusnetwork.Inventory.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,27 +21,14 @@ import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jastley.exodusnetwork.Dialogs.LoadingDialogFragment;
+
 import com.jastley.exodusnetwork.Inventory.InventoryViewModel;
-import com.jastley.exodusnetwork.Inventory.models.CharacterDatabaseModel;
 import com.jastley.exodusnetwork.MainActivity;
 import com.jastley.exodusnetwork.R;
 import com.jastley.exodusnetwork.api.models.Response_GetAllCharacters;
-import com.jastley.exodusnetwork.database.dao.AccountDAO;
-import com.jastley.exodusnetwork.database.AppDatabase;
-import com.jastley.exodusnetwork.database.models.Account;
-import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * {@link ParentInventoryFragment} calls viewModel method to load account for active platform.

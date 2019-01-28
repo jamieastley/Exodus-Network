@@ -1,7 +1,7 @@
 package com.jastley.exodusnetwork;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 
 import com.jastley.exodusnetwork.Utils.SnackbarMessage;
@@ -9,7 +9,6 @@ import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.repositories.AccountRepository;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 

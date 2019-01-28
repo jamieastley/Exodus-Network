@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".checklists.fragments.LatentMemoriesFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.core.widget.SwipeRefreshLayout
         android:id="@+id/latent_memories_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -17,6 +17,6 @@
             android:layout_height="wrap_content">
         </android.support.v7.widget.RecyclerView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.core.widget.SwipeRefreshLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.ConstraintLayout>

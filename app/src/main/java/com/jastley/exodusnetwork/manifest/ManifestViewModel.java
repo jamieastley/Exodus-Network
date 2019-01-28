@@ -1,8 +1,8 @@
 package com.jastley.exodusnetwork.manifest;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.arch.paging.PagedList;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.paging.PagedList;
 
 import com.jastley.exodusnetwork.app.App;
 import com.jastley.exodusnetwork.database.models.DestinyInventoryItemDefinition;
